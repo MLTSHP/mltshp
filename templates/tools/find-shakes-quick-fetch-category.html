@@ -1,0 +1,5 @@
+{% for shake in shakes %}
+  <div class="friend">
+    {{modules.ShakeFollow(follow_shake=shake, current_user=current_user_obj, avatar_size=50, extended=True)}}
+  </div>
+{% end %}

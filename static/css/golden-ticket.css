@@ -1,0 +1,34 @@
+html, body {
+  background-color: #000;
+}
+
+.golden-ticket {
+  margin: 50px auto;
+  width: 768px;
+  height: 498px;
+  background: transparent url('/static/images/golden-ticket.jpg') 0 0 no-repeat;
+  position: relative;
+}
+
+.golden-ticket-input {
+  position: absolute;
+  top: 300px;
+  left: 80px;
+  width: 600px;
+  text-align: center;
+  background-color: transparent;
+  font-size: 60px;
+  line-height: 40px;
+  height: 120px;
+  border: none;
+  outline: none;
+}
+
+.golden-ticket-error {
+  background: transparent url('/static/images/golden-ticket-error.jpg') 0 0 no-repeat;
+  position: absolute;
+  top: 142px;  
+  left: 389px;
+  width: 327px;
+  height: 175px;
+}

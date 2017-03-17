@@ -1,0 +1,27 @@
+<div class="choose-a-shake-wrapper">
+  <div id="choose-a-shake" class="choose-a-shake">
+    <div class="choose-a-shake-hd">
+      Choose a shake
+    </div>
+    <div class="choose-a-shake-bd">
+      <ul class="top-shakes">
+        <li><a href="/friends">Friend Shake</a></li>
+        <li><a href="/user/{{current_user.name}}">Your Shake</a></li>
+        <li><a href="/user/{{current_user.name}}/likes">Your Favorites</a></li> 
+        <li><a href="/popular">Popular</a></li> 
+        <li><a href="/incoming">Incoming!!!</a></li>
+      </ul>
+      {% if group_shakes %}
+        <ul class="group-shakes">
+        {% for shake in group_shakes %}
+          <li><a href="{{shake.path()}}">{{escape(shake.display_name())}}</a></li>
+        {% end %}
+        </ul>
+      {% end %}
+      {% if can_create_shake and not site_is_readonly %}
+        <a class="add-a-shake" href="/shake/create">+ Add a shake</a>
+        <div class="clear"><!-- --></div>
+      {% end %}
+    </div>
+  </div>
+</div>

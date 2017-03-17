@@ -1,0 +1,38 @@
+{% extends "tools/base-sign-in.html" %}
+
+{% block title %}Sign In{% end %}
+
+{% block main %}
+    <h1>Sign in to save your images to your shake</h1>
+    <div class="fun-form sign-in-fun-form">
+      <form method="POST" action="/sign-in/">
+        {{ xsrf_form_html() }}
+        <div class="field">
+          <label>Username:</label>
+          <div class="field-input"> 
+            <input class="input-text" type="text" name="name" value="{{name}}"
+             autocorrect="off" autocapitalize="none">
+            {% if errors.name %}
+            <div class="error">
+              <span class="error-text">
+                {{errors.name }}
+              </span>
+            </div>
+            <span class="bottoms"></span>
+            {% end %}
+          </div>
+        </div>
+        <div class="field">
+          <label>Password:</label>
+          <div class="field-input">
+            <input class="input-text" type="password" name="password" >
+          </div>
+        </div>
+        <div class="field">
+          <input class="input-submit" type="submit" value="Sign In!">
+        </div>
+        <input type="hidden" name="next" value="{{next}}">        
+      </form>
+      <div class="clear"><!-- --></div>
+    </div>
+{% end %}

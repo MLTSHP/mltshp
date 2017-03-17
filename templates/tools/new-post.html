@@ -1,0 +1,63 @@
+<div class="start-screen">
+  {% if current_user and current_user_object and current_user_object.email_confirmed != 1 %}
+  <div class="email-unverified">
+    <h2>Email Unconfirmed</h2>
+    <h3>In order to post, you have to confirm your email address first. Check your email for the confirmation
+        link. Visit your <a href="/account/settings">account settings</a> if you need it re-sent.</h3>
+  </div>
+  {% else %}
+  {% if can_upload_this_month %}
+  <div class="upload-an-image">
+    <form id="upload-image-form" method="POST" action="/upload" enctype="multipart/form-data">
+    {{ xsrf_form_html() }}  
+    <h2>Upload an <a href="">image</a><input name="file" type="file" id="upload-image-input" class="upload-image-input"></h2>
+    {% if shakes and len(shakes) > 1 %}
+      <div class="shake-selector">
+        <input type="hidden" name="shake_id" value="">
+        <h3>
+          <a href="" class="selected-shake"><span>In </span><span class="green">Your Shake</span></a>
+        </h3>
+        <ul>
+        {% for shake in shakes %}
+          <li><a id="shake-selector-a-{{shake.id}}" href="">
+            {% if shake.type == 'user' %}
+              Your Shake
+            {% else %}
+              {{shake.display_name()}}
+            {% end %}
+          </a></li>
+        {% end %}
+        </ul>
+      </div>
+    {% end %}
+    </form>
+  </div>
+  {% else %}
+  <div class="over-upload-limit">
+    <h2>Free account limit</h2>
+    <h3>You've reached the limit on the number of megs you can upload in a month. That limit is 300 megabytes. If you'd like to <a href="/account/subscribe">upgrade to a paid account</a> it's just $2/month and you get unlimited uploads.</h3>
+  </div>
+  {% end %}
+  </div>
+  <div class="link-to-video">
+    <h2>Link to a <a id="link-to-video" href="">video</a></h2>
+    {% if shakes and len(shakes) > 1%}
+      <div class="shake-selector">
+        <input type="hidden" id="video-shake-id" name="shake_id" value="">
+        <h3><a href="" class="selected-shake"><span>In </span><span class="green">Your Shake</span></a></h3>
+        <ul>
+        {% for shake in shakes %}
+        <li><a id="shake-selector-b-{{shake.id}}" href="">
+          {% if shake.type == 'user' %}
+            Your Shake
+          {% else %}
+            {{shake.display_name()}}
+          {% end %}
+        </a></li>
+        {% end %}
+        </ul>  
+      </div>
+    {% end %}
+  </div>
+  {% end %}
+</div>

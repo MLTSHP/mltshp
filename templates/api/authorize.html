@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Approve App{% end %}
+
+{% block main %}
+
+  <div class="content content-narrow">
+    <h1>Allow Access?</h1>
+    <p>
+      Do you want to let {{app.title}} read and write to your account?
+    </p>
+    <form class="api-accept" method="POST" action="/api/authorize?response_type=code&amp;client_id={{client_id}}">
+      {{ xsrf_form_html() }}
+      <input type="hidden" name="agree" value="1">
+      {% if redirect_url %}
+        <input type="hidden" name="redirect_uri" value="{{redirect_url}}">
+      {% end %}
+      <input class="api-accept-button" type="submit" value="Agree">
+    </form>
+    <form class="api-decline" method="POST" action="/api/authorize?response_type=code&amp;client_id={{client_id}}">
+      {{ xsrf_form_html() }}
+      <input type="hidden" name="agree" value="0">
+      {% if redirect_url %}
+        <input type="hidden" name="redirect_uri" value="{{redirect_url}}">
+      {% end %}
+      <input class="api-decline-button" type="submit" value="Decline">
+    </form>
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}

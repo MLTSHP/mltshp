@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+<div class="content">
+   <div class="content-developer">
+
+    <h1>Create A MLTSHP Application</h1>
+
+    <div class="fun-form fun-form-white">
+
+    <form method="post" action="/developers/new-api-application">
+            {{ xsrf_form_html() }}  
+
+    <div class="field">
+      <label>Title:</label>
+      <div class="field-input">
+        <input class="input-text" type="text" name="title" value="{{title}}">
+        {% if errors.title %}
+        <div class="error">
+          <span class="error-text">
+            {{errors.title }}
+          </span>
+        </div>
+        <span class="bottoms"></span>
+        {% end %}
+      </div>
+    </div>
+
+
+    <div class="field field-textarea">
+      <label>Description:</label>
+      <div class="field-input">
+        <div class="field-input-inner">
+          <textarea maxlength="255" name="description">{{description}}</textarea>
+          {% if errors.description %}
+          <div class="error">
+            <span class="error-text">
+              {{errors.description }}
+            </span>
+          </div>
+          <span class="bottoms"></span>
+          {% end %}
+        </div>
+      </div>
+      <div class="field-help">255 characters max.</div>
+    </div>
+
+    <div class="field">
+      <label>Redirect URL:</label>
+      <div class="field-input">
+        <input class="input-text" type="text" name="redirect_url" value="{{redirect_url}}">
+        {% if errors.redirect_url %}
+        <div class="error">
+          <span class="error-text">
+            {{errors.redirect_url }}
+          </span>
+        </div>
+        <span class="bottoms"></span>
+        {% end %}
+        
+      </div>
+    </div>
+
+    <div class="field field-submit">
+    <div class="action-button"><a href=""><span>Create It!</span></a></div>
+    </div>
+
+
+    </form>
+
+
+  </div>
+</div>
+{% end %}

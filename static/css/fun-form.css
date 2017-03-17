@@ -1,0 +1,193 @@
+/* Fun Form */
+
+.fun-form {
+  margin-top: 20px;
+}
+
+.fun-form .field {
+  width: 588px;
+  float: left;
+  clear: both;
+  margin: 12px 0;
+  position: relative;
+}
+
+.fun-form .field-submit {
+  padding-left: 200px;
+}
+
+.fun-form label {
+  padding-top: 14px;
+  float: left;
+  display: block;
+  text-align: right;
+  color: #333;
+  font-weight: bold;
+  font-size: 18px;
+  padding-right: 10px;
+  width: 190px;
+}
+
+.fun-form .field-input {
+  width: 388px;
+  height: 43px;
+  background: transparent url('/static/images/fun-form-field-input-back.gif') 0 0 no-repeat;
+  float: left;
+}
+
+.fun-form .field-textarea .field-input {
+  height: auto;
+  float: left;
+  background: transparent url('/static/images/fun-form-field-textarea-input-back.gif') left bottom no-repeat;
+}
+
+.fun-form .field-textarea .field-input-inner {
+  float: left;
+  width: 388px;
+  height: auto;
+  background: transparent url('/static/images/fun-form-field-textarea-input-back-top.gif') 0 0 no-repeat;
+}
+
+.fun-form .field-input-file {
+  margin-top: 7px;
+  background: none;
+}
+
+.fun-form .field-input-checkbox {
+  color: #666;
+  padding-top: 14px;
+  background: none;
+}
+
+.fun-form .field-help {
+  float: left;
+  font-size: 12px;
+  color: #666;
+  display: block;
+  padding: 10px 0 0 0;
+  margin-left: 210px;
+}
+
+.fun-form .input-text {
+  margin-top: 5px;
+  padding-top: 8px;
+  padding-left: 10px;
+  font-size: 18px;
+  margin-left: 5px;
+  background: transparent;
+  width: 340px;
+  border: none;
+  outline: none;
+}
+
+.fun-form textarea {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 340px;
+  margin-top: 5px;
+  padding-top: 8px;
+  padding-left: 10px;
+  font-size: 18px;
+  color: #666;
+  height: 120px;
+  float: left;
+  resize: none;
+}
+
+.fun-form .input-submit {
+  float: right;
+  background-color: #ff0080;
+  font-size: 24px;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  padding: 18px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  text-shadow: #bf0060 0 1px 0px;
+}
+
+.fun-form .field .error {
+  position: absolute;
+  right: -160px;
+  bottom: 30px;
+  display: block;
+  font-size: 12px;
+  width: 109px;
+  background: url('/static/images/error-hat.gif') 0 0 no-repeat;
+  padding-top: 25px;
+  padding-left: 65px;
+  padding-right: 10px;
+}
+
+.fun-form .field .error-text {
+  position: relative;
+  z-index: 10;
+  display: block;
+  min-height: 36px;
+}
+
+.fun-form .field .bottoms {
+  width: 184px;
+  height: 44px;
+  display: block;
+  position: absolute;
+  right: -160px;
+  bottom: 10px;
+  background: transparent url('/static/images/error-bottoms.gif') 0 0 no-repeat;
+}
+
+.fun-form-stacked .field {
+  width: 400px;
+}
+
+.fun-form-stacked .field-input {
+  clear: both;
+}
+
+.fun-form-stacked label {
+  text-align: left;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+.fun-form-stacked .input-submit {
+  float: none;
+}
+
+.fun-form-stacked .field .error {
+}
+
+.fun-form-stacked .field-input-checkbox {
+  padding-left: 10px;
+}
+
+.fun-form-stacked .field-submit {
+  padding-left: 0;
+}
+
+.fun-form-stacked .field .bottoms {
+  background: transparent url('/static/images/error-bottoms-white.gif') 0 0 no-repeat;
+}
+
+.fun-form-white .field .bottoms {
+  background: transparent url('/static/images/error-bottoms-white.gif') 0 0 no-repeat;
+}
+
+.fun-form-stacked .field-help {
+  margin-left: 10px;
+}
+
+.fun-form-border .field .bottoms {
+  background: transparent url('/static/images/error-bottoms.gif') 0 0 no-repeat;
+}
+
+
+/* List of Errors that usually lives at the top */
+
+.fun-form-errors {
+  font-size: 18px;
+  color: #c00;
+}

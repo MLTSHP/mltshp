@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to MLTSHP and thanks!{% end %}
+
+{% block main %}
+
+  <div class="content content-narrow">
+    <h1>Hello, {{current_user['name']}}!</h1>
+
+    {% if promotion %}
+    <p>Thanks for joining MLTSHP through {{ escape(promotion.name) }}!</p>
+    {% end %}
+
+    <p>
+    Please check your email account, we need to verify that you gave us the right one!</h1>
+    <p>
+
+    {% if promotion and promotion_shake %}
+    <div>
+    Get started by following the {{ escape(promotion_shake.title) }} shake.<br><br>
+    </div>
+
+    <div>
+    {{modules.ShakeFollow(follow_shake=promotion_shake, current_user=current_user_obj, avatar_size=100)}}
+    </div>
+
+    <div class="clear"><!-- --></div>
+    {% end %}
+  </div>
+{% end %}

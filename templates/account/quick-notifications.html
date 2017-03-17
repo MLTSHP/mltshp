@@ -1,0 +1,121 @@
+{% if len(notifications['mention']) > 0 %}
+<div class="notification-block notification-block-mention">
+  <div class="notification-block-link">
+    <a href="/mentions">You have {{len(notifications['mention'])}} {% if len(notifications['mention']) == 1%}mention{% else %}mentions{% end %}</a>
+  </div>
+</div>
+{% end %}
+
+{% if len(notifications['follow']) > 0 %}
+<div class="notification-block notification-block-follow">
+  <div class="notification-block-hd">
+    You have {{len(notifications['follow'])}} new {% if len(notifications['follow']) == 1%}follower{% else %}followers{% end %}
+  </div>
+  <div class="notification-block-bd">
+    {% for follower in notifications['follow'] %}
+      <div class="notification">
+        {{modules.ShakeFollow(follow_user=follower['sender'], current_user=current_user_obj, avatar_size=48, post_name_text=follower['post_name_text'])}}          
+        <a href="" class="notification-close" id="notification-close-{{follower['id']}}">
+          <img src="{{ static_url("images/notification-close.gif") }}" width="22" height="21" alt="x">
+        </a>
+      </div>
+    {% end %}
+    {% if len(notifications['follow']) > 0 %}
+      <div class="clear-all">
+        <a href="/account/clear-notification?type=subscriber"><img src="{{ static_url("images/clear-all-followers.gif") }}" width="60" height="21" alt="clear all"></a>
+      </div>
+    {% end %}
+  </div>
+</div>
+{% end %}
+
+{% if notifications['save']['count'] > 0 %}
+<div class="notification-block notification-block-save">
+  <div class="notification-block-hd">
+    {{notifications['save']['count']}} new {% if notifications['save']['count'] == 1%}save{% else %}saves{% end %}
+  </div>
+  <div class="notification-block-bd">
+    {% for key, notification in notifications['save']['items'].items() %}
+      {% if notification[0]['related_object'] %}
+      <div class="notification">
+        <div class="thumb">
+          <a href="/p/{{notification[0]['related_object'].share_key}}"><img src="{{notification[0]['related_object'].thumbnail_url()}}"></a>
+        </div>  
+        <div class="context">
+           <a href="/p/{{notification[0]['related_object'].share_key}}">{{escape(notification[0]['related_object'].get_title())}}</a> has been saved by 
+           {{", ".join(["""<a href="/user/%s">%s</a>""" % (n['sender'].name, n['sender'].name) for n in notification])}}
+        </div>
+      </div>
+      {% end %}
+    {% end %}
+    {% if notifications['save']['count'] > 0 %}
+      <div class="clear-all">
+        <a href="/account/clear-notification?type=save"><img src="{{ static_url("images/clear-all-saves.gif") }}" width="59" height="21" alt="clear all"></a>
+      </div>
+    {% end %}
+  </div>
+</div>
+{% end %}
+
+{% if notifications['like']['count'] > 0 %}
+<div class="notification-block notification-block-like">
+  <div class="notification-block-hd">
+    {{notifications['like']['count']}} new {% if notifications['like']['count'] == 1%}like{% else %}likes{% end %}
+  </div>
+  <div class="notification-block-bd">
+    {% for key, notification in notifications['like']['items'].items() %}
+      {% if notification[0]['related_object'] %}
+      <div class="notification">
+        <div class="thumb">
+          <a href="/p/{{notification[0]['related_object'].share_key}}"><img src="{{notification[0]['related_object'].thumbnail_url()}}"></a>
+        </div>  
+        <div class="context">
+           <a href="/p/{{notification[0]['related_object'].share_key}}">{{escape(notification[0]['related_object'].get_title())}}</a> has been liked by 
+           {{", ".join(["""<a href="/user/%s">%s</a>""" % (n['sender'].name, n['sender'].name) for n in notification])}}
+        </div>
+      </div>
+      {% end %}
+    {% end %}
+    {% if notifications['like']['count'] > 0 %}
+      <div class="clear-all">
+        <a href="/account/clear-notification?type=favorite"><img src="{{ static_url("images/clear-all-likes.gif") }}" width="60" height="21" alt="clear all"></a>
+      </div>
+    {% end %}
+  </div>
+</div>
+{% end %}
+
+{% if len(notifications['comment']) > 0 %}
+<div class="notification-block notification-block-comment">
+  <div class="notification-block-hd">
+    {{len(notifications['comment'])}} new {% if len(notifications['comment']) == 1%}comment{% else %}comments{% end %}
+  </div>
+  <div class="notification-block-bd">
+    {% for notification in notifications['comment'] %}
+      {% if notification['related_object'] %}
+      <div class="notification">
+        <div class="thumb">
+          <a href="/p/{{notification['related_object'].sharedfile().share_key}}"><img src="{{notification['related_object'].sharedfile().thumbnail_url()}}"></a>
+        </div>  
+        <div class="context">
+           <a href="/user/{{notification['sender'].name}}">{{notification['sender'].name}}</a> commented on <a href="/p/{{notification['related_object'].sharedfile().share_key}}">{{escape(notification['related_object'].sharedfile().get_title())}}</a><br>
+           {{notification['related_object'].chopped_body()}}
+        </div>
+      </div>
+      {% end %}
+    {% end %}
+    {% if len(notifications['comment']) > 0 %}
+      <div class="clear-all">
+        <a href="/account/clear-notification?type=comment"><img src="{{ static_url("images/clear-all-comments.gif") }}" width="59" height="21" alt="clear all"></a>
+      </div>
+    {% end %}
+  </div>
+</div>
+{% end %}
+
+{{modules.NotificationInvitations(notifications['invitation'])}}
+
+{{modules.NotificationInvitationRequest(notifications['invitation_request'])}}
+
+{{modules.NotificationInvitationApproved(notifications['invitation_approved'])}}
+

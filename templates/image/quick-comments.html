@@ -1,0 +1,43 @@
+{% for key, comment in enumerate(comments) %}
+  <div class="comment" {% if key > 2 and expanded is False %}style="display: none;"{% end %}>
+    <div class="avatar">
+      <a href="/user/{{comment.user().name}}"><img src="{{comment.user().profile_image_url()}}" height="30" width="30"></a>
+    </div>
+    <div class="comment-body">
+      {% set commenting_user = comment.user() %}
+      <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_paid %}<a href="/account/subscribe" title="upgrade your account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></a>{% end %}
+        <span class="created-at">{{comment.pretty_created_at()}}</span> 
+        {% if not site_is_readonly %}
+          {% if current_user and current_user_object.email_confirmed == 1 %}
+        <a class="reply-to" href="">Reply</a>
+          {% end %}
+          {% if current_user and (comment.user_id == current_user.id or sharedfile.user_id == current_user.id) %}
+        <form class="delete-form" method="post" id="delete-comment-{{comment.id}}-form" action="/p/{{sharedfile.share_key}}/comment/{{comment.id}}/delete?ajax=1">
+          {{ xsrf_form_html() }}
+        </form>
+        <span id="delete-comment-{{comment.id}}" class="delete">Delete</span>
+          {% end %}
+        {% end %}
+      </div>
+      <div class="comment-body-text">
+        {{comment.body_formatted()}}
+      </div>
+    </div>
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}
+{% if len(comments) > 3 and expanded is False %}
+  <a href="/p/{{sharedfile.share_key}}#comments" class="show-more-comments">View all {{len(comments)}} comments</a>
+{% end %}
+{% if can_comment %}
+  <div class="post-comment-inline">
+    <form class="post-comment-form" action="/p/{{sharedfile.share_key}}/comment" method="post">
+      {{ xsrf_form_html() }}
+      <input type="hidden" name="ajax" value="1">
+        <textarea name="body">Write a comment&hellip;</textarea>
+        <div class="button">
+          <input class="submit-comment-button" type="submit" value="Post It!">
+        </div>
+    </form>
+  </div>
+{% end %}

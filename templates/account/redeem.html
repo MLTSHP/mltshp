@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Redeem a Coupon{% end %}
+
+{% block main %}
+
+  <div class="content content-narrow">
+    <h1>Redeem Coupon</h1>
+    <div class="fun-form">
+      <form method="POST" action="/account/redeem">
+        {{ xsrf_form_html() }}
+
+        <div class="field">
+          <label>Discount code:</label>
+          <div class="field-input">
+            <input class="input-text" type="text" name="key" value="{{xhtml_escape(key)}}">
+            {% if errors.key %}
+            <div class="error">
+              <span class="error-text">
+                {{errors.key }}
+              </span>
+            </div>
+            <span class="bottoms"></span>
+            {% end %}
+          </div>
+          <div class="field-help"> 
+            If you have a discount code to apply
+            towards a membership, enter it here.
+
+            {% if promotions %}
+            <br><br>If you don’t have a discount code, here’s
+            our active promotions!
+
+            <ul class="promotions">
+            {% for promo in promotions %}
+            {% set promo_shake = promo.shake() %}
+            <li><a href="{{ promo.promotion_url }}" rel="nofollow" target="_blank"><div class="promotion-avatar"><img src="{{promo_shake.page_image()}}" width="100" height="100" alt=""></div><span class="promotion-name">{{ xhtml_escape(promo.name) }}</span></a></li>
+            {% end %}
+            </ul>
+            <div class="clear"><!-- --></div>
+            {% end %}
+          </div>
+        </div>
+
+        <div class="field">
+          <input class="input-submit" type="submit" value="Redeem!">
+        </div>
+      </form>
+      <div class="clear"><!-- --></div>
+    </div>
+  </div>
+{% end %}

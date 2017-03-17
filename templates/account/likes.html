@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{user.name}}&#x27;s likes
+{% end %}
+
+
+{% block main %}
+
+<div class="content content-with-sidebar content-account">
+  <div class="sidebar">
+    <div class="user-info">
+      {{modules.ShakeFollow(follow_user=user, current_user=current_user_obj, avatar_size=100)}}
+
+      <div class="following-wrapper">
+        <h3>Following <span class="count">({{following_shakes_count}})</span></h3>
+        <div class="following">
+          <ul id='following-list'>
+            {% for follow in following_shakes %}
+              <li><a href="{{follow['path']}}" title="{{follow['name']}}"><img src="{{follow['image']}}" width="48" height="48"></a></li>
+            {% end %}
+          </ul>
+          <br style="clear:both;">          
+          {% if following_shakes %}
+            <a class="view-all-following" href="/user/{{user.name}}/following">view all</a>
+          {% end %}
+        </div>
+      </div>
+      <div class="following-wrapper">
+        <h3>Followed by <span class="count">({{follower_count}})</span></h3>
+        <div class="following">
+          <ul id='following-list'>
+            {% for follower in followers %}
+              <li><a href="/user/{{follower.name}}" title="{{follower.display_name()}}"><img src="{{follower.profile_image_url()}}" width="48" height="48"></a></li>
+            {% end %}
+          </ul>
+          <br style="clear:both;">
+          {% if followers %}
+            <a class="view-all-following" href="/user/{{user.name}}/followers">view all</a>
+          {% end %}
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+  <div class="body">
+    <div class="image-content-list">
+      {% for sharedfile in sharedfiles %}
+        {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
+      {% end %}
+    </div>
+    
+    <div class="linear-navigation">
+      <div class="older">
+        {% if older_link %}
+          <div class="action-button"><a class="sky" href="{{ older_link }}"><span>&laquo; Older</span></a></div>
+        {% end %}
+      </div>
+      <div class="newer">
+        {% if newer_link %}
+          <div class="action-button"><a class="sky" href="{{ newer_link }}"><span>Newer &raquo;</span></a></div>
+        {% end %}
+      </div>
+    </div>
+    
+  </div>
+</div>
+{% end %}

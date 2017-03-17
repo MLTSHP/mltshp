@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Your Connections Settings{% end %}
+
+{% block main %}
+  <div class="content content-settings">
+    <h1>Your Settings</h1>
+    <div class="settings-navigation">
+      <ul>
+        <li><a href="/account/settings">Account</a></li>
+        <li><a href="/account/settings/profile">Profile</a></li>
+        <li class="selected"><a href="/account/settings/connections">Connections</a></li>
+      </ul>
+    </div>
+    <div class="settings-body settings-body-connections">
+      {% if apps %}
+      <h3>You've allowed the following applications access to your account</h3>
+      {% else %}
+      <h3>You haven't allowed any applications access to your account yet.</h3>
+      {% end %}
+      <ul id="apps" class="apps">
+      {% for app in apps %}
+        <li>
+          <h4><span class="title">{{escape(app.get_title())}}</span> <span class="by">by <a href="/user/{{app.user().name}}">{{app.user().name}}</a></span></h4>
+          <p>{{escape(app.get_description())}}</p>
+          <p>
+            <a class="disconnect" href="">Disconnect.</a>
+          </p>
+          <form method="post" action="/account/settings/connections/{{app.id}}/disconnect">
+            {{ xsrf_form_html() }}
+          </form>
+        </li>
+      {% end %}
+      </ul>
+      
+      
+    </div>
+  </div>
+{% end %}

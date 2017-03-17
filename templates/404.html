@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}404 - Uh oh! {% if page_type == 'image' %}Image{% else %}Page{% end %} not found.{% end %}
+{% block main %}
+  <div class="content content-narrow">
+    <h1 class="error-uh-oh">{% if page_type == 'image' %}Image{% elif page_type=='shake'%}That shake{% else %}Page{% end %} couldn't be found.</h1>
+  </div>
+{% end %}

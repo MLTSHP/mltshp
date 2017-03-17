@@ -1,0 +1,15 @@
+{% if len(notifications) > 0 %}
+<div id="notification-block-invitation-approved" class="notification-block notification-block-invitation-approved">
+  <div class="notification-block-hd">{{len(notifications)}} new shake membership{% if len(notifications) != 1%}s{% end %}</div>
+  <div class="notification-block-bd">
+    {% for notification in notifications %}
+      <div class="notification">
+        You are now a member of <a href="{{notification['related_object'].path()}}">{{notification['related_object'].display_name()}}</a>.
+      </div>
+    {% end %}
+    <div class="clear-all">
+      <a href="/account/clear-notification?type=invitation_approved"><img src="{{ static_url("images/clear-all-invitations.gif") }}" width="59" height="21" alt="clear all"></a>
+    </div>
+  </div>
+</div>
+{% end %}

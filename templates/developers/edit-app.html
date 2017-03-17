@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+<div class="content">
+   <div class="content-developer">
+<h1>Editing An Application</h1>
+<p>
+<a href="/developers/apps">Back To API Application List</a>
+</p>
+<p>
+  Consumer Key: {{app.key()}}<br>
+  Consumer Secret: {{app.secret}}<br>
+</p>
+<div class="fun-form">
+
+<form method="POST" action="/developers/edit-app/{{app.id}}">
+  {{ xsrf_form_html() }}  
+  <div class="field">
+    <label>Title:</label>
+    <div class="field-input">
+      <input class="input-text" type="text" name="title" value="{{app.title}}">
+      {% if errors.title %}
+      <div class="error">
+        <span class="error-text">
+          {{errors.title }}
+        </span>
+      </div>
+      <span class="bottoms"></span>
+      {% end %}
+    </div>
+  </div>
+  
+  <div class="field field-textarea">
+    <label>Description:</label>
+    <div class="field-input">
+      <div class="field-input-inner">
+        <textarea maxlength="255" name="description">{{app.description}}</textarea>
+        {% if errors.description %}
+        <div class="error">
+          <span class="error-text">
+            {{errors.description }}
+          </span>
+        </div>
+        <span class="bottoms"></span>
+        {% end %}
+      </div>
+    </div>
+    <div class="field-help">255 characters max.</div>
+  </div>
+  
+  <div class="field">
+    <label>Redirect URL:</label>
+    <div class="field-input">
+       <input class="input-text" type="text" name="redirect_url" value="{{app.redirect_url}}">
+       {% if errors.redirect_url %}
+       <div class="error">
+         <span class="error-text">
+           {{errors.redirect_url }}
+         </span>
+       </div>
+       <span class="bottoms"></span>
+       {% end %}       
+    </div>
+  </div>
+  
+  <div class="field field-submit">
+  <div class="action-button"><a href=""><span>Save</span></a></div>
+  </div>
+
+      </form>
+    </div>
+  </div>  
+</div>
+
+{% end %}

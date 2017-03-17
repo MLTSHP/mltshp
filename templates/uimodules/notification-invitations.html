@@ -1,0 +1,37 @@
+{% if len(notifications) > 0 %}
+<div id="notifcation-block-shakeinvitation" class="notification-block notification-block-shakeinvitation">
+  <div class="notification-block-hd {% if single %}invitation-single{% end %}">
+    {% if single %}
+      You're invited!
+    {% else %}
+      {{len(notifications)}} new shake {% if len(notifications) == 1%}invitation{% else %}invitations{% end %}
+    {% end %}
+  </div>
+  <div class="notification-block-bd" {% if single %}style="display: block;"{% end %}>
+    {% for notification in notifications %}
+      {% if notification['related_object'] %}
+      <div class="notification">
+        <div class="shake-thumb">
+          <a href="/{{notification['related_object'].name}}"><img width="48" height="48" src="{{notification['related_object'].thumbnail_url()}}"></a>
+        </div>
+        <h4 class="title"><a href="/{{notification['related_object'].name}}">{{escape(notification['related_object'].display_name())}}</a></h4>
+        <div class="shake-context">
+           <a href="/user/{{notification['sender'].name}}">{{notification['sender'].display_name()}}</a> has invited you to join this shake. Wanna join?
+        </div>
+        <div class="buttons">
+          <form method="post" action="/shake/{{notification['related_object'].name}}/accept-invitation?json=1">
+            {{ xsrf_form_html() }}
+            <input type="hidden" name="id" value="{{notification['id']}}">
+            <input class="shake-accept-invitation" type="image" src="{{ static_url("images/woo-hoo-sign-me-up.gif") }}" value="accept">
+          </form>
+          <form method="post" action="/account/clear-notification?type=single&amp;id={{notification['id']}}&amp;json=1">
+            {{ xsrf_form_html() }}
+            <input class="shake-ignore-invitation" type="image" src="{{ static_url("images/nah.gif") }}" value="ignore">
+          </form>
+        </div>
+      </div>
+      {% end %}
+    {% end %}
+  </div>
+</div>
+{% end %}

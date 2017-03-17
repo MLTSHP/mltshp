@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block included_scripts %}
+<script type="text/javascript" charset="utf-8">
+  slide_number=1;
+  
+  $(document).ready(function() {
+    $('#previous_button').hide();
+    
+    $('#next_button').click(function() {
+      slide_number += 1;
+
+      if (slide_number > 11) {
+          $('#next_button').hide();
+      } else if (slide_number > 1){
+          $('#previous_button').show();
+      } else {
+        $('#previous_button').hide();
+      }
+      
+      $('#step-' + (slide_number - 1)).hide();
+      $('#step-' + (slide_number)).show();
+    });
+    
+    $('#previous_button').click(function() {
+      slide_number -= 1;
+      
+      if (slide_number > 11) {
+          $('#next_button').hide();
+      } else if (slide_number > 1){
+          $('#previous_button').show();
+          $('#next_button').show();
+      } else {
+        $('#previous_button').hide();
+      }
+      
+      
+      $('#step-' + (slide_number + 1)).hide();
+      $('#step-' + (slide_number)).show();
+    });
+  });
+</script>
+{% end %}
+
+
+{% block title %}How To Setup Twitter{% end %}
+
+{% block main %}
+  <div class="content content-narrow">
+    <h1>How To Setup Twitter</h1>
+
+    <div class="steps" id="step-1" style="display:inline;">
+      <p>Open Twitter for iPhone</p>
+      <p><img src="{{ static_url("images/howto-1.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps" id="step-2">
+      <p>From The Far Right Tab Select &#8220;Accounts &amp; Settings&#8221;</p>
+      <p><img src="{{ static_url("images/howto-2.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps"  id="step-3">
+      <p>Select &#8220;Settings&#8221;</p>
+      <p><img src="{{ static_url("images/howto-3.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps" id="step-4">
+      <p>Scroll To &#8220;Services&#8221; And Select It</p>
+      <p><img src="{{ static_url("images/howto-4.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps" id="step-5">
+      <p>Pick &#8220;Image Service&#8221;</p>
+      <p><img src="{{ static_url("images/howto-5.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps" id="step-6">
+      <p>Tap &#8220;Custom&hellip;&#8221;</p>
+      <p><img src="{{ static_url("images/howto-6.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps" id="step-7">
+      <p>Enter https://mltshp.com/upload</p>
+      <p><img src="{{ static_url("images/howto-7.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps"id="step-8">
+      <p>Tap &#8220;Save&#8221;</p>
+      <p><img src="{{ static_url("images/howto-8.png") }}" width="320" height="480"></p>
+    </div>
+
+    <div class="steps"id="step-9">
+      <p>Start A New Tweet And Click The Character Count</p>
+      <p><img src="{{ static_url("images/howto-9.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps"id="step-10">
+      <p>Take A Photo</p>
+      <p><img src="{{ static_url("images/howto-10.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps"id="step-11">
+      <p>Post Your Tweet</p>
+      <p><img src="{{ static_url("images/howto-11.png") }}" width="320" height="480"></p>
+    </div>
+    <div class="steps"id="step-12">
+      <p>The URL To The Photo Will Be Appended</p>
+      <p><img src="{{ static_url("images/howto-12.png") }}" width="320" height="480"></p>
+    </div>
+
+
+    <p style="text-align:center;">
+      <a href="#" id="previous_button">Previous</a>&nbsp;&nbsp;
+      <a href="#" id="next_button">Next</a>
+    </p>
+  </div>
+{% end %}

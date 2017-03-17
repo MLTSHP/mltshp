@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}{{escape(sharedfile.get_title())}} - mltshp{% end %}
+{% block included_headers %}
+<link rel="alternate" 
+      type="application/json+oembed"
+      href="http://mltshp.com/services/oembed?url=http%3A//mltshp.com/p/{{sharedfile.share_key}}"
+      title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
+<link rel="alternate" 
+      type="application/javascript+oembed"
+      href="http://mltshp.com/services/oembed?url=http%3A//mltshp.com/p/{{sharedfile.share_key}}&amp;jsoncallback={{jsonp}}"
+      title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
+
+<meta name="thumbnail" content="{{thumb_url}}">
+<meta name="twitter:url" content="https://mltshp.com/p/{{sharedfile.share_key}}">
+<meta name="og:site_name" content="MLTSHP">
+<meta name="og:title" content="{{escape(sharedfile.get_title())}}">
+<meta name="og:description" content="{{escape(sharedfile.get_description())}}">
+<meta name="twitter:site" content="@mltshp">
+{% if owner_twitter_account != 'mltshp' %}
+<meta name="twitter:creator" content="@{{owner_twitter_account}}">
+{% end %}
+{% if sourcefile.type == 'image' %}
+<meta name="twitter:card" content="photo">
+<meta name="og:image" content="https://s.mltshp.com/r/{{sharedfile.share_key}}">
+<meta name="og:image:width" content="{{sourcefile.width}}">
+<meta name="og:image:height" content="{{sourcefile.height}}">
+{% end %}
+{% end %}
+
+{% block main %}
+  <div class="content content-permalink">
+    {{modules.Image(sharedfile, current_user=current_user_obj, list_view=False, show_attribution_in_title=False)}}
+    
+    <div class="permalink-sidebar">
+      <div class="permalink-user-info">
+        {{modules.ShakeFollow(follow_user=sharedfile.user(), current_user=current_user_obj, avatar_size=48)}}
+      </div>
+
+      <div id="sidebar-stats" class="sidebar-stats">
+        <div class="sidebar-stats-block sidebar-stats-views"><span class="tab">{{view_count}} View{% if view_count != 1%}s{% end %}</span></div>
+        <div class="sidebar-stats-block sidebar-stats-saves {% if save_count > 0 %}enable-cursor{% end %}">
+          <span class="tab"><span class="save-count" id="save-count-amount-{{sharedfile.share_key}}">{{save_count}} Save{% if save_count != 1 %}s{% end %}</span></span></div>
+        <div class="sidebar-stats-block sidebar-stats-hearts {% if heart_count > 0 %}enable-cursor{% end %}">
+          <span class="tab"><span class="like-count" id="like-count-amount-{{sharedfile.share_key}}">{{heart_count}}  Like{% if heart_count != 1 %}s{% end %}</span></span></div>
+        <div class="sidebar-stats-content">
+
+        </div>
+      </div>
+      
+      {% if sourcefile.type == 'image' %}
+      <div class="meta-data">
+        <h4>Image URL</h4>
+        <p>http://s.mltshp.com/r/{{sharedfile.share_key}}</p>
+      </div>
+      {% end %}
+      <div class="clear"><!-- --></div>        
+      {% if can_add_to_shakes %}
+        <h4 class="shake-details-title">Add To Shakes</h4>
+        <div class="in-these-shakes">
+          <form action="/p/{{sharedfile.share_key}}/shakes" method="post">
+          {{ xsrf_form_html() }}
+          <ul>
+          {% for shake in add_to_shakes %}
+            {% if shake.display_name() == current_user_obj.display_name() and shake.type == 'user' %}
+              <li><input type="checkbox" class="input-checkbox" name="shakes" value="{{shake.id}}"><a href="{{shake.path()}}">Your Shake</a></li>
+            {% else %}
+              <li><input type="checkbox" class="input-checkbox" name="shakes" value="{{shake.id}}"><a href="{{shake.path()}}">{{escape(shake.display_name())}}</a></li>            
+            {% end %}
+          {% end %}          
+          </ul>
+          <input type="submit" class="add-to-shakes-button" value="Add">
+          </form>
+        </div>
+      {% end %}
+      
+      {% if in_these_shakes %}
+        <h4 class="shake-details-title">In These Shakes</h4>
+        <div class="in-these-shakes">
+          <ul>
+          {% for shake in in_these_shakes %}
+            <li>
+              {% if can_delete and len(in_these_shakes) > 1 %}
+                <form class="delete-from-shakes-form" action="/p/{{sharedfile.share_key}}/shakes/{{shake.id}}/delete" method="post">
+                  {{ xsrf_form_html() }}
+                  <input src="{{ static_url("images/remove-from-shake.gif") }}" width="16" height="15" type="image" value="delete">
+                </form>
+              {% end %}
+              {% if current_user_obj and current_user_obj.display_name() == shake.display_name() and shake.type == 'user' %}
+                <a href="{{shake.path()}}">Your Shake</a>
+              {% else %}
+                <a href="{{shake.path()}}">{{escape(shake.display_name())}}</a>
+              {% end %}
+            </li>
+          {% end %}
+        </div>
+      {% end %}
+
+      <p style="float:left;padding-right:5px;">
+<!-- Place this tag where you want the su badge to render -->
+<su:badge layout="4"></su:badge>
+
+<!-- Place this snippet wherever appropriate -->
+<script type="text/javascript">
+  (function() {
+    var li = document.createElement('script'); li.type = 'text/javascript'; li.async = true;
+    li.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + '//platform.stumbleupon.com/1/widgets.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(li, s);
+  })();
+</script>
+
+      </p> 
+      <p style="float:left;">
+        <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
+        <img id="fb_share_button" src="{{ static_url("images/fb_icon.png") }}" alt="Post to Facebook" height="21" width="21" alt="">
+      </p>
+      <div id="fb-root">&nbsp;</div>
+      <script type="text/javascript">
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId  : '133612633386253',
+            status : false, // check login status
+            cookie : false, // enable cookies to allow the server to access the session
+            xfbml  : false  // parse XFBML
+          });
+        };
+        (function() {
+          var e = document.createElement('script');
+          e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+          e.async = true;
+          document.getElementById('fb-root').appendChild(e);
+        }());
+      </script>
+
+      {% if current_user_obj and not site_is_readonly %}
+      <form class="flag-image-form" method="post" action="/p/{{sharedfile.share_key}}/nsfw">
+        {{ xsrf_form_html() }}
+        <input type="submit" class="flag-image {% if sourcefile.nsfw == 1 %}flag-image-set{% end %}" id="flag-image-permalink" value="Flag this as NSFW">
+      </form>
+      {% end %}
+      
+      {% if can_delete %}
+      <form method="post" action="/p/{{sharedfile.share_key}}/delete">
+        {{ xsrf_form_html() }}
+        <input type="submit" class="delete-post-text" id="delete-post-text" value="Delete This Post">
+      </form>
+      {% end %}
+    </div>
+    
+    <div class="image-comments" id="image-comments-permalink">
+      {% for comment in comments %}
+        <div class="comment">
+          <div class="avatar">
+            <a href="/user/{{comment.user().name}}"><img src="{{comment.user().profile_image_url()}}" height="48" width="48" alt=""></a>
+          </div>
+          <div class="body">
+            {% set commenting_user = comment.user() %}
+            <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_paid %}<a href="/account/subscribe" title="upgrade your account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center" alt="+"></a>{% end %}
+              <span class="created-at">{{comment.pretty_created_at()}}</span>
+              {% if not site_is_readonly %}
+                {% if can_comment %}
+              <a class="reply-to" href="">Reply</a>
+                {% end %}
+                {% if current_user_obj and (comment.user_id == current_user_obj.id or sharedfile.user_id == current_user_obj.id) %}
+              <form class="delete-form" method="post" id="delete-comment-{{comment.id}}-form" action="/p/{{sharedfile.share_key}}/comment/{{comment.id}}/delete">
+                {{ xsrf_form_html() }}
+              </form>
+              <span id="delete-comment-{{comment.id}}" class="delete">Delete</span>
+                {% end %}
+              {% end %}
+            </div>
+            {{comment.body_formatted()}}
+          </div>
+          <div class="clear"><!-- --></div>
+        </div>
+      {% end %}
+    </div>
+    {% if can_comment %}
+    <div id="post-comment" class="image-comment-form">
+      <form action="/p/{{sharedfile.share_key}}/comment" method="post">
+        {{ xsrf_form_html() }}
+          <img class="avatar" src="{{current_user_obj.profile_image_url()}}" height="48" width="48" alt="">
+          <h3><span>I've got something to say!</span></h3>
+          <div class="field">
+            <textarea id="post-comment-body" name="body"></textarea>
+          </div>
+          <div class="field">
+            <input type="image" src="{{ static_url("images/post-it-button.gif") }}">
+          </div>
+      </form>
+    </div>
+    {% end %}
+    
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}
+
+{% block included_scripts %}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#fb_share_button').click(function(e){
+      e.preventDefault();
+      FB.ui(
+        {
+          method: "feed",
+          name: {{json_encode(sharedfile.get_title())}},
+          link: "http://mltshp.com/p/{{sharedfile.share_key}}",
+          {% if sourcefile.type == 'image' %}
+          picture: "http://s.mltshp.com/r/{{sharedfile.share_key}}",
+          {% else %}
+          picture: "{{thumb_url}}",
+          {% end %}
+          caption: "",
+          description: {{json_encode(sharedfile.get_description(raw=True))}},
+          message: {{json_encode(sharedfile.get_title())}}
+        });
+      });
+    });
+</script>
+{% end %}

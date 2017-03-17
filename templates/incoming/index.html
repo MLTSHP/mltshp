@@ -1,0 +1,60 @@
+{%extends "base.html" %}
+
+{% block main %}
+  <div class="content content-with-sidebar content-incoming">
+    <div class="incoming-header">
+      <h2>Our most recent files.</h2>
+    </div>
+    
+    <div class="sidebar">
+      <h3>This is MLTSHP</h3>
+      <p>
+        MLTSHP is an image and video sharing site. We&rsquo;re now <a href="/create-account">open to the public</a>!
+      </p>
+
+      <h4>NSFW Filter</h4>
+      <p>
+        The incoming shake is open for all to see. It&#146;s a public area of the site that you might want 
+        to check out in a public place. Because of this, if we see something posted that is extremely over the 
+        line that user&#146;s account will be set to not show their files in this shake. This doesn&#146;t affect that user&#146;s 
+        account in any other shake.
+      </p>        
+      <p>
+        {% if filtering %}
+        <strong>The filter is ON.</strong>
+          <form method="post" id="nsfw-filter-button" action="/account/set-content-filter/off">
+            <div class="action-button"><a class="sky" href=""><span>Turn it off</span></a></div>
+        {% else %}
+        <strong>The filter is OFF.</strong>
+          <form method="post" id="nsfw-filter-button" action="/account/set-content-filter/on">
+            <div class="action-button"><a class="sky" href=""><span>Turn it on</span></a></div>
+        {% end %}
+        {{ xsrf_form_html() }}
+        </form>
+        <div class="clear"><!-- --></div>
+      </p>
+      <p>
+        While we don&#146;t think we can be 100% accurate on this, we think it&#146;s a small step to keep the incoming shake useful for more people.
+      </p>
+    </div>
+    <div class="body">
+      <div class="image-content-list meta hentry">
+        {% for sharedfile in sharedfiles %}
+          {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
+        {% end %}
+      </div>
+      <div class="linear-navigation">
+        <div class="older">
+          {% if older_link %}
+            <div class="action-button"><a class="sky" href="{{ older_link }}"><span>&laquo; Older</span></a></div>
+          {% end %}
+        </div>
+        <div class="newer">
+          {% if newer_link %}
+            <div class="action-button"><a class="sky" href="{{ newer_link }}"><span>Newer &raquo;</span></a></div>
+          {% end %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% end %}

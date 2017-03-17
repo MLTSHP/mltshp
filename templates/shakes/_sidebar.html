@@ -1,0 +1,147 @@
+<div class="sidebar">
+  {% if shake.can_edit(current_user_obj) %}
+    <div id="shake-image-edit" class="shake-image">
+      {% if shake.page_image() %}
+        <img src="{{shake.page_image()}}" width="284" height="284">
+      {% else %}
+        <img src="{{ static_url("images/shake-default-image.gif") }}" width="284" height="284">
+      {% end %}
+      <form method="post" action="/shake/{{shake.name}}/update"  enctype="multipart/form-data">
+        {{ xsrf_form_html() }}
+        <input class="shake-image-input" type="file" name="file">
+      </form>
+      <div class="border"></div>
+    </div>
+  {% else %}
+    {% if shake.page_image() %}
+      <img src="{{shake.page_image()}}" width="284" height="284">
+    {% else %}
+      <img src="{{ static_url("images/shake-default-image-not-owner.gif") }}" width="284" height="284">
+    {% end %}
+  {% end %}
+  
+  {% if shake.can_edit(current_user_obj) %}
+    <div class="shake-details">
+      <h3 class="title shake-edit-title">{% if shake.title %}{{escape(shake.title)}}{% end %}</h3>
+      <form action="/shake/{{shake.name}}/quick-details" class="shake-edit-title-form">
+        {{ xsrf_form_html() }}
+        <input type="text" class="shake-edit-title-input" name="title" value=""/>
+        <div class="buttons">
+          <input type="submit" class="save" value="Save">
+          <span class="or">or</span>
+          <a href="" class="cancel">Cancel</a>
+        </div>
+      </form>
+    </div>
+    <div class="shake-details">
+      <p class="description shake-edit-description">
+        {% if shake.description %}
+          {{escape(shake.description)}}
+        {% else %}
+          <span class="click-to-edit">Click to edit description</span>
+        {% end %}
+      </p>
+      <form action="/shake/{{shake.name}}/quick-details" class="shake-edit-description-form">
+        {{ xsrf_form_html() }}
+        <textarea class="shake-edit-description-input" name="description"></textarea>
+        <div class="buttons">
+          <input type="submit" class="save" value="Save">
+          <span class="or">or</span>
+          <a href="" class="cancel">Cancel</a>
+        </div>
+      </form>
+    </div>
+  {% else %}
+  <div class="shake-details">
+    <h3 class="title">{% if shake.title %}{{escape(shake.title)}}{% end %}</h3>
+    <p class="description">{% if shake.description %}{{escape(shake.description)}}{% end %}</p>
+  </div>
+  {% end %}
+
+  {% if not site_is_readonly %}
+  <div class="shake-sidebar-subscribe">
+    {{modules.ShakeFollow(follow_shake=shake, current_user=current_user_obj, avatar_size=100)}}
+    {% if current_user_obj and current_user_obj.can_request_invitation_to_shake(shake.id) %}
+      <div id="request-invitation" class="request-invitation">
+        <form method="post" action="/shake/{{shake.name}}/request_invitation">
+          {{ xsrf_form_html() }}
+          <input type="image" src="{{ static_url("images/join-this-shake-button.gif") }}" value="+ join this shake">
+        </form>
+      </div>
+    {% end %}
+    <div class="clear"><!-- --></div>
+  </div>
+
+  {{modules.NotificationInvitations(invitation)}}
+  
+  {% if current_user_obj and current_user_obj.id == shake_editor.id %}
+    <div id="shake-invite-member" class="shake-invite-member-block">
+      <div class="inner">
+        <h3>+ Invite A New Member</h3>
+        <form method="post" action="/shake/{{shake.name}}/invite?json=1">
+          {{ xsrf_form_html() }}
+          <div class="shake-input-wrapper">
+            <input type="text" class="input-text" name="name">
+            <a href="" class="invite-button invite-button-inactive">Invite</a>
+            <div class="clear"><!-- --></div>
+            <ul class="shake-results"></ul>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="shake-sidebar-requests">
+      {{modules.NotificationInvitationRequest(invitation_requests, on_shake_page=True)}}
+    </div>
+  {% end %}
+  {% end %}
+  
+  <div class="shake-sidebar-editor-block">
+    <div class="editor-image">
+      <img src="{{shake_editor.profile_image_url()}}" width="48" height="48"> 
+    </div>
+    <div class="editor-details">
+      <a href="/user/{{shake_editor.name}}">{% if current_user_obj and current_user_obj.id == shake_editor.id %}You</a> are{% else %}{{shake_editor.name}}</a> is{% end %} this shake's editor.
+    </div>
+    <div class="clear"><!-- --></div>
+  </div>
+  
+  {% if managers %}
+  <div class="following-wrapper">
+    <h3>Members {% if shake.is_owner(current_user_obj) %}<a href="/shake/{{escape(shake.name)}}/members">Edit</a>{% end %}</h3>
+    <div class="following">
+      <ul id='following-list'>
+        {% for manager in managers %}
+          <li><a href="/user/{{manager.name}}"><img border="0" width="48" height="48" src="{{manager.profile_image_url()}}"></a></li>
+        {% end %}
+      </ul>
+    </div>
+  </div>
+  <p>
+    {% if is_shake_manager and not site_is_readonly %}
+      <form class="quit-shake-form" method="post" action="/shake/{{shake.name}}/quit">
+        {{ xsrf_form_html() }}
+        <input type="submit" class="quit-shake" id="quit-shake-page" value="Quit {{escape(shake.display_name())}} shake?">
+      </form>
+    {% end %}
+  </p>
+  {% end %}
+
+  <div class="following-wrapper">
+    <h3>Followed by <span class="count">({{follower_count}})</span></h3>
+    <div class="following">
+      <ul id='following-list'>
+        {% for follower in followers %}
+          <li><a href="/user/{{follower.name}}" title="{{follower.display_name()}}"><img src="{{follower.profile_image_url()}}" width="48" height="48"></a></li>
+        {% end %}
+      </ul>
+      <br style="clear:both;">
+      {% if followers %}
+        <a class="view-all-following" href="/shake/{{escape(shake.name)}}/followers">view all</a>
+      {% end %}
+    </div>
+  </div>
+
+
+
+  
+</div>

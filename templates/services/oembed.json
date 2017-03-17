@@ -1,0 +1,21 @@
+{% if jsonp %}{{jsonp}}({%end %}{ {% if jsonp %}
+  "callback":"{{jsonp}}",{% end %}
+  "version": "1.0",
+  {% if sourcefile.type=="link" %}
+  "type": "link",
+  "url": "{{sharedfile.source_url}}",
+  {% else %}
+  "type": "photo",
+  "url": "http://s.mltshp.com/r/{{sharedfile.share_key}}",
+  {% end %}
+  "width": {{sourcefile.width}},
+  "height": {{sourcefile.height}},
+  "title": {{json_encode(sharedfile.get_title())}},
+  "author_name": "{{escape(sharedfile_owner.name)}}",
+  "author_url": "http://mltshp.com/user/{{sharedfile_owner.name}}",
+  "provider_name": "MLTSHP",
+  {% if include_embed and sourcefile.type == "link" %}
+    "embed_html": {{json_encode(sharedfile.render_data())}},
+  {% end %}
+  "provider_url": "http://mltshp.com/"
+}{% if jsonp %}){%end %}

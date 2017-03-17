@@ -1,0 +1,10 @@
+*.pyc
+settings.py
+celeryconfig.py
+.eggs/
+build/
+html/
+.figleaf
+pip-log.txt
+.DS_Store
+*.swp

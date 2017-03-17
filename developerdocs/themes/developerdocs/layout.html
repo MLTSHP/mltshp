@@ -1,0 +1,31 @@
+<!--
+
+    This template is generated with Sphinx from a file in the
+    developerdocs directory. Try to edit that instead!
+
+-->
+{%- if url_root == '#' %}{% set url_root = '' %}{% endif %}
+
+{{ '{%' }} extends "base.html" %}
+
+{{ '{%' }} block title %}{{ title|striptags|e }}{{ '{%' }} end %}
+
+{{ '{%' }} block included_scripts %}
+    <link type="text/css" rel="stylesheet" href="{{ '{{' }} static_url("css/developerdocs.css") }}">
+{{ '{%' }} end %}
+
+{% block content -%}
+{{ '{%' }} block main %}
+<div class="content">
+    <div class="content-developer">
+
+        <div id="toc">
+            {{ toc }}
+        </div>
+
+        {% block body %}{% endblock %}
+
+    </div>
+</div>
+{{ '{%' }} end %}
+{%- endblock %}

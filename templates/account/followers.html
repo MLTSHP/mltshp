@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{user_info.name}}&rsquo;s followers
+{% end %}
+
+
+{% block main %}
+<div class="content content-with-sidebar content-relationships">
+  <div class="sidebar">
+    <div class="user-info">
+      {{modules.ShakeFollow(follow_user=user_info, current_user=current_user_object, avatar_size=100, extended=True)}}
+    </div>
+  </div>
+  <div class="body">
+    {% for follower in followers %}
+    <div class="friend">
+      {{modules.ShakeFollow(follow_user=follower, current_user=current_user_object, avatar_size=50, extended=True)}}        
+    </div>
+    {% end %}
+    <br style="clear:both">
+    <div>
+    {{modules.Pagination(object_count=follower_count, current_page=page, url_format=url_format,per_page=20)}}
+    </div>
+  </div>
+</div>
+{% end %}

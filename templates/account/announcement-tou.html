@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Use Notice{% end %}
+
+{% block main %}
+  <div class="content content-narrow">
+    <div class="tou-notice-page">
+      <p>
+        Hi everyone. We have a Terms of Use document everyone who signed up before today needs to agree to. We worked
+        with our lawyer and read many other Terms of Use documents to make sure we weren't doing anything out of 
+        the ordinary or different from other sites like ours. This took longer than normal because we wanted to make sure
+        we were doing it right. 
+      </p>
+      <p>
+        By clicking this button, you agree to <a href="/terms-of-use" target="_blank">the terms listed on this page</a>.
+      </p>
+      <div class="tou-agree">
+        <div class="action-button">
+          <a class="red" href="/account/announcement/tou?agree=you-bet"><span>I Agree</span></a>
+        </div>
+      </div>
+      <br class="clear">
+      <p>
+        By the way, we just wanted to say thanks to everyone for helping us. We're a little, self-funded team of people in 
+        San Francisco building something we've always dreamed of making. We have taken no funding. We are using our own 
+        savings.
+      </p>
+      <p>
+        We just wanted to make a great site and we know we wouldn't be doing it without all of you showing up 
+        every day. So, thank you.
+      </p>
+    </div>
+  </div>
+{% end %}

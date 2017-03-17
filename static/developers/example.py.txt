@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+
+try:
+    import sys
+    import webbrowser
+    import urllib2
+    import urllib
+    import json
+    from hashlib import md5, sha1
+    import hmac
+    import random
+    import base64
+    from datetime import datetime
+    import time
+except Exception as e:
+    print "You don't have the required modules!"
+    print e
+    sys.exit(1)
+
+# Replace the next two lines with your own key and secret after creating your app.
+API_KEY = ''
+API_SECRET = ''
+
+# REDIRECT_URL should be the url on your host waiting for authentication.
+REDIRECT_URL = 'http://localhost/test' 
+
+# These URLs are API calls. You don't go to them directly.
+AUTHENTICATION_URL = "https://mltshp.com/api/authorize?response_type=code&client_id=%s&redirect_uri=%s" % (API_KEY, REDIRECT_URL)
+ACCESS_TOKEN_URL = 'https://mltshp.com/api/token'
+RESOURCE_URL = 'https://mltshp.com/api/sharedfile/GA4'
+
+print "SENDING YOU TO AUTHENTICATE THIS APPLICATION."
+print "PLEASE CLICK 'I AGREE'."
+webbrowser.open(AUTHENTICATION_URL, new=1)
+
+print "VERIFY AUTHENTICATION."
+authorization_code = raw_input('What was the code in the redirection URL (the value of code=)? ')
+
+# Now we submit another request to get an access token
+message={
+        'grant_type':"authorization_code",
+        'code':authorization_code,
+        'redirect_uri':REDIRECT_URL,
+        'client_id':API_KEY,
+        'client_secret': API_SECRET
+    }
+data = urllib.urlencode(message)
+req = urllib2.Request(ACCESS_TOKEN_URL, data)
+response = urllib2.urlopen(req)
+
+j_response = json.loads(response.read())
+print "ACCESS TOKEN IS: %s" % (j_response['access_token'])
+print "ACCESS TOKEN SECRET: %s" % (j_response['secret'])
+print "YOU WILL USE THESE TO SIGN REQUESTS ON BEHALF OF EACH USER."
+print "SEE CODE FOR THE STEPS"
+
+#You want to access /api/sharedfile/GA4 and pull file data.
+#You must create a signed message for the server using the following:
+# - the access token you just received.
+# - a UTC timestamp 
+# - a nonce. Basically a random string no longer than 35 characters and no shorter than 10. 
+#   Don't use the UTC timestamp!
+# - your request method (GET/POST)
+# - the host (mltshp.com)
+# - the port (443 for ssl)
+# - the path (/api/sharedfile/GA4)
+# - the query array (there is no query array for this request, but there will be an example
+#       on the developer site soon. There is a specific method for encoding this bit.)
+
+timestamp = int(time.mktime(datetime.utcnow().timetuple()))
+nonce = md5("%s" % random.random()).hexdigest() #you might want to generate better nonces
+
+#start by normalizing the message. the order here is important
+normalized_string = "%s\n" % (j_response['access_token'])
+normalized_string += "%s\n" % (timestamp)
+normalized_string += "%s\n" % (nonce)
+normalized_string += "GET\n" #request method
+normalized_string += "mltshp.com\n" #host
+normalized_string += "80\n" # THIS IS A BUG! port should be 443 but it's not recognizing it, so leave this at 80. 
+                                #(you should use https for all API queries.)
+normalized_string += "/api/sharedfile/GA4\n"
+#note, we're not including the query string because there isn't one.
+
+#now we sign the request
+digest = hmac.new(j_response['secret'].encode('ascii'), normalized_string, sha1).digest()
+signature = base64.encodestring(digest).strip() #we strip the end off because it gives us a \n at the end
+authorization_string = 'MAC token="%s", timestamp="%s", nonce="%s", signature="%s"' % (j_response['access_token'], str(timestamp), nonce, signature)
+
+
+req = urllib2.Request(RESOURCE_URL,headers={ 'Authorization' : authorization_string })
+response = urllib2.urlopen(req)
+j_response = json.loads(response.read())
+print "FILE NAME: %s" % (j_response['name'])
+print "FILE TITLE: %s" % (j_response['title'])
+print "USER WHO SHARED IT: %s" % (j_response['user']['name'])
+print "DONE!"

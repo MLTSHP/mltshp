@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title%}mltshp{% end %}</title>
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/reset.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/fun-form.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/tools.css") }}">
+    {% block included_headers %}{% end %}
+    <script type="text/javascript" charset="utf-8">
+      window.resizeTo(850,550);
+      window.moveTo(screen.width/2-450,screen.height/2-300)
+    </script>
+  </head>
+  <body>
+    <div class="tools-signin-logo">
+      <img class="tools-signin-logo" src="{{ static_url("images/mlkshk-tools-logo.gif") }}">
+    </div>
+    
+    <div class="content-sign-in">
+      {% block main %}
+        {{content}}
+      {% end %}
+    </div>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js" charset="utf-8"></script>
+    {% block included_scripts %}{% end %}
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-19472228-1']);
+      _gaq.push(['_setDomainName', '.mltshp.com']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </body>
+</html>

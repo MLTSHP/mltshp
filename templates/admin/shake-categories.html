@@ -1,0 +1,29 @@
+{%extends "base.html" %}
+
+{% block main %}
+<div class="content content-narrow">
+  <h1>Shake Categories</h1>
+  <p>
+    No delete yet. Sorry.
+  </p>
+  <ul>
+    {% for shake_category in shake_categories %}
+      <li>{{shake_category.name}} - {{shake_category.short_name}}</li>
+    {% end %}
+  </ul>
+  <p>
+    Save A New Category
+  </p>
+  <form method="POST" action="/admin/shake-categories">
+    {{ xsrf_form_html() }}
+
+    Name: <input type="text" name="name"><br>
+    Short name: <input type="text" name="short_name" ><br>
+    <input type="submit" value="save it">
+  </form>
+  <p>
+    <a href="/admin/">&lt; Back to the Admin</a>
+  </p>
+</div>
+{% end %}
+

@@ -1,0 +1,35 @@
+{% extends 'tools/base.html' %}
+
+{% block main %}
+  <div class="image-info">
+    <h2 class="tools-saved-it">{{escape(sf.get_title())}} has been saved.</h2>
+  
+    <div class="meta">
+    <form style="top:0px;">
+    <div id="fun-form-settings-profile" class="fun-form fun-form-stacked fun-form-border">
+        <div class="field">
+            <label><h3>Image URL</h3></label>
+            <div class="field-input">
+                <input nonClick="javascript:this.focus();this.select();" type="text" class="input-text" name="bookmarklet" 
+                value="http://{{host}}/p/{{sf.share_key}}">
+            </div>
+        </div>
+        <div class="field">
+            <label><h3>Direct Image URL</h3></label>
+            <div class="field-input">
+                <input nonClick="javascript:this.focus();this.select();" type="text" class="input-text" name="bookmarklet" 
+                value="http://{{host}}/r/{{sf.share_key}}">
+            </div>
+        </div>
+    </div>
+    </form>
+    
+    </div>
+  </div>
+
+      <div class="image-to-save">
+    <img src="/r/{{sf.share_key}}">
+  </div>
+  
+  <div class="clear"><!-- --></div>
+{% end %}

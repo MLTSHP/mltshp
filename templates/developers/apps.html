@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+<div class="content">
+   <div class="content-developer">
+     
+<h1>List of Your API Applications</h1>
+<ul>
+{% for app in apps %}
+<li><a href="/developers/view-app/{{app.id}}">{% if app.title %}{{app.title}}{% else %}(No App Title){% end %}</a></li>
+{% end %}
+</ul>
+<p>
+<a href="/developers">Main Developer Page</a>
+</p>
+
+
+  </div>
+</div>
+{% end %}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title%}mltshp{% end %}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="search" type="application/opensearchdescription+xml" href="/static/opensearch.xml" title="mltshp">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/reset.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/fun-form.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/main.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/account.css") }}">
+    <link rel="dns-prefetch" href="//s.mltshp-cdn.com">
+    <link rel="dns-prefetch" href="//mltshp-production.s3.amazonaws.com">
+    <link rel="dns-prefetch" href="//code.jquery.com">
+    <link rel="icon" href="{{ static_url("images/apple-touch-icon.png") }}">
+    <link rel="apple-touch-icon" href="{{ static_url("images/apple-touch-icon.png") }}">
+    {% block included_headers %}
+    {% end %}
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="header">
+        <div class="logo">
+          <a href="/"><img src="{{ static_url("images/logo-compact.gif") }}" height="86" width="221" alt="MLTSHP"></a>
+        </div>
+
+        {% if current_user %}
+          {{modules.ShakeDropdown(current_user_object)}}
+          <div class="your-conversations-wrapper">
+            <a href="/conversations">Your Conversations</a>
+          </div>
+        {% else %}
+          <div class="navigation-incoming">
+            <a href="/popular">Popular</a>
+          </div>
+        {% end %}
+
+        {% if not site_is_readonly %}
+          {% if current_user %}
+          <div class="upload">
+            <div class="action-button">
+              <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
+            </div>
+          </div>
+          {% else %}
+          <div class="sign-in">
+            {% set handler_class = handler.__class__.__name__  %}
+            {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
+              <div class="call-out">Join us! Sign up to post images and create your own shake.</div>
+            {% end %}
+            <div class="action-button">
+              <a class="blue" href="/create-account"><span>Sign Up!</span></a>
+            </div>
+          </div>
+          {% end %}
+        {% end %}
+
+        <div class="user-nav">
+          <ul>
+            {% if current_user %}
+              {% if site_is_readonly %}
+              <li>The site is under maintenance right now! We’re doing something cool with the database!</l1>
+              {% end %}
+              {% if current_user_object and not current_user_object.email_confirmed %}
+              {% if not site_is_readonly %}
+              <li>Please visit settings to confirm your email address! </li>
+              {% end %}
+              {% end %}
+              <li><a href="/account/settings">settings</a></li>
+              <li><a href="/faq/">faq</a></li>
+              <li><a href="/sign-out/">sign out</a></li>
+            {% else %}
+              {% set handler_class = handler.__class__.__name__  %}
+              <li><a href="/sign-in?next={{request.path}}">sign in</a></li>
+            {% end %}
+          </ul>
+        </div>
+      </div>
+      <div class="clear"><!-- --></div>
+
+      {% block main %}
+        {{content}}
+      {% end %}
+
+      <div class="footer">
+        <div class="footer-top">
+          <a href="http://mltshp.tumblr.com/" target="_blank">Read Our Blog</a> &amp; <a href="https://twitter.com/mltshp" target="_blank">Follow Us On Twitter</a>
+          <br>
+          Are you a developer? <a href="/developers">Check out our API</a>.
+          <br>
+        </div>
+        <div class="footer-bottom">
+          &copy; <a href="http://mltshp.com/" target="_blank">MLTSHP, LLC</a>&nbsp;&nbsp;All Rights Reserved&nbsp;&nbsp;<a href="/terms-of-use">Terms of Use</a>&nbsp;&nbsp;<script type="text/javascript">
+          //<![CDATA[
+
+          function hiveware_enkoder(){var i,j,x,y,x=
+          "x=\"z?$9:5f445:595:565;5c5:5456555:875756565c56595:585;5d5:565;5;5;8956585" +
+          ";895:595:885:595;575:8:5:585:465h9c7e445f9:8:5:575:8956865:5c5:575;865:875" +
+          ":885:54588:5:875:875:595:5c5:85578:5:585;875:5d5:555:885:5656875988575:5:5" +
+          "85;895:8:5:575889575656875955565d5:5c5854565d5;555:5759565687598857595:875" +
+          ":585;5d5:585;56568759885:92898g529c5g8d5f545h8d4c96938:5f4;4;5h9d5f4686575" +
+          "45786575d5656568957555:8:568757575;59595456585;575:559:5d49495f9;5d7e449d4" +
+          "35f4d4d564g8d4c969897869997529c4f4;494;4c89948587978992995h4f9d9f4d565h4f8" +
+          "d5f8c988;966387868h6594838:854g9:5f8c9d4;4d4d8;5d8:96898g878e4g9:5e8;5d525" +
+          "f8;4:948h885d4;9:4:8792838595878g975f9;9f4;8c4:87868h6594838:658f8h94884g8" +
+          "98g8;9496755f4d9;5d565;5f4d8c4;54555e8c4:888;5d544f4;8;4:445d9;5f49495d888" +
+          "h944:8;5f525d8;5e9:4g8e878g89968:5d8;4d5f57534;9d888h944:8c5f6f83968:4g8f8" +
+          ";8g4:9:4g8e878g89968:4e8;4d57534;5d4f4f8c5g5f8;5d4;9d9;4d5f9:4g858:8394639" +
+          "64:8c4;5d9f9f9;5d$={?))=hqt*k?2=k>z0ngpivj=k-?4+}{-?wpguecrg*)')-z0uwduvt*" +
+          "k.4++=!{\";y='';x=unescape(x);for(i=0;i<x.length;i++){j=x.charCodeAt(i)-2;" +
+          "if(j<32)j+=94;y+=String.fromCharCode(j)}y";
+          while(x=eval(x));}hiveware_enkoder();
+
+          //]]>
+          </script>
+          <a href="https://twitter.com/best_of_mltshp">@best_of_mltshp</a>
+          <br><a href="/user/mltshp">Follow The MLTSHP User!</a> 
+        </div>
+      </div>
+    </div>
+    <div id="new-post-panel" class="new-post-panel"></div>
+    <script type="text/javascript" charset="utf-8" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ static_url("js/main.js")}}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ static_url("js/paging_keys.js")}}"></script>
+    {% block included_scripts %}
+    {% end %}
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-_______-1']);
+    _gaq.push(['_setDomainName', '.mltshp.com']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+  </body>
+</html>

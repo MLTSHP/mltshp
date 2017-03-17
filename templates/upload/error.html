@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Oops.{% end %}
+{% block main %}
+  <div class="content content-narrow">
+    {% if error_type == 'content_type' %}
+    <h1 class="error-uh-oh">We don't support that file type.</h1>
+    <p class="error-p">
+      Right now we only support uploading gif's, jpeg's &amp; png's.
+    </p>
+    {% elif error_type == 'upload_limit' %}
+    <h1 class="error-uh-oh">Free Account Limit.</h1>
+    <p class="error-p error-p-long">
+      You've reached the limit on the number of megs you can upload in a month. That limit is 300 megabytes. If you'd like to <a href="/account/subscribe">upgrade to a paid account</a> it's just $2/month and you get unlimited uploads.
+    </p>
+    {% elif error_type == 'email_unconfirmed' %}
+    <h1 class="error-uh-oh">Your Email Address is Unconfirmed.</h1>
+    <p class="error-p error-p-long">
+      You can't upload until you've confirmed your email address. Go to <a href="/account/settings">your account settings</a> if you need the confirmation email re-sent.
+    </p>
+    {% end %}
+  </div>
+{% end %}

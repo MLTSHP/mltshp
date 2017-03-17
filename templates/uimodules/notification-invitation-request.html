@@ -1,0 +1,24 @@
+{% if len(notifications) > 0 %}
+<div id="notification-block-invitation-request" class="notification-block notification-block-invitation-request">
+  <div class="notification-block-hd {% if on_shake_page %}on-shake-page{% end %}">{{len(notifications)}} request{% if len(notifications) != 1%}s{% end %} to join a shake</div>
+  <div class="notification-block-bd" {% if on_shake_page %}style="display:block;"{% end %}>
+    {% for notification in notifications %}
+      <div class="notification">
+        <a href="/user/{{notification['sender'].name}}">{{notification['sender'].display_name()}}</a> has requested to join {{notification['related_object'].display_name()}}.
+        <div class="notification-actions">
+          <form class="approve-invitation" method="post" action="/shake/{{notification['related_object'].name}}/approve_invitation?json=1">
+            {{ xsrf_form_html() }}          
+            <input type="hidden" name="user_id" value="{{notification['sender'].id}}">
+            <input type="image" src="{{ static_url("images/approve-button.gif") }}">
+          </form>
+          <form class="decline-invitation" method="post" action="/shake/{{notification['related_object'].name}}/decline_invitation?json=1">
+            {{ xsrf_form_html() }}          
+            <input type="hidden" name="user_id" value="{{notification['sender'].id}}">
+            <input type="image" src="{{ static_url("images/decline-button.gif") }}">
+          </form>
+        </div>
+      </div>
+    {% end %}
+  </div>
+</div>
+{% end %}

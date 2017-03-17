@@ -1,0 +1,159 @@
+/* Styles for the /tools Picker */
+
+body, html {
+  font-family: Helvetica,Arial,sans-serif;
+  background-color: #dbfaff;
+}
+
+a, a:link {
+  color: #ff0080;
+}
+
+.header {
+  text-align: right;
+  padding: 20px;
+  background: transparent url('/static/images/mlkshk-tools-small.gif') 20px 0 no-repeat;
+  font-size: 12px;
+  color: #666;
+}
+
+.header a {
+  font-weight: bold;
+}
+
+.content {
+  padding: 20px;
+  background-color: #fff;
+}
+
+/* wrapper for floated elements, so they don't drop 
+on resize or other factors */
+.content-inner {
+  margin: 0 auto;
+  width: 785px;
+}
+
+.image-to-save {
+  width: 365px;
+  overflow: visible;
+  font-size: 12px;
+  float: right;
+}
+
+.image-to-save img {
+  float: right;
+  max-width: 365px;
+}
+
+/* Override fun-form for tools area */
+
+.tools-fun-form {
+  margin-top: 0;
+  width: 420px;
+  float: left;
+}
+
+.tools-fun-form .field,
+.tools-fun-form label,
+.tools-fun-form .field-input {
+  float:none;
+}
+
+.tools-fun-form .field {
+  width: 420px;
+}
+
+.tools-fun-form label {
+  padding: 10px 5px;
+  text-align: left;
+}
+
+.tools-fun-form .tools-field-title .input-text {
+  font-weight: bold;
+}
+
+/* Error Page */
+
+.error-uh-oh {
+  padding-top: 160px;
+  background: transparent url('/static/images/tools-uh-oh.gif') 0 0 no-repeat;
+  font-weight: bold;
+  font-size: 36px;
+}
+
+/* Success Page */
+
+.tools-saved-it {
+  padding-top: 160px;
+  background: transparent url('/static/images/tools-saved-it.gif') 0 0 no-repeat;
+  font-weight: bold;
+  font-size: 36px;
+}
+
+.image-info {
+  overflow: hidden;
+  float: left;
+  width: 420px;
+}
+
+.image-info .meta {
+  margin: 30px 0; 
+}
+
+.image-info .meta h3 {
+  color: #006d7e;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.image-info .meta p {
+ color: #666; 
+}
+
+
+/* Sign-in page */
+
+.content-sign-in {
+  background-color: #fff;
+  margin: 0 auto;
+  margin-top: 20px;
+  width: 600px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.tools-signin-logo {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.sign-in-fun-form {
+  padding-bottom: 20px;
+  margin-top: 0;
+}
+
+.sign-in-fun-form label {
+  width: 120px;
+}
+
+.sign-in-fun-form .field {
+  padding-left: 20px;
+  width: 520px;
+}
+
+.content-sign-in h1 {
+  padding: 30px;
+  color: #006d7e;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* General */
+.code {
+  font-family: Consolas,"Courier New",monospace;
+}
+
+.clear {
+  clear: both;
+}

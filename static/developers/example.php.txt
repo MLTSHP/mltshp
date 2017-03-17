@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>MLTSHP API Test - PHP</title>
+	<meta name="author" content="Brett O'Connor">
+</head>
+<body> 
+<pre>
+<?php
+/**
+* MLTSHP API Test - PHP
+*
+* Performs a full auth circle with MLTSHP and then executes https://mltshp.com/api/sharedfile/GA4 (returning info on that file)
+*/
+
+//You may need to install HTTP_Reuqest2 and Crypt_HMAC2 via PEAR
+require_once('HTTP/Request2.php');
+require_once('HTTP/Request2/Observer/Log.php');
+require_once('Crypt/HMAC2.php');
+
+//Your apps API key and API secret. Set up your app to get this: https://mltshp.com/developers
+define('API_KEY','');
+define('API_SECRET','');
+
+//the redirect url mltshp will send auth code to. Same one you provided when you set up your app
+define('REDIRECT_URL','http://localhost/mltshp-php-sample.php');
+
+//other API urls
+define('AUTHENTICATION_URL',sprintf("https://mltshp.com/api/authorize?response_type=code&client_id=%s",API_KEY));
+define('ACCESS_TOKEN_URL','https://mltshp.com/api/token');
+
+define('NONCE_SALT','Something unique or random.'); //Salt for your nonce.
+
+//this is the resource we're going to get info on via sharedfile
+define('RESOURCE_URL','https://mltshp.com/api/sharedfile/GA4');
+
+//see if we're here because an auth code exists
+if ($code = $_GET['code'])
+{
+  //Auth code exists. Now we need to get access token.
+  //assemble and send our JSON formatted request
+  $data= array(
+    'grant_type' => 'authorization_code',
+    'code' => $code,
+    'redirect_uri' => REDIRECT_URL,
+    'client_id' => API_KEY,
+    'client_secret' => API_SECRET
+  );                                         
+  $req = new HTTP_Request2(ACCESS_TOKEN_URL);
+  #$req->setConfig('ssl_verify_peer',false); //if you're getting ssl errors uncomment this but you should try to find out why and fix it
+  $req->setMethod(HTTP_Request2::METHOD_POST)
+      ->addPostParameter($data);
+  $auth_response = json_decode($req->send()->getBody());
+
+  //we should have our access token.  now to test getting /api/sharedfile/GA4
+  $timestamp = time();
+  $nonce = md5($timestamp.rand().NONCE_SALT);
+  
+  $normalized_string = sprintf("%s\n",$auth_response->access_token);
+  $normalized_string .= sprintf("%s\n",$timestamp);
+  $normalized_string .= sprintf("%s\n",$nonce);
+  $normalized_string .= "GET\n";
+  $normalized_string .= "mltshp.com\n";
+  $normalized_string .= "80\n"; #FIXME: port should be 443.  known bug
+  $normalized_string .= "/api/sharedfile/GA4\n"; //replace this with the specific method and resource you want to use
+
+  //sign the request
+  $hmac = new Crypt_HMAC2($auth_response->secret,'sha1');
+  $signature = hex2b64($hmac->hash($normalized_string));
+  $auth_string = sprintf('MAC token="%s", timestamp="%s", nonce="%s", signature="%s"',$auth_response->access_token,$timestamp,$nonce,$signature);
+
+  //and send it
+  $req2 = new HTTP_Request2(RESOURCE_URL);
+  #$req2->setConfig('ssl_verify_peer',false); //if you're getting ssl errors uncomment this but you should try to find out why and fix it
+  $req2->setMethod(HTTP_Request2::METHOD_GET)
+      ->setHeader('Authorization',$auth_string);
+
+  //uncomment to debug
+  #$observer = new HTTP_Request2_Observer_Log();
+  #$req2->attach($observer);
+
+  $response = json_decode($req2->send()->getBody());
+
+  //output the array to page
+  print_r($response);
+  
+} else {
+  //auth code does not exist. this will put info in the html to send them on their way
+  echo "You need to authenticate this application with MLSKSHK first.  <a href=".AUTHENTICATION_URL.">Go authenticate. (Be sure to click \"I AGREE.\")</a>";
+}
+
+/**
+* hex2b64()
+*
+* Converts provided string to decimal numbers and then base64 encodes
+*/
+function hex2b64($str) {
+  $raw = '';
+  for ($i=0; $i < strlen($str); $i+=2) {
+    $raw .= chr(hexdec(substr($str, $i, 2)));
+  }
+  return base64_encode($raw);
+}
+?>
+</pre>
+</body>
+</html> 

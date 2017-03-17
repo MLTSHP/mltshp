@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Conversations{% end %}
+
+{% block main %}
+  <div class="content content-with-sidebar content-conversations">
+    <div class="sidebar">
+      <div class="conversations-nav">
+        <h3>Looking for something?</h3>
+        <ul>
+          <li {% if selected == 'all' %}class="selected"{% end %}><a href="/conversations">All conversations</a></li>
+          <li {% if selected == 'my-files' %}class="selected"{% end %}><a href="/conversations/my-files">Conversations on my files</a></li>
+          <li {% if selected == 'my-comments' %}class="selected"{% end %}><a href="/conversations/my-comments">Conversations I've commented in </a></li>
+          <li {% if selected == 'mentions' %}class="selected"{% end %}><a href="/mentions">Mentions</a></li>
+        </ul>  
+      </div>
+    </div>
+    <div class="body">
+      <h2>Your Conversations</h2>
+      
+      {% for conversation in conversations %}
+        <div class="conversation">
+          <a class="thumb" href="/p/{{conversation['sharedfile'].share_key}}"><img src="{{ conversation['sharedfile'].thumbnail_url() }}"></a>
+          <div class="details-wrapper">
+            <h3 class="sharedfile-title">{{ conversation['sharedfile'].get_title() }}</h3>
+            <p class="sharedfile-description">
+              {{ conversation['sharedfile'].get_description() }}
+            </p>
+            <div class="image-comments">
+              {% for comment in conversation['comments'] %}
+                <div class="comment">
+                  <div class="avatar">
+                    <a href="/user/{{comment.user().name}}"><img src="{{comment.user().profile_image_url()}}" height="48" width="48"></a>
+                  </div>
+                  <div class="body">
+                    <div class="meta"><a href="/user/{{comment.user().name}}">{{comment.user().name}}</a> <span class="created-at">{{comment.pretty_created_at()}}</span></div>
+                    {{comment.body_formatted()}}
+                  </div>
+                  <div class="clear"><!-- --></div>
+                </div>
+              {% end %}
+            </div>
+            {% if not site_is_readonly %}
+            <div class="conversation-meta">
+              <a class="post-a-comment" href="/p/{{conversation['sharedfile'].share_key}}#post-comment">post a comment &raquo;</a>
+              <a class="mute-this-conversation" href="">mute this conversation &raquo;</a>
+              <form class="mute-this-conversation-form" method="POST" action="/conversations/{{conversation['conversation'].id}}/mute">
+                {{ xsrf_form_html() }}
+              </form>
+            </div>
+            {% end %}
+          </div>
+          <div class="clear"><!-- --></div>
+        </div>
+      {% end %}
+      {{modules.Pagination(object_count=count, current_page=page, url_format=url_format)}}
+      
+    </div>
+  </div>
+{% end %}
+

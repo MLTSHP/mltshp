@@ -1,0 +1,63 @@
+{%extends "base.html" %}
+
+{% block title %}New Users{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
+
+{% block main %}
+<div class="content content-with-sidebar admin-new-users">
+  {% include "admin/_sidebar.html" %}
+
+  <div class="body">
+  <h1>New Users</h1>
+
+    <ul id="new-members-list" class="new-members">
+      {% for user in users %}
+        <li>
+          <a href="/user/{{escape(user.name)}}"><img class="avatar" src="{{user.profile_image_url()}}" width="48" height="48"></a>
+          <div class="details">
+            <h4><a class="icon" href="/user/{{escape(user.name)}}">{{ escape(user.display_name()) }}</a> {% if user.is_paid %}<img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center">{% end %}</h4>
+            <p class="about">{{escape(user.about)}}
+            {% if user.website %}
+              <br>
+              <a class="website" rel="nofollow" target="_blank" href="{{escape(user.website)}}">{{escape(user.website)}}</a>
+            {% end %}
+            </p>
+          </div>
+
+        <form action="/admin/user/{{user.name}}/flag-nsfw" method="post">
+          {{ xsrf_form_html() }}
+          {% if bool(user.nsfw) == True %}
+            NSFW.
+            <input type="hidden" name="nsfw" value="0">
+            <input class="flag-nsfw-button" type="submit" value="Remove NSFW Flag">
+          {% else %}
+            SFW.
+            <input type="hidden"  name="nsfw"  value="1">
+            <input class="unflag-nsfw-button" type="submit" value="Set NSFW Flag">
+          {% end %}
+        </form>
+
+        {% if user.last_sharedfile %}
+            {{modules.ImageMedium(user.last_sharedfile)}}
+        {% end %}
+        </li>
+      {% end %}
+    </ul>
+
+    <div class="pagination">
+      <div class="pagination-inner">
+        {% if previous_link %}
+        <a class="previous-link" href="{{previous_link}}">&laquo; Prev</a>
+        {% end %}
+        {% if next_link %}
+        <a class="next-link" href="{{next_link}}">Next &raquo;</a>
+        {% end %}
+      </div>
+    </div>
+  </div>
+</div>
+{% end %}
+

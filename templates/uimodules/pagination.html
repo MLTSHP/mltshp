@@ -1,0 +1,23 @@
+<div class="pagination">
+  <div class="pagination-inner">
+    {% if previous_link %}
+      <a class="previous-link" href="{{previous_link}}">&laquo; Prev</a>
+    {% else %}
+      <span class="previous-link">&laquo; Prev</span>
+    {% end %}
+    {% if next_link %}
+      <a class="next-link" href="{{next_link}}">Next &raquo;</a>
+    {% else %}
+      <span class="next-link">Next &raquo;</span>
+    {% end %}
+    {% for page in pages %}
+      {% if page == current_page %}
+        <span class="current">{{page}}</span>
+      {% elif page == '...' %}
+        <span class="dot-dot-dot">...</span>
+      {% else %}
+        <a href="{{url_format % (page)}}">{{page}}</a>
+      {% end %}
+    {% end %}
+  </div>
+</div>

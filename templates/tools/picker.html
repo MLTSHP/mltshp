@@ -1,0 +1,54 @@
+{% extends 'tools/base.html' %}
+
+{% block main %}
+    <div class="image-to-save">
+      <img src="{{url}}">
+    </div>
+    
+    <form class="fun-form tools-fun-form" method="post" action="/tools/p">
+      {% if len(shakes) > 1 %}
+        <select name="shake_id">
+        {% for shake in shakes %}
+          <option value="{{shake.id}}">{% if shake.type == 'user'%}user shake{% else %}{{shake.name}}{%end%}</option>
+        {% end %}
+        </select>
+      {% end %}
+      <!--<label><input type="checkbox" value="1"> NSFW</label>-->
+      <div class="field tools-field-title">
+        <div class="field-input">
+          <input class="input-text" type="text" name="title" autocomplete="off" value="{{escape(file_name)}}">
+          {% if errors.title %}
+          <div class="error">
+            <span class="error-text">
+              {{errors.title }}
+            </span>
+          </div>
+          <span class="bottoms"></span>
+          {% end %}
+        </div>
+      </div>
+      
+      <div class="field field-textarea">
+        <div class="field-input">
+          <div class="field-input-inner">
+            <textarea id="description-field" name="description" value="{{escape(description)}}">{% if source_url %}source: {{source_url}}{% end %}</textarea>
+            {% if errors.description %}
+            <div class="error">
+              <span class="error-text">
+                {{errors.description }}
+              </span>
+            </div>
+            <span class="bottoms"></span>
+            {% end %}
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="source_url" value="{{escape(source_url)}}">
+      <div class="tools-save-this">
+        <input type="image" src="{{ static_url("images/tools-save-this.gif") }}" width="171" height="79" alt="Save This">
+      </div>
+      {{ xsrf_form_html() }}
+      <input type="hidden" name="url" value="{{url}}">
+    </form>
+    <div class="clear"><!-- --></div>
+{% end %}
