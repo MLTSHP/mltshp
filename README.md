@@ -55,7 +55,7 @@ If your `aws_bucket` is called `mltshp_testing`, add appropriate entry in
 
 Ensure that we have a safe place to store files:
 
-    mkdir /tmp/fakes3
+    mkdir /tmp/mltshp
 
 Launch fakes3 in the background:
 
