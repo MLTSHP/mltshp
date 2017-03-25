@@ -8,3 +8,6 @@ html/
 pip-log.txt
 .DS_Store
 *.swp
+env
+uploaded
+logs

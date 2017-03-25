@@ -22,7 +22,7 @@ CREATE TABLE `sharedfile` (
   KEY `files_sharedfile_fbfc09f1` (`user_id`),
   KEY `original_id_deleted_idx` (`original_id`,`deleted`) USING BTREE,
   KEY `parent_id_deleted_idx` (`parent_id`,`deleted`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `sourcefile` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -38,7 +38,7 @@ CREATE TABLE `sourcefile` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `file_key_idx` (`file_key`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -68,7 +68,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `invitation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -80,7 +80,7 @@ CREATE TABLE `invitation` (
   `created_at` datetime DEFAULT NULL,
   `claimed_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `fileview` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -89,7 +89,7 @@ CREATE TABLE `fileview` (
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sharedfile_id_idx` (`sharedfile_id`, `user_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `externalservice` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -103,7 +103,7 @@ CREATE TABLE `externalservice` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `favorite` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -115,7 +115,7 @@ CREATE TABLE `favorite` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `sharedfile_id_user_id_unique_idx` (`sharedfile_id`,`user_id`),
   KEY `sharedfile_id_deleted_idx` (`sharedfile_id`,`deleted`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `shake` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -132,7 +132,7 @@ CREATE TABLE `shake` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id_type_idx` (`user_id`, `type`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `subscription` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -143,7 +143,7 @@ CREATE TABLE `subscription` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_shake_id_idx` (`user_id`,`shake_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `shakesharedfile` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -154,7 +154,7 @@ CREATE TABLE `shakesharedfile` (
   PRIMARY KEY (`id`),
   KEY `sharedfile_id_idx` (`sharedfile_id`) USING BTREE,
   KEY `shake_id_sharedfile_id_idx` (`shake_id`, `sharedfile_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `waitlist` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -164,7 +164,7 @@ CREATE TABLE `waitlist` (
   `invited` tinyint(1) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -176,7 +176,7 @@ CREATE TABLE `comment` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sharedfile_id_idx` (`sharedfile_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `post` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -190,7 +190,7 @@ CREATE TABLE `post` (
   PRIMARY KEY (`id`),
   KEY `usersrcdeleted_idx` (`user_id`,`sourcefile_id`, `deleted`) USING BTREE,
   KEY `sharedfile_idx` (`sharedfile_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `notification` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -204,7 +204,7 @@ CREATE TABLE `notification` (
   KEY `receiver_id_deleted_created_at_idx` (`receiver_id`,`deleted`,`created_at`) USING BTREE,
   KEY `receiver_id_type_deleted_idx` (`receiver_id`,`type`,`deleted`) USING BTREE,
   KEY `sender_id_deleted_idx` (`sender_id`, `deleted`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `app` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -217,7 +217,7 @@ CREATE TABLE `app` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `authorizationcode` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -230,7 +230,7 @@ CREATE TABLE `authorizationcode` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `accesstoken` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -242,7 +242,7 @@ CREATE TABLE `accesstoken` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `apilog` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -250,7 +250,7 @@ CREATE TABLE `apilog` (
   `nonce` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `conversation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -261,7 +261,7 @@ CREATE TABLE `conversation` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_sharedfile_idx` (`user_id`, `sharedfile_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `external_relationship` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -272,7 +272,7 @@ CREATE TABLE `external_relationship` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_service_type_service_id_idx` (`user_id`,`service_type`,`service_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `shake_manager` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -306,7 +306,7 @@ CREATE TABLE `payment_log` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `bookmark` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -316,7 +316,7 @@ CREATE TABLE `bookmark` (
   `created_at` datetime DEFAULT NULL,
   UNIQUE KEY `user_id_created_at_idx` (`user_id`,`created_at`) USING BTREE,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `invitation_request` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -327,7 +327,7 @@ CREATE TABLE `invitation_request` (
   `updated_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `apihit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -336,7 +336,7 @@ CREATE TABLE `apihit` (
   `hour_start` datetime DEFAULT NULL,
   UNIQUE KEY `accesstoken_id_hour_start_unique_idx` (`accesstoken_id`,`hour_start`),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `nsfw_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -345,7 +345,7 @@ CREATE TABLE `nsfw_log` (
   `sourcefile_id` int(11) not null DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `magicfile` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -353,7 +353,7 @@ CREATE TABLE `magicfile` (
   `created_at` datetime DEFAULT NULL,
   UNIQUE KEY `sharedfile_id` (`sharedfile_id`),
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `script_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -363,7 +363,7 @@ CREATE TABLE `script_log` (
   `started_at` datetime DEFAULT NULL,
   `finished_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `shake_category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -372,7 +372,7 @@ CREATE TABLE `shake_category` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `comment_like` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -382,7 +382,7 @@ CREATE TABLE `comment_like` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `tag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -390,7 +390,7 @@ CREATE TABLE `tag` (
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tag_name` (`name`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `tagged_file` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -399,7 +399,7 @@ CREATE TABLE `tagged_file` (
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `promotion` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -409,7 +409,7 @@ CREATE TABLE `promotion` (
     `promotion_url` text,
     `expires_at` datetime default null,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `voucher` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -423,4 +423,4 @@ CREATE TABLE `voucher` (
   `promotion_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `voucher_key` (`voucher_key`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
