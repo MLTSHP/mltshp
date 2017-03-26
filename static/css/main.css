@@ -23,8 +23,9 @@ a, a:link {
 
 .header .logo {
   width: 221px;
-  height: 86px;
+  height: 111px;
   position: relative;
+  top: -21px;
   float: left;
 }
 
