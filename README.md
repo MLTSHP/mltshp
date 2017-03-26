@@ -59,7 +59,7 @@ Ensure that we have a safe place to store files:
 
 Launch fakes3 in the background:
 
-    nohup bundle exec fakes3 -p 4000 --root /tmp/fakes3 &
+    nohup bundle exec fakes3 -p 4000 --root /tmp/mltshp &
 
 ## Configure python environment / settings.py
 
