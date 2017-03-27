@@ -45,7 +45,9 @@ RUN ./configure \
 RUN rm -rf /tmp/install
 
 # code for app
-RUN useradd ubuntu && mkdir -p /home/ubuntu && chown ubuntu:ubuntu /home/ubuntu
+RUN groupadd ubuntu --gid=1010 && \
+    useradd ubuntu --create-home --home-dir=/home/ubuntu \
+        --uid=1010 --gid=1010
 RUN mkdir -p /mnt/tmpuploads/0 && \
     mkdir -p /mnt/tmpuploads/1 && \
     mkdir -p /mnt/tmpuploads/2 && \
