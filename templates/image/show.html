@@ -3,15 +3,15 @@
 {% block included_headers %}
 <link rel="alternate" 
       type="application/json+oembed"
-      href="http://mltshp.com/services/oembed?url=http%3A//mltshp.com/p/{{sharedfile.share_key}}"
+      href="http://new.mltshp.com/services/oembed?url=http%3A//new.mltshp.com/p/{{sharedfile.share_key}}"
       title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
 <link rel="alternate" 
       type="application/javascript+oembed"
-      href="http://mltshp.com/services/oembed?url=http%3A//mltshp.com/p/{{sharedfile.share_key}}&amp;jsoncallback={{jsonp}}"
+      href="http://new.mltshp.com/services/oembed?url=http%3A//new.mltshp.com/p/{{sharedfile.share_key}}&amp;jsoncallback={{jsonp}}"
       title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
 
 <meta name="thumbnail" content="{{thumb_url}}">
-<meta name="twitter:url" content="https://mltshp.com/p/{{sharedfile.share_key}}">
+<meta name="twitter:url" content="http://new.mltshp.com/p/{{sharedfile.share_key}}">
 <meta name="og:site_name" content="MLTSHP">
 <meta name="og:title" content="{{escape(sharedfile.get_title())}}">
 <meta name="og:description" content="{{escape(sharedfile.get_description())}}">
@@ -21,7 +21,7 @@
 {% end %}
 {% if sourcefile.type == 'image' %}
 <meta name="twitter:card" content="photo">
-<meta name="og:image" content="https://s.mltshp.com/r/{{sharedfile.share_key}}">
+<meta name="og:image" content="http://s.new.mltshp.com/r/{{sharedfile.share_key}}">
 <meta name="og:image:width" content="{{sourcefile.width}}">
 <meta name="og:image:height" content="{{sourcefile.height}}">
 {% end %}
@@ -110,7 +110,7 @@
 
       </p> 
       <p style="float:left;">
-        <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
+        <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
         <img id="fb_share_button" src="{{ static_url("images/fb_icon.png") }}" alt="Post to Facebook" height="21" width="21" alt="">
       </p>
       <div id="fb-root">&nbsp;</div>
@@ -203,9 +203,9 @@
         {
           method: "feed",
           name: {{json_encode(sharedfile.get_title())}},
-          link: "http://mltshp.com/p/{{sharedfile.share_key}}",
+          link: "http://new.mltshp.com/p/{{sharedfile.share_key}}",
           {% if sourcefile.type == 'image' %}
-          picture: "http://s.mltshp.com/r/{{sharedfile.share_key}}",
+          picture: "http://s.new.mltshp.com/r/{{sharedfile.share_key}}",
           {% else %}
           picture: "{{thumb_url}}",
           {% end %}
