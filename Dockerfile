@@ -57,7 +57,8 @@ RUN mkdir -p /mnt/tmpuploads/0 && \
     mkdir -p /mnt/tmpuploads/8 && \
     mkdir -p /mnt/tmpuploads/9 && \
     chmod 777 /mnt/tmpuploads/* && \
-    mkdir -p /srv/mltshp.com/mltshp && \
+    mkdir -p /srv/mltshp.com/uploaded && \
+    mkdir -p /srv/mltshp.com/logs && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
 # NOTE: /srv/mltshp.com/logs and /srv/mltshp.com/uploaded need to be mounted volumes for this image
