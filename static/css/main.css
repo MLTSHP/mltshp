@@ -22,11 +22,14 @@ a, a:link {
 }
 
 .header .logo {
-  width: 221px;
-  height: 111px;
   position: relative;
   top: -21px;
   float: left;
+}
+
+.header .logo img {
+  width: 211px;
+  height: 110px;
 }
 
 .header .sign-in {
@@ -290,7 +293,7 @@ a, a:link {
   width: 960px;
   float: left;
   background-color: #fff;
-  margin-top: 35px;
+  margin-top: 6px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
