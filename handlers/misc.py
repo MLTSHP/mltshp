@@ -66,6 +66,11 @@ class ComingSoonHandler(BaseHandler):
     def get(self):
         return self.render("misc/coming-soon.html")
 
+class BrowserConfigHandler(BaseHandler):
+    def get(self):
+        return self.render("../static/browserconfig.xml")
+
+
 class WebmasterToolsHandler(BaseHandler):
     def get(self):
         return self.render("misc/googlead81c5d028a3e443.html")
