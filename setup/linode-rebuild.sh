@@ -55,13 +55,16 @@ function rebuild_node() {
         --mode "drain"
 
     echo -n "Waiting for node availability..."
+    # Let's give the node a chance to appear "DOWN"...
+    sleep 60
+
     while true; do
-        sleep 10
         echo -n '.'
         status=$( linode nodebalancer --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
         if [ -n "$status" ]
             then echo 'UP'; break;
         fi
+        sleep 10
     done
 
     # Put the node back into rotation
