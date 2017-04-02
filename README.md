@@ -8,11 +8,19 @@ Want to get this set up and make sure it's all working right? Run the following 
 
 ## Run the tests
 
+The first time you run the tests or start the server, use this command:
+
+    bin/start_fakes3
+
 Each time you want to run unit tests, use this command:
 
     bin/test
 
 ## Load it up in the browser
+
+The first time you run the tests or start the server, use this command:
+
+    bin/start_fakes3
 
 Each time you want to restart the server, use this command:
 

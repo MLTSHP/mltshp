@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+bundle exec fakes3 -p 4000 --root /tmp/mltshp
