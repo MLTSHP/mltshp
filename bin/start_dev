@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+[[ -z $VIRTUAL_ENV ]] && \
+  virtualenv env && \
+  source env/bin/activate
+
+python main.py

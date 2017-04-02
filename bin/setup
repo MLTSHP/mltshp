@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+
+# ========== Install mysql ==========
+echo "Checking MySQL"
+
+# Check for existing mysql
+mysql_exists=`brew list -1 | grep mysql`
+if [ -z $mysql_exists ]; then
+    echo "  Installing MySQL"
+    brew install mysql
+fi
+# Check to see if mysql is running
+mysql_running=`ps ax | grep mysqld_safe | grep -v grep | awk '{print $1}'`
+if [ -z $mysql_running ]; then
+    echo "  Attempting to start MySQL"
+    brew services start mysql
+fi
+
+# Check to see if testing db is present
+mltshp_testing_db_exists=`mysql -u root -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'mltshp_testing'" | tail -1`
+if [ -z $mltshp_testing_db_exists ]; then
+    echo "  Creating 'mltshp_testing' database"
+    mysql -u root -e "CREATE DATABASE mltshp_testing"
+fi
+
+# Check to see if development db is present
+mltshp_dev_db_exists=`mysql -u root -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'mltshp'" | tail -1`
+if [ -z $mltshp_dev_db_exists ]; then
+    echo "  Creating and seeding 'mltshp' database"
+    mysql -u root -e "CREATE DATABASE mltshp"
+    mysql -u root -D mltshp < setup/db-install.sql
+    mysql -u root -D mltshp < setup/db-fixtures.sql
+fi
+
+# ========== Install ruby ==========
+echo "Checking Ruby install"
+
+# Check for existing ruby
+rvm_exists=`which rvm`
+if [ -z $rvm_exists ]; then
+    echo "  Installing Ruby via RVM"
+    gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+    curl -sSL https://get.rvm.io | bash -s stable --ruby
+else
+    echo "  Updating RVM"
+    rvm get head 2>&1 >/dev/null
+    echo "  Installing most recent ruby"
+    # Regexplanation: `\[ruby-\]([^\[]+)\[.*\]` finds 2.4 from the string `'[ruby-]2.4[.1]`
+    latest_ruby=`rvm list known | grep "\[ruby-\]" | tail -1 | sed -E 's/\[ruby-\]([^\[]+)\[.*\]/\1/g'`
+
+    # TODO: Figure out a way to tell whether we're on the latest, not just what the latest is
+    rvm install $latest_ruby
+fi
+
+echo "Checking Ruby dependencies"
+
+bundler_exists=`gem list --local | grep "bundler (" | head -1  | awk '{ print $1}'`
+if [ -z $bundler_exists ]; then
+    echo "  Installing Bundler"
+    gem install bundler
+    bundle install
+else
+    echo "  Bundling"
+    bundle check || bundle install
+fi
+
+# TODO: Check settings.py for aws_host=localhost, aws_port=4000
+# TODO: Check settings.py for aws_bucket=mltshp_testing
+
+# Create local hostname aliases for fakes3
+echo "Checking system is configured for fakes3"
+
+# Check for existing lines in /etc/hosts
+localhost_entry_exists=`cat /etc/hosts | grep "mltshp_testing.localhost" | awk '{ print $1}'`
+if [ -z $localhost_entry_exists ]; then
+    echo "  Installing local host entry to /etc/hosts"
+    cp /etc/hosts /tmp/hosts
+    echo "127.0.0.1 mltshp_testing.localhost" >> /tmp/hosts
+    sudo cp /tmp/hosts /etc/hosts
+fi
+
+# Create directory for storing images via fakes3
+if [ ! -d /tmp/mltshp ]; then
+    echo "  Creating /tmp/mltshp"
+    mkdir /tmp/mltshp
+fi
+
+# Launch fakes3 in the background
+# TODO: Use something like brew services to start this up
+# nohup bundle exec fakes3 -p 4000 --root /tmp/mltshp &
+
+# ========== Configure python environment / settings.py ==========
+echo "Checking Python install"
+
+if [ ! `which virtualenv` ]; then
+    echo "  Installing Python via virtualenv"
+    curl -sSL https://bootstrap.pypa.io/get-pip.py | python
+else
+    echo "  Installing latest pip packages"
+    virtualenv env
+    source env/bin/activate
+    pip install --upgrade pip
+fi
+
+# TODO: Find a way to do something like `bundle check`
+echo "  Installing Python dependencies"
+pip install -r requirements.txt # requires mysql install
+
+# (Unusual) You may need to tweak your library path for OpenSSL when compiling
+# the mysql module. This worked for me:
+
+# export LDFLAGS="-L/usr/local/opt/openssl/lib"
+
+# ========== Create settings.py ==========
+echo "Configuring MLTSHP"
+if [ ! -f settings.py ]; then
+    echo "  Copying settings.example.py"
+    cp settings.example.py settings.py
+
+    # Set new secret strings
+    echo "  Generating new secrets"
+    perl -pi -e "s/change me/$(uuidgen)/g" settings.py
+
+    echo "  New config file is not set up for external integrations. See README.md for more info about this."
+fi
+
+# ========== Install and secure rabbit ==========
+echo "Checking RabbitMQ"
+
+if [ ! `brew list -1 | grep mysql` ]; then
+    echo "  Installing RabbitMQ via homebrew"
+    brew install rabbitmq
+
+    echo "  Configuring to start on machine bootup"
+    brew services start rabbitmq
+
+    # TODO: randomize this password and report it to the user
+    echo "  Securing the base account"
+    echo "  Your Rabbit main account un/pw is guest/super_secure_password"
+    rabbitmqctl change_password guest "super_secure_password"
+fi
+
+# Configure rabbit
+# TODO: Figure out how to check if Rabbit is configured correctly
+echo "  Configuring RabbitMQ"
+rabbitmqctl add_user mltshp_user password
+rabbitmqctl add_vhost kablam.local
+rabbitmqctl set_permissions -p kablam.local mltshp_user ".*" ".*" ".*"
+
+if [ ! -f celeryconfig.py ]; then
+    echo "  Copying celeryconfig.example.py"
+    cp celeryconfig.example.py celeryconfig.py
+fi
+
+# TODO: Start celery with something like `brew services`
+# python worker.py
+
