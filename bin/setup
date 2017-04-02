@@ -54,7 +54,7 @@ fi
 
 echo "Checking Ruby dependencies"
 
-bundler_exists=`gem list --local | grep "bundler (" | head -1  | awk '{ print $1}'`
+bundler_exists=`gem list --local | grep "^bundler (" | head -1  | awk '{ print $1}'`
 if [ -z $bundler_exists ]; then
     echo "  Installing Bundler"
     gem install bundler
@@ -127,7 +127,7 @@ fi
 # ========== Install and secure rabbit ==========
 echo "Checking RabbitMQ"
 
-if [ ! `brew list -1 | grep mysql` ]; then
+if [ ! `brew list -1 | grep rabbitmq` ]; then
     echo "  Installing RabbitMQ via homebrew"
     brew install rabbitmq
 
