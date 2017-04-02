@@ -83,3 +83,7 @@ fakes3 ruby gem.
 * launch fakes3:
 
     bundle exec fakes3 -p 4000 --root /tmp
+
+#### About
+
+MLTSHP is open-source software, ©2017 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.
