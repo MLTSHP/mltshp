@@ -204,7 +204,7 @@ class SettingsHandler(BaseHandler):
 
 class SettingsProfileHandler(BaseHandler):
     """
-    path: /account/settings/profiles
+    path: /account/settings/profile
 
     View and update profile settings.
     """

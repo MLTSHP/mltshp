@@ -11,6 +11,7 @@ RUN apt-get -y update && apt-get install -y \
     libcurl4-openssl-dev \
     curl \
     wget \
+    vim \
     libpcre3 \
     libpcre3-dev \
     libssl-dev \
@@ -29,9 +30,14 @@ COPY setup/docker-supervisord.conf /etc/supervisor/conf.d/mltshp.conf
 # nginx + nginx-upload module
 RUN mkdir -p /tmp/install && mkdir -p /var/log/nginx
 WORKDIR /tmp/install
-RUN wget http://nginx.org/download/nginx-1.10.3.tar.gz && tar zxf nginx-1.10.3.tar.gz
+RUN wget http://nginx.org/download/nginx-0.8.55.tar.gz && tar zxf nginx-0.8.55.tar.gz
+#RUN wget http://nginx.org/download/nginx-1.2.9.tar.gz && tar zxf nginx-1.2.9.tar.gz
+#RUN wget http://nginx.org/download/nginx-1.10.3.tar.gz && tar zxf nginx-1.10.3.tar.gz
 RUN wget https://github.com/vkholodkov/nginx-upload-module/archive/2.2.tar.gz && tar zxf 2.2.tar.gz
-WORKDIR /tmp/install/nginx-1.10.3
+#WORKDIR /tmp/install/nginx-1.10.3
+#WORKDIR /tmp/install/nginx-1.2.9
+WORKDIR nginx-0.8.55
+
 RUN ./configure \
     --with-http_ssl_module \
     --with-pcre \
