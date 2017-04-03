@@ -35,21 +35,25 @@ fi
 # ========== Install ruby ==========
 echo "Checking Ruby install"
 
+# Regexplanation: `\[ruby-\]([^\[]+)\[.*\]` finds 2.4 from the string `'[ruby-]2.4[.1]`
+latest_ruby=`rvm list known | grep "\[ruby-\]" | tail -1 | sed -E 's/\[ruby-\]([^\[]+)\[.*\]/\1/g'`
+
 # Check for existing ruby
 rvm_exists=`which rvm`
 if [ -z $rvm_exists ]; then
     echo "  Installing Ruby via RVM"
     gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
     curl -sSL https://get.rvm.io | bash -s stable --ruby
+
+    rvm use $latest_ruby
 else
     echo "  Updating RVM"
     rvm get head 2>&1 >/dev/null
     echo "  Installing most recent ruby"
-    # Regexplanation: `\[ruby-\]([^\[]+)\[.*\]` finds 2.4 from the string `'[ruby-]2.4[.1]`
-    latest_ruby=`rvm list known | grep "\[ruby-\]" | tail -1 | sed -E 's/\[ruby-\]([^\[]+)\[.*\]/\1/g'`
 
     # TODO: Figure out a way to tell whether we're on the latest, not just what the latest is
     rvm install $latest_ruby
+    rvm use $latest_ruby
 fi
 
 echo "Checking Ruby dependencies"

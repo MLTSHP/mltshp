@@ -8,9 +8,11 @@ Want to get this set up and make sure it's all working right? Run the following 
 
 ## Run the tests
 
-The first time you run the tests or start the server, use this command:
+Before you start the tests, in another tab/terminal start the fake S3 server using this command:
 
     bin/start_fakes3
+
+This will start a fake S3 service so you don't need to have an AWS account and set the credentials in settings.py. If you would like 
 
 Each time you want to run unit tests, use this command:
 
@@ -18,9 +20,11 @@ Each time you want to run unit tests, use this command:
 
 ## Load it up in the browser
 
-The first time you run the tests or start the server, use this command:
+Before you start the server, in another tab/terminal start the fake S3 server using this command:
 
     bin/start_fakes3
+
+This will start a fake S3 service so you don't need to have an AWS account and set the credentials in settings.py. If you would like 
 
 Each time you want to restart the server, use this command:
 
