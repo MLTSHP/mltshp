@@ -163,7 +163,8 @@ class User(ModelQueryCache, Model):
             pm = postmark.PMMail(api_key=options.postmark_api_key,
                 sender="hello@mltshp.com", to=self.email,
                 subject="[mltshp] Please verify your email address",
-                text_body="Hi there, could you visit this URL to verify your email address for us? Thanks. \n\nhttp://mltshp.com/verify-email/%s" % (self.verify_email_token))
+                text_body="Hi there, could you visit this URL to verify your email address for us? Thanks. \n\nhttp://%s/verify-email/%s" % (
+                    options.app_host, self.verify_email_token))
             pm.send()
             return True
         return False
@@ -181,13 +182,13 @@ class User(ModelQueryCache, Model):
         body = """
 Hi there,
 We just received a password reset request for this email address (user: %s). If you want to change your password just click this link:
-http://mltshp.com/account/reset-password/%s
+http://%s/account/reset-password/%s
 
 Thanks for using the site!
 hello@mltshp.com
 
 (If you're having problems with your account, please mail us! We are happy to help.)
-""" % (self.name, self.reset_password_token)
+""" % (self.name, options.app_host, self.reset_password_token)
         if not options.debug:
             pm = postmark.PMMail(api_key=options.postmark_api_key,
                 sender="hello@mltshp.com", to=self.email,

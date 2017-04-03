@@ -56,7 +56,7 @@ def tweet_or_magic(db, sharedfile_id, like_count):
         twitter_account = db.get("SELECT screen_name from externalservice where user_id = %s and deleted=0", sf['user_id'])
         if twitter_account:
             via_twitter_account = " via @{0}".format(twitter_account['screen_name'])
-        api.update_status('http://mltshp.com/p/%s "%s"%s' % (sf['share_key'], title[:90], via_twitter_account))
+        api.update_status('http://new.mltshp.com/p/%s "%s"%s' % (sf['share_key'], title[:90], via_twitter_account))
 
 
 @mltshp_task()

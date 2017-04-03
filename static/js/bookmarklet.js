@@ -119,7 +119,7 @@ function straw() {
         left_location = screen.width/2-450;
         top_location = screen.height/2-300;
         var window_attributes = "width=850,height=650,menubar=yes,toolbar=yes,scrollbars=yes,resizable=yes,left=" + left_location + ",top=" + top_location + "screenX=" + left_location + ",screenY=" + top_location;
-        window.open('http://mltshp.com/tools/p?url=' + escape(image_url) + '&source_url=' + escape(location.href) ,'save image',window_attributes);
+        window.open('http://new.mltshp.com/tools/p?url=' + escape(image_url) + '&source_url=' + escape(location.href) ,'save image',window_attributes);
     }
 
     this.select_video = function(video_url){
