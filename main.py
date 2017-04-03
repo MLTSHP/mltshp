@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os.path
 import sys
 
@@ -12,7 +13,6 @@ from tornado.httpclient import AsyncHTTPClient
 
 from lib.flyingcow import register_connection
 import lib.flyingcow.cache
-import tornadotoad
 from routes import routes
 import lib.uimodules
 import mltshpoptions
@@ -48,11 +48,6 @@ class MltshpApplication(tornado.web.Application):
                                       password=options.database_password)
         if options.use_query_cache:
             lib.flyingcow.cache.use_query_cache = True
-        if options.hoptoad_enabled:
-            environment = 'development' if options.debug else 'production'
-            tornadotoad.register(api_key=options.hoptoad_api_key,
-                                 environment=environment)
-
         if options.stripe_secret_key:
             stripe.api_key = options.stripe_secret_key
 
