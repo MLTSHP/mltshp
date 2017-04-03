@@ -99,6 +99,8 @@ echo "Checking Python install"
 if [ ! `which virtualenv` ]; then
     echo "  Installing Python via virtualenv"
     curl -sSL https://bootstrap.pypa.io/get-pip.py | python
+    virtualenv env
+    source env/bin/activate
 else
     echo "  Installing latest pip packages"
     virtualenv env
