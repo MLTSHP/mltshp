@@ -882,6 +882,7 @@ class SubscriptionHandler(BaseHandler):
         promotions = Promotion.active()
 
         return self.render('account/subscribe.html',
+            stripe_public_key=options.stripe_public_key,
             promotions=promotions)
 
 
