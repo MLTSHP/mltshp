@@ -13,6 +13,23 @@ a, a:link {
   color: #42b4ff;
 }
 
+/* Beta Alert */
+
+.alert {
+  background: #ffd4d4;
+  color: #ff1c1c;
+  font-size: .9em;
+  line-height: 1.25;
+  padding: .66em 80px .66em 1em;
+  font-weight: 300;
+}
+
+.alert a,
+.alert strong {
+  color: #ff1c1c;
+  font-weight: bold;
+}
+
 /* Header */
 
 .header {
