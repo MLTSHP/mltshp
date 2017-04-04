@@ -1,7 +1,7 @@
 /** @preserve
 Straw - a MLTSHP Bookmarklet.
-Source: http://mltshp.comm/static/straw/source.js
-Bookmarklet URL: javascript:void((function(){var%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://mltshp.com/static/straw/compact.js?r='+Math.random()*99999999);document.body.appendChild(e)})());
+Source: http://new.mltshp.com/static/straw/source.js
+Bookmarklet URL: javascript:void((function(){var%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://new.mltshp.com/static/straw/compact.js?r='+Math.random()*99999999);document.body.appendChild(e)})());
 */
 /*
  To compile, from project root:
@@ -132,7 +132,7 @@ java -jar ./tools/compiler.jar --js static/straw/source.js --js_output_file stat
     left_location = screen.width/2-450;
     top_location = screen.height/2-300;
     var window_attributes = "width=850,height=650,menubar=yes,toolbar=yes,scrollbars=yes,resizable=yes,left=" + left_location + ",top=" + top_location + "screenX=" + left_location + ",screenY=" + top_location;
-    global.open('http://mltshp.com/tools/p?url=' + encodeURI(this.asset) + '&title=' + encodeURI(global.document.title) + '&source_url=' + encodeURI(global.location.href), 'save_image', window_attributes);
+    global.open('http://new.mltshp.com/tools/p?url=' + encodeURI(this.asset) + '&title=' + encodeURI(global.document.title) + '&source_url=' + encodeURI(global.location.href), 'save_image', window_attributes);
   };
   
   Sharedfile.prototype.height = function() {

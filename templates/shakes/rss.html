@@ -1,7 +1,7 @@
 <rss version="2.0">
 <channel>
 <title>{{xhtml_escape(shake.display_name())}}</title>
-<link>http://mltshp.com/{{shake.name}}</link>
+<link>http://new.mltshp.com/{{shake.name}}</link>
 <description>
 {{xhtml_escape(shake.description)}}
 </description>
@@ -10,7 +10,7 @@
 <image>
 <url>http:{{shake.page_image()}}</url>
 <title>{{xhtml_escape(shake.display_name())}}</title>
-<link>http://mltshp.com/{{shake.name}}</link>
+<link>http://new.mltshp.com/{{shake.name}}</link>
 </image>
 
 {% for sf in sharedfiles %}
@@ -18,14 +18,14 @@
 <title>
 {{xhtml_escape(sf.get_title())}}
 </title>
-<link>http://mltshp.com/p/{{sf.share_key}}</link>
+<link>http://new.mltshp.com/p/{{sf.share_key}}</link>
 <description>
 <![CDATA[
   <p>
     {% if sf.type() == "link" %}
       {{sf.render_data(store_view=False)}}
     {% else %}
-      <a href="http://mltshp.com/r/{{sf.share_key}}"><img border="0" src="http://mltshp.com/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}"></a>
+      <a href="http://new.mltshp.com/r/{{sf.share_key}}"><img border="0" src="http://new.mltshp.com/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}"></a>
     {% end %}
   </p>
   {% if sf.description %}

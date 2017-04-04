@@ -1,5 +1,5 @@
 BeautifulSoup==3.2.0
-MySQL-python==1.2.3
+MySQL-python==1.2.5
 pillow==3.1.0
 amqplib==1.0.0
 anyjson==0.3.1
@@ -12,11 +12,13 @@ pyparsing==2.2.0
 python-dateutil==1.5
 python-postmark==0.3.1
 recaptcha-client==1.0.6
-tornado==4.0.2
+tornado==4.1
 torndb==0.3
-tornadotoad==0.3
 tweepy==2.3
 wsgiref==0.1.2
-requests==1.2.3
 mock==1.0.1
-stripe==1.28.0
+pyOpenSSL==16.2.0
+backports.ssl==0.0.9
+requests==2.13.0
+stripe==1.51.0
+newrelic==2.82.0.62

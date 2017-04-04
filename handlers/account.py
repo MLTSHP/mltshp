@@ -204,7 +204,7 @@ class SettingsHandler(BaseHandler):
 
 class SettingsProfileHandler(BaseHandler):
     """
-    path: /account/settings/profiles
+    path: /account/settings/profile
 
     View and update profile settings.
     """
@@ -882,6 +882,7 @@ class SubscriptionHandler(BaseHandler):
         promotions = Promotion.active()
 
         return self.render('account/subscribe.html',
+            stripe_public_key=options.stripe_public_key,
             promotions=promotions)
 
 
