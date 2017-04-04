@@ -45,7 +45,8 @@ class MltshpApplication(tornado.web.Application):
         self.db = register_connection(host=options.database_host,
                                       name=options.database_name,
                                       user=options.database_user,
-                                      password=options.database_password)
+                                      password=options.database_password,
+                                      charset="utf8mb4")
         if options.use_query_cache:
             lib.flyingcow.cache.use_query_cache = True
         if options.stripe_secret_key:
