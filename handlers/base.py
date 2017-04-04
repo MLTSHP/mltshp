@@ -2,7 +2,6 @@ import time
 
 import tornado.web
 from tornado.options import define, options
-import tornadotoad
 
 from lib.flyingcow.cache import RequestHandlerQueryCache
 from lib.s3 import S3Connection
@@ -22,7 +21,7 @@ class _Errors(dict):
         else:
             return None
 
-class BaseHandler(RequestHandlerQueryCache, tornadotoad.mixin.RequestHandler, tornado.web.RequestHandler):
+class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
     def initialize(self):
         self._errors = _Errors()
         self.approved_content_types =  ['image/gif', 'image/jpeg', 'image/jpg', 'image/png']
