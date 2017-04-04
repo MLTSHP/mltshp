@@ -1,19 +1,11 @@
 import os
 from torndb import Connection
 from tornado.options import options
-import tornadotoad
 
 from tasks import mltshp_task
 
 
-def configure_tornadotoad():
-    if options.hoptoad_enabled:
-        environment = 'development' if options.debug else 'production'
-        tornadotoad.register(api_key=options.hoptoad_api_key, environment=environment)
-
-
 @mltshp_task()
-@tornadotoad.mixin.catcher
 def add_posts(shake_id=0, sharedfile_id=0, sourcefile_id=0, deleted=0, created_at=None, **kwargs):
     """
     This task will get the subscribers for a shake and insert
@@ -43,7 +35,6 @@ def add_posts(shake_id=0, sharedfile_id=0, sourcefile_id=0, deleted=0, created_a
 
 
 @mltshp_task()
-@tornadotoad.mixin.catcher
 def delete_posts(sharedfile_id=0, **kwargs):
     """
     This task will update the post table setting any post containing the shared file

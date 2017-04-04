@@ -2,20 +2,12 @@ from torndb import Connection
 from tornado.options import options
 from datetime import datetime
 import os
-import tornadotoad
 import tweepy #temporary, need to use feathers
 
 from tasks import mltshp_task
 
 
-def configure_tornadotoad():
-    if options.hoptoad_enabled:
-        environment = 'development' if options.debug else 'production'
-        tornadotoad.register(api_key=options.hoptoad_api_key, environment=environment)
-
-
 @mltshp_task()
-@tornadotoad.mixin.catcher
 def calculate_likes(sharedfile_id, **kwargs):
     """
     This task will get all likes for a shared file, count them, then update the sharedfile.like_count
@@ -60,7 +52,6 @@ def tweet_or_magic(db, sharedfile_id, like_count):
 
 
 @mltshp_task()
-@tornadotoad.mixin.catcher
 def calculate_saves(sharedfile_id, **kwargs):
     """
     Take the id of a sharedfile that just got saved by another user.

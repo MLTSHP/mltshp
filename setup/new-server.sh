@@ -31,7 +31,6 @@ sudo apt-get install libcurl4-openssl-dev
 sudo pip install pycurl
 sudo pip install python-postmark
 sudo pip install BeautifulSoup
-sudo pip install tornadotoad
 sudo apt-get install libjpeg-dev
 sudo pip install PIL
 sudo pip install celery
