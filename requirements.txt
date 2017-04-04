@@ -1,5 +1,5 @@
 BeautifulSoup==3.2.0
-MySQL-python==1.2.3
+MySQL-python==1.2.5
 pillow==3.1.0
 amqplib==1.0.0
 anyjson==0.3.1
