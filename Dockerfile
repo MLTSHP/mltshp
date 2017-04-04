@@ -15,6 +15,7 @@ RUN apt-get -y update && apt-get install -y \
     libpcre3 \
     libpcre3-dev \
     libssl-dev \
+    libffi-dev \
     python-pip \
     && rm -rf /var/lib/apt/lists/*
 
