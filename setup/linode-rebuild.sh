@@ -37,6 +37,14 @@ function rebuild_node() {
 
     echo "Rebuilding $NODE_NAME..."
 
+    # Switch status of node to 'drain' to re-enable availability checks...
+    linode nodebalancer \
+        --action node-update \
+        --label "$NODEBALANCER_NAME" \
+        --port 80 \
+        --name "$NODE_NAME" \
+        --mode "drain"
+
     linode --action rebuild \
         --label "$NODE_NAME" \
         --plan linode2048 \
@@ -46,25 +54,15 @@ function rebuild_node() {
         --stackscriptjson '{}' \
         --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)"
 
-    # Switch status of node to 'drain' to re-enable availability checks...
-    linode nodebalancer \
-        --action node-update \
-        --label "$NODEBALANCER_NAME" \
-        --port 80 \
-        --name "$NODE_NAME" \
-        --mode "drain"
-
     echo -n "Waiting for node availability..."
-    # Let's give the node a chance to appear "DOWN"...
-    sleep 60
 
     while true; do
+        sleep 10
         echo -n '.'
         status=$( linode nodebalancer --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
         if [ -n "$status" ]
             then echo 'UP'; break;
         fi
-        sleep 10
     done
 
     # Put the node back into rotation
