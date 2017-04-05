@@ -4,6 +4,10 @@ html, body {
   overflow-x: hidden;
 }
 
+.page {
+  position: relative;
+}
+
 .wrapper {
   width: 1000px;
   margin: 0 auto;
@@ -19,9 +23,9 @@ a, a:link {
   background: #ffd4d4;
   color: #ff1c1c;
   font-size: .9em;
-  line-height: 1.25;
-  padding: .66em 80px .66em 1em;
   font-weight: 300;
+  line-height: 1.25;
+  padding: .66em 1em;
 }
 
 .alert a,

@@ -38,102 +38,104 @@
       You can't import your MLKSHK yet, but all other
       MLKSHK functionality should be working.
     </div>
-    <div class="wrapper">
-      <div class="header">
-        <div class="logo">
-          <a href="/"><img src="{{ static_url("images/logo-compact.png") }}" alt="MLTSHP"></a>
-        </div>
-
-        {% if current_user %}
-          {{modules.ShakeDropdown(current_user_object)}}
-          <div class="your-conversations-wrapper">
-            <a href="/conversations">Your Conversations</a>
+    <main class="page">
+      <div class="wrapper">
+        <div class="header">
+          <div class="logo">
+            <a href="/"><img src="{{ static_url("images/logo-compact.png") }}" alt="MLTSHP"></a>
           </div>
-        {% else %}
-          <div class="navigation-incoming">
-            <a href="/popular">Popular</a>
-          </div>
-        {% end %}
 
-        {% if not site_is_readonly %}
           {% if current_user %}
-          <div class="upload">
-            <div class="action-button">
-              <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
+            {{modules.ShakeDropdown(current_user_object)}}
+            <div class="your-conversations-wrapper">
+              <a href="/conversations">Your Conversations</a>
             </div>
-          </div>
           {% else %}
-          <div class="sign-in">
-            {% set handler_class = handler.__class__.__name__  %}
-            {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
-              <div class="call-out">Join us! Sign up to post images and create your own shake.</div>
-            {% end %}
-            <div class="action-button">
-              <a class="blue" href="/create-account"><span>Sign Up!</span></a>
+            <div class="navigation-incoming">
+              <a href="/popular">Popular</a>
             </div>
-          </div>
           {% end %}
+
+          {% if not site_is_readonly %}
+            {% if current_user %}
+            <div class="upload">
+              <div class="action-button">
+                <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
+              </div>
+            </div>
+            {% else %}
+            <div class="sign-in">
+              {% set handler_class = handler.__class__.__name__  %}
+              {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
+                <div class="call-out">Join us! Sign up to post images and create your own shake.</div>
+              {% end %}
+              <div class="action-button">
+                <a class="blue" href="/create-account"><span>Sign Up!</span></a>
+              </div>
+            </div>
+            {% end %}
+          {% end %}
+
+          <div class="user-nav">
+            <ul>
+              {% if current_user %}
+                {% if site_is_readonly %}
+                <li>The site is under maintenance right now! We’re doing something cool with the database!</l1>
+                {% end %}
+                {% if current_user_object and not current_user_object.email_confirmed %}
+                {% if not site_is_readonly %}
+                <li>Please visit settings to confirm your email address! </li>
+                {% end %}
+                {% end %}
+                <li><a href="/account/settings">settings</a></li>
+                <li><a href="/faq/">faq</a></li>
+                <li><a href="/sign-out/">sign out</a></li>
+              {% else %}
+                {% set handler_class = handler.__class__.__name__  %}
+                <li><a href="/sign-in?next={{request.path}}">sign in</a></li>
+              {% end %}
+            </ul>
+          </div>
+        </div>
+        <div class="clear"><!-- --></div>
+
+        {% block main %}
+          {{content}}
         {% end %}
 
-        <div class="user-nav">
-          <ul>
-            {% if current_user %}
-              {% if site_is_readonly %}
-              <li>The site is under maintenance right now! We’re doing something cool with the database!</l1>
-              {% end %}
-              {% if current_user_object and not current_user_object.email_confirmed %}
-              {% if not site_is_readonly %}
-              <li>Please visit settings to confirm your email address! </li>
-              {% end %}
-              {% end %}
-              <li><a href="/account/settings">settings</a></li>
-              <li><a href="/faq/">faq</a></li>
-              <li><a href="/sign-out/">sign out</a></li>
-            {% else %}
-              {% set handler_class = handler.__class__.__name__  %}
-              <li><a href="/sign-in?next={{request.path}}">sign in</a></li>
-            {% end %}
-          </ul>
+        <div class="footer">
+          <div class="footer-top">
+            <a href="http://mltshp.tumblr.com/" target="_blank">Read Our Blog</a> &amp; <a href="https://twitter.com/mltshphq" target="_blank">Follow Us On Twitter</a>
+            <br>
+            Are you a developer? <a href="/developers">Check out our API</a>.
+            <br>
+          </div>
+          <div class="footer-bottom">
+            &copy; <a href="http://new.mltshp.com/" target="_blank">MLTSHP, LLC</a>&nbsp;&nbsp;All Rights Reserved&nbsp;&nbsp;<a href="/terms-of-use">Terms of Use</a>&nbsp;&nbsp;<script type="text/javascript">
+            //<![CDATA[
+            <!--
+            (function () {
+            var x="function f(x){var i,o=\"\",l=x.length;for(i=0;i<l;i+=2) {if(i+1<l)o+=" +
+            "x.charAt(i+1);try{o+=x.charAt(i);}catch(e){}}return o;}f(\"ufcnitnof x({)av" +
+            " r,i=o\\\"\\\"o,=l.xelgnhtl,o=;lhwli(e.xhcraoCedtAl(1/)3=!84{)rt{y+xx=l;=+;" +
+            "lc}tahce({)}}of(r=i-l;1>i0=i;--{)+ox=c.ahAr(t)i};erutnro s.buts(r,0lo;)f}\\" +
+            "\"(3)11\\\\,!\\\"-(0=o.6#S{v$4c03\\\\\\\\17\\\\07\\\\02\\\\\\\\30\\\\06\\\\" +
+            "SMO3T702\\\\0t\\\\\\\\\\\\27\\\\00\\\\01\\\\\\\\}+5y00\\\\\\\\::7017\\\\\\\\"+
+            "%?=8(+03\\\\0.\\\\QSQ^\\\\rZ\\\\]GLF3F01\\\\\\\\0{03\\\\\\\\DEumx;7+7;17\\\\"+
+            "\\\\hc77\\\\1`\\\\ruu-20\\\\01\\\\03\\\\\\\\27\\\\0r\\\\\\\\\\\\25\\\\03\\\\"+
+            "03\\\\\\\\26\\\\0\\\\\\\\(\\\"}fo;n uret}r);+)y+^(i)t(eAodrCha.c(xdeCoarCho" +
+            "mfrg.intr=So+7;12%=;y++)y13<1(iif){++;i<l;i=0(ior;fthnglex.l=\\\\,\\\\\\\"=" +
+            "\\\",o iar{vy)x,f(n ioctun\\\"f)\")";
+            while(x=eval(x));})();
+            //-->
+            //]]>
+            </script>
+            <a href="https://twitter.com/best_of_mltshp">@best_of_mltshp</a>
+            <br><a href="/user/mltshp">Follow The MLTSHP User!</a>
+          </div>
         </div>
       </div>
-      <div class="clear"><!-- --></div>
-
-      {% block main %}
-        {{content}}
-      {% end %}
-
-      <div class="footer">
-        <div class="footer-top">
-          <a href="http://mltshp.tumblr.com/" target="_blank">Read Our Blog</a> &amp; <a href="https://twitter.com/mltshphq" target="_blank">Follow Us On Twitter</a>
-          <br>
-          Are you a developer? <a href="/developers">Check out our API</a>.
-          <br>
-        </div>
-        <div class="footer-bottom">
-          &copy; <a href="http://new.mltshp.com/" target="_blank">MLTSHP, LLC</a>&nbsp;&nbsp;All Rights Reserved&nbsp;&nbsp;<a href="/terms-of-use">Terms of Use</a>&nbsp;&nbsp;<script type="text/javascript">
-          //<![CDATA[
-          <!--
-          (function () {
-          var x="function f(x){var i,o=\"\",l=x.length;for(i=0;i<l;i+=2) {if(i+1<l)o+=" +
-          "x.charAt(i+1);try{o+=x.charAt(i);}catch(e){}}return o;}f(\"ufcnitnof x({)av" +
-          " r,i=o\\\"\\\"o,=l.xelgnhtl,o=;lhwli(e.xhcraoCedtAl(1/)3=!84{)rt{y+xx=l;=+;" +
-          "lc}tahce({)}}of(r=i-l;1>i0=i;--{)+ox=c.ahAr(t)i};erutnro s.buts(r,0lo;)f}\\" +
-          "\"(3)11\\\\,!\\\"-(0=o.6#S{v$4c03\\\\\\\\17\\\\07\\\\02\\\\\\\\30\\\\06\\\\" +
-          "SMO3T702\\\\0t\\\\\\\\\\\\27\\\\00\\\\01\\\\\\\\}+5y00\\\\\\\\::7017\\\\\\\\"+
-          "%?=8(+03\\\\0.\\\\QSQ^\\\\rZ\\\\]GLF3F01\\\\\\\\0{03\\\\\\\\DEumx;7+7;17\\\\"+
-          "\\\\hc77\\\\1`\\\\ruu-20\\\\01\\\\03\\\\\\\\27\\\\0r\\\\\\\\\\\\25\\\\03\\\\"+
-          "03\\\\\\\\26\\\\0\\\\\\\\(\\\"}fo;n uret}r);+)y+^(i)t(eAodrCha.c(xdeCoarCho" +
-          "mfrg.intr=So+7;12%=;y++)y13<1(iif){++;i<l;i=0(ior;fthnglex.l=\\\\,\\\\\\\"=" +
-          "\\\",o iar{vy)x,f(n ioctun\\\"f)\")";
-          while(x=eval(x));})();
-          //-->
-          //]]>
-          </script>
-          <a href="https://twitter.com/best_of_mltshp">@best_of_mltshp</a>
-          <br><a href="/user/mltshp">Follow The MLTSHP User!</a>
-        </div>
-      </div>
-    </div>
+    </main>
     <div id="new-post-panel" class="new-post-panel"></div>
     <script type="text/javascript" charset="utf-8" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="{{ static_url("js/main.js")}}"></script>
