@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ ! -z "$(git status --untracked-files=no --porcelain)" ]; then
-    echo "You have uncommitted changes in this branch."
-    exit 1
-fi
-
 # StackScript for "MLTSHP Web Node" - 77953
 STACKSCRIPT="MLTSHP Web Node"
 
@@ -20,12 +15,15 @@ NODE_PREFIX="mltshp-web"
 # A public key for assigning to each node we rebuild (root account)
 PUBLIC_KEY="setup/mltshp-web-key.pub"
 
+# Get a list of nodes from the cluster
+nodes=$( linode nodebalancer --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )
+
 echo "This script will rebuild all active MLTSHP web nodes"
-echo "using the latest Docker image."
+echo "using a Docker Cloud image."
 echo
 echo "Docker image to deploy: $DOCKER_IMAGE_NAME"
 echo "Linode NodeBalancer: $NODEBALANCER_NAME"
-echo "Web Nodes to rebuild: ${NODE_PREFIX}-*"
+echo "Web Nodes to rebuild: ${nodes}"
 echo "StackScript to deploy: $STACKSCRIPT"
 echo "Public key to assign: $PUBLIC_KEY"
 echo
@@ -60,7 +58,7 @@ function rebuild_node() {
         --distribution "Ubuntu 16.04 LTS" \
         --pubkey-file $PUBLIC_KEY \
         --stackscript "$STACKSCRIPT" \
-        --stackscriptjson '{"DOCKER_IMAGE_NAME": "$DOCKER_IMAGE_NAME"}' \
+        --stackscriptjson "{\"docker_image_name\": \"$DOCKER_IMAGE_NAME\"}" \
         --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)"
 
     echo -n "Waiting for node availability..."
@@ -106,8 +104,6 @@ function slackpost {
 
 slackpost "technology" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME..."
 
-# Get a list of nodes from the cluster
-nodes=$( linode nodebalancer --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )
 for node in $nodes;
 do
     rebuild_node $node
