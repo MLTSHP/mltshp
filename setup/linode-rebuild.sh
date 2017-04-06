@@ -97,18 +97,18 @@ function slackpost {
         text=$*
 
         escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
-        json="{\"channel\": \"#$channel\", \"icon_emoji\": \":mltshp:\", \"text\": \"$escapedText\"}"
-        curl -s -d "payload=$json" "$SLACK_WEBHOOK_URL" > /dev/null
+        json="{\"channel\": \"$channel\", \"icon_emoji\": \":mltshp:\", \"text\": \"$escapedText\"}"
+        curl -s -d "payload=$json" "$SLACK_WEBHOOK_URL"
     fi
 }
 
-slackpost "technology" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME..."
+slackpost "#operations" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME..."
 
 for node in $nodes;
 do
     rebuild_node $node
 done
 
-slackpost "technology" "Docker image $DOCKER_IMAGE_NAME deployed to production."
+slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production."
 
 echo "All nodes rebuilt!"
