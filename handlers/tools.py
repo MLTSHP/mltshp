@@ -221,7 +221,7 @@ class BookmarkletPageHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self):
-        return self.render("tools/bookmarklet.html")
+        return self.render("tools/bookmarklet.html", app_host=options.app_host)
 
 class NewPostHandler(BaseHandler):
     """
