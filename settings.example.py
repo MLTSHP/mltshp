@@ -2,11 +2,11 @@
 # image.
 settings = {
     "app_host": "mltshp.dev",
-    "cdn_host": "mltshp.dev",
+    "cdn_host": "s.mltshp.dev",
     "api_hits_per_hour" : 150,
     "auth_secret" : "ne4om9og3maw8orp2ot9quos5ed8aj3lam6up3ja",
     "aws_bucket": "mltshp-dev",
-    "aws_host": "s3.amazonaws.com",
+    "aws_host": "fakes3",
     "aws_port": 8000,
     "aws_key": "dummy-key",
     "aws_secret": "dummy-secret",
@@ -38,7 +38,7 @@ test_settings = {
     "database_password" : "",
     "database_host": "mysql",
     "aws_bucket": "mltshp-testing",
-    "aws_host": "s3.amazonaws.com",
+    "aws_host": "fakes3",
     "aws_port": 8000,
     "aws_key": "dummy-key",
     "aws_secret": "dummy-secret",
