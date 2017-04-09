@@ -100,6 +100,7 @@
           </div>
         </div>
 
+        {% if recaptcha %}
         <div class="field">
           <label>Prove you’re not just a MLTSHP-lovin’ robot:</label>
           <div class="field-help" style="margin-left: 0">
@@ -114,6 +115,8 @@
           <span class="bottoms"></span>
           {% end %}
         </div>
+        {% end %}
+
         <div class="field">
           <div class="field-help"> 
             By creating an account you agree to MLTSHP’s <a href="/terms-of-use" target="_blank">terms of use</a>.

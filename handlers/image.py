@@ -527,7 +527,7 @@ class OEmbedHandler(BaseHandler):
         self.render("services/oembed.json", sharedfile=sharedfile, sourcefile=sourcefile,
                     sharedfile_owner=sharedfile_owner, jsonp=jsonp,
                     include_embed=include_embed, app_host=options.app_host,
-                    cdn_host=options.use_cdn and options.cdn_host or options.app_host)
+                    cdn_host=options.cdn_host)
 
 
 class CommentHandler(BaseHandler):

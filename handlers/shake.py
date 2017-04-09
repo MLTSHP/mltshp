@@ -2,6 +2,7 @@ import tornado.web
 from tornado.escape import json_encode
 from tornado import escape
 import torndb
+from tornado.options import options
 
 from base import BaseHandler
 from models import Shake, User, Notification, ShakeManager
@@ -474,7 +475,9 @@ class RSSFeedHandler(BaseHandler):
             build_date = sharedfiles[0].feed_date()
 
         self.set_header("Content-Type", "application/xml")
-        return self.render("shakes/rss.html", shake=shake, sharedfiles=sharedfiles, build_date=build_date)
+        return self.render("shakes/rss.html",
+            app_host=options.app_host, shake=shake,
+            sharedfiles=sharedfiles, build_date=build_date)
 
 
 class FollowerHandler(BaseHandler):

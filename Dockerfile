@@ -26,8 +26,6 @@ RUN pip install -U pip setuptools distribute
 # https://github.com/pypa/setuptools/issues/543
 RUN rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info
 
-COPY setup/docker-supervisord.conf /etc/supervisor/conf.d/mltshp.conf
-
 # nginx + nginx-upload module
 RUN mkdir -p /tmp/install && mkdir -p /var/log/nginx
 WORKDIR /tmp/install
@@ -51,7 +49,6 @@ RUN ./configure \
     && make && make install && mkdir -p /etc/nginx
 RUN rm -rf /tmp/install
 
-# code for app
 RUN groupadd ubuntu --gid=1010 && \
     useradd ubuntu --create-home --home-dir=/home/ubuntu \
         --uid=1010 --gid=1010
@@ -71,13 +68,13 @@ RUN mkdir -p /mnt/tmpuploads/0 && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
 # NOTE: /srv/mltshp.com/logs and /srv/mltshp.com/uploaded need to be mounted volumes for this image
-USER ubuntu
-WORKDIR /srv/mltshp.com/mltshp
 ADD requirements.txt /srv/mltshp.com/mltshp
-USER root
-COPY setup/production.nginx.conf /etc/nginx/nginx.conf
+WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
+COPY setup/production/supervisord.conf /etc/supervisor/conf.d/mltshp.conf
+COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 
+# code for app
 ADD . /srv/mltshp.com/mltshp
 
 EXPOSE 80

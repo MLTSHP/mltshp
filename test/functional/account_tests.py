@@ -19,7 +19,7 @@ class AccountTests(test.base.BaseAsyncTestCase):
     def test_user_paid_account_rss_works(self):
         self.user.is_paid = 1
         self.user.save()
-    
+
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=self.user.id, \

@@ -1,5 +1,5 @@
 {% if jsonp %}{{jsonp}}({%end %}{ {% if jsonp %}
-  "callback":"{{jsonp}}",{% end %}
+  "callback": "{{jsonp}}",{% end %}
   "version": "1.0",
   {% if sourcefile.type=="link" %}
   "type": "link",
@@ -12,10 +12,10 @@
   "height": {{sourcefile.height}},
   "title": {{json_encode(sharedfile.get_title())}},
   "author_name": "{{escape(sharedfile_owner.name)}}",
-  "author_url": "http://{{cdn_host}}/user/{{sharedfile_owner.name}}",
+  "author_url": "http://{{app_host}}/user/{{sharedfile_owner.name}}",
   "provider_name": "MLTSHP",
   {% if include_embed and sourcefile.type == "link" %}
-    "embed_html": {{json_encode(sharedfile.render_data())}},
+  "embed_html": {{json_encode(sharedfile.render_data())}},
   {% end %}
   "provider_url": "http://{{app_host}}/"
 }{% if jsonp %}){%end %}

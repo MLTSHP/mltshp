@@ -19,4 +19,8 @@ def S3Connection():
 
 
 def S3Bucket():
-    return S3Connection().get_bucket(options.aws_bucket)
+    # if we're testing, then just auto-create a bucket if it doesn't exist already
+    if options.aws_bucket.endswith("-dev") or options.aws_bucket.endswith("-testing"):
+        return S3Connection().create_bucket(options.aws_bucket)
+    else:
+        return S3Connection().get_bucket(options.aws_bucket)
