@@ -508,10 +508,13 @@ class CreateAccountHandler(BaseHandler):
             self.request.protocol) == "https"
 
         #recaptcha hot fix
-        captcha_string = captcha.displayhtml(
-            options.recaptcha_public_key,
-            use_ssl=using_https
-        )
+        if options.recaptcha_public_key:
+            captcha_string = captcha.displayhtml(
+                options.recaptcha_public_key,
+                use_ssl=using_https
+            )
+        else:
+            captcha_string = ""
         return self.render("account/create.html", name="", email="",
             key=key_value,
             promotions=promotions,
@@ -538,6 +541,8 @@ class CreateAccountHandler(BaseHandler):
              self.get_argument('password_again', ""))
 
         skip_recaptcha = self.get_argument('_skip_recaptcha_test_only', False)
+        if not options.recaptcha_private_key:
+            skip_recaptcha = True
 
         #recaptcha hotfix
         if not skip_recaptcha:
@@ -555,11 +560,17 @@ class CreateAccountHandler(BaseHandler):
         if not has_errors:
             try:
                 if new_user.save():
-                    # i'd like to NOT invalidate_email in the
-                    # case of using a voucher, but the person
-                    # may use a different email for MLTSHP than
-                    # they used for receiving their voucher, so...
-                    new_user.invalidate_email()
+                    if options.postmark_api_key:
+                        # i'd like to NOT invalidate_email in the
+                        # case of using a voucher, but the person
+                        # may use a different email for MLTSHP than
+                        # they used for receiving their voucher, so...
+                        new_user.invalidate_email()
+                    else:
+                        # we have no way to send a verification
+                        # email, so we're gonna trust 'em
+                        new_user.email_confirmed = 1
+                        new_user.save()
 
                     query_str = ''
                     if voucher is not None:
@@ -567,7 +578,10 @@ class CreateAccountHandler(BaseHandler):
                         query_str = '?vid=%s' % str(voucher.id)
 
                     self.log_user_in(new_user)
-                    return self.redirect('/confirm-account%s' % query_str)
+                    if new_user.email_confirmed:
+                        return self.redirect('/')
+                    else:
+                        return self.redirect('/confirm-account%s' % query_str)
             except torndb.IntegrityError:
                 #This is a rare edge case, so we handle it lazily -- IK.
                 pass
@@ -782,7 +796,8 @@ class RSSFeedHandler(BaseHandler):
             build_date = sharedfiles[0].feed_date()
 
         self.set_header("Content-Type", "application/xml")
-        return self.render("shakes/rss.html", shake=shake, sharedfiles=sharedfiles, build_date=build_date)
+        return self.render("shakes/rss.html", shake=shake, sharedfiles=sharedfiles,
+            app_host=options.app_host, build_date=build_date)
 
 
 class SubscriptionHandler(BaseHandler):

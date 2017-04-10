@@ -30,3 +30,5 @@ DROP TABLE IF EXISTS `shake_category`;
 DROP TABLE IF EXISTS `comment_like`;
 DROP TABLE IF EXISTS `tag`;
 DROP TABLE IF EXISTS `tagged_file`;
+DROP TABLE IF EXISTS `voucher`;
+DROP TABLE IF EXISTS `promotion`;

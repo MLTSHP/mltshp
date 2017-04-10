@@ -13,7 +13,7 @@ DOCKER_IMAGE_NAME=${1:-mltshp/mltshp-web:latest}
 NODE_PREFIX="mltshp-web"
 
 # A public key for assigning to each node we rebuild (root account)
-PUBLIC_KEY="setup/mltshp-web-key.pub"
+PUBLIC_KEY="setup/production/mltshp-web-key.pub"
 
 # Get a list of nodes from the cluster
 nodes=$( linode nodebalancer --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )

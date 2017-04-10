@@ -1,89 +1,123 @@
-## MLTSHP
+# MLTSHP
 
-### Setup Development / Testing environment
+## Development Environment
 
-Create settings.py from settings.example.py
+MLTSHP is a Dockerized application. This greatly simplifies running the
+application for local development. We also deploy the application using
+[Docker](https://www.docker.com/), so it makes for a more consistent
+environment to build and test against.
 
-* Update path for `uploaded_files`
-* Add valid AWS bucket reference (`aws_bucket`)
-* Add valid AWS key and secret (`aws_key`, `aws_secret`)
-* Add valid Recaptcha key and secret (`recaptcha_private_key`,
-  `recaptcha_public_key`)
-* Add valid Twitter API keys (`twitter_consumer_key`,
-  `twitter_consumer_secret`, `twitter_access_key`,
-  `twitter_access_secret`)
+With Docker and a git client installed on your computer, clone the MLTSHP
+code from Github. If you intend to develop features for MLTSHP, you should
+clone from your own fork of the code. Once you have a copy checked out
+locally, use this command to create a `settings.py` and `celeryconfig.py`
+file suitable for local development:
 
-#### Virtualenv
+    $ make init-dev
 
-* Install virtualenv, pip, then run:
+The defaults there should be okay for a local instance. Then, just run:
 
-    virtualenv env
-    source env/bin/activate
-    pip install -r requirements.txt
+    $ make run
 
-You may need to tweak your library path for OpenSSL when
-compiling the mysql module. This worked for me:
+This will do a lot of things. But ultimately, you should end up with a
+copy of MLTSHP running locally. It expects to be accessed via a hostname
+of `mltshp.dev` and `s.mltshp.dev`. Add these entries to your `/etc/hosts`
+file:
 
-    export LDFLAGS="-L/usr/local/opt/openssl/lib"
+    127.0.0.1   mltshp.dev s.mltshp.dev
 
-#### Database
+The web app itself runs on port 8000. You should be able to reach it via:
 
-Install mysql and create an "mltshp\_testing" database
-for unit tests to use. Create another empty "mltshp"
-database and install an empty schema to it using
-the setup/db-install.sql file.
+[http://mltshp.dev:8000/]()
 
-#### RabbitMQ
+Subsequent invocations of `make run` should be faster, once you have
+the dependency images downloaded.
 
-The application relies on RabbitMQ and Celery for doing
-background tasks. Install RabbitMQ and configure `celeryconfig.py`
-appropriately (using `celeryconfig.example.py` as a basis).
-A few rabbitmqctl commands need to be run to create the virtualhost,
-user, etc. (customize these as you'd like):
+You can login as the `admin` user using the password `password`. You
+can also register new user accounts.
 
-    rabbitmqctl add_user mltshp_user password
-    rabbitmqctl add_vhost kablam.local
-    rabbitmqctl set_permissions -p kablam.local mltshp_user ".*" ".*" ".*"
+While running the service, you can open an editor to the git checkout and
+make updates to the code. Changes should be reflected as you save your
+files (no need to restart the service).
 
-Then, run the Celery worker using:
+The MySQL instance that is launched will be accessible on localhost:3306
+if you want to look at the database directly (since this is using the
+default MySQL port, you will probably need to shutdown any existing MySQL
+server you may have running). The login for the database is `root` with
+no password. If you want to mark any of your user accounts as paid users,
+find them in the `user` table and set their `is_paid` value to `1`.
 
-    python worker.py
 
-Note: the celery worker and rabbitmq server are not necessary for running
-unit tests.
+## Logs and Data
 
-#### Tests
+When you run the application, it launches it into a background process.
+But if you want to watch the realtime logs emitted by each service,
+just use this command;
 
-Run unit tests using this command (assumes it is run with the
-virtualenv activated):
+    $ docker-compose logs
 
-    python test.py
+In addition to that, the web app produces some log files that are
+captured under the "mounts/logs" folder of your git repository.
+The directory structure looks like this:
 
-#### Removing S3 test / development dependency
+    mounts/
+        uploaded/
+            (transient uploaded file storage)
+        logs/
+            access.log - nginx access log file
+            error.log - nginx error log file
+            main-8000.log - python app log file
+            celeryd-01.log - celery worker log file
+        mysql/
+            (mysql data files)
 
-If you don't want to rely on S3 for tests or development, you can use the
-fakes3 ruby gem.
 
-* Make sure you have Ruby 1.9.3 installed (rvm is your easiest bet)
-* Make sure you have bundle installed
+## Tests
 
-    gem install bundler
+With your copy of MLTSHP running, you may want to run unit tests. Some
+of the unit tests actually test against Twitter itself, so you'll want
+to generate a custom Twitter app with your own set of keys. Configure
+the `test_settings` in your `settings.py` file appropriately:
 
-* Install files in the Gemfile
+    "twitter_consumer_key" : "twitter_consumer_key_here",
+    "twitter_consumer_secret" : "twitter_consumer_secret_key_here",
+    "twitter_access_key" : "twitter_access_key_here",
+    "twitter_access_secret" : "twitter_access_secret_here",
 
-    bundle install
+Then, just run:
 
-* Update your settings.py and update `aws_host` to `localhost` and
-  `aws_port` to whatever port you will run fakes3 on (default is `10050`).
-* If your `aws_bucket` is called `mltshp_testing`, add appropriate entry
-  in your /etc/hosts:
+    $ make test
 
-    127.0.0.1 mltshp_testing.localhost
+Which will invoke a Docker process to run the unit test suite.
 
-* launch fakes3:
 
-    bundle exec fakes3 -p 4000 --root /tmp
+## Connecting to the MLTSHP shell
 
-#### About
+If you ever need to access the Docker image running the application,
+you can use this command to create a shell:
+
+    $ docker-compose run mltshp bash
+
+This should place you in the /srv/mltshp.com/mltshp directory as the
+root user. You can use `apt-get` commands to install utilities you
+may need.
+
+
+## Cleanup
+
+If you ever want to *wipe your local data* and rebuild your Docker
+containers, just use this command:
+
+    $ make destroy
+
+If you just wish to rebuild the Docker container, use the Docker
+compose command:
+
+    $ docker-compose down
+
+Then, run another `make run`.
+
+
+## About
 
 MLTSHP is open-source software, ©2017 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.

@@ -190,16 +190,17 @@ class SharedFileTests(BaseAsyncTestCase):
         self.test_file2_content_type = "image/gif"
 
     def test_oembed_response_json(self):
-        response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        self.http_client.fetch(self.get_url("/services/oembed?url=http%3A//mltshp.com/p/1"), self.stop)
-        response = self.wait()
-        j = json.loads(response.body)
-        self.assertEqual(j['width'], 1)
-        self.assertEqual(j['height'], 1)
-        self.assertEqual(j['title'], '1.png')
-        # pattern from oembed.json is...
-        #    http://s.mltshp.com/r/{{sharedfile.share_key}}
-        self.assertEqual(j['url'], 'http://s.mltshp.com/r/1')
+        with test_option("cdn_host", "cdn-service.com"):
+            response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
+            self.http_client.fetch(self.get_url("/services/oembed?url=http%3A//mltshp.com/p/1"), self.stop)
+            response = self.wait()
+            j = json.loads(response.body)
+            self.assertEqual(j['width'], 1)
+            self.assertEqual(j['height'], 1)
+            self.assertEqual(j['title'], '1.png')
+            # pattern from oembed.json is...
+            #    http://{{ cdn_host }}/r/{{sharedfile.share_key}}
+            self.assertEqual(j['url'], 'http://cdn-service.com/r/1')
 
         #test jsonp callback works
         sharedfile = Sharedfile.get('id = %s', 1)

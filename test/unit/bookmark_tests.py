@@ -45,7 +45,7 @@ class BookmarkTests(BaseTestCase):
         new_sharedfile = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
         # we need to make sure that sharedfile we pass in, is one second older than when original was set in setUp
-        time.sleep(1)
+        time.sleep(2)
         new_sharedfile.save()
         
         first_bookmark = models.Bookmark.start_reading(self.user, new_sharedfile)
@@ -68,7 +68,7 @@ class BookmarkTests(BaseTestCase):
         new_sharedfile = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
         # we need to make sure that sharedfile we pass in, is one second older than when original was set in setUp
-        time.sleep(1)
+        time.sleep(2)
         new_sharedfile.save()
         
         second_bookmark = models.Bookmark.start_reading(self.user, new_sharedfile)
