@@ -8,13 +8,13 @@ import hashlib
 import random
 from lib.utilities import email_re
 
-        
+
 class HAProxyHandler(BaseHandler):
     def get(self):
         return self.write("OK")
-        
+
 class HeartbeatHandler(BaseHandler):
-    def check_xsrf_cookie(self): 
+    def check_xsrf_cookie(self):
         pass
     def get(self):
         response = """{
@@ -51,11 +51,11 @@ class HeartbeatHandler(BaseHandler):
 
     def post(self):
         return self.write("OK")
-            
+
 class FAQHandler(BaseHandler):
     def check_xsrf_cookie(self):
         pass
-        
+
     def get(self):
         return self.render("misc/faq.html")
 
@@ -70,6 +70,10 @@ class WebmasterToolsHandler(BaseHandler):
     def get(self):
         return self.render("misc/googlead81c5d028a3e443.html")
 
+class StyleguideHandler(BaseHandler):
+    def get(self):
+        return self.render("misc/styleguide.html")
+
 class TermsOfUseHandler(BaseHandler):
     def get(self):
         return self.render("misc/terms-of-use.html")
@@ -82,7 +86,7 @@ class AdBannerHandler(BaseHandler):
             #    'link': 'clickout-of-banner',
             #    'text': 'html caption for ad',
             #}
-        ]    
+        ]
         banner = random.choice(ads)
         return self.render("misc/ad_banner.html", banner = banner)
 

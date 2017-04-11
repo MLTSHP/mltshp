@@ -216,6 +216,7 @@ routes = [
     (r"/heartbeat", handlers.misc.HeartbeatHandler),
     ## TODO: needs customization for mltshp.com domain
     #(r"/googlead81c5d028a3e443.html", handlers.misc.WebmasterToolsHandler),
+    (r"/styleguide", handlers.misc.StyleguideHandler),
     (r"/terms-of-use", handlers.misc.TermsOfUseHandler),
     (r"/healthy/is_healthy.php", handlers.misc.HAProxyHandler),
 
