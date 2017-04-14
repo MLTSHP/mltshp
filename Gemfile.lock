@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:jubos/fake-s3.git
+  remote: https://github.com/jubos/fake-s3.git
   revision: 2f31a962e8abaa7effe25931f1d2fd35d8a557da
   specs:
     fakes3 (0.1.5.1)
