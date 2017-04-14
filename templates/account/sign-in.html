@@ -10,7 +10,7 @@
       <form id="sign-in-form" method="POST" action="/sign-in/">
         {{ xsrf_form_html() }}
         <div class="field">
-          <label>Username:</label>
+          <label for="name">Username:</label>
           <div class="field-input"> 
             <input class="input-text" type="text" name="name" value="{{name}}" 
             autocorrect="off" autocapitalize="none">
@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="field">
-          <label>Password:</label>
+          <label for="password">Password:</label>
           <div class="field-input">
             <input class="input-text" type="password" name="password" >
           </div>
