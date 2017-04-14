@@ -1,0 +1,10 @@
+env:
+  DOCKER_COMPOSE_VERSION: 1.12.0
+
+sudo: required
+
+services:
+  - docker
+
+script:
+  - docker-compose run mltshp ./test.py
