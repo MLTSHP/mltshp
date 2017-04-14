@@ -39,8 +39,6 @@ services:
       - app_net
   mysql:
     image: mysql:latest
-    ports:
-      - "3306:3306"
     volumes:
       - ./mounts/mysql:/var/lib/mysql
       - ./setup/db-install.sql:/docker-entrypoint-initdb.d/00_db-install.sql
