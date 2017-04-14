@@ -113,9 +113,9 @@
 }
 
 .sidebar .following ul {
-  padding-top: 15px;
-  padding-left: 15px;
-  padding-bottom: 15px;
+  margin: 0;
+  padding: 15px 0 15px 15px;
+  list-style: none;
   float: left;
 }
 

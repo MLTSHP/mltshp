@@ -1,22 +1,32 @@
 {%extends "base.html" %}
 
+{% block title %}Recommend a Group Shake{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
+
 {% block main %}
-<div class="content content-narrow">
-  <h1>Recommend Shakes</h1>
-  <ol>
-  {% for group_shake in group_shakes %}
-    <li>
-        <table border="0">
-          <tr>
-            <td width="80"><img src="{{group_shake.thumbnail_url()}}" width="48" height="48"></td>
-            <td width="200"><a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a><br>
-                {{group_shake.description}}</td>
-            <td><form style='display:inline;' method="post" action='/admin/recommend-group-shake/{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>{{ xsrf_form_html() }}<input type='submit' value='{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'><input type='hidden' name='shake_id' value='{{group_shake.id}}'></form></td>
-          </tr>
-        </table>
-        <hr>
-    </li>
-  {% end %}
-  </ol>
+<div class="content content-with-sidebar admin-new-users">
+  {% include "admin/_sidebar.html" %}
+
+  <div class="body">
+    <h1>Recommend Shakes</h1>
+    <ol class="shake-list">
+    {% for group_shake in group_shakes %}
+      <li>
+          <table border="0">
+            <tr>
+              <td width="80"><img src="{{group_shake.thumbnail_url()}}" width="48" height="48"></td>
+              <td width="200"><a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a><br>
+                  {{group_shake.description}}</td>
+              <td><form style='display:inline;' method="post" action='/admin/recommend-group-shake/{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>{{ xsrf_form_html() }}<input type='submit' value='{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'><input type='hidden' name='shake_id' value='{{group_shake.id}}'></form></td>
+            </tr>
+          </table>
+          <hr>
+      </li>
+    {% end %}
+    </ol>
+  </div>
 </div>
 {% end %}

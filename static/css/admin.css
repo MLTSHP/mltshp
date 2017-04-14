@@ -11,6 +11,12 @@
   float: none;
 }
 
+.admin-new-users .body #new-members-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .admin-new-users .body #new-members-list > li {
   margin-bottom: 30px;
   padding-bottom: 30px;
@@ -94,4 +100,16 @@
 
 .admin-new-users .image-medium .user-and-title > a {
     display: none;
+}
+
+.shake-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-nav {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
