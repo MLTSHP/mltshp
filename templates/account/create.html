@@ -11,7 +11,7 @@
       <form method="POST" action="/create-account/">
         {{ xsrf_form_html() }}
         <div class="field">
-          <label>Username:</label>
+          <label for="name">Username:</label>
           <div class="field-input">
             <input class="input-text" type="text" name="name" value="{{xhtml_escape(name)}}" autocapitalize="none">
             {% if errors.name %}
@@ -29,7 +29,7 @@
         </div>
 
         <div class="field">
-          <label>Password:</label>
+          <label for="password">Password:</label>
           <div class="field-input">
             <input class="input-text" type="password" name="password" >
             {% if errors.password %}
@@ -44,7 +44,7 @@
         </div>
 
         <div class="field">
-          <label>Password, again:</label>
+          <label for="password_again">Password, again:</label>
           <div class="field-input">
             <input class="input-text" type="password" name="password_again" >
           </div>
