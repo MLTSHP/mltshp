@@ -7,4 +7,5 @@ services:
   - docker
 
 script:
+  - cp ./settings.example.py ./settings.py
   - docker-compose run mltshp ./test.py
