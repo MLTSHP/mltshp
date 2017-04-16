@@ -1,7 +1,19 @@
 {%extends "base.html" %}
 
+{% block title %}Interesting Stats{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
+
 {% block main %}
-<p>
-Total number of files uploaded: {{total_files}}
-</p>
+<div class="content content-with-sidebar admin-new-users">
+  {% include "admin/_sidebar.html" %}
+
+  <div class="body">
+    <p>
+    Total number of files uploaded: {{total_files}}
+    </p>
+  </div>
+</div>
 {% end %}

@@ -1,14 +1,26 @@
 {%extends "base.html" %}
 
+{% block title %}Create Users{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
+
 {% block main %}
-<p>
-email address, one per line
-</p>
-<form method="POST" action="/admin/create-users">
-  {{ xsrf_form_html() }}
-  
-  <textarea cols="80" rows="15" name="emails"></textarea><br>
-  <input type="submit" value="save">
-  
-</form>
+<div class="content content-with-sidebar admin-new-users">
+  {% include "admin/_sidebar.html" %}
+
+  <div class="body">
+    <p>
+    email address, one per line
+    </p>
+    <form method="POST" action="/admin/create-users">
+      {{ xsrf_form_html() }}
+
+      <textarea cols="80" rows="15" name="emails"></textarea><br>
+      <input type="submit" value="save">
+
+    </form>
+  </div>
+</div>
 {% end %}

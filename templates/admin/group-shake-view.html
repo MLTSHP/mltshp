@@ -1,7 +1,13 @@
 {%extends "base.html" %}
 
+{% block title %}Group Shake: {{shake.display_name()}}{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
+
 {% block main %}
-<div class="content content-narrow">
+<div class="content content-narrow admin-new-users">
   <h1>{{shake.display_name()}}</h1>
 
   <img src="{{shake.thumbnail_url()}}" width="48" height="48">
@@ -10,7 +16,7 @@
   </p>
   <form method="POST" action="/admin/group-shake/{{shake.id}}">
     {{ xsrf_form_html() }}
-    
+
   <p>
     Shake Category : <select name="shake_category_id">
                         <option value="0">No Category</option>
@@ -25,14 +31,14 @@
                             <a href="/admin/group-shake/{{featured_shake.id}}">{{featured_shake.display_name()}}</a>
                           {% end %})
   </p>
-                
+
   <input type="submit" value="save this">
   </form>
   <p>
     <a href="/admin/group-shakes">&lt; Back to Shake List</a>
   </p>
-  
-  
+
+
 </div>
 {% end %}
 

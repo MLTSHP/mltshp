@@ -1,7 +1,9 @@
 html, body {
   font-family: Helvetica,Arial,sans-serif;
   background-color: #dbfaff;
+  color: #000;
   overflow-x: hidden;
+  margin: 0;
 }
 
 .page {
@@ -13,8 +15,29 @@ html, body {
   margin: 0 auto;
 }
 
-a, a:link {
+a {
   color: #42b4ff;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: #0088f1;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Beta Alert */
@@ -186,6 +209,12 @@ a, a:link {
   border-top-right-radius: 10px;
 }
 
+.header .choose-a-shake ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .header .choose-a-shake-bd ul.top-shakes li a {
   display: block;
   background-color: #fff;
@@ -280,9 +309,10 @@ a, a:link {
 }
 
 .header .user-nav ul {
-  padding-left: 10px;
+  margin: 0;
+  padding: 0 0 5px 10px;
+  list-style: none;
   float: left;
-  padding-bottom: 5px;
 }
 
 .header .user-nav li {
@@ -410,7 +440,9 @@ h1 {
 
 .content-find-shakes .find-shakes-navigation {
   float: left;
-  margin-left: 40px;
+  margin: 0 0 0 40px;
+  padding: 0;
+  list-style: none;
 }
 
 .content-find-shakes .find-shakes-navigation li {
@@ -561,6 +593,9 @@ h1 {
 
 .content-find-shakes .featured-shakes ul {
   float: left;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .content-find-shakes .featured-shakes li {
@@ -744,6 +779,9 @@ h1 {
 
 .content-settings .settings-navigation ul {
   float: left;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .content-settings .settings-navigation li {
@@ -889,6 +927,8 @@ h1 {
 .settings-body-connections .apps {
   width: 500px;
   margin: 30px 0;
+  padding: 0;
+  list-style: none;
 }
 
 .settings-body-connections .apps li {
@@ -953,6 +993,8 @@ h1 {
   font-size: 24px;
   color: #333;
   margin: 40px 0;
+  padding: 0;
+  list-style: none;
 }
 
 .content-upgrade li {
@@ -1078,6 +1120,9 @@ h1 {
 
 .image-content .image-interactions .save-this-shake-selector ul {
   clear: both;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .image-content .image-interactions .save-this-shake-selector a {
@@ -1276,6 +1321,12 @@ h1 {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
+}
+
+.permalink-sidebar .in-these-shakes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .permalink-sidebar .in-these-shakes li {
@@ -1536,6 +1587,7 @@ h1 {
   padding: 10px;
   color: #4b4b4b;
   margin: 0 10px 10px 10px;
+  list-style: none;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -1782,7 +1834,8 @@ h1 {
 }
 
 .cool-tools-block .browser-tools  {
-  margin-top: 20px;
+  list-style: none;
+  margin: 20px 0 0;
   background-color: #f6f6f6;
   padding: 10px;
   -webkit-border-radius: 10px;
@@ -1910,6 +1963,8 @@ h1 {
   box-shadow:inset 0px 0px 10px rgba(0,0,0,.1);
   -webkit-box-shadow:inset 0px 0px 10px rgba(0,0,0,.1);
   -moz-box-shadow:inset 0px 0px 10px rgba(0,0,0,.1);
+  margin: 0;
+  list-style: none;
 }
 
 .shake-invite-member-block .shake-results li {
@@ -1981,7 +2036,9 @@ h1 {
 }
 
 .content-shake .shake-members {
+  margin: 0;
   padding: 30px;
+  list-style: none;
 }
 
 .content-shake .shake-members li {
@@ -2111,6 +2168,9 @@ h1 {
 .user-counts ul {
   float: left;
   width: 255px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .user-counts li {
@@ -2364,7 +2424,9 @@ h1 {
 }
 
 .image-content-footer .stats {
-  margin-left: 10px;
+  list-style: none;
+  margin: 0 0 0 10px;
+  padding: 0;
   color: #4b4b4b;
   float: left;
 }
@@ -2844,7 +2906,9 @@ h1 {
 }
 
 .image-medium .stats {
-  padding-top: 10px;
+  margin: 0;
+  padding: 10px 0 0;
+  list-style: none;
   color: #4b4b4b;
   clear: both;
   float: left;
@@ -3367,8 +3431,10 @@ span.previous-link {
   margin-bottom: 15px;
 }
 
-.content-conversations .conversations-nav {
-
+.content-conversations .conversations-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .content-conversations .conversations-nav li {
@@ -3568,21 +3634,6 @@ span.previous-link {
     margin-bottom:15px;
     margin-top:15px;
 }
-
-.content-developer ol li{
-    list-style-type:decimal;
-    margin-left:40px;
-}
-
-.content-developer strong {
-    font-weight:bold;
-}
-
-.content-developer ul li {
-    list-style-type:disc;
-    margin-left:40px;
-}
-
 
 /* Terms of Use Page */
 .terms-of-use p {
@@ -4060,7 +4111,9 @@ span.previous-link {
   clear: both;
   background-color: #dfffcb;
   width: 200px;
+  margin: 0;
   padding: 10px 0 5px 0;
+  list-style: none;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -4207,6 +4260,8 @@ span.previous-link {
 /* Create Account */
 ul.promotions {
     margin: 10px 0;
+    padding: 0;
+    list-style: none;
 }
 ul.promotions li {
     box-sizing: border-box;
