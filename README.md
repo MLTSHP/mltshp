@@ -40,7 +40,7 @@ While running the service, you can open an editor to the git checkout and
 make updates to the code. Changes should be reflected as you save your
 files (no need to restart the service).
 
-The MySQL instance that is launched will be accessible on localhost:3310
+The MySQL instance that is launched will be accessible on localhost:3306
 if you want to look at the database directly (since this is using the
 default MySQL port, you will probably need to shutdown any existing MySQL
 server you may have running). The login for the database is `root` with
