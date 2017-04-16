@@ -1,0 +1,56 @@
+version: "2"
+services:
+  mltshp:
+    image: mltshp/mltshp-web
+    volumes:
+      - .:/srv/mltshp.com/mltshp
+      - ./mounts/logs:/srv/mltshp.com/logs
+      - ./mounts/uploaded:/srv/mltshp.com/uploaded
+      - ./setup/dev/nginx.conf:/etc/nginx/nginx.conf
+      - ./setup/dev/supervisord.conf:/etc/supervisor/conf.d/mltshp.conf
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+      - fakes3
+      - rabbitmq
+    links:
+      - mysql
+      - fakes3
+      - rabbitmq
+    networks:
+      app_net:
+        aliases:
+          - mltshp.dev
+  fakes3:
+    image: fingershock/fakes3
+    networks:
+      app_net:
+        aliases:
+          - mltshp-testing.fakes3
+          - mltshp-dev.fakes3
+  rabbitmq:
+    image: rabbitmq:alpine
+    environment:
+      RABBITMQ_DEFAULT_VHOST: "kablam.local"
+      RABBITMQ_DEFAULT_USER: "mltshp_user"
+      RABBITMQ_DEFAULT_PASS: "password"
+    networks:
+      - app_net
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3316:3306"
+    volumes:
+      - ./mounts/mysql:/var/lib/mysql
+      - ./setup/db-install.sql:/docker-entrypoint-initdb.d/00_db-install.sql
+      - ./setup/db-fixtures.sql:/docker-entrypoint-initdb.d/01_db-fixtures.sql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "mltshp"
+      MYSQL_USER: "mltshp"
+    networks:
+      - app_net
+
+networks:
+  app_net:
