@@ -7,5 +7,6 @@ services:
   - docker
 
 script:
+  - mysqladmin shutdown
   - cp ./settings.example.py ./settings.py
   - docker-compose run mltshp ./test.py
