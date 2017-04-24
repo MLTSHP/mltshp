@@ -8,34 +8,47 @@ This script is run at a regular interval via cron.
 import json
 
 import models
+from lib.flyingcow.db import connection
+
 
 NAME = "calculate-views"
 
+
 def main():
-    script_log = models.ScriptLog.last_successful(NAME)
-    if script_log and script_log.result:
-        try:
-            last_result = json.loads(script_log.result)
-            return run_from(last_result['last_fileview_id'])
-        except ValueError, AttributeError:
-            pass
-    return run_from()
-
-
-def run_from(after_id=None):
     """
-    Find all sharedfiles and calculate their likes starting
-    at the fileview id supplied by after_id.
+    Find all sharedfiles and calculate their likes from fileview.
     """
-    last_fileview = models.Fileview.last()
     updated_sharedfiles = 0
-    for sharedfile_id in models.Fileview.sharedfile_ids(after_id=after_id):
-        sharedfile = models.Sharedfile.get("id = %s and deleted = 0", sharedfile_id)
-        if sharedfile:
-            updated_sharedfiles += 1
-            sharedfile.update_view_count()
+    last_fileview = models.Fileview.last()
+    if last_fileview:
+        sharedfile_ids = models.Fileview.sharedfile_ids(before_id=last_fileview.id+1)
+
+        conn = connection()
+        cursor = conn._cursor()
+        try:
+            for sharedfile_id in sharedfile_ids:
+                sharedfile = models.Sharedfile.get("id = %s", sharedfile_id)
+                if sharedfile:
+                    conn._execute(
+                        cursor,
+                        "DELETE FROM fileview WHERE sharedfile_id=%s AND user_id != %s AND id <= %s",
+                        [sharedfile_id, sharedfile.user_id, last_fileview.id], {})
+                    count = cursor.rowcount
+                    if count > 0:
+                        sharedfile.increment_view_count(count)
+                        updated_sharedfiles += 1
+
+            # delete the remaining rows; will only be cases where the image was
+            # viewed by the owner of the sharedfile; we shouldn't actually have
+            # these for new fileview records, just legacy ones...
+            conn._execute(
+               cursor,
+               "DELETE FROM fileview WHERE id <= %s",
+               [last_fileview.id], {})
+        finally:
+            cursor.close()
+
     results = {
-        'last_fileview_id': last_fileview.id,
         'updated_sharedfiles' : updated_sharedfiles
     }
     return json.dumps(results)

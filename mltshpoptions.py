@@ -37,6 +37,7 @@ define('uploaded_files', metavar='PATH', help="Path on disk where uploaded files
 define('use_workers', type=bool, default=True, help="Use asynchronous Celery workers")
 define('debug_workers', type=bool, default=False, help="Wait for asynchronous workers to complete (for testing)")
 define('use_cdn', type=bool, default=False, help="Enable if s.mltshp.com should redirect to mltshp-cdn.com for images")
+define('server_id', help='A name for this server instance (unique per server)')
 
 # APIs
 define('aws_key', metavar="KEY", help="Amazon API key for S3 & Payments")

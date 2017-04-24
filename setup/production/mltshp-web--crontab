@@ -1,0 +1,4 @@
+# Crontab jobs for MLTSHP web server
+# Run calculate web views, but only on our primary web server, so we don't
+# have to worry about two instances trying to consume view counts at the same time
+0,5,10,15,20,25,30,35,40,45,50,55 * * * * cd /srv/mltshp.com/mltshp; run-one timeout 290s python runner.py --server_id mltshp-web-1 scripts/calculate-views.py

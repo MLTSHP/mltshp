@@ -54,8 +54,14 @@ def main(opts, args):
     script_path = args[0]
     if not script_path.endswith('.py'):
         sys.exit("You can only reference python scripts that end with a .py extension.")
-    
+
     mltshpoptions.parse_dictionary(getattr(settings, opts.settings))
+
+    # if a server argument was specified and doesn't match with the
+    # server_id configured for settings, then exit silently
+    # without running
+    if opts.server_id and opts.server_id != options.server_id:
+        exit(0)
 
     lib.flyingcow.register_connection(host=options.database_host,
         name=options.database_name, user=options.database_user,
@@ -72,4 +78,6 @@ if __name__ == '__main__':
     parser.add_option("-s", "--settings", dest="settings",
                     help="name of the settings dict inside the settings file used to bootstrap environment", 
                     metavar="PATH", default='settings')
+    parser.add_option("--server_id", dest="server_id",
+                    help="name of the server to scope for this script")
     main(*parser.parse_args())

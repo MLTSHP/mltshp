@@ -444,13 +444,14 @@ class Sharedfile(ModelQueryCache, Model):
             self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
 
-    def update_view_count(self):
+    def increment_view_count(self, amount):
         """
         Update view_count field for current sharedfile.
         """
-        self.update_attribute('view_count', self.calculate_view_count())
+        view_count = self.view_count or 0
+        self.update_attribute('view_count', view_count + amount)
 
-    def calculate_view_count(self):
+    def calculate_view_count(self, last_fileview=0):
         """
         Calculate count of all views for the sharedfile.
         """
