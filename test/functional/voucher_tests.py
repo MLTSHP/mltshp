@@ -108,7 +108,7 @@ class VoucherTests(test.base.BaseAsyncTestCase):
 
     def test_redeem_voucher_with_bad_voucher(self):
         self.sign_out()
-        user = test.factories.user(name="free_user", email="free_user@mltshp.com")
+        user = test.factories.user(name="free_user", email="free_user@mltshp.com", is_paid=0)
         self.sign_in(user.name, "password")
         response = self.fetch_url("/account/settings")
         # verify this account is currently free
@@ -123,6 +123,8 @@ class VoucherTests(test.base.BaseAsyncTestCase):
     def test_redeem_voucher_with_good_voucher(self):
         self.sign_out()
         user = test.factories.user(name="free_user", email="free_user@mltshp.com")
+        user.is_paid = 0
+        user.save()
         self.sign_in(user.name, "password")
         response = self.fetch_url("/account/settings")
         # verify this account is currently free

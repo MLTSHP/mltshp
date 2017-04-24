@@ -8,7 +8,7 @@ from tornado.escape import json_encode
 class ShakeCrudTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(ShakeCrudTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.is_paid = 1
         self.user.save()
@@ -18,6 +18,8 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         """
         Create a shake for user admin. Should succeed and redirect to /short_name
         """
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
         arguments = {
             'name' : 'yo',
             'description' : 'My little corner of the world',
@@ -32,6 +34,8 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         """
         Can't create a shake without a name.
         """
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
         arguments = {
             'name' : '',
             'title': 'title',
@@ -45,6 +49,8 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         """
         Can't create a shake without a title.
         """
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
         arguments = {
             'name' : 'got one',
             'title': '',
@@ -56,6 +62,8 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
 
 
     def test_shake_update_description(self):
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
         arguments = {
             'name' : 'test1',
             'description' : 'OLD OLD OLD',
@@ -76,6 +84,8 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         self.assertEqual(response.code, 404)
 
     def test_shake_duplicate_error(self):
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
         arguments = {
             'name' : 'asdf',
             'description' : 'Shake 1',
@@ -92,8 +102,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         self.assertTrue(response.body.find('That URL is already taken.') > -1)
 
     def test_subscribe_unsubscribe_works(self):
-        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1)
-        user_a.is_paid = 1
+        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1, is_paid=1, stripe_plan_id="mltshp-double")
         user_a.set_password('asdfasdf')
         user_a.save()
         self.sign_in('user_a', 'asdfasdf')
@@ -120,8 +129,9 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         self.assertEqual(subscription.user_id, 1)
         self.assertEqual(subscription.deleted, 1)
 
-    def test_cannot_create_shake_if_not_paid(self):
-        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1)
+    def test_cannot_create_shake_if_not_a_plus_member(self):
+        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1, is_paid=1,
+            stripe_plan_id="mltshp-single")
         user_a.set_password('asdfasdf')
         user_a.save()
         self.sign_in('user_a', 'asdfasdf')
@@ -130,13 +140,13 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
             'name' : 'asdf',
             'description' : 'A shake test.',
             'title' : 'Shake Test',
-
         }
         response = self.post_url('/shake/create', arguments=arguments)
-        self.assertTrue(response.body.find('make 100 shakes in addition') > -1)
+        self.assertTrue(response.body.find('Create up to 100 group shakes') > -1)
 
-    def test_create_shake_page_works(self):
-        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1)
+    def test_create_shake_page_works_for_plus_members(self):
+        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1,
+            is_paid=1, stripe_plan_id="mltshp-double")
         user_a.set_password('asdfasdf')
         user_a.save()
         self.sign_in('user_a', 'asdfasdf')
@@ -148,6 +158,9 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         """
         Testing that the RSS feed works.
         """
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
+
         arguments = {
             'name' : 'yo',
             'description' : 'My little corner of the world',
@@ -195,11 +208,13 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         parsed_xml = lib.utilities.parse_xml(response.body)
         self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'http://mltshp.com/p/1')
 
-
     def test_creating_group_shake_creates_subscription(self):
         """
         Create a shake for user admin. Admin should now have a subscription to that shake
         """
+        self.user.stripe_plan_id = "mltshp-double"
+        self.user.save()
+
         arguments = {
             'name' : 'yo',
             'description' : 'My little corner of the world',
@@ -210,7 +225,6 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
 
         sub = Subscription.get('user_id=%s and shake_id=%s and deleted = 0', self.user.id, sh.id)
         self.assertTrue(sub)
-
 
     def test_created_shake_contains_file(self):
         """
@@ -223,14 +237,13 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         Getting shared files for C does not see file.
         Getting shared files for A does not see file.
         """
-        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1)
+        user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1, is_paid=1, stripe_plan_id="mltshp-double")
         user_a.set_password('asdfasdf')
-        user_a.is_paid = 1
         user_a.save()
-        user_b = User(name='user_b', email='user_b@example.com', email_confirmed=1)
+        user_b = User(name='user_b', email='user_b@example.com', email_confirmed=1, is_paid=1)
         user_b.set_password('asdfasdf')
         user_b.save()
-        user_c = User(name='user_c', email='user_c@example.com', email_confirmed=1)
+        user_c = User(name='user_c', email='user_c@example.com', email_confirmed=1, is_paid=1)
         user_c.set_password('asdfasdf')
         user_c.save()
 

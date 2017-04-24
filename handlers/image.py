@@ -8,7 +8,7 @@ from tornado import escape
 from tornado.escape import json_encode
 from tornado.options import options
 
-from base import BaseHandler
+from base import BaseHandler, require_membership
 from models import Favorite, User, Sharedfile, Sourcefile, Comment, Shake, Externalservice
 import models
 from lib.utilities import s3_authenticated_url, uses_a_banned_phrase
@@ -24,6 +24,7 @@ class SaveHandler(BaseHandler):
     count to update stats on the page in real time.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         if not sharedfile:
@@ -67,6 +68,8 @@ class ShowHandler(BaseHandler):
 
     The image permalink page.
     """
+    @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         return self.redirect("/p/{0}".format(share_key))
 
@@ -277,6 +280,7 @@ class AddToShakesHandler(BaseHandler):
     path: /p/{share_key}/delete
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         current_user = self.get_current_user_object()
         sharedfile = Sharedfile.get_by_share_key(share_key)
@@ -297,6 +301,7 @@ class DeleteFromShake(BaseHandler):
     path: /p/{share_key}/shakes/{shake_id}/delete
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key, shake_id):
         current_user = self.get_current_user_object()
         sharedfile = Sharedfile.get_by_share_key(share_key)
@@ -320,6 +325,7 @@ class DeleteHandler(BaseHandler):
     path: /p/{share_key}/delete
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         user = self.get_current_user()
         sf = Sharedfile.get("share_key=%s and user_id=%s", share_key, user['id'])
@@ -336,6 +342,7 @@ class QuickEditTitleHandler(BaseHandler):
     and raw (unescaped) title.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
@@ -367,6 +374,7 @@ class QuickEditDescriptionHandler(BaseHandler):
     and raw (unescaped) description.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
@@ -398,6 +406,7 @@ class QuickEditSourceURLHandler(BaseHandler):
     and raw (unescaped) source_url.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
@@ -420,6 +429,7 @@ class QuickEditSourceURLHandler(BaseHandler):
 
 class LikeHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def post(self, sharedfile_key):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
@@ -454,6 +464,7 @@ class LikeHandler(BaseHandler):
 
 class UnlikeHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def post(self, sharedfile_key):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
@@ -537,6 +548,7 @@ class CommentHandler(BaseHandler):
     Adds a comment for a particular shared file.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         shared_file = Sharedfile.get_by_share_key(share_key)
         if not shared_file:
@@ -566,6 +578,7 @@ class CommentDeleteHandler(BaseHandler):
     Deletes a comment if user has permission to do so.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key, comment_id):
         shared_file = Sharedfile.get_by_share_key(share_key)
         if not shared_file:
@@ -594,6 +607,7 @@ class CommentLikeHandler(BaseHandler):
     Creates or updates a CommentLike on an entry in the db.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key, comment_id):
         shared_file = models.Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
@@ -631,6 +645,7 @@ class CommentDislikeHandler(BaseHandler):
     Sets an existing comment_like to deleted.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key, comment_id):
         shared_file = models.Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
@@ -664,6 +679,7 @@ class NSFWHandler(BaseHandler):
     Sets the NSFW flag on an image.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         if not sharedfile:

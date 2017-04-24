@@ -6,7 +6,7 @@ import os
 class InviteMemberTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(InviteMemberTests, self).setUp()
-        self.user = models.User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = models.User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('pass')
         self.user.save()
 
@@ -15,11 +15,11 @@ class InviteMemberTests(test.base.BaseAsyncTestCase):
         self.shake.save()
 
         #create three other users
-        self.usera = models.User(name='usera', email='usera@example.com', email_confirmed=1)
+        self.usera = models.User(name='usera', email='usera@example.com', email_confirmed=1, is_paid=1)
         self.usera.set_password('pass')
         self.usera.save()
 
-        self.userb = models.User(name='userb', email='userb@example.com', email_confirmed=1)
+        self.userb = models.User(name='userb', email='userb@example.com', email_confirmed=1, is_paid=1)
         self.userb.set_password('pass')
         self.userb.save()
 

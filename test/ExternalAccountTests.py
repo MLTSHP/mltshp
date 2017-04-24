@@ -27,7 +27,7 @@ def twittertest(fn):
 class TwitterTests(BaseAsyncTestCase):
     def setUp(self):
         super(TwitterTests, self).setUp()
-        self.user = User(name="admin", email="admin@mltshp.com", email_confirmed=1)
+        self.user = User(name="admin", email="admin@mltshp.com", email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.sid = self.sign_in("admin", "asdfasdf")        

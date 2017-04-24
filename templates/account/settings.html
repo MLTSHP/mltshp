@@ -75,8 +75,16 @@
         </form>
       </div>
       <div class="settings-subscription-sidebar">
+        {% if has_data_to_migrate and not site_is_readonly %}
+        <h3><a href="/account/mlkshk-migrate">YOUR MLKSHK IS READY TO MIGRATE!</a></h3>
+        <br><br>
+        {% end %}
+
         {% if user.is_paid %}
-          <h4>Your last 3 payments or credits:</h4>
+          <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
+
+          <p>Your last 3 payments or credits:</p>
+
           <ol class="transaction-list">
           {% for item in payments %}
             <li><span class="amount">{{item.transaction_amount}}</span>
@@ -84,11 +92,12 @@
                 on <span class="date">{{item.created_at.strftime("%B %d, %Y")}}</span></li>
           {% end %}
           </ol>
+
           <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
         {% else %}
           <p>You are currently using a free account. If you'd like 
           to support MLTSHP and get some nifty new benefits you can
-          <a href="/account/subscribe">upgrade to a paid account</a>.</p>
+          <a href="/account/membership">become a member</a>.</p>
 
           {% if promotions and not site_is_readonly %}
           <!-- THINKUP Web Bundle Promotion -->

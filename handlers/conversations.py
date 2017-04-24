@@ -1,10 +1,11 @@
 import tornado.web
 
-from base import BaseHandler
+from base import BaseHandler, require_membership
 from models import Conversation, Notification, Comment, Sharedfile
 
 class IndexHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self, show_only=None, page=None):
         current_user_object = self.get_current_user_object()
         if not page:
@@ -35,8 +36,10 @@ class IndexHandler(BaseHandler):
         return self.render("conversations/index.html", conversations=conversations_marshalled, \
             page=page, count=conversations_count, url_format=url_format, selected=show_only)
 
+
 class MuteHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def post(self, conversation_id):
         """
         Mutes a conversation for a user and redirects them to /conversations
@@ -47,8 +50,10 @@ class MuteHandler(BaseHandler):
             conversation.mute()
         return self.redirect('/conversations')
 
+
 class MentionsHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self, page=None):
         current_user_object = self.get_current_user_object()
         if not page:

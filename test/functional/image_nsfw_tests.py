@@ -12,12 +12,12 @@ class ImageNSFWTests(test.base.BaseAsyncTestCase):
         """
         super(ImageNSFWTests, self).setUp()
         # uploader
-        self.admin = models.User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = models.User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
 
         # another user
-        self.bob = models.User(name='bob', email='bob@mltshp.com', email_confirmed=1)
+        self.bob = models.User(name='bob', email='bob@mltshp.com', email_confirmed=1, is_paid=1)
         self.bob.set_password('asdfasdf')
         self.bob.save()
     

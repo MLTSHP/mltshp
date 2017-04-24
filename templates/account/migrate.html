@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Migrate from MLKSHK?{% end %}
+
+{% block main %}
+  <div class="content content-migrate">
+
+    {% if has_migrated %}
+    <h1>Migration Complete!</h1>
+
+    <p>Thanks for joining MLTSHP and for all your posts!</p>
+
+    <form id="migration-form" action="/" method="GET">
+    <input type="submit"
+      class="button" value="Take me home!" border="0">
+    </form>
+    {% else %}
+    <h1>Migrate from MLKSHK?</h1>
+
+    <p>Okay, you’ve successfully reclaimed your username!
+        Now, would you like to migrate all your old content from MLKSHK
+        or start over with a clean account (but the same username)?
+        If you choose to migrate, all your posts, shakes, and comments
+        will be brought over (with the same IDs, exactly as on MLKSHK).</p>
+
+    <div style="float:left">
+        <form id="migration-form" action="/account/mlkshk-migrate" method="POST">
+        {{ xsrf_form_html() }}
+        <input type="submit"
+          class="button" value="Migrate Me!" border="0">
+      </form>
+    </div>
+    <div style="float:left; margin-left: 20px">
+      <form id="migration-form" action="/account/settings" method="GET">
+      <input type="submit"
+        class="button" value="I'll Decide Later!" border="0">
+      </form>
+    </div>
+
+    {% end %}
+
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}

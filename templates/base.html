@@ -45,25 +45,22 @@
             <a href="/"><img src="{{ static_url("images/logo-compact.png") }}" alt="MLTSHP"></a>
           </div>
 
-          {% if current_user %}
+          {% if current_user and current_user_object.is_member() %}
             {{modules.ShakeDropdown(current_user_object)}}
             <div class="your-conversations-wrapper">
               <a href="/conversations">Your Conversations</a>
             </div>
-          {% else %}
-            <div class="navigation-incoming">
-              <a href="/popular">Popular</a>
-            </div>
           {% end %}
 
           {% if not site_is_readonly %}
-            {% if current_user %}
+            {% if current_user and current_user_object.can_post() %}
             <div class="upload">
               <div class="action-button">
                 <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
               </div>
             </div>
             {% else %}
+            {% if not current_user %}
             <div class="sign-in">
               {% set handler_class = handler.__class__.__name__  %}
               {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
@@ -73,6 +70,7 @@
                 <a class="blue" href="/create-account"><span>Sign Up!</span></a>
               </div>
             </div>
+            {% end %}
             {% end %}
           {% end %}
 

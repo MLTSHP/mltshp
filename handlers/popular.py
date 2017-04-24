@@ -1,13 +1,16 @@
-from base import BaseHandler
-import tornado.web
-from tornado.options import options
-
 from datetime import datetime
 from datetime import timedelta
 
+import tornado.web
+from tornado.options import options
+from base import BaseHandler, require_membership
+
 from models import sharedfile, notification, user
 
+
 class IndexHandler(BaseHandler):
+    @tornado.web.authenticated
+    @require_membership
     def get(self):
         current_user_obj = self.get_current_user_object()
         now = datetime.utcnow()
@@ -26,7 +29,7 @@ class IndexHandler(BaseHandler):
         sharedfiles = sharedfile.Sharedfile.object_query("""SELECT *, (like_count)/(TIMESTAMPDIFF(minute, created_at, utc_timestamp())+3)^1.5 AS adjusted 
                                                             FROM sharedfile 
                                                             WHERE deleted=0 AND original_id = 0 AND like_count > 5 AND id > %s 
-                                                            ORDER BY adjusted DESC LIMIT 50""", last_sf_id)
+                                                            ORDER BY adjusted DESC LIMIT 30""", last_sf_id)
 
         best_of_user = user.User.get("name=%s", options.best_of_user_name)
         best_of_shake = best_of_user.shake()

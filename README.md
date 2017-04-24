@@ -94,9 +94,10 @@ Which will invoke a Docker process to run the unit test suite.
 ## Connecting to the MLTSHP shell
 
 If you ever need to access the Docker image running the application,
-you can use this command to create a shell:
+you can use this command to create a shell (specifically, a shell
+to the Python web application container):
 
-    $ docker-compose run mltshp bash
+    $ make shell
 
 This should place you in the /srv/mltshp.com/mltshp directory as the
 root user. You can use `apt-get` commands to install utilities you

@@ -49,8 +49,8 @@
       
       {% if sourcefile.type == 'image' %}
       <div class="meta-data">
-        <h4>Image URL</h4>
-        <p>http://s.mltshp.com/r/{{sharedfile.share_key}}</p>
+        <h4>Post URL</h4>
+        <p>https://mltshp.com/p/{{sharedfile.share_key}}</p>
       </div>
       {% end %}
       <div class="clear"><!-- --></div>        
@@ -154,7 +154,7 @@
           </div>
           <div class="body">
             {% set commenting_user = comment.user() %}
-            <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_paid %}<a href="/account/subscribe" title="upgrade your account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center" alt="+"></a>{% end %}
+            <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_plus() %}<a href="/account/membership" title="upgrade your account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center" alt="+"></a>{% end %}
               <span class="created-at">{{comment.pretty_created_at()}}</span>
               {% if not site_is_readonly %}
                 {% if can_comment %}

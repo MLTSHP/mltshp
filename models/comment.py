@@ -156,8 +156,7 @@ class Comment(Model):
     def add(self, user=None, sharedfile=None, body=None):
         """
         Creates a comment and returns it, or returns None if some conditions
-        are not met.  Sets a user to be restricted if they exhibit spammy
-        behavior.
+        are not met.
         """
         if not user or not sharedfile or not body:
             return None
@@ -169,15 +168,17 @@ class Comment(Model):
         if len(body) == 0:
             return None
 
-        now = datetime.utcnow()
-        if user.created_at > (now - timedelta(hours=24)):
-            if user.sharedfiles_count() == 0 and user.likes_count() == 0:
-                if Comment.where_count("user_id = %s", user.id) >= 1:
-                    user.restricted = 1
-                    user.save()
-                    all_comments = Comment.where('user_id=%s', user.id)
-                    for this_comment in all_comments:
-                        this_comment.delete()
+        # Dropping this rule for now, since we will have 100%
+        # paying members for commenters...
+        # now = datetime.utcnow()
+        # if user.created_at > (now - timedelta(hours=24)):
+        #     if user.sharedfiles_count() == 0 and user.likes_count() == 0:
+        #         if Comment.where_count("user_id = %s", user.id) >= 1:
+        #             user.restricted = 1
+        #             user.save()
+        #             all_comments = Comment.where('user_id=%s', user.id)
+        #             for this_comment in all_comments:
+        #                 this_comment.delete()
 
         comment = Comment(user_id=user.id, sharedfile_id=sharedfile.id, body=body)
         comment.save()

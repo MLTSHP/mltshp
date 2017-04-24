@@ -8,11 +8,11 @@ import models
 class CommentFavorTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(CommentFavorTests, self).setUp()
-        self.admin = models.User(name='admin', email='admin@example.com', email_confirmed=1)
+        self.admin = models.User(name='admin', email='admin@example.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
 
-        self.user2 = models.User(name='user2', email='user2@example.com', email_confirmed=1)
+        self.user2 = models.User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         self.user2.set_password('asdfasdf')
         self.user2.save()
 

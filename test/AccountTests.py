@@ -20,7 +20,7 @@ from models import User, Sourcefile, Sharedfile, Shake, Subscription, Notificati
 class AccountIndexTests(BaseAsyncTestCase):
     def setUp(self):
         super(AccountIndexTests, self).setUp()
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
         self.sign_in('admin', 'asdfasdf')
@@ -61,15 +61,15 @@ class AccountIndexTests(BaseAsyncTestCase):
 class SubscriptionTests(BaseAsyncTestCase):    
     def setUp(self):
         super(SubscriptionTests, self).setUp()
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
         
-        self.user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        self.user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user2.set_password('asdfasdf')
         self.user2.save()
         
-        self.user3 = User(name='user3', email='user3@mltshp.com', email_confirmed=1)
+        self.user3 = User(name='user3', email='user3@mltshp.com', email_confirmed=1, is_paid=1)
         self.user3.set_password('asdfasdf')
         self.user3.save()
         
@@ -171,7 +171,7 @@ class SubscriptionTests(BaseAsyncTestCase):
 class EmailVerificationTests(BaseAsyncTestCase):
     def setUp(self):
         super(EmailVerificationTests, self).setUp()
-        self.user = User(name="admin", email="admin@mltshp.com", email_confirmed=1)
+        self.user = User(name="admin", email="admin@mltshp.com", email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.xsrf = self.get_xsrf()
@@ -302,10 +302,10 @@ class EmailVerificationTests(BaseAsyncTestCase):
 class NotificationTests(BaseAsyncTestCase):
     def setUp(self):
         super(NotificationTests, self).setUp()
-        self.sender = User(name="admin", email="admin@mltshp.com", email_confirmed=1)
+        self.sender = User(name="admin", email="admin@mltshp.com", email_confirmed=1, is_paid=1)
         self.sender.set_password('asdfasdf')
         self.sender.save()
-        self.receiver = User(name="user2", email="user2@torrez.org", email_confirmed=1)
+        self.receiver = User(name="user2", email="user2@torrez.org", email_confirmed=1, is_paid=1)
         self.receiver.set_password('asdfasdf')
         self.receiver.save()
 

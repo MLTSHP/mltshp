@@ -17,6 +17,7 @@ from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
 from tasks.counts import calculate_likes
+from tasks.migration import migrate_for_user
 from lib.badpasswords import bad_list
 
 import notification
@@ -59,6 +60,7 @@ class User(ModelQueryCache, Model):
     invitation_count = Property(default=0)
     disable_notifications = Property(default=0)
     stripe_customer_id = Property()
+    stripe_plan_id = Property()
     created_at = Property()
     updated_at = Property()
 
@@ -128,6 +130,12 @@ class User(ModelQueryCache, Model):
 
         self.set_password(password)
         return True
+
+    def is_plus(self):
+        return self.stripe_plan_id == "mltshp-double"
+
+    def is_member(self):
+        return self.is_paid
 
     def set_password(self, password):
         """
@@ -457,7 +465,7 @@ hello@mltshp.com
         """
         if options.readonly:
             return False
-        if not self.is_paid:
+        if not self.is_plus():
             return False
         if len(self.shakes(include_only_group_shakes=True)) <= 100:
             return True
@@ -542,6 +550,26 @@ hello@mltshp.com
         shared_files = sharedfile.Sharedfile.where('user_id=%s and deleted=0', self.id)
         for sf in shared_files:
             sf.delete()
+
+        return True
+
+    def restore(self):
+        """
+        Restores a soft-deleted user (we will use this to migrate "deleted" MLKSHK
+        accounts to MLTSHP).
+
+        """
+        if options.readonly:
+            return False
+
+        migrate_for_user.delay_or_run(self.id)
+
+        # restore User object immediately since the user may be
+        # using it.
+        if self.deleted != 0:
+            self.deleted = 0
+            self.save()
+        return True
 
     def shake(self):
         return shake.Shake.get('user_id=%s and type=%s', self.id, 'user')
@@ -645,6 +673,8 @@ hello@mltshp.com
         """
         if options.readonly:
             return False
+        if not self.is_paid:
+            return False
         if shake.user_id == self.id:
             return False
         return True
@@ -720,12 +750,18 @@ hello@mltshp.com
         else:
             return int(response[0]['total_bytes'] / 1024)
 
+    def can_post(self):
+        return self.can_upload_this_month()
+
     def can_upload_this_month(self):
         """
         Returns if this user can upload this month.
         If is_paid or under the max_mb_per_month setting: True
         """
-        if self.is_paid:
+        if not self.is_paid:
+            return False
+
+        if self.is_plus():
             return True
 
         month_days = calendar.monthrange(datetime.utcnow().year,datetime.utcnow().month)
@@ -981,6 +1017,18 @@ hello@mltshp.com
         """
         hashed_password = User.generate_password_digest(password)
         return User.get("name = %s and hashed_password = %s and deleted = 0", name, hashed_password)
+
+    @staticmethod
+    def find_unmigrated_user(name, password):
+        """
+        Returns a non-migrated User object or None.
+
+        This code is part of the MLKSHK->MLTSHP migration project. It can be removed
+        once the migration is over. We are tracking unmigrated users as deleted records,
+        with a deleted value of 2.
+        """
+        hashed_password = User.generate_password_digest(password)
+        return User.get("name = %s and hashed_password = %s and deleted = 2", name, hashed_password)
 
     @staticmethod
     def generate_password_digest(password):

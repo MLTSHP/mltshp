@@ -43,7 +43,7 @@ $(document).ready(function() {
     </ul>
 
     <div style="float:left">
-      <form id="subscribe-form" action="/account/subscribe" method="POST">
+      <form id="subscribe-form" action="/account/membership" method="POST">
         {{ xsrf_form_html() }}
         <input id="subscribe-token" type="hidden" name="token" value="">
       </form>

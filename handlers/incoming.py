@@ -1,11 +1,13 @@
 from lib.utilities import base36decode
 
 import tornado.web
-from base import BaseHandler
+from base import BaseHandler, require_membership
 from models import User, Sharedfile
+
 
 class IncomingHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self, before_or_after=None, base36_id=None):
         """
         path: /incoming
@@ -20,7 +22,7 @@ class IncomingHandler(BaseHandler):
             before_id = sharedfile_id
         elif sharedfile_id and before_or_after == 'after':
             after_id = sharedfile_id
-        
+
         #is this user's content filter on
         nsfw_mode = self.get_secure_cookie('nsfw')
         if nsfw_mode == '1':

@@ -6,7 +6,7 @@ from models import User, Sharedfile, Sourcefile, Conversation, Comment, App, Acc
 class AccountSettingsTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(AccountSettingsTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.sign_in("admin", "asdfasdf")        
@@ -185,7 +185,7 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         app.save()
         
         # another user.
-        new_user = User(name='newuser', email='newuser@example.com', email_confirmed=1)
+        new_user = User(name='newuser', email='newuser@example.com', email_confirmed=1, is_paid=1)
         new_user.set_password('asdfasdf')
         new_user.save()
         

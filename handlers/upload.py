@@ -1,4 +1,4 @@
-from base import BaseHandler
+from base import BaseHandler, require_membership
 
 import tornado.httpclient
 from tornado.httpclient import HTTPRequest
@@ -20,6 +20,7 @@ class UploadHandler(BaseHandler):
             super(UploadHandler, self).check_xsrf_cookie()
     
     @tornado.web.asynchronous
+    @require_membership
     def post(self):
         """
         {

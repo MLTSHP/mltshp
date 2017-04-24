@@ -4,7 +4,7 @@ from tornado import escape
 import torndb
 from tornado.options import options
 
-from base import BaseHandler
+from base import BaseHandler, require_membership
 from models import Shake, User, Notification, ShakeManager
 from lib.utilities import base36decode
 
@@ -33,6 +33,7 @@ def _invitations(shake, current_user):
 
 class ShakeHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self, shake_name=None, before_or_after=None, base36_id=None):
         shake = Shake.get("name=%s", shake_name)
         older_link, newer_link = None, None
@@ -108,26 +109,31 @@ class CreateShakeHandler(BaseHandler):
     Creates a shake.
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         user_object = self.get_current_user_object()
-        
-        if not user_object.is_paid:
-            return self.redirect('/account/subscribe')
-        
+
+        if not user_object.is_plus():
+            return self.redirect('/account/membership?upgrade=1')
+
         if len(user_object.shakes()) < 100:
             new_shake = Shake(name='', title='', description='')
             return self.render("shakes/create.html", shake=new_shake)
         else:
             return self.render("shakes/no-create.html")
-    
+
     @tornado.web.authenticated
+    @require_membership
     def post(self):
         name = self.get_argument("name", '')
         description = self.get_argument("description", '')
         title = self.get_argument("title", '')
         user_object = self.get_current_user_object()
-        
-        if user_object.is_paid and len(user_object.shakes()) < 101:
+
+        if not user_object.is_plus():
+            return self.redirect('/account/membership?upgrade=1')
+
+        if len(user_object.shakes()) < 101:
             new_shake = Shake(name=name, title=title, description=description, user_id=user_object.id, type='group')
             try:
                 if new_shake.save():
@@ -146,6 +152,7 @@ class QuickDetailsHandler(BaseHandler):
     path: /shake/{shake.name}/quick-details
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self, shake_name):
         shake = Shake.get("name=%s", shake_name)
         if not shake:
@@ -164,6 +171,7 @@ class QuickDetailsHandler(BaseHandler):
         return self.write(escape.json_encode(value))
     
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name):
         current_user = self.get_current_user_object()
         shake_to_update = Shake.get('name=%s and user_id=%s and type=%s', shake_name, current_user.id, 'group')
@@ -188,6 +196,7 @@ class UpdateShakeHandler(BaseHandler):
           OR /shake/internalupdate (called through nginx with a 'shake_name' argument)
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name=None):
         current_user = self.get_current_user_object()
         if current_user.email_confirmed != 1:
@@ -233,6 +242,7 @@ class SubscribeShakeHandler(BaseHandler):
     This subscribes to a specific shake, not a user shake.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_id):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
@@ -261,6 +271,7 @@ class UnsubscribeShakeHandler(BaseHandler):
     This unsubscribes from a shake.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_id):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
@@ -289,6 +300,7 @@ class InviteMemberHandler(BaseHandler):
     This method creates an invitation notification for a user.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name):
         shake = Shake.get('name=%s and type=%s', shake_name, "group")
         if not shake:
@@ -316,6 +328,7 @@ class AcceptInvitationHandler(BaseHandler):
     an email to the invitor that the invitation was accepted.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name):
         is_json = self.get_argument('json', None)
         current_user_object = self.get_current_user_object()
@@ -363,6 +376,7 @@ class RequestInvitationHandler(BaseHandler):
     Creates a request object if one does not already exist.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name=None):
         shake = Shake.get('name=%s', shake_name)
         current_user_object = self.get_current_user_object()
@@ -388,6 +402,7 @@ class ApproveInvitationHandler(BaseHandler):
     Approve an invitation request
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name=None):
         shake = Shake.get('name=%s', shake_name)
         current_user_object = self.get_current_user_object()
@@ -430,6 +445,7 @@ class DeclineInvitationHandler(BaseHandler):
     Decline an invitation request
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name=None):
         shake = Shake.get('name=%s', shake_name)
         current_user_object = self.get_current_user_object()
@@ -485,6 +501,7 @@ class FollowerHandler(BaseHandler):
     Returns followers for this shake
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self, shake_name=None, page=None):
         shake_object = Shake.get("name=%s", shake_name)
         if not page:
@@ -511,6 +528,8 @@ class MembersHandler(BaseHandler):
     
     Render list of members and provide control for removing members.
     """
+    @tornado.web.authenticated
+    @require_membership
     def get(self, shake_name):
         shake = Shake.get("name=%s", shake_name)
         if not shake:
@@ -544,6 +563,7 @@ class QuitHandler(BaseHandler):
     for this user and marks it as deleted.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name=None):
         shake = Shake.get("name=%s", shake_name)
         if not shake:
@@ -561,6 +581,7 @@ class RemoveMemberHandler(BaseHandler):
     for the shake that is owned by this user.
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, shake_name=None):
         shake = Shake.get('name=%s and user_id = %s', shake_name, self.current_user['id'])
 

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Welcome to MLTSHP!{% end %}
+
+{% block main %}
+  <div class="content content-migrate">
+
+    <h1>Welcome to MLTSHP!</h1>
+
+    <p>Hi, {{ name }}! We are thrilled to have you join us here.</p>
+
+    <p>Here's what to do next:</p>
+
+    <ol>
+        <li>Choose your membership</li>
+        <li>Optionally migrate your MLKSHK content</li>
+    </ol>
+
+    <form action="/account/membership" method="GET">
+       <input type="submit"
+         class="button" value="Select Membership" border="0">
+    </form>
+
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}

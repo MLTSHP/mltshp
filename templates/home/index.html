@@ -60,11 +60,11 @@
       {% end %}
     {% end %}
     
-    {% if not current_user_obj.is_paid %}
+    {% if not current_user_obj.is_member() %}
       {% if not site_is_readonly %}
     <div class="upgrade-account-block">
       <div class="upgrade-account-block-content">
-        <h3><a href="/account/subscribe">Upgrade your account &raquo;</a></h3>
+        <h3><a href="/account/membership">Become a Member! &raquo;</a></h3>
         <p>Get <strong>100</strong> group shakes for just $2 per month and support MLTSHP!</p>
       </div>
     </div>

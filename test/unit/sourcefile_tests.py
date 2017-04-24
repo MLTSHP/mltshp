@@ -12,7 +12,7 @@ class SourcefileModelTests(BaseTestCase):
         Create a user sourcefile and sharedfile to work with.
         """ 
         super(SourcefileModelTests, self).setUp() # register connection.
-        self.user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0)
+        self.user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         self.user.save()
         self.sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         self.sourcefile.save()

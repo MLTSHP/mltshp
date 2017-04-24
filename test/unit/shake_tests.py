@@ -7,7 +7,7 @@ from base import BaseTestCase
 class ShakeModelTests(BaseTestCase):
     def setUp(self):
         super(ShakeModelTests, self).setUp()
-        self.user = User(name='admin', email='admin@example.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@example.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         
@@ -59,10 +59,10 @@ class ShakeModelTests(BaseTestCase):
         """
         Tests that a user can and cannot update a certain shake
         """
-        user1 = User(name='user1', email='user1@example.com', email_confirmed=1)
+        user1 = User(name='user1', email='user1@example.com', email_confirmed=1, is_paid=1)
         user1.set_password('asdfasdf')
         user1.save()
-        user2 = User(name='user2', email='user2@example.com', email_confirmed=1)
+        user2 = User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         user2.set_password('asdfasdf')
         user2.save()
         
@@ -105,10 +105,10 @@ class ShakeModelTests(BaseTestCase):
         """
         Tests whether subscribers returned are the subscribers to a particular shake.
         """
-        user1 = User(name='user1', email='user1@example.com', email_confirmed=1)
+        user1 = User(name='user1', email='user1@example.com', email_confirmed=1, is_paid=1)
         user1.set_password('asdfasdf')
         user1.save()
-        user2 = User(name='user2', email='user2@example.com', email_confirmed=1)
+        user2 = User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         user2.set_password('asdfasdf')
         user2.save()
         
@@ -153,7 +153,7 @@ class ShakeModelTests(BaseTestCase):
         """
         Verifies adding a new manager works
         """
-        user1 = User(name='user1', email='user1@example.com', email_confirmed=1)
+        user1 = User(name='user1', email='user1@example.com', email_confirmed=1, is_paid=1)
         user1.set_password('asdfasdf')
         user1.save()
         
@@ -169,7 +169,7 @@ class ShakeModelTests(BaseTestCase):
         """
         Tests whether a user has the ability to edit a shake
         """
-        user1 = User(name='user1', email='user1@example.com', email_confirmed=1)
+        user1 = User(name='user1', email='user1@example.com', email_confirmed=1, is_paid=1)
         user1.set_password('asdfasdf')
         user1.save()
 

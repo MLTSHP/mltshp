@@ -15,6 +15,8 @@ class HomeHandler(BaseHandler):
         current_user_obj = self.get_current_user_object()
         if not current_user_obj:
             return self.render("home/not-logged-in.html", share_key=None)
+        if not current_user_obj.is_paid:
+            return self.redirect("/account/membership")
 
         older_link, newer_link = None, None
         sharedfile_id = None

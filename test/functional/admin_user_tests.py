@@ -6,7 +6,7 @@ from models import User, Sharedfile, Sourcefile, Conversation, Comment
 class AdminUserFlagNSFWTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(AdminUserFlagNSFWTests, self).setUp()
-        self.admin = User(name='admin', email='admin@example.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@example.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()        
         self.sign_in('admin', 'asdfasdf')
@@ -15,12 +15,12 @@ class AdminUserFlagNSFWTests(test.base.BaseAsyncTestCase):
         """
         A non-admin user should not be able to post.
         """
-        self.non_admin = User(name='nonadmin', email='nonadmin@example.com', email_confirmed=1)
+        self.non_admin = User(name='nonadmin', email='nonadmin@example.com', email_confirmed=1, is_paid=1)
         self.non_admin.set_password('asdfasdf')
         self.non_admin.save()
         self.sign_in('nonadmin', 'asdfasdf')
     
-        offensive_user = User(name='offensive', email='offensive@example.com')
+        offensive_user = User(name='offensive', email='offensive@example.com', is_paid=1)
         offensive_user.save()
         offensive_user = User.get("id = %s",  offensive_user.id)
         self.assertEqual(offensive_user.nsfw, False)
@@ -35,7 +35,7 @@ class AdminUserFlagNSFWTests(test.base.BaseAsyncTestCase):
         """
         Posting to /admin/user/{user_name}/flag-nsfw with POST parameter "nsfw" set to 1, sets the nsfw flag on a user.
         """
-        offensive_user = User(name='offensive', email='offensive@example.com')
+        offensive_user = User(name='offensive', email='offensive@example.com', is_paid=1)
         offensive_user.save()
         offensive_user = User.get("id = %s",  offensive_user.id)
         self.assertEqual(offensive_user.nsfw, False)
@@ -52,13 +52,13 @@ class AdminUserFlagNSFWTests(test.base.BaseAsyncTestCase):
 class AdminDeleteUserTest(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(AdminDeleteUserTest, self).setUp()
-        self.admin = User(name='admin', email='admin@example.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@example.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()        
         self.sign_in('admin', 'asdfasdf')
 
     def test_delete_user(self):
-        user_to_del = User(name='user_delete', email='delete@example.com', email_confirmed=1)
+        user_to_del = User(name='user_delete', email='delete@example.com', email_confirmed=1, is_paid=1)
         user_to_del.set_password('asdfasdf')
         user_to_del.save()  
         

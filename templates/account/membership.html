@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block included_scripts %}
+<script type="text/javascript" src="https://checkout.stripe.com/checkout.js" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+$(document).ready(function() {
+  var subscribeHandler = StripeCheckout.configure({
+    key: '{{ stripe_public_key }}',
+    image: '//new.mltshp.com/static/images/apple-touch-icon.png',
+    email: '{{ current_user_object.email }}',
+    panelLabel: 'Subscribe!',
+    token: function(token) {
+      // Use the token to create the charge with a server-side script.
+      // You can access the token ID with `token.id`
+      $('#subscribe-token').val(token.id);
+      $('#membership-form').submit();
+    }
+  });
+
+  $('#subscribe-button-single-scoop').bind('click', function(e) {
+    e.preventDefault();
+    $('#subscribe-plan-id').val('mltshp-single');
+    {% if stripe_customer_id == None %}
+    // Open Checkout with further options
+    subscribeHandler.open({
+      name: 'Single Scoop Membership',
+      description: '1 Year ($3.00)',
+      amount: 300
+    });
+    {% else %}
+    $('#membership-form').submit();
+    {% end %}
+  });
+
+  $('#subscribe-button-double-scoop').bind('click', function(e) {
+    e.preventDefault();
+
+    $('#subscribe-plan-id').val('mltshp-double');
+    var quantity = Math.floor(parseInt($('#subscribe-plan-quantity').val(), 10));
+    if (quantity < 24) {
+      alert("Minimum amount for a Double Scoop membership is $24/year.");
+      return;
+    }
+    if (quantity >= 100) {
+      if (!confirm('Are you sure? That\'s a lot of money!')) {
+        return;
+      }
+    }
+    $('#subscribe-plan-quantity').val(quantity.toString());
+
+    {% if stripe_customer_id == None %}
+    // Open Checkout with further options
+    subscribeHandler.open({
+      name: 'Double Scoop Membership',
+      description: '1 Year ($' + quantity.toString() + '.00)',
+      amount: quantity * 100
+    });
+    {% else %}
+    $('#membership-form').submit();
+    {% end %}
+  });
+
+  // Close Checkout on page navigation
+  $(window).bind('popstate', function() {
+    subscribeHandler.close();
+  });
+});
+</script>
+{% end %}
+{% block title %}Choose Your Membership Level{% end %}
+
+{% block main %}
+  <div class="content content-membership">
+    <h1>MLTSHP Membership</h1>
+
+    <p>MLTSHP is community-supported. We offer two membership levels that unlock
+      abilities on the site. If you have questions, please see our
+      <a href="/faq">FAQ page</a>.</p>
+
+    <div class="membership-plan-option{% if current_plan == "mltshp-single" %} current-plan{% end %}">
+    <h2>SINGLE SCOOP</h2>
+
+    <p><em>Roughly equivalent to MLKSHK's free account.</em></p>
+
+    <ul>
+      <li>Only $3/year</li>
+      <li>Bask in the warm glow of supporting MLTSHP</li>
+      <li>Save images to your personal shake</li>
+      <li>Save, like, and comment on your friend’s images</li>
+      <li>Follow interesting people & group shakes</li>
+    </ul>
+    </div>
+
+    <div class="membership-plan-option{% if current_plan == "mltshp-double" %} current-plan{% end %}">
+    <h2>DOUBLE SCOOP</h2>
+
+    <p><em>Roughly equivalent to MLKSHK's Pro account.</em></p>
+
+    <ul>
+      <li>$24/year or enter a custom amount below you'd like to give more support</li>
+      <li>All the benefits of a Single Scoop membership</li>
+      <li>Create up to 100 group shakes!</li>
+      <li>Invite your friends to post to your group shakes</li>
+      <li>Appear more attractive to other MLTSHP users <img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></li>
+    </ul>
+    </div>
+
+    <div class="clear"><!-- --></div>
+
+    <form id="membership-form" action="/account/membership" method="POST">
+      {{ xsrf_form_html() }}
+      <input id="subscribe-token" type="hidden" name="token" value="">
+      <input id="subscribe-plan-id" type="hidden" name="plan_id" value="">
+
+      <div style="float:left">
+        <button id="subscribe-button-single-scoop"
+          class="subscription-button">SINGLE SCOOP</button>
+      </div>
+
+      <div style="float:left; margin-left: 20px; font-size: 23px; padding: 20px 0;">
+        <em>or</em>
+      </div>
+
+      <div style="float:left; margin-left: 20px;">
+        <button id="subscribe-button-double-scoop"
+          class="subscription-button">DOUBLE SCOOP</button>
+
+        <span class="subscribe-plan-quantity-wrapper"><i>$</i>
+        <input title="Enter a custom subscription amount, if you want" id="subscribe-plan-quantity" class="input-plan-quantity"
+          type="number" min="24" max="500" step="1" name="quantity" value="24" pattern="[0-9]*"></span>
+      </div>
+    </form>
+
+    <div class="clear"><!-- --></div>
+    <p class="fine-print">
+      We use Stripe to process subscriptions. After payment, you'll be brought
+      back to your freshly made MLTSHP Paid Account.
+    </p>
+  </div>
+{% end %}

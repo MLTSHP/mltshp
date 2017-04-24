@@ -10,7 +10,7 @@ class CommentModelTests(BaseTestCase):
         Create a user sourcefile and sharedfile to work with.
         """
         super(CommentModelTests, self).setUp() # register connection.
-        self.user = User(name='thename',email='theemail@example.com',verify_email_token='created',email_confirmed=1)
+        self.user = User(name='thename',email='theemail@example.com',verify_email_token='created',email_confirmed=1, is_paid=1)
         self.user.save()
         self.sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         self.sourcefile.save()
@@ -18,7 +18,7 @@ class CommentModelTests(BaseTestCase):
             content_type="image/png", share_key="ok")
         self.sharedfile.save()
 
-        self.visitor = User(name='visitor',email='visitor@example.com',verify_email_token='created',email_confirmed=1)
+        self.visitor = User(name='visitor',email='visitor@example.com',verify_email_token='created',email_confirmed=1, is_paid=1)
         self.visitor.save()
 
     def test_as_json(self):
@@ -132,13 +132,13 @@ anything to the conversation.""",
         self.assertEqual(new_c.chopped_body(), "I am a long comment that really doesn't say much. Sorry. Good!")
 
     def test_comment_mention_extraction(self):
-        user_a = User(name='user_a',email='user_a@example.com',verify_email_token='created',email_confirmed=1)
+        user_a = User(name='user_a',email='user_a@example.com',verify_email_token='created',email_confirmed=1, is_paid=1)
         user_a.save()
-        user_b = User(name='userb',email='user_b@example.com',verify_email_token='created',email_confirmed=1)
+        user_b = User(name='userb',email='user_b@example.com',verify_email_token='created',email_confirmed=1, is_paid=1)
         user_b.save()
-        user_c = User(name='user-c',email='user-c@example.com',verify_email_token='created',email_confirmed=1)
+        user_c = User(name='user-c',email='user-c@example.com',verify_email_token='created',email_confirmed=1, is_paid=1)
         user_c.save()
-        user_d = User(name='Userd',email='Userd@example.com',verify_email_token='created',email_confirmed=1)
+        user_d = User(name='Userd',email='Userd@example.com',verify_email_token='created',email_confirmed=1, is_paid=1)
         user_d.save()
 
         body = """@thename hey there @user_a,@user_a

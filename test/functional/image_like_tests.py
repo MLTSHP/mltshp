@@ -13,19 +13,19 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         Create users to test different liking situations.
         """
         super(ImageLikeTests, self).setUp()
-        self.admin = User(name='admin', email='admin@example.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@example.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
 
-        self.joe = User(name='joe', email='joe@example.com', email_confirmed=1)
+        self.joe = User(name='joe', email='joe@example.com', email_confirmed=1, is_paid=1)
         self.joe.set_password('asdfasdf')
         self.joe.save()
         
-        self.bill = User(name='bill', email='bill@example.com', email_confirmed=1)
+        self.bill = User(name='bill', email='bill@example.com', email_confirmed=1, is_paid=1)
         self.bill.set_password('asdfasdf')
         self.bill.save()
                 
-        self.frank = User(name='frank', email='frank@example.com', email_confirmed=1)
+        self.frank = User(name='frank', email='frank@example.com', email_confirmed=1, is_paid=1)
         self.frank.set_password('asdfasdf')
         self.frank.save()
         

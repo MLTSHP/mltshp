@@ -1,5 +1,6 @@
 import tornado.web
-from base import BaseHandler
+from base import BaseHandler, require_membership
+
 
 class FriendHandler(BaseHandler):
     """
@@ -11,6 +12,7 @@ class FriendHandler(BaseHandler):
     path: /friends
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self, before_or_after=None, base36_id=None):
         if not before_or_after:
             return self.redirect('/')

@@ -40,14 +40,13 @@ class APIAuthorizationTests(test.base.BaseAsyncTestCase):
         . Create second account that is going to auth
         """
         super(APIAuthorizationTests, self).setUp()
-        self.user_a = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user_a = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
 
-
-        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_b.set_password('asdfasdf')
         self.user_b.save()
 
@@ -216,14 +215,14 @@ class APIAuthorizationTests(test.base.BaseAsyncTestCase):
 class APITokenTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(APITokenTests, self).setUp()
-        self.user_a = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user_a = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
 
 
-        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_b.set_password('asdfasdf')
         self.user_b.save()
 
@@ -336,14 +335,14 @@ class APIResourceOwnerPasswordCredentials(test.base.BaseAsyncTestCase):
     """
     def setUp(self):
         super(APIResourceOwnerPasswordCredentials, self).setUp()
-        self.user_a = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user_a = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
 
 
-        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_b.set_password('asdfasdf')
         self.user_b.save()
 
@@ -409,6 +408,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
                 name='admin',
                 email='admin@mltshp.com',
                 email_confirmed=1,
+                is_paid=1,
                 about="admin",
                 website='http://mltshp.com')
         self.user_a.set_password('asdfasdf')
@@ -422,7 +422,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         response = self.upload_file(file_path=self.test_file1_path, sha1=self.test_file1_sha1,
             content_type=self.test_file1_content_type, user_id=self.user_a.id, sid=self.sid, xsrf=self.xsrf)
 
-        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_b.set_password('asdfasdf')
         self.user_b.save()
 

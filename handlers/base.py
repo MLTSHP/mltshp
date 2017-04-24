@@ -1,4 +1,5 @@
 import time
+from functools import wraps
 
 import tornado.web
 from tornado.options import define, options
@@ -8,6 +9,16 @@ from lib.s3 import S3Connection
 import models
 
 SESSION_COOKIE = "sid"
+
+
+def require_membership(f):
+    @wraps(f)
+    def wrapper(self, *args, **kwargs):
+        user = self.get_current_user_object()
+        if user and not user.is_paid:
+            return self.redirect("/account/membership?join=1")
+        return f(self, *args, **kwargs)
+    return wrapper
 
 
 class _Errors(dict):
@@ -20,6 +31,7 @@ class _Errors(dict):
             return self[key]
         else:
             return None
+
 
 class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
     def initialize(self):

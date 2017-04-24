@@ -11,15 +11,12 @@ import lib.utilities
 class AccountTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(AccountTests, self).setUp()
-        self.user = User(name='admin', email='admin@example.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@example.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.sign_in("admin", "asdfasdf")
 
     def test_user_paid_account_rss_works(self):
-        self.user.is_paid = 1
-        self.user.save()
-
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=self.user.id, \
@@ -36,13 +33,11 @@ class AccountTests(test.base.BaseAsyncTestCase):
         self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'http://mltshp.com/p/1')
 
     def test_user_unpaid_account_rss_404s(self):
+        self.user.update_attribute("is_paid", 0)
+        self.user.save()
+
         response = self.fetch_url('/user/admin/rss')
         self.assertEqual(response.code, 404)
-    
-    #def test_user_has_not_accepted_tou_and_redirected_to_tou(self):
-    #    self.user.
-    #    response = self.fetch_url('/')
-    #    self.assert
     
     def test_like_save_view_count_is_returned(self):
         sharedfile = test.factories.sharedfile(self.user, view_count=25, save_count=50, like_count=100)
@@ -51,18 +46,17 @@ class AccountTests(test.base.BaseAsyncTestCase):
         self.assertEqual(j_response['likes'], 100)
         self.assertEqual(j_response['saves'], 50)
         self.assertEqual(j_response['views'], 25)
-        
 
     def test_email_not_confirmed_puts_notice_at_top(self):
         self.user.email_confirmed = 0
         self.user.save()
-        
+
         response = self.fetch_url('/')
         self.assertTrue(response.body.find('Please visit settings to confirm your email address!') > -1)
-        
+
         response = self.fetch_url('/incoming')
         self.assertTrue(response.body.find('Please visit settings to confirm your email address!') > -1)
-        
+
         response = self.fetch_url('/friends')
         self.assertTrue(response.body.find('Please visit settings to confirm your email address!') > -1)
 
@@ -70,11 +64,12 @@ class AccountTests(test.base.BaseAsyncTestCase):
         """
         /account/quick-notifications should return without error when populated with
         all possible  notification types.
-        
+
         Page should also not be accessible if you're not signed in.
         """
         self.user2 = User(name='example2',email='user2@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1,
+            is_paid=1)
         self.user2.save()
         self.sourcefile = Sourcefile(width=20,height=20,file_key="asdf", \
             thumb_key="asdf_t")

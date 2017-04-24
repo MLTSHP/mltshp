@@ -10,7 +10,7 @@ class SharedfileModelTests(BaseTestCase):
         Create a user sourcefile and sharedfile to work with.
         """
         super(SharedfileModelTests, self).setUp() # register connection.
-        self.user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0)
+        self.user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         self.user.set_password('pass')
         self.user.save()
         self.sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
@@ -41,7 +41,7 @@ class SharedfileModelTests(BaseTestCase):
         """
         Tests that just saving a file does not create a file size record
         """
-        new_user = User(name='newguy',email='newguy@example.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='newguy',email='newguy@example.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.set_password('pass')
         new_user.save()
 
@@ -63,7 +63,7 @@ class SharedfileModelTests(BaseTestCase):
         Sharedfile.can_save should return False when no user specified.
         """
         self.assertFalse(self.sharedfile.can_save(self.user))
-        user = User(name='newuser',email='newemail@gmail.com',verify_email_token='created',email_confirmed=0)
+        user = User(name='newuser',email='newemail@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         user.save()
         self.assertTrue(self.sharedfile.can_save(user))
         self.assertFalse(self.sharedfile.can_save(None))
@@ -74,7 +74,7 @@ class SharedfileModelTests(BaseTestCase):
         A Sharedfile should only be deletable if belongs to the user.
         Sharedfile.can_delete should return False when no user specified.
         """
-        new_user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
         self.assertEqual(self.user.id, self.sharedfile.user_id)
         self.assertTrue(self.sharedfile.can_delete(self.user))
@@ -91,7 +91,7 @@ class SharedfileModelTests(BaseTestCase):
         self.assertFalse(self.sharedfile.can_favor(self.user))
 
         # Create a new shared file that doesn't belong to user.
-        new_user = User(name='new_email',email='new_email_address@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='new_email',email='new_email_address@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
         self.assertTrue(self.sharedfile.can_favor(new_user))
         new_user.add_favorite(self.sharedfile)
@@ -108,7 +108,7 @@ class SharedfileModelTests(BaseTestCase):
         in the first place.
         """
         # Create a new shared file that doesn't belong to user.
-        new_user = User(name='new_email',email='new_email_address@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='new_email',email='new_email_address@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
         self.assertFalse(self.sharedfile.can_unfavor(new_user))
         new_user.add_favorite(self.sharedfile)
@@ -125,7 +125,7 @@ class SharedfileModelTests(BaseTestCase):
         """
         self.assertEqual(self.sharedfile.user_id, self.user.id)
         self.assertTrue(self.sharedfile.can_edit(self.user))
-        new_user = User(name='new_email',email='new_email_address@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='new_email',email='new_email_address@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
         self.assertFalse(self.sharedfile.can_edit(new_user))
 
@@ -145,7 +145,7 @@ class SharedfileModelTests(BaseTestCase):
 
         Returns an instance of the new shared file.
         """
-        user = User(name='newuser',email='newemail@gmail.com',verify_email_token='created',email_confirmed=0)
+        user = User(name='newuser',email='newemail@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         user.save()
         new_file = self.sharedfile.save_to_shake(user)
 
@@ -171,7 +171,7 @@ class SharedfileModelTests(BaseTestCase):
         self.assertEqual(new_file.parent_id, self.sharedfile.id)
 
         #final test, a share of a share needs to still point to original_id of the first share
-        user = User(name='anotheruser',email='another@example.com',verify_email_token='created',email_confirmed=0)
+        user = User(name='anotheruser',email='another@example.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         user.save()
         newer_file = new_file.save_to_shake(user)
 
@@ -189,7 +189,7 @@ class SharedfileModelTests(BaseTestCase):
         """
         Creates new user and sharedfile, pointing to the sharedfile in setUp.
         """
-        user = User(name='anewusername',email='anewuser@gmail.com',verify_email_token='created',email_confirmed=0)
+        user = User(name='anewusername',email='anewuser@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         user.save()
         new_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=user.id, \
             content_type="image/png", share_key="another_share_key", parent_id=self.sharedfile.id)
@@ -410,11 +410,11 @@ class SharedfileModelTests(BaseTestCase):
         new_user3 = saves C, into D -- A: 3, b: 1, c: 1
         """
         # Set up users we'll need.
-        new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
-        new_user2 = User(name='new_user_2',email='new_user2@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user2 = User(name='new_user_2',email='new_user2@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user2.save()
-        new_user3 = User(name='new_user_3',email='new_user3@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user3 = User(name='new_user_3',email='new_user3@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user3.save()
         a = self.sharedfile
         self.assertEqual(0, a.save_count())
@@ -436,7 +436,7 @@ class SharedfileModelTests(BaseTestCase):
 
         TODO: test the before_id & after_id parameters.
         """
-        new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0)
+        new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
         another_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="ok", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
@@ -488,7 +488,7 @@ class SharedfileModelTests(BaseTestCase):
         self.assertEqual(True, self.sharedfile.can_user_delete_from_shake(self.user, user_shake))
 
         # A user that doesn't own the sharedfile
-        new_user = User(name='new_user',email='new_user@mltshp.com',verify_email_token='created', email_confirmed=0)
+        new_user = User(name='new_user',email='new_user@mltshp.com',verify_email_token='created', email_confirmed=0, is_paid=1)
         new_user.save()
         self.assertEqual(False, self.sharedfile.can_user_delete_from_shake(new_user, user_shake))
 
@@ -525,9 +525,9 @@ class SharedfileModelTests(BaseTestCase):
     #    """
     #    self.assertEqual(0, self.sharedfile.favorite_count())
     #    # Create some users to save images to.
-    #    new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0)
+    #    new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
     #    new_user.save()
-    #    new_user2 = User(name='new_user_2',email='new_user2@gmail.com',verify_email_token='created',email_confirmed=0)
+    #    new_user2 = User(name='new_user_2',email='new_user2@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
     #    new_user2.save()
     #    new_user.add_favorite(self.sharedfile)
     #    self.assertEqual(1, self.sharedfile.favorite_count())
@@ -575,7 +575,7 @@ class SharedfileModelTests(BaseTestCase):
         as_json should return the correct 'saved' and 'liked' flags
         if user_context is provided.
         """
-        new_user = User(name='newuser', email='newuser@mltshp.com', verify_email_token='created', email_confirmed=0)
+        new_user = User(name='newuser', email='newuser@mltshp.com', verify_email_token='created', email_confirmed=0, is_paid=1)
         new_user.save()
         sf_dict = self.sharedfile.as_json(user_context=new_user)
         self.assertEqual(False, sf_dict['saved'])

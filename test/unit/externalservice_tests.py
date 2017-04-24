@@ -4,7 +4,7 @@ from base import BaseTestCase
 class ExternalserviceModelTests(BaseTestCase):
     def setUp(self):
         super(ExternalserviceModelTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.save()
         self.external_service = Externalservice(
                                 user_id=self.user.id, 
@@ -39,7 +39,7 @@ class ExternalserviceModelTests(BaseTestCase):
         an external service connected, but is not in admin's ExternalRelationship
         graph, he will not be returned.
         """
-        user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         user2.save()
         user2_service = Externalservice(
                                 user_id=user2.id, 
@@ -49,7 +49,7 @@ class ExternalserviceModelTests(BaseTestCase):
                                 service_key='asdf', 
                                 service_secret='qwer')
         user2_service.save()
-        user3 = User(name='user3', email='user3@mltshp.com', email_confirmed=1)
+        user3 = User(name='user3', email='user3@mltshp.com', email_confirmed=1, is_paid=1)
         user3_service = Externalservice(
                                 user_id=user2.id, 
                                 service_id=2000,

@@ -12,7 +12,7 @@ class UserModelTests(BaseTestCase):
         """
         super(UserModelTests, self).setUp()
         self.user = User(name='example',email='example@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         self.user.save()
         self.sourcefile = Sourcefile(width=20,height=20,file_key="asdf", \
             thumb_key="asdf_t")
@@ -28,25 +28,25 @@ class UserModelTests(BaseTestCase):
         Can't create a user with same user name or email.  Save should return False, no new
         users should be added.
         """
-        user = User(name='unique_user',email='unique_user@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1)
+        user = User(name='unique_user',email='unique_user@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         user.save()
         users_in_db = User.all("where name = '%s'" % ('unique_user'))
         self.assertEqual(1, len(users_in_db))
         
         # same name, different email shouldn't save.
-        user = User(name='unique_user',email='different_email@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1)
+        user = User(name='unique_user',email='different_email@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         self.assertFalse(user.save())
         users_in_db = User.all("where name = '%s'" % ('unique_user'))
         self.assertEqual(1, len(users_in_db))
         
         # same email, different name
-        user = User(name='different_name',email='unique_user@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1)
+        user = User(name='different_name',email='unique_user@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         self.assertFalse(user.save())
         users_in_db = User.all("where email = '%s'" % ('unique_user@example.com'))
         self.assertEqual(1, len(users_in_db))
         
         # both different, should save.
-        user = User(name='different_name',email='different_email@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1)
+        user = User(name='different_name',email='different_email@example.com',verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         self.assertTrue(user.save())
         users_in_db = User.all("where email = %s and name = %s", 'different_email@example.com', 'different_name')
         self.assertEqual(1, len(users_in_db))
@@ -62,7 +62,7 @@ class UserModelTests(BaseTestCase):
                         ('$55233234234', '8b57e7ee9feab3d7083debc1f2c97810329ed3bb')
                     ]
         for password in passwords:
-            u = User(name=self.generate_string_of_len(random.randint(1,30)), email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1)
+            u = User(name=self.generate_string_of_len(random.randint(1,30)), email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1, is_paid=1)
             u.set_and_confirm_password(password[0],password[0])            
             u.save()
             self.assertEqual(u.hashed_password, password[1])
@@ -79,7 +79,7 @@ class UserModelTests(BaseTestCase):
     #                ]
     #    for password in passwords:
     #        this_user = self.generate_string_of_len(random.randint(1,30))
-    #        u = User(name=this_user, email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1)
+    #        u = User(name=this_user, email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1, is_paid=1)
     #        u.set_and_confirm_password(password[0],password[0])            
     #        u.save()
     #        u.authenticate(this_user, password[0])
@@ -92,11 +92,11 @@ class UserModelTests(BaseTestCase):
         name = self.generate_string_of_len(random.randint(1,30))
         password = self.generate_string_of_len(10)
 
-        first_user = User(name=name, email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1)
+        first_user = User(name=name, email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1, is_paid=1)
         first_user.set_and_confirm_password(password, password)
         first_user.save()
         
-        second_user = User(name=name, email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1)
+        second_user = User(name=name, email=self.generate_string_of_len(6) + '@example.com', email_confirmed=1, is_paid=1)
         second_user.set_and_confirm_password(password, password)
         self.assertFalse(second_user.save())
 
@@ -105,11 +105,11 @@ class UserModelTests(BaseTestCase):
         valid_emails = ['admin@mltshp.com', 'joe@test.com', 'someone@nu.com', 'another@uber.nu', 'bladlfksj+wefwe@sdlkfjl.com']
         
         for i_email in invalid_emails:
-            invalid_user = User(name=self.generate_string_of_len(random.randint(1,30)), email=i_email, email_confirmed=1)
+            invalid_user = User(name=self.generate_string_of_len(random.randint(1,30)), email=i_email, email_confirmed=1, is_paid=1)
             self.assertFalse(invalid_user.save())
             
         for v_email in valid_emails:
-            valid_user = User(name=self.generate_string_of_len(random.randint(1,30)), email=v_email, email_confirmed=1)
+            valid_user = User(name=self.generate_string_of_len(random.randint(1,30)), email=v_email, email_confirmed=1, is_paid=1)
             self.assertTrue(valid_user.save())
 
     def test_shared_files_count_ignores_deleted(self):
@@ -146,14 +146,14 @@ class UserModelTests(BaseTestCase):
         posts from user being subscribed to.  In this case, timeline will
         suppress dupes.
         """
-        user1 = User(name='user', email='user@hi.com')
+        user1 = User(name='user', email='user@hi.com', is_paid=1)
         user1.save()
                         
         source_file = Sourcefile(width=10, height=10, file_key='mumbles', thumb_key='bumbles')
         source_file.save()
         users = ['user2', 'user3', 'user4']
         for name in users:
-            user = User(name=name, email='%s@mltshp.com' % (name))
+            user = User(name=name, email='%s@mltshp.com' % (name), is_paid=1)
             user.save()
             sf = Sharedfile(source_id=source_file.id, user_id = user.id, name='%s file.jpg' % (name), \
                 title='%s file' % (name), share_key='%s' % (name), content_type='image/jpg', deleted=0)
@@ -205,7 +205,7 @@ class UserModelTests(BaseTestCase):
         """
         # Create new user with their own sharedfile.
         new_user = User(name='newuser',email='newuser@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         new_user.save()
         new_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file", \
             user_id=new_user.id, content_type="image/png", share_key="ok")
@@ -248,7 +248,7 @@ class UserModelTests(BaseTestCase):
         """
         # Create new user with their own sharedfile.
         new_user = User(name='newuser',email='newuser@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         new_user.save()
         new_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file", \
             user_id=new_user.id, content_type="image/png", share_key="ok")
@@ -269,7 +269,7 @@ class UserModelTests(BaseTestCase):
         """
         # Create new user with their own sharedfile.
         new_user = User(name='newuser',email='newuser@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         new_user.save()
         new_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file", \
             user_id=new_user.id, content_type="image/png", share_key="ok")
@@ -307,7 +307,7 @@ class UserModelTests(BaseTestCase):
         """
         # Create new user with their own sharedfile.
         new_user = User(name='newuser',email='newuser@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         new_user.save()
         new_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file", \
             user_id=new_user.id, content_type="image/png", share_key="ok")
@@ -332,7 +332,7 @@ class UserModelTests(BaseTestCase):
         """
         # Create new user to be doing the saving, and its own sharedfile.
         new_user = User(name='newuser',email='newuser@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         new_user.save()
         
         self.assertEqual(None, new_user.saved_sharedfile(self.sharedfile))
@@ -392,7 +392,7 @@ class UserModelTests(BaseTestCase):
         """
         
         #a new person with a shake
-        shake_owner = User(name='user1', email='user1@example.com', email_confirmed=1)
+        shake_owner = User(name='user1', email='user1@example.com', email_confirmed=1, is_paid=1)
         shake_owner.set_password('asdfasdf')
         shake_owner.save()
         group_shake = shake_owner.create_group_shake(title='asdf', name='asdf', description='adsf')
@@ -414,6 +414,9 @@ class UserModelTests(BaseTestCase):
         """
         Tests whether a user can upload a file if they are over the limit for this month.
         """
+        self.user.stripe_plan_id = "mltshp-single"
+        self.user.save()
+
         file_name = 'red.gif'
         file_content_type = 'image/gif'
         file_path = os.path.abspath("test/files/%s" % (file_name))
@@ -432,9 +435,10 @@ class UserModelTests(BaseTestCase):
         
     def test_can_upload_if_over_file_upload_limit_paid(self):
         """
-        Tests whether a user can upload a file if they are over the limit and have paid.
+        Tests whether a user can upload a file if they are over the limit and have paid
+        for the double scoop plan.
         """
-        self.user.is_paid = 1
+        self.user.stripe_plan_id = "mltshp-double"
         self.user.save()
         
         file_name = 'red.gif'
@@ -452,7 +456,6 @@ class UserModelTests(BaseTestCase):
         sf.save()
         
         self.assertTrue(self.user.can_upload_this_month())
-
     
     def test_total_file_count_for_this_month(self):
         """
@@ -483,10 +486,10 @@ class UserModelTests(BaseTestCase):
         Only user's with the name admin should return True when User.is_admin is called.
         """
         admin = User(name='admin',email='admin@mltshp.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         admin.save()
         someone_else = User(name='someoneelse',email='someoneelse@mltshp.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         someone_else.save()
         self.assertTrue(admin.is_admin())
         self.assertFalse(someone_else.is_admin())
@@ -499,10 +502,10 @@ class UserModelTests(BaseTestCase):
         usernames.
         """
         admin = User(name='admin',email='admin@mltshp.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         admin.save()
         another_user = User(name='another',email='another@mltshp.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+            verify_email_token = 'created', password='examplepass', email_confirmed=1, is_paid=1)
         another_user.save()
         
         self.assertEqual([], User.find_by_name_fragment('nothing'));
@@ -536,7 +539,7 @@ class UserModelTests(BaseTestCase):
         self.assertEqual(user.website, '')
         self.assertEqual(user.nsfw, 1)
         self.assertEqual(user.recommended, 0)
-        self.assertEqual(user.is_paid, 0)
+        self.assertEqual(user.is_paid, 1)
         self.assertEqual(user.deleted, 1)
         self.assertEqual(user.verify_email_token, 'deleted')
         self.assertEqual(user.reset_password_token, 'deleted')
