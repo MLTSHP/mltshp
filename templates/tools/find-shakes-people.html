@@ -3,15 +3,11 @@
   Find Other People to Follow.
 {% end %}
 {% block main %}
-  <div class="content content-find-shakes">
-    <h1>Find Shakes to Follow</h1>
-    
-    <ul class="find-shakes-navigation">
-      <li><a href="/tools/find-shakes">Group Shakes</a></li>
-      <li class="selected"><a href="/tools/find-shakes/people">People</a></li>
-      <li><a href="/tools/find-shakes/twitter">Twitter</a></li>
-    </ul>
-    
+  <div class="content content-with-sidebar content-with-sidebar-reversed content-find-shakes">
+    <div class="header">
+      <h1>Find Shakes to Follow</h1>
+    </div>
+
     <div class="sidebar">
       <h3>Some Good Folks</h3>
       <div class="sidebar-content">
@@ -27,8 +23,14 @@
         {% end %}
       </div>
     </div>
-    
+
     <div class="body">
+      <ul class="find-shakes-navigation">
+        <li><a href="/tools/find-shakes">Group Shakes</a></li>
+        <li class="selected"><a href="/tools/find-shakes/people">People</a></li>
+        <li><a href="/tools/find-shakes/twitter">Twitter</a></li>
+      </ul>
+
       {% for friend in users %}
         <div class="friend">
           {{modules.ShakeFollow(follow_user=friend, current_user=current_user_obj, avatar_size=50, extended=True)}}

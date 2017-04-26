@@ -19,7 +19,7 @@
       <img src="{{ static_url("images/shake-default-image-not-owner.gif") }}" width="284" height="284">
     {% end %}
   {% end %}
-  
+
   {% if shake.can_edit(current_user_obj) %}
     <div class="shake-details">
       <h3 class="title shake-edit-title">{% if shake.title %}{{escape(shake.title)}}{% end %}</h3>
@@ -73,7 +73,7 @@
   </div>
 
   {{modules.NotificationInvitations(invitation)}}
-  
+
   {% if current_user_obj and current_user_obj.id == shake_editor.id %}
     <div id="shake-invite-member" class="shake-invite-member-block">
       <div class="inner">
@@ -94,17 +94,17 @@
     </div>
   {% end %}
   {% end %}
-  
+
   <div class="shake-sidebar-editor-block">
     <div class="editor-image">
-      <img src="{{shake_editor.profile_image_url()}}" width="48" height="48"> 
+      <img src="{{shake_editor.profile_image_url()}}" width="48" height="48">
     </div>
     <div class="editor-details">
       <a href="/user/{{shake_editor.name}}">{% if current_user_obj and current_user_obj.id == shake_editor.id %}You</a> are{% else %}{{shake_editor.name}}</a> is{% end %} this shake's editor.
     </div>
     <div class="clear"><!-- --></div>
   </div>
-  
+
   {% if managers %}
   <div class="following-wrapper">
     <h3>Members {% if shake.is_owner(current_user_obj) %}<a href="/shake/{{escape(shake.name)}}/members">Edit</a>{% end %}</h3>
@@ -143,5 +143,5 @@
 
 
 
-  
+
 </div>
