@@ -24,8 +24,6 @@ services:
           - mltshp.dev
   fakes3:
     image: fingershock/fakes3
-    volumes:
-      - ./mounts/fakes3:/fakes3_data
     networks:
       app_net:
         aliases:
