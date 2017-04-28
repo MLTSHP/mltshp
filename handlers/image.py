@@ -106,7 +106,7 @@ class ShowHandler(BaseHandler):
         if owner_twitter_account:
             owner_twitter_account = owner_twitter_account.screen_name
         else:
-            owner_twitter_account = 'mltshp'
+            owner_twitter_account = 'mltshphq'
 
         image_url = "/r/%s" % (sharedfile.share_key)
         if options.debug:
