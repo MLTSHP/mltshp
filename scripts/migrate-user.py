@@ -1,21 +1,18 @@
-#!/usr/bin/env python
-
-import argparse
-
+import sys
 from torndb import Connection
 from tornado.options import options
 
 from models import User
+from tasks.migration import migrate_for_user
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description='migrate a MLKSHK use to MLTSHP')
-    parser.add_argument(
-        'user', metavar='str', type=str,
-        help='a MLKSHK username')
-    args = parser.parse_args()
+    names = sys.argv[2:]
 
-    user = User.get("name = %s and deleted <> 0", args.user)
-    if user is not None:
-        user.restore()
+    for name in names:
+        user = User.get("name=%s and deleted=2", name)
+        if user is not None:
+            print "Migrating %s..." % name
+            migrate_for_user.delay_or_run(user.id)
+        else:
+            print "Could not find user named: %s" % name

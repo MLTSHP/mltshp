@@ -28,6 +28,9 @@ def migrate_for_user(user_id=0, **kwargs):
     db.execute("""UPDATE sharedfile SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
     db.execute("""UPDATE subscription SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
     db.execute("""UPDATE tagged_file SET deleted=0 WHERE deleted=2 AND sharedfile_id IN (SELECT DISTINCT id FROM sharedfile WHERE user_id=%s)""", user_id)
+    # this should already be done by the web app, but we may running this
+    # via a script
+    db.execute("""UPDATE user SET deleted=0 WHERE deleted=2""", user_id)
     db.execute("""UPDATE migration_state SET is_migrated=1 WHERE user_id=%s""", user_id)
 
     db.close()
