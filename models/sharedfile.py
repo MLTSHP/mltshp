@@ -637,6 +637,7 @@ class Sharedfile(ModelQueryCache, Model):
                     on favorite.sharedfile_id = sharedfile.id
                     WHERE favorite.user_id = %s
                     AND favorite.deleted = 0
+                    AND sharedfile.deleted = 0
                     %s
                     GROUP BY sharedfile.source_id
                     ORDER BY favorite.id %s limit 0, %s""" % (int(user_id), constraint_sql, order, per_page)
