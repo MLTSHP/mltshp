@@ -24,7 +24,7 @@ def migrate_for_user(user_id=0, **kwargs):
     db.execute("""UPDATE post SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
     db.execute("""UPDATE shake SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
     db.execute("""UPDATE shake_manager SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
-    db.execute("""UPDATE shakesharedfile SET deleted=0 WHERE deleted=2 AND skake_id IN (SELECT DISTINCT id FROM shake WHERE deleted=0 AND user_id=%s)""", user_id)
+    db.execute("""UPDATE shakesharedfile SET deleted=0 WHERE deleted=2 AND shake_id IN (SELECT DISTINCT id FROM shake WHERE deleted=0 AND user_id=%s)""", user_id)
     db.execute("""UPDATE sharedfile SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
     db.execute("""UPDATE subscription SET deleted=0 WHERE deleted=2 AND user_id=%s""", user_id)
     db.execute("""UPDATE tagged_file SET deleted=0 WHERE deleted=2 AND sharedfile_id IN (SELECT DISTINCT id FROM sharedfile WHERE user_id=%s)""", user_id)
