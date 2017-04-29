@@ -230,10 +230,13 @@ class ShowRawHandler(BaseHandler):
         if self.request.host == ("s.%s" % options.app_host) and options.use_cdn:
             # s = static; serve through CDN for "s.mltshp.com" requests
 
-            # Amazon's ELB will set this header to inform us what scheme is in use
-            # Fallback to checking Tornado's protocol if it is absent
-            using_https = self.request.headers.get("X-Forwarded-Proto",
-                self.request.protocol) == "https"
+            # If we're using cdn.mltshp.com, we know that we can use
+            # https; if something else is configured, check the
+            # X-Forwarded-Proto header and fallback to the protocol
+            # of the request
+            using_https = options.cdn_ssl_host == "cdn.mltshp.com" or \
+                self.request.headers.get("X-Forwarded-Proto",
+                    self.request.protocol) == "https"
 
             # construct a URL to the CDN-hosted image
             # http://cdn.mltshp.com/r/share_key

@@ -25,6 +25,7 @@ class Shake(ModelQueryCache, Model):
     recommended = Property(name='recommended', default=0)
     featured    = Property(name='featured', default=0)
     shake_category_id = Property(name='shake_category_id', default=0)
+    deleted     = Property(default=0)
     created_at  = Property(name='created_at')
     updated_at  = Property(name='updated_at')
 
@@ -49,6 +50,16 @@ class Shake(ModelQueryCache, Model):
         if self.id is None or self.created_at is None:
             self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    def delete(self):
+        """
+        Sets the deleted flag to 1 and saves to DB.
+        """
+        if options.readonly:
+            return False
+
+        self.deleted = 1;
+        self.save()
 
     def as_json(self, extended=False):
         base_dict = {
@@ -162,7 +173,7 @@ class Shake(ModelQueryCache, Model):
             self.add_error('name', 'Username can only contain letters, numbers, and dashes.')
             return False
 
-        existing_shake = shake.Shake.get("name = %s", self.name)
+        existing_shake = shake.Shake.get("name = %s and deleted=0", self.name)
         if existing_shake and existing_shake.id != self.id:
             self.add_error('name', 'That URL is already taken.')
             return False
@@ -197,7 +208,8 @@ class Shake(ModelQueryCache, Model):
         """
         limit_start = (page-1) * per_page
         sql = """SELECT sharedfile.* FROM sharedfile, shakesharedfile
-                 WHERE shakesharedfile.shake_id = %s and shakesharedfile.sharedfile_id = sharedfile.id and shakesharedfile.deleted = 0
+                 WHERE shakesharedfile.shake_id = %s and shakesharedfile.sharedfile_id = sharedfile.id and
+                       shakesharedfile.deleted = 0 and sharedfile.deleted = 0
                  ORDER BY shakesharedfile.sharedfile_id desc limit %s, %s"""
         return sharedfile.Sharedfile.object_query(sql,self.id, int(limit_start), per_page)
 
@@ -215,7 +227,8 @@ class Shake(ModelQueryCache, Model):
             constraint_sql = "AND shakesharedfile.sharedfile_id > %s" % (int(since_id))
 
         sql = """SELECT sharedfile.* FROM sharedfile, shakesharedfile
-                 WHERE shakesharedfile.shake_id = %s and shakesharedfile.sharedfile_id = sharedfile.id and shakesharedfile.deleted = 0
+                 WHERE shakesharedfile.shake_id = %s and shakesharedfile.sharedfile_id = sharedfile.id and
+                 shakesharedfile.deleted = 0 and sharedfile.deleted = 0
                  %s
                  ORDER BY shakesharedfile.sharedfile_id %s limit %s, %s""" % (int(self.id), constraint_sql, order, 0, int(per_page))
         results = sharedfile.Sharedfile.object_query(sql)

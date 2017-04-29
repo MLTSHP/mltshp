@@ -5,7 +5,7 @@ import torndb
 from tornado.options import options
 
 from base import BaseHandler, require_membership
-from models import Shake, User, Notification, ShakeManager
+from models import Shake, User, Notification, ShakeManager, MigrationState
 from lib.utilities import base36decode
 
 
@@ -90,7 +90,7 @@ class ShakeHandler(BaseHandler):
                 if manager.id == current_user.id:
                     is_shake_manager = True
                     break
-        
+
         followers = shake.subscribers()
         follower_count = len(followers)
 

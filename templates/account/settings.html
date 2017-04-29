@@ -75,12 +75,12 @@
         </form>
       </div>
       <div class="settings-subscription-sidebar">
-        {% if has_data_to_migrate and not site_is_readonly %}
-        <h3><a href="/account/mlkshk-migrate">YOUR MLKSHK IS READY TO MIGRATE!</a></h3>
-        <br><br>
-        {% end %}
-
         {% if user.is_paid %}
+          {% if has_data_to_migrate and not site_is_readonly %}
+          <h3><a href="/account/mlkshk-migrate">YOUR MLKSHK IS READY TO MIGRATE!</a></h3>
+          <br><br>
+          {% end %}
+
           <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
 
           <p>Your last 3 payments or credits:</p>

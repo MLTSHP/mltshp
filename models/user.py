@@ -98,7 +98,6 @@ class User(ModelQueryCache, Model):
         new_shake = shake.Shake(user_id=self.id, type='user', description='New Shake')
         new_shake.save()
 
-
     def as_json(self, extended=False):
         base_dict = {
             'name' :self.name,
@@ -355,7 +354,7 @@ hello@mltshp.com
         """
         Remove a favorite. If there is no favorite or if it's already been remove, return False.
         """
-        existing_favorite = models.favorite.Favorite.get('user_id= %s and sharedfile_id = %s' % (self.id, sharedfile.id))
+        existing_favorite = models.favorite.Favorite.get('user_id= %s and sharedfile_id = %s and deleted=0' % (self.id, sharedfile.id))
         if not existing_favorite:
             return False
         if existing_favorite.deleted:
@@ -371,14 +370,14 @@ hello@mltshp.com
         Subscribe to a shake. If subscription already exists, then just mark deleted as 0.
         If this is a new subscription, send notification email.
         """
-        #Need to check if shake is deleted
-        #if shake.deleted
-        #not yet
+        if to_shake.deleted != 0:
+            return False
+
         if to_shake.user_id == self.id:
             #you can't subscribe to your own shake, dummy!
             return False
 
-        existing_subscription = subscription.Subscription.get('user_id = %s and shake_id = %s', self.id, to_shake.id)
+        existing_subscription = subscription.Subscription.get('user_id = %s and shake_id = %s and deleted=0', self.id, to_shake.id)
         if existing_subscription:
             existing_subscription.deleted = 0
             existing_subscription.save()
@@ -413,7 +412,7 @@ hello@mltshp.com
         if self.id == shake_owner.id:
             return False
 
-        shake_owners_shake = shake.Shake.get('user_id = %s and type=%s', shake_owner.id, 'user')
+        shake_owners_shake = shake.Shake.get('user_id = %s and type=%s and deleted=0', shake_owner.id, 'user')
         return self.subscribe(shake_owners_shake)
 
     def total_file_stats(self):
@@ -435,14 +434,14 @@ hello@mltshp.com
         if self.id == shake_owner.id:
             return False
 
-        shake_owners_shake = shake.Shake.get('user_id = %s and type=%s', shake_owner.id, 'user')
+        shake_owners_shake = shake.Shake.get('user_id = %s and type=%s and deleted=0', shake_owner.id, 'user')
         return self.unsubscribe(shake_owners_shake)
 
     def has_subscription(self, user):
         """
         Returns True if a user subscribes to user's main shake
         """
-        users_shake = shake.Shake.get('user_id = %s and type = %s', user.id, 'user')
+        users_shake = shake.Shake.get('user_id = %s and type = %s and deleted=0', user.id, 'user')
         return self.has_subscription_to_shake(users_shake)
 
     def has_subscription_to_shake(self, shake):
@@ -528,9 +527,10 @@ hello@mltshp.com
         for sm in shakemanagers:
             sm.delete()
 
-        #shakes = shake.Shake.where("user_id = %s", self.id)
-        #for s in shakes:
-        #    s.deleted = 1
+        shakes = shake.Shake.where("user_id = %s and deleted=0", self.id)
+        for s in shakes:
+            s.deleted = 1
+            s.save()
 
         comments = models.comment.Comment.where('user_id=%s and deleted=0', self.id)
         for com in comments:
@@ -572,7 +572,7 @@ hello@mltshp.com
         return True
 
     def shake(self):
-        return shake.Shake.get('user_id=%s and type=%s', self.id, 'user')
+        return shake.Shake.get('user_id=%s and type=%s and deleted=0', self.id, 'user')
 
     def shakes(self, include_managed=False, include_only_group_shakes=False):
         """
@@ -586,13 +586,14 @@ hello@mltshp.com
             sql = """SELECT shake.* from shake, shake_manager
                         WHERE shake_manager.user_id = %s
                             AND shake.id = shake_manager.shake_id
+                            AND shake.deleted = 0
                             AND shake_manager.deleted = 0
                         ORDER BY shake_manager.shake_id
             """
             managed_shakes = shake.Shake.object_query(sql, self.id)
         user_shakes_sql = 'user_id=%s ORDER BY id'
         if include_only_group_shakes:
-            user_shakes_sql = "user_id=%s and type='group' ORDER BY id"
+            user_shakes_sql = "user_id=%s and type='group' and deleted=0 ORDER BY id"
         return shake.Shake.where(user_shakes_sql, self.id) + managed_shakes
 
     _has_multiple_shakes = None
@@ -616,6 +617,7 @@ hello@mltshp.com
               WHERE subscription.user_id = %s
               AND subscription.shake_id = shake.id
               AND user.id = shake.user_id
+              AND shake.deleted = 0
               AND subscription.deleted = 0
         """ % self.id
         count = self.query(sql)
@@ -634,6 +636,7 @@ hello@mltshp.com
               WHERE subscription.user_id = %s
               AND subscription.shake_id = shake.id
               AND user.id = shake.user_id
+              AND shake.deleted = 0
               AND subscription.deleted = 0
         """ % self.id
 
@@ -674,6 +677,8 @@ hello@mltshp.com
         if options.readonly:
             return False
         if not self.is_paid:
+            return False
+        if shake.deleted != 0:
             return False
         if shake.user_id == self.id:
             return False
@@ -785,7 +790,7 @@ hello@mltshp.com
             return False
 
         #shake exists
-        s = shake.Shake.get('id = %s', shake_id)
+        s = shake.Shake.get('id = %s and deleted=0', shake_id)
         if not s:
             return False
 
@@ -806,7 +811,7 @@ hello@mltshp.com
         return True
 
     def request_invitation_to_shake(self, shake_id):
-        s = shake.Shake.get('id=%s', shake_id)
+        s = shake.Shake.get('id=%s and deleted=0', shake_id)
         if s:
             manager = s.owner()
             no = notification.Notification.new_invitation_to_shake(self, manager, s.id)
@@ -950,10 +955,10 @@ hello@mltshp.com
         following_sql = """
             select user.id from user
                 left join shake
-                on shake.user_id = user.id
+                on shake.user_id = user.id and shake.deleted=0
                 left join subscription
                 on subscription.shake_id = shake.id
-                where subscription.user_id  = %s
+                where subscription.user_id  = %s and subscription.deleted=0
         """
         following = self.query(following_sql, user.id)
         following = [somebody['id'] for somebody in following]

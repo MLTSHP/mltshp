@@ -67,14 +67,14 @@ class AccountImagesHandler(BaseHandler):
         following_shakes = user.following()
         following_shakes_count = len(following_shakes)
 
-        followers = user.shake().subscribers()
-        follower_count = len(followers)
-
-        other_shakes = user.shakes(include_managed=False, include_only_group_shakes=True)
-
         user_shake = user.shake()
+        followers = user_shake.subscribers()
+        follower_count = len(followers)
         count = user_shake.sharedfiles_count()
         images = user_shake.sharedfiles(page=page)
+        has_data_to_migrate = not MigrationState.has_migrated(user.id)
+
+        other_shakes = user.shakes(include_managed=False, include_only_group_shakes=True)
 
         if not images and page != 1:
             raise tornado.web.HTTPError(404)
@@ -83,7 +83,8 @@ class AccountImagesHandler(BaseHandler):
             url_format=url_format, can_follow=can_follow,
             following_shakes=following_shakes[:10],
             following_shakes_count=following_shakes_count, followers=followers[:10],
-            follower_count=follower_count, other_shakes=other_shakes)
+            follower_count=follower_count, other_shakes=other_shakes,
+            has_data_to_migrate=has_data_to_migrate)
 
 
 class UserLikesHandler(BaseHandler):
@@ -371,8 +372,16 @@ class SignInHandler(BaseHandler):
             unmigrated_user = User.find_unmigrated_user(name, password)
             if unmigrated_user:
                 if not MigrationState.has_migrated(unmigrated_user.id):
+                    # undelete the user account and log them in...
                     unmigrated_user.deleted = 0
                     unmigrated_user.save()
+                    # also, find their personal shake and restore that
+                    # specifically. does not restore any images within it--
+                    # the user will need to invoke a migration for that.
+                    shake = Shake.get('user_id=%s and type=%s and deleted=2', unmigrated_user.id, 'user')
+                    if shake is not None:
+                        shake.deleted = 0
+                        shake.save()
 
                     self.log_user_in(unmigrated_user)
                     return self.redirect("/account/welcome-to-mltshp")
@@ -400,6 +409,7 @@ class MlkshkMigrationHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def get(self):
+        user = self.get_current_user_object()
         state = MigrationState.has_migrated(user.id)
         return self.render(
             "account/migrate.html",
@@ -568,10 +578,13 @@ class CreateAccountHandler(BaseHandler):
 
         promotions = Promotion.active()
 
-        # Amazon's ELB will set this header to inform us what scheme is in use
-        # Fallback to checking Tornado's protocol if it is absent
-        using_https = self.request.headers.get("X-Forwarded-Proto",
-            self.request.protocol) == "https"
+        # If we're using cdn.mltshp.com, we know that we can use
+        # https; if something else is configured, check the
+        # X-Forwarded-Proto header and fallback to the protocol
+        # of the request
+        using_https = options.cdn_ssl_host == "cdn.mltshp.com" or \
+            self.request.headers.get("X-Forwarded-Proto",
+                self.request.protocol) == "https"
 
         #recaptcha hot fix
         if options.recaptcha_public_key:
@@ -900,7 +913,8 @@ class MembershipHandler(BaseHandler):
                         plan=plan_id)
         except stripe.error.CardError as ex:
             return self.render("account/return-subscription-completed.html",
-                error=unicode(ex))
+                error=unicode(ex),
+                has_data_to_migrate=False)
 
         if not sub:
             raise Exception("Error issuing subscription")
@@ -943,7 +957,10 @@ class MembershipHandler(BaseHandler):
 
         payment_notifications(current_user, "subscription", amount)
 
-        return self.render("account/return-subscription-completed.html")
+        has_data_to_migrate = not MigrationState.has_migrated(current_user.id)
+
+        return self.render("account/return-subscription-completed.html",
+                has_data_to_migrate=has_data_to_migrate)
 
     @tornado.web.authenticated
     def get(self):

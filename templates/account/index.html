@@ -90,6 +90,12 @@
     {% end %}
   </div>
   <div class="body">
+    {% if has_data_to_migrate %}
+    <div class="migration-reminder">
+      <p>Hey! You still MLKSHK posts that you haven't migrated. If you want to
+        restore that data now, <a href="/account/mlkshk-migrate">go here.</p>
+    </div>
+    {% end %}
     <div class="image-content-list">
       {% for sharedfile in images %}
         {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=False)}}
