@@ -52,16 +52,16 @@ class Notification(Model):
         that followed.
         """
         if self.type in ['favorite', 'save']:
-            return sharedfile.Sharedfile.get("id=%s", self.action_id)
+            return sharedfile.Sharedfile.get("id=%s and deleted=0", self.action_id)
         elif self.type == 'comment':
-            return comment.Comment.get("id=%s", self.action_id)
+            return comment.Comment.get("id=%s and deleted=0", self.action_id)
         elif self.type in ['invitation', 'invitation_request', 'invitation_approved']:
-            return shake.Shake.get("id=%s", self.action_id)
+            return shake.Shake.get("id=%s and deleted=0", self.action_id)
         elif self.type == 'subscriber':
-            subscription_ = subscription.Subscription.get("id = %s", self.action_id)
-            return subscription_.shake()
+            subscription_ = subscription.Subscription.get("id = %s and deleted=0", self.action_id)
+            return subscription_ and subscription_.shake()
         else:
-            return user.User.get("id = %s", self.sender_id)
+            return user.User.get("id = %s and deleted=0", self.sender_id)
     
     @classmethod
     def invitation_to_shake_for_user(self, shake, user):
@@ -121,6 +121,9 @@ class Notification(Model):
         for notification in cls.for_user(user):
             sender = notification.sender()
             related_object = notification.related_object()
+            if not related_object:
+                continue
+
             _notification = {'sender' : sender, 'related_object' : related_object, 'id' : notification.id}
             
             if notification.type == 'favorite':
