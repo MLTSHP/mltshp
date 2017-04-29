@@ -129,6 +129,7 @@ CREATE TABLE `shake` (
   `recommended` tinyint(1) NOT NULL DEFAULT '0',
   `featured` tinyint(1) NOT NULL DEFAULT '0',
   `shake_category_id` INT(11) NOT NULL DEFAULT 0,
+  `deleted` tinyint(1) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
