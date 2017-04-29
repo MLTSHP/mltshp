@@ -74,7 +74,7 @@ class FileViewTests(BaseAsyncTestCase):
 
         response = self.wait()
         options.use_cdn = False
-        self.assertEquals(response.headers['location'], 'http://s.mltshp-cdn.com/r/1')
+        self.assertEquals(response.headers['location'], 'https://cdn.mltshp.com/r/1')
 
     def test_raw_image_view_counts(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1,

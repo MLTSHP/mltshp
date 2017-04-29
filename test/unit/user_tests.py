@@ -172,9 +172,11 @@ class UserModelTests(BaseTestCase):
 
         shared_files[0].deleted = 1
         shared_files[0].save()
-        
+
+        # they should no longer see the shared file since it
+        # was deleted.
         shared_files = user1.sharedfiles_from_subscriptions()
-        self.assertEqual(1, len(shared_files))
+        self.assertEqual(0, len(shared_files))
     
     def test_profile_image_url(self):
         """

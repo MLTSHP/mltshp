@@ -377,7 +377,7 @@ hello@mltshp.com
             #you can't subscribe to your own shake, dummy!
             return False
 
-        existing_subscription = subscription.Subscription.get('user_id = %s and shake_id = %s and deleted=0', self.id, to_shake.id)
+        existing_subscription = subscription.Subscription.get('user_id = %s and shake_id = %s', self.id, to_shake.id)
         if existing_subscription:
             existing_subscription.deleted = 0
             existing_subscription.save()

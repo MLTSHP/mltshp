@@ -111,19 +111,19 @@ class ShakeModelTests(BaseTestCase):
         user2 = User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         user2.set_password('asdfasdf')
         user2.save()
-        
+
         user1.subscribe(self.shake)
         user2.subscribe(self.shake)
-        
+
         self.assertTrue(user1.id in [s.id for s in self.shake.subscribers()])
         self.assertTrue(user2.id in [s.id for s in self.shake.subscribers()])
 
-        user1.unsubscribe(self.shake)        
+        user1.unsubscribe(self.shake)
         self.assertFalse(user1.id in [s.id for s in self.shake.subscribers()])
-        
+
         user1.subscribe(self.shake)
         self.assertTrue(user1.id in [s.id for s in self.shake.subscribers()])
-        
+
     def test_paginated_sharedfiles_and_count(self):
         """
         Tests both the pagination of a shake's shared files and the count
@@ -131,7 +131,7 @@ class ShakeModelTests(BaseTestCase):
         sharedfiles = []
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
-        
+
         for i in range(31):
             sf = Sharedfile(source_id=sourcefile.id, name="my shared file",
                 user_id=self.user.id, content_type="image/png", share_key="1", 
@@ -139,7 +139,7 @@ class ShakeModelTests(BaseTestCase):
             sf.save()
             sf.add_to_shake(self.shake)
             sharedfiles.append(sf)
-        
+
         self.assertEqual(len(self.shake.sharedfiles()), 10) #default
         self.assertEqual(len(self.shake.sharedfiles(page=1)), 10)
         self.assertEqual(len(self.shake.sharedfiles(page=2)), 10)
