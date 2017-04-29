@@ -60,6 +60,7 @@ class Conversation(Model):
           WHERE conversation.user_id = %s
             AND conversation.muted = 0
             AND sharedfile.id = conversation.sharedfile_id
+            AND sharedfile.deleted = 0
             %s
             ORDER BY sharedfile.activity_at desc
           limit %s, %s
@@ -78,6 +79,7 @@ class Conversation(Model):
           SELECT count(conversation.id) as count from conversation, sharedfile
           WHERE conversation.user_id = %s
             AND sharedfile.id = conversation.sharedfile_id
+            AND sharedfile.deleted = 0
             AND conversation.muted = 0
             %s
         """ % (user_id, filtering_by)
