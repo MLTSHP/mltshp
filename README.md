@@ -40,21 +40,22 @@ While running the service, you can open an editor to the git checkout and
 make updates to the code. Changes should be reflected as you save your
 files (no need to restart the service).
 
-The MySQL instance that is launched will be accessible on localhost:3306
+The MySQL instance that is launched will be accessible on 127.0.0.1:3306
 if you want to look at the database directly (since this is using the
 default MySQL port, you will probably need to shutdown any existing MySQL
 server you may have running). The login for the database is `root` with
 no password. If you want to mark any of your user accounts as paid users,
-find them in the `user` table and set their `is_paid` value to `1`.
+find them in the `user` table and set their `is_paid` value to `1` and
+their `stripe_plan_id` column value to `mltshp-double`.
 
 
 ## Logs and Data
 
 When you run the application, it launches it into a background process.
 But if you want to watch the realtime logs emitted by each service,
-just use this command;
+just use this command:
 
-    $ docker-compose logs
+    $ docker-compose logs -f
 
 In addition to that, the web app produces some log files that are
 captured under the "mounts/logs" folder of your git repository.
@@ -68,6 +69,8 @@ The directory structure looks like this:
             error.log - nginx error log file
             main-8000.log - python app log file
             celeryd-01.log - celery worker log file
+        fakes3/
+            (local S3 storage)
         mysql/
             (mysql data files)
 
