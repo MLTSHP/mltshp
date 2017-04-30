@@ -995,7 +995,7 @@ hello@mltshp.com
         if name == '' or name == None:
             return []
         name = name + '%'
-        return User.where("name like %s limit %s and deleted=0", name, limit)
+        return User.where("name like %s and deleted=0 limit %s", name, limit)
 
     @staticmethod
     def authenticate(name, password):
