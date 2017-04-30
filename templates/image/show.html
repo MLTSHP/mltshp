@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{escape(sharedfile.get_title())}} - mltshp{% end %}
 {% block included_headers %}
-<link rel="alternate" 
+<link rel="alternate"
       type="application/json+oembed"
       href="http://new.mltshp.com/services/oembed?url=http%3A//new.mltshp.com/p/{{sharedfile.share_key}}"
       title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
-<link rel="alternate" 
+<link rel="alternate"
       type="application/javascript+oembed"
       href="http://new.mltshp.com/services/oembed?url=http%3A//new.mltshp.com/p/{{sharedfile.share_key}}&amp;jsoncallback={{jsonp}}"
       title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
@@ -30,7 +30,7 @@
 {% block main %}
   <div class="content content-permalink">
     {{modules.Image(sharedfile, current_user=current_user_obj, list_view=False, show_attribution_in_title=False)}}
-    
+
     <div class="permalink-sidebar">
       <div class="permalink-user-info">
         {{modules.ShakeFollow(follow_user=sharedfile.user(), current_user=current_user_obj, avatar_size=48)}}
@@ -46,14 +46,14 @@
 
         </div>
       </div>
-      
+
       {% if sourcefile.type == 'image' %}
       <div class="meta-data">
         <h4>Post URL</h4>
         <p>https://mltshp.com/p/{{sharedfile.share_key}}</p>
       </div>
       {% end %}
-      <div class="clear"><!-- --></div>        
+      <div class="clear"><!-- --></div>
       {% if can_add_to_shakes %}
         <h4 class="shake-details-title">Add To Shakes</h4>
         <div class="in-these-shakes">
@@ -64,15 +64,15 @@
             {% if shake.display_name() == current_user_obj.display_name() and shake.type == 'user' %}
               <li><input type="checkbox" class="input-checkbox" name="shakes" value="{{shake.id}}"><a href="{{shake.path()}}">Your Shake</a></li>
             {% else %}
-              <li><input type="checkbox" class="input-checkbox" name="shakes" value="{{shake.id}}"><a href="{{shake.path()}}">{{escape(shake.display_name())}}</a></li>            
+              <li><input type="checkbox" class="input-checkbox" name="shakes" value="{{shake.id}}"><a href="{{shake.path()}}">{{escape(shake.display_name())}}</a></li>
             {% end %}
-          {% end %}          
+          {% end %}
           </ul>
           <input type="submit" class="add-to-shakes-button" value="Add">
           </form>
         </div>
       {% end %}
-      
+
       {% if in_these_shakes %}
         <h4 class="shake-details-title">In These Shakes</h4>
         <div class="in-these-shakes">
@@ -96,19 +96,19 @@
       {% end %}
 
       <p style="float:left;padding-right:5px;">
-<!-- Place this tag where you want the su badge to render -->
-<su:badge layout="4"></su:badge>
+        <!-- Place this tag where you want the su badge to render -->
+        <su:badge layout="4"></su:badge>
 
-<!-- Place this snippet wherever appropriate -->
-<script type="text/javascript">
-  (function() {
-    var li = document.createElement('script'); li.type = 'text/javascript'; li.async = true;
-    li.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + '//platform.stumbleupon.com/1/widgets.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(li, s);
-  })();
-</script>
+        <!-- Place this snippet wherever appropriate -->
+        <script type="text/javascript">
+          (function() {
+            var li = document.createElement('script'); li.type = 'text/javascript'; li.async = true;
+            li.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + '//platform.stumbleupon.com/1/widgets.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(li, s);
+          })();
+        </script>
 
-      </p> 
+      </p>
       <p style="float:left;">
         <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
         <img id="fb_share_button" src="{{ static_url("images/fb_icon.png") }}" alt="Post to Facebook" height="21" width="21" alt="">
@@ -137,7 +137,7 @@
         <input type="submit" class="flag-image {% if sourcefile.nsfw == 1 %}flag-image-set{% end %}" id="flag-image-permalink" value="Flag this as NSFW">
       </form>
       {% end %}
-      
+
       {% if can_delete %}
       <form method="post" action="/p/{{sharedfile.share_key}}/delete">
         {{ xsrf_form_html() }}
@@ -145,7 +145,7 @@
       </form>
       {% end %}
     </div>
-    
+
     <div class="image-comments" id="image-comments-permalink">
       {% for comment in comments %}
         <div class="comment">
@@ -170,7 +170,6 @@
             </div>
             {{comment.body_formatted()}}
           </div>
-          <div class="clear"><!-- --></div>
         </div>
       {% end %}
     </div>
@@ -189,8 +188,7 @@
       </form>
     </div>
     {% end %}
-    
-    <div class="clear"><!-- --></div>
+
   </div>
 {% end %}
 

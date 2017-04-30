@@ -1,5 +1,8 @@
 .admin-new-users {
   border: 2px solid red;
+}
+
+.admin-new-users .body {
   padding: 30px;
 }
 
@@ -21,9 +24,7 @@
   margin-bottom: 30px;
   padding-bottom: 30px;
   clear: both;
-  float: left;
   border-bottom: 1px dashed #e0e0e0;
-  width: 575px;
 }
 
 .admin-new-users .body #new-members-list > li img.avatar {

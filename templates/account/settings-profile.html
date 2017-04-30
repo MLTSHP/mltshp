@@ -4,40 +4,45 @@
 
 {% block main %}
   <div class="content content-settings">
-    <h1>Your Settings</h1>
-    <div class="settings-navigation">
-      <ul>
-        <li><a href="/account/settings">Account</a></li>
-        <li class="selected"><a href="/account/settings/profile">Profile</a></li>
-        <li><a href="/account/settings/connections">Connections</a></li>
-      </ul>
+    <div class="settings-header">
+      <h1>Your Settings</h1>
+      <div class="settings-navigation">
+        <ul>
+          <li><a href="/account/settings">Account</a></li>
+          <li class="selected"><a href="/account/settings/profile">Profile</a></li>
+          <li><a href="/account/settings/connections">Connections</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="settings-body">
-      <form method="POST" action="/account/settings/profile/save" enctype="multipart/form-data">
+
+    <form method="POST" action="/account/settings/profile/save" enctype="multipart/form-data">
+      <div class="settings-body">
         <div class="settings-body-sidebar">
           <div class="profile-photo">
-          {% if user.profile_image and user.email_confirmed == 1 %}
-            <img src="{{user.profile_image_url()}}" width="100" height="100"><br>
-          {% else %}
-            <img src="{{ static_url("images/default-icon-venti.png") }}" width="100" height="100"><br>
-          {% end %}
-          </div>
-          <div class="profile-photo-meta">
-            <h3>This is your user photo.</h3>
-            {% if not site_is_readonly and user.email_confirmed == 1 %}
-            <h4>Want to change it?</h4>
-            <input class="settings-photo-upload" type="file" name="photo" size="10">
-            {% end %}
+            <div class="profile-photo-media">
+              {% if user.profile_image and user.email_confirmed == 1 %}
+                <img src="{{user.profile_image_url()}}" width="100" height="100"><br>
+              {% else %}
+                <img src="{{ static_url("images/default-icon-venti.png") }}" width="100" height="100"><br>
+              {% end %}
+            </div>
+            <div class="profile-photo-meta">
+              <h3>This is your user photo.</h3>
+              {% if not site_is_readonly and user.email_confirmed == 1 %}
+                <h4>Want to change it?</h4>
+                <input class="settings-photo-upload" type="file" name="photo" size="10">
+              {% end %}
+            </div>
           </div>
           {% if not site_is_readonly and user.email_confirmed == 1 %}
-          <div class="info-block">
-            <h3>Tips for your profile image: </h3>
-            <p>Shoot for 100×100 pixels square, it will also be displayed at 48×48 for file pages. (100k maximum size)</p>
-          </div>
+            <div class="info-block">
+              <h3>Tips for your profile image: </h3>
+              <p>Shoot for 100×100 pixels square, it will also be displayed at 48×48 for file pages. (100k maximum size)</p>
+            </div>
           {% end %}
         </div>
         <div class="settings-body-content">
-        
+
           <div id="fun-form-settings-profile" class="fun-form fun-form-stacked fun-form-border"{% if site_is_readonly %} disabled="disabled"{% end %}>
             {{ xsrf_form_html() }}
             <div class="field">
@@ -54,7 +59,7 @@
               <span class="bottoms"></span>
               {% end %}
             </div>
-            
+
             <div class="field field-textarea">
               <label for="about">About You</label>
               <div class="field-input">
@@ -72,7 +77,7 @@
               <span class="bottoms"></span>
               {% end %}
             </div>
-            
+
             <div class="field">
               <label for="website">Website</label>
               <div class="field-input">
@@ -87,7 +92,7 @@
               <span class="bottoms"></span>
               {% end %}
             </div>
-            
+
             {% if not site_is_readonly and user.email_confirmed == 1 %}
             <div class="field field-submit">
               <div class="action-button"><a href=""><span>Save It!</span></a></div>
@@ -95,8 +100,7 @@
             {% end %}
           </div>
         </div>
-      </form> 
-      <div class="clear"><!-- --></div> 
-    </div>
+      </div>
+    </form>
   </div>
 {% end %}

@@ -4,20 +4,22 @@
 
 {% block main %}
   <div class="content content-settings">
-    <h1>Your Settings</h1>
-    <div class="settings-navigation">
-      <ul>
-        <li class="selected"><a href="/account/settings">Account</a></li>
-        <li><a href="/account/settings/profile">Profile</a></li>
-        <li><a href="/account/settings/connections">Connections</a></li>
-      </ul>
+    <div class="settings-header">
+      <h1>Your Settings</h1>
+      <div class="settings-navigation">
+        <ul>
+          <li class="selected"><a href="/account/settings">Account</a></li>
+          <li><a href="/account/settings/profile">Profile</a></li>
+          <li><a href="/account/settings/connections">Connections</a></li>
+        </ul>
+      </div>
     </div>
     <div class="settings-body">
       <div class="fun-form fun-form-stacked fun-form-settings">
         {% if not current_user_object.email_confirmed and not site_is_readonly %}
         <form method="POST" action="/account/settings/resend-verification-email">
           {{ xsrf_form_html() }}
-        
+
         <div class="field">
           Your email address is not verified. Email verification is required for
           posting, commenting and updating your profile settings.
@@ -28,7 +30,7 @@
         </div>
         </form>
         {% end %}
-        
+
         <form method="POST" action="/account/settings"{% if site_is_readonly %} disabled="disabled"{% end %}>
           {{ xsrf_form_html() }}
           <div class="field">
@@ -45,25 +47,31 @@
               {% end %}
             </div>
           </div>
-          
+
           <div class="field">
-            <label>Disable Notifications?</label>
             <div class="field-input field-input-checkbox">
-              <label><input type="checkbox" name="disable_notifications" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.disable_notifications %} checked="checked"{% end %}> Yes, please.</label>
+              <label>
+                <input type="checkbox" name="disable_notifications" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.disable_notifications %} checked="checked"{% end %}>
+                Disable Notifications?
+              </label>
             </div>
           </div>
 
           <div class="field">
-            <label>Remove NSFW Filter?</label>
             <div class="field-input field-input-checkbox">
-              <label><input type="checkbox" name="show_naked_people" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.show_naked_people %} checked="checked"{% end %}> Yes.</label>
+              <label>
+                <input type="checkbox" name="show_naked_people" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.show_naked_people %} checked="checked"{% end %}>
+                Remove NSFW Filter?
+              </label>
             </div>
           </div>
 
           <div class="field">
-            <label>Show Stats?</label>
             <div class="field-input field-input-checkbox">
-              <label><input type="checkbox" name="show_stats" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.show_stats %} checked="checked"{% end %}> Yes.</label>
+              <label>
+                <input type="checkbox" name="show_stats" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.show_stats %} checked="checked"{% end %}>
+                Show Stats?
+              </label>
             </div>
           </div>
 
@@ -75,62 +83,69 @@
         </form>
       </div>
       <div class="settings-subscription-sidebar">
-        {% if user.is_paid %}
-          {% if has_data_to_migrate and not site_is_readonly %}
-          <h3><a href="/account/mlkshk-migrate">YOUR MLKSHK IS READY TO MIGRATE!</a></h3>
-          <br><br>
-          {% end %}
+        <div class="member-status-block">
+          <h3>Membership Status</h3>
+          <div class="member-status-block-content">
+            {% if user.is_paid %}
+              {% if has_data_to_migrate and not site_is_readonly %}
+              <h3><a href="/account/mlkshk-migrate">YOUR MLKSHK IS READY TO MIGRATE!</a></h3>
+              <br><br>
+              {% end %}
 
-          <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
+              <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
 
-          <p>Your last 3 payments or credits:</p>
-
-          <ol class="transaction-list">
-          {% for item in payments %}
-            <li><span class="amount">{{item.transaction_amount}}</span>
-                {% if item.status == 'credit' %}credited{% else %}received{% end %}
-                on <span class="date">{{item.created_at.strftime("%B %d, %Y")}}</span></li>
-          {% end %}
-          </ol>
-
-          <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
-        {% else %}
-          <p>You are currently using a free account. If you'd like 
-          to support MLTSHP and get some nifty new benefits you can
-          <a href="/account/membership">become a member</a>.</p>
-
-          {% if promotions and not site_is_readonly %}
-          <!-- THINKUP Web Bundle Promotion -->
-          <p>
-          We have an active promotion running now. To learn more about them and
-          to redeem a code, click this button:
-          </p>
-          <div class="action-button"><a href="/account/redeem"><span>Redeem Code</span></a></div>
-          <!-- END THINKUP Promotion -->
-          {% end %}
-
-        {% end %}
+              <p>Your last 3 payments or credits:</p>
+              <ol class="transaction-list">
+                {% for item in payments %}
+                  <li>
+                    <span class="amount">{{item.transaction_amount}}</span>
+                    {% if item.status == 'credit' %}credited{% else %}received{% end %}
+                    on <span class="date">{{item.created_at.strftime("%B %d, %Y")}}</span>
+                  </li>
+                {% end %}
+              </ol>
+              <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
+            {% else %}
+              <p>
+                You are currently using a free account. If you'd like
+                to support MLTSHP and get some nifty new benefits you can
+                <a href="/account/membership">upgrade to a paid account</a>.
+              </p>
+              {% if promotions and not site_is_readonly %}
+                <!-- THINKUP Web Bundle Promotion -->
+                <p>
+                  We have an active promotion running now. To learn more about them and
+                  to redeem a code, click this button:
+                </p>
+                <div class="action-button"><a href="/account/redeem"><span>Redeem Code</span></a></div>
+                <!-- END THINKUP Promotion -->
+              {% end %}
+            {% end %}
+          </div>
+        </div>
 
         {% if not site_is_readonly %}
-        <br><br><br><br>
-        {% if already_requested %}
-        <p>
-          You have requested a zip file. It should take less than 24 hours
-          to process. You will receive an email with a link.
-        </p>
-        {% else %}
-        <p>Press this button to request a zip file of all the images you have ever uploaded:</p>
-        
-          <form method="POST" action="/account/image-request">
-            {{ xsrf_form_html() }}
-          <div class="field field-submit">
-            <div class="action-button"><a href=""><span>Request All Images</span></a></div>
+          <div class="archive-block">
+            <h3>Request Archive</h3>
+            <div class="archive-block-content">
+              {% if already_requested %}
+                <p>
+                  You have requested a zip file. It should take less than 24 hours
+                  to process. You will receive an email with a link.
+                </p>
+              {% else %}
+                <p>Press this button to request a zip file of all the images you have ever uploaded:</p>
+                <form method="POST" action="/account/image-request">
+                  {{ xsrf_form_html() }}
+                  <div class="field field-submit">
+                    <div class="action-button"><a href=""><span>Request All Images</span></a></div>
+                  </div>
+                </form>
+              {% end %}
+            </div>
           </div>
-          </form>
-        {% end %}
         {% end %}
       </div>
-      <div class="clear"><!-- --></div>
     </div>
   </div>
 {% end %}

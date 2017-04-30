@@ -8,14 +8,20 @@
 <p>
 <a href="/developers/apps">Back To API Application List</a>
 </p>
-<p>
-  Consumer Key: {{app.key()}}<br>
-  Consumer Secret: {{app.secret}}<br>
-</p>
+<table>
+  <tr>
+    <td>Key: </td>
+    <td><code>{{app.key()}}</code></td>
+  </tr>
+  <tr>
+    <td>Secret: </td>
+    <td><pre>{{app.secret}}</pre></td>
+  </tr>
+</table>
 <div class="fun-form">
 
 <form method="POST" action="/developers/edit-app/{{app.id}}">
-  {{ xsrf_form_html() }}  
+  {{ xsrf_form_html() }}
   <div class="field">
     <label>Title:</label>
     <div class="field-input">
@@ -30,7 +36,7 @@
       {% end %}
     </div>
   </div>
-  
+
   <div class="field field-textarea">
     <label>Description:</label>
     <div class="field-input">
@@ -48,7 +54,7 @@
     </div>
     <div class="field-help">255 characters max.</div>
   </div>
-  
+
   <div class="field">
     <label>Redirect URL:</label>
     <div class="field-input">
@@ -60,17 +66,17 @@
          </span>
        </div>
        <span class="bottoms"></span>
-       {% end %}       
+       {% end %}
     </div>
   </div>
-  
+
   <div class="field field-submit">
   <div class="action-button"><a href=""><span>Save</span></a></div>
   </div>
 
       </form>
     </div>
-  </div>  
+  </div>
 </div>
 
 {% end %}
