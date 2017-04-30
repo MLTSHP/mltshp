@@ -10,11 +10,11 @@
 <div class="content content-with-sidebar content-account">
   <div class="account-header">
     <div class="avatar">
-      <a href="/user/{{current_user_obj.name}}"><img src="{{current_user_obj.profile_image_url()}}" width="50" height="50"></a>
+      <a class="avatar-media" href="/user/{{current_user_obj.name}}"><img src="{{current_user_obj.profile_image_url()}}" width="50" height="50"></a>
       {% if front_page %}
-        <h2>Hi {{ escape(current_user_obj.display_name()) }}!</h2>
+        <h2 class="avatar-title">Hi {{ escape(current_user_obj.display_name()) }}!</h2>
       {% else %}
-        <h2>Your Friends</h2>
+        <h2 class="avatar-title">Your Friends</h2>
       {% end %}
     </div>
   </div>

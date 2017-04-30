@@ -3570,6 +3570,10 @@ span.previous-link {
   display: flex;
 }
 
+.account-header .avatar-media {
+  flex: none;
+}
+
 .account-header .avatar img {
   display: block;
 }
