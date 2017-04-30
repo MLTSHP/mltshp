@@ -38,12 +38,12 @@ class AccountTests(test.base.BaseAsyncTestCase):
     def test_user_unpaid_account_rss_404s(self):
         response = self.fetch_url('/user/admin/rss')
         self.assertEqual(response.code, 404)
-    
+
     #def test_user_has_not_accepted_tou_and_redirected_to_tou(self):
     #    self.user.
     #    response = self.fetch_url('/')
     #    self.assert
-    
+
     def test_like_save_view_count_is_returned(self):
         sharedfile = test.factories.sharedfile(self.user, view_count=25, save_count=50, like_count=100)
         response = self.fetch_url('/user/%s/counts' % self.user.name)
@@ -51,26 +51,26 @@ class AccountTests(test.base.BaseAsyncTestCase):
         self.assertEqual(j_response['likes'], 100)
         self.assertEqual(j_response['saves'], 50)
         self.assertEqual(j_response['views'], 25)
-        
+
 
     def test_email_not_confirmed_puts_notice_at_top(self):
         self.user.email_confirmed = 0
         self.user.save()
-        
+
         response = self.fetch_url('/')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email address!') > -1)
-        
+        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+
         response = self.fetch_url('/incoming')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email address!') > -1)
-        
+        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+
         response = self.fetch_url('/friends')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email address!') > -1)
+        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
 
     def test_quick_notifications(self):
         """
         /account/quick-notifications should return without error when populated with
         all possible  notification types.
-        
+
         Page should also not be accessible if you're not signed in.
         """
         self.user2 = User(name='example2',email='user2@example.com', \
@@ -85,8 +85,8 @@ class AccountTests(test.base.BaseAsyncTestCase):
         self.shake = Shake(user_id=self.user2.id, name='asdf', type='group',
             title='My Test Shake', description='Testing this shake test.')
         self.shake.save()
-        
-        
+
+
         # new subscription
         new_sub = Subscription(user_id=self.user2.id, shake_id=1)
         new_sub.save()
@@ -102,12 +102,12 @@ class AccountTests(test.base.BaseAsyncTestCase):
         new_mention = Notification.new_mention(receiver=self.user, comment=new_comment)
         # new invitation
         new_mention = Notification.new_invitation(sender=self.user2, receiver=self.user, action_id=self.shake.id)
-        
+
         response = self.fetch_url('/account/quick-notifications')
         self.assertEqual(200, response.code)
         self.sign_out()
         response = self.fetch_url('/account/quick-notifications', follow_redirects=False)
         self.assertEqual(302, response.code)
-        
-        
-        
+
+
+

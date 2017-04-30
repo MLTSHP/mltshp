@@ -4,13 +4,15 @@
 
 {% block main %}
   <div class="content content-settings">
-    <h1>Your Settings</h1>
-    <div class="settings-navigation">
-      <ul>
-        <li><a href="/account/settings">Account</a></li>
-        <li><a href="/account/settings/profile">Profile</a></li>
-        <li class="selected"><a href="/account/settings/connections">Connections</a></li>
-      </ul>
+    <div class="settings-header">
+      <h1>Your Settings</h1>
+      <div class="settings-navigation">
+        <ul>
+          <li><a href="/account/settings">Account</a></li>
+          <li><a href="/account/settings/profile">Profile</a></li>
+          <li class="selected"><a href="/account/settings/connections">Connections</a></li>
+        </ul>
+      </div>
     </div>
     <div class="settings-body settings-body-connections">
       {% if apps %}
@@ -32,8 +34,6 @@
         </li>
       {% end %}
       </ul>
-      
-      
     </div>
   </div>
 {% end %}

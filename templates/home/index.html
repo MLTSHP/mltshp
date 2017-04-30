@@ -10,11 +10,11 @@
 <div class="content content-with-sidebar content-account">
   <div class="account-header">
     <div class="avatar">
-      <a href="/user/{{current_user_obj.name}}"><img src="{{current_user_obj.profile_image_url()}}" width="50" height="50"></a>
+      <a class="avatar-media" href="/user/{{current_user_obj.name}}"><img src="{{current_user_obj.profile_image_url()}}" width="50" height="50"></a>
       {% if front_page %}
-        <h2>Hi {{ escape(current_user_obj.display_name()) }}!</h2>
+        <h2 class="avatar-title">Hi {{ escape(current_user_obj.display_name()) }}!</h2>
       {% else %}
-        <h2>Your Friends</h2>
+        <h2 class="avatar-title">Your Friends</h2>
       {% end %}
     </div>
   </div>
@@ -22,7 +22,7 @@
     {% if current_user_obj.show_stats %}
     {{modules.UserCounts(user=current_user_obj)}}
     {% end %}
-    
+
     {% if not current_user_obj.tou_agreed %}
     <div class="notification-block notification-block-tou">
       <div class="notification-block-link">
@@ -30,7 +30,7 @@
       </div>
     </div>
     {% end %}
-    
+
     {% if front_page %}
       {% include "account/quick-notifications.html" %}
     {% elif notifications_count > 0 %}
@@ -40,7 +40,7 @@
       </div>
     </div>
     {% end %}
-    
+
     {% if not site_is_readonly %}
       {% if externalservice %}
     <div class="find-shakes-block">
@@ -59,7 +59,7 @@
     </div>
       {% end %}
     {% end %}
-    
+
     {% if not current_user_obj.is_paid %}
       {% if not site_is_readonly %}
     <div class="upgrade-account-block">
@@ -94,7 +94,7 @@
                 <span>Here is where you were</span>
             </div>
         {% end %}
-        
+
         {% for sharedfile in sharedfiles %}
           {% if sharedfile.__class__.__name__ == 'Sharedfile' %}
             {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
@@ -105,7 +105,7 @@
             <div class="jump-back">
             {% if sharedfile.previous_sharedfile_id > 0 %}
                 <a href="/before/{{sharedfile.previous_sharedfile_key()}}/returning">jump to previous</a>
-            {% end %}            
+            {% end %}
             </div>
           {% end %}
         {% end %}
@@ -126,11 +126,11 @@
       <div class="dashboard-new-user">
         <h1>Welcome To MLTSHP!</h1>
         <h2>Getting Started</h2>
-        <p style="width: 550px;">
-          There are a couple of things you can do to make MLTSHP more fun. You can 
-          find people to follow in the <a href="/incoming">incoming shake</a>. If you 
-          see something you like click the &#147;LIKE&#148; button. If you see 
-          something you want to keep click &#147;SAVE&#148; and your followers will 
+        <p>
+          There are a couple of things you can do to make MLTSHP more fun. You can
+          find people to follow in the <a href="/incoming">incoming shake</a>. If you
+          see something you like click the &#147;LIKE&#148; button. If you see
+          something you want to keep click &#147;SAVE&#148; and your followers will
           see it too.
         </p>
         <div class="two-columns">

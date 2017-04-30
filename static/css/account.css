@@ -3,7 +3,6 @@
 .sidebar-flag-nsfw {
   margin-top: 30px;
   clear: both;
-  float: left;
 }
 
 .sidebar-flag-nsfw .flag-nsfw-button {
@@ -30,8 +29,6 @@
 }
 
 .content-account .user-info .details {
-  width: 170px;
-  float: left;
 }
 
 .content-account .user-info .details h3 {
@@ -57,7 +54,6 @@
 
 .sidebar .following-wrapper {
   margin-bottom:25px;
-  float: left;
 }
 
 .sidebar .following {
@@ -68,16 +64,15 @@
 }
 
 .sidebar .following {
-  width: 285px;
-  float: left;
 }
 
 .following .view-all-following {
+  display: block;
   font-size: 12px;
-  float: right;
   margin-top: -10px;
   padding-bottom: 10px;
   padding-right: 15px;
+  text-align: right;
 }
 
 .sidebar .following-wrapper h3 {
@@ -114,20 +109,20 @@
 
 .sidebar .following ul {
   margin: 0;
-  padding: 15px 0 15px 15px;
+  padding: 15px 15px 0;
   list-style: none;
-  float: left;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .sidebar .following li {
-  padding-right: 4px;
-  padding-bottom: 5px;
-  float: left;
+  flex: none;
+  margin-right: 4px;
+  margin-bottom: 5px;
 }
 
 .sidebar .following li a {
   display: block;
-  float: left;
   width: 48px;
   height: 48px;
 }

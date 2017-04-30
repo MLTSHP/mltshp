@@ -1,5 +1,5 @@
 <div class="image-title {% if show_attribution_in_title %}image-title-with-poster{% end %}">
-  
+
   {% if can_edit and not site_is_readonly %}
     {% if list_view %}
       <h3 class="image-edit-title">{{escape(sharedfile.get_title())}}</h3>
@@ -22,7 +22,7 @@
       </div>
     {% end %}
     {% if list_view %}
-      <h3>{{escape(sharedfile.get_title())}}</h3> 
+      <h3>{{escape(sharedfile.get_title())}}</h3>
     {% else %}
       <h1>{{escape(sharedfile.get_title())}}</h1>
     {% end %}
@@ -53,9 +53,9 @@
         </div>
       {% else %}
         {% if list_view %}
-          <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" height="{{sized_height}}" width="{{sized_width}}" alt=""></a>
+          <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
         {% else %}
-          <a href="//s.{{host}}/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" height="{{sized_height}}" width="{{sized_width}}" alt=""></a>
+          <a href="//s.{{host}}/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
         {% end %}
       {% end %}
     {% end %}
@@ -90,7 +90,7 @@
             {{ xsrf_form_html() }}
             <input type="image" class="like-button" src="{{ static_url("images/like-this.gif") }}" height="22" value="Like This">
           </form>
-        </div>        
+        </div>
       {% end %}
       {% if can_unfavor and not site_is_readonly %}
         <div class="like-this">
@@ -119,12 +119,12 @@
         </div>
       {% end %}
     </div>
-    
+
     {% if sharedfile.original() %}
       {{ original_user = sharedfile.original_user()}}
       <div class="originally-posted-by">originally <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by <a href="/user/{{original_user.name}}"><img border="0" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt=""></a> <a href="/user/{{original_user.name}}">{{ original_user.name }}</a></div>
     {% end %}
-    
+
     {% if list_view %}
       <span class="created-at"><a href="/p/{{sharedfile.share_key}}">{{sharedfile.pretty_created_at()}}</a></span>
       <ul class="stats">
@@ -143,6 +143,6 @@
       {% end %}
       <div class="clear"><!-- --></div>
     {% end %}
-    
+
   </div>
 </div>

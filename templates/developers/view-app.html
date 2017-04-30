@@ -4,7 +4,7 @@
 {% block main %}
 <div class="content">
    <div class="content-developer">
-     
+
 <h1>{% if app.title %}{{app.title}}{% else %}(No App Title){% end %}</h1>
 <p>
   {% if app.description != None%}{{app.description}}{% end %}
@@ -12,10 +12,16 @@
 <p>
   {% if app.redirect_url != None%}{{app.redirect_url}}{% end %}
 </p>
-<p>
-  Key: {{app.key()}}<br>
-  Secret: {{app.secret}}
-</p>
+<table>
+  <tr>
+    <td>Key: </td>
+    <td><code>{{app.key()}}</code></td>
+  </tr>
+  <tr>
+    <td>Secret: </td>
+    <td><pre>{{app.secret}}</pre></td>
+  </tr>
+</table>
 <p>
   <a href="/developers/edit-app/{{app.id}}">Edit This Application</a><br>
   <a href="/developers/apps">My MLTSHP API Applications</a>

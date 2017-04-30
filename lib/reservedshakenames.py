@@ -60,6 +60,7 @@ reserved_names = [
 'templates',
 'password',
 'style',
+'styleguide',
 'javascript',
 'js',
 'bin'
