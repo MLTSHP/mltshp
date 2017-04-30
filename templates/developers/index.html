@@ -10,8 +10,8 @@
     </p>
     <h2>Steps To Creating A MLTSHP Application</h2>
     <p>
-      To get started first <a href="/developers/new-api-application">register an application</a>. You'll need to 
-      enter a title, description, and also a redirect URL. 
+      To get started first <a href="/developers/new-api-application">register an application</a>. You'll need to
+      enter a title, description, and also a redirect URL.
       This URL will be where users of your app will be sent after approving your app to access their account.
     </p>
       Once that is done you will be given an API key and a secret. We are using draft 12 of the new <b>OAuth2</b> specification.
@@ -22,13 +22,13 @@
     </p>
     <ul>
       <li>Provide a MLTSHP authentication URL for your user to approve your application's access. (http://mysite.com/return)</li>
-      <li>Capture the authorization code when they are bounced back to your site. (http://mysite.com/return?code=######)</li> 
+      <li>Capture the authorization code when they are bounced back to your site. (http://mysite.com/return?code=######)</li>
       <li>Use that authorization code to request an access token. The access token will contain a key and a secret.</li>
       <li>Use the key to make requests on behalf of your user and sign each request with the secret. </li>
       <li>If the request is properly signed you can request resources and make updates to those resources on behalf of the user.</li>
     </ul>
     <p>
-      Here are two example scripts. Both require you to input your access key and secret you get 
+      Here are two example scripts. Both require you to input your access key and secret you get
       from <a href="/developers/apps">creating an application here</a>.
     </p>
     <ul>
@@ -43,7 +43,7 @@
        an access token with one step. <strong>DO NOT</strong> use this method if you are not making a desktop application.
     </p>
     <p>
-        After acquiring <a href="/developers/new-api-application">app credentials here</a>, POST 
+        After acquiring <a href="/developers/new-api-application">app credentials here</a>, POST
         the following data here:
     </p>
     <pre>
@@ -54,13 +54,12 @@
         Then if everything matches you'll receive an access token as a JSON response:
     </p>
     <pre>
-        {
-            "access_token": "########", 
-            "secret": "########", 
-            "token_type": "mac", 
-            "algorithm": "hmac-sha-1"
-        }
-    </pre>
+{
+    "access_token": "########",
+    "secret": "########",
+    "token_type": "mac",
+    "algorithm": "hmac-sha-1"
+}</pre>
     <p>
         Requests to the API should be signed with the access token as normal in the above script examples.
     </p>

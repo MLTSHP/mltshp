@@ -12,7 +12,7 @@ class HomeTests(test.base.BaseAsyncTestCase):
         self.admin.set_password('asdfasdf')
         self.admin.save()
         self.sign_in('admin', 'asdfasdf')
-    
+
     def test_not_logged_in(self):
         """
         Should be no error when accessing home page when not logged in.
@@ -21,25 +21,25 @@ class HomeTests(test.base.BaseAsyncTestCase):
         self.sign_out()
         response = self.fetch_url('/')
         self.assertEqual(200, response.code)
-        self.assertTrue(response.body.find('Save, Share &amp; Discover') > -1)
-    
+        self.assertTrue(response.body.find('Save, Share &amp;&nbsp;Discover') > -1)
+
     def test_home_page_no_sharedfiles(self):
         """
         Accessing friend page with no files
-        - Should not error. 
+        - Should not error.
         - No bookmarks should be created.
         - Introduction to mltshp should show.
         """
         response = self.fetch_url('/friends')
         self.assertEqual(200, response.code)
         self.assertEqual(0, len(Bookmark.all()))
-        
+
     def test_home_page_with_friends(self):
         """
-        Creates ten users, user 1 follows five of them, each user uploads a file, 
+        Creates ten users, user 1 follows five of them, each user uploads a file,
         result from hitting /friends will return five files.
-        
-        When we go to friends for first time, bookmark will be set. If done multiple times, 
+
+        When we go to friends for first time, bookmark will be set. If done multiple times,
         still will only have one bookmark if no files have been uploaded between visits.
         """
         for x in range(10):
@@ -49,40 +49,40 @@ class HomeTests(test.base.BaseAsyncTestCase):
             sf.add_to_shake(user.shake())
             if (x % 2) == 0:
                 self.admin.subscribe(user.shake())
-            
+
         ssf = Shakesharedfile.all()
         self.assertEqual(len(ssf), 10)
         self.assertEqual(len(self.admin.sharedfiles_from_subscriptions()), 5)
-        
+
         response = self.fetch_url('/friends')
         self.assertEqual(response.code, 200)
         self.assertEqual(1, len(Bookmark.all()))
-        
+
         response = self.fetch_url('/friends')
         self.assertEqual(response.code, 200)
         self.assertEqual(1, len(Bookmark.all()))
-        
-    
+
+
     def test_paginating_home_stream(self):
         """
         Test going back and forward in the timeline using /before/{share_key}
         and /after/{share_key} addresses.
-        
+
         We create new user (user2), which admin subscribes to. They create
         15 files, and then we have admin user go backwards and forward in his stream.
-        We check the stream for correctness by checking for presence of sharefile 
+        We check the stream for correctness by checking for presence of sharefile
         titles that appear on the page.
         """
         user = User(name='user2', email='user2@example.com', email_confirmed=1)
         user.save()
         self.admin.subscribe(user.shake())
-        
+
         saved_files = []
         for x in range(15):
             sf = test.factories.sharedfile(user)
             sf.add_to_shake(user.shake())
             saved_files.append(sf)
-        
+
         response = self.fetch_url('/before/%s' % saved_files[5].share_key)
         self.assertEqual(response.code, 200)
         self.assertTrue(response.body.find('sharedfile_0.png'))
@@ -107,31 +107,31 @@ class HomeTests(test.base.BaseAsyncTestCase):
         for speeding up future render times. When we can detect that
         the request is not user-intiated, we want to make sure
         we don't set any bookmarks for the user.
-        
+
         When a browser bot accesses the home page, no bookmarks should be
         set.
         """
         user = User(name='user2', email='user2@example.com', email_confirmed=1)
         user.save()
         self.admin.subscribe(user.shake())
-        
+
         saved_files = []
         for x in range(5):
             sf = test.factories.sharedfile(user)
             sf.add_to_shake(user.shake())
             saved_files.append(sf)
-        
+
         response = self.fetch_url('/friends', headers={"X-Purpose": "preview"})
         self.assertEqual(response.code, 200)
         self.assertEqual(0, len(Bookmark.all()))
-        
+
         response = self.fetch_url('/friends', headers={"X-Moz": "prefetch"})
         self.assertEqual(response.code, 200)
         self.assertEqual(0, len(Bookmark.all()))
-        
+
         response = self.fetch_url('/friends', )
         self.assertEqual(response.code, 200)
         self.assertEqual(1, len(Bookmark.all()))
-        
-        
+
+
 

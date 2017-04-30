@@ -1,8 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title%}mltshp{% end %}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="search" type="application/opensearchdescription+xml" href="{{ static_url("opensearch.xml") }}" title="mltshp">
 
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/normalize.css") }}">
@@ -25,130 +27,155 @@
 
     {% block included_headers %}
     {% end %}
-  </head>
-  <body>
+</head>
+<body>
     <div class="alert">
-      <strong>Attention!</strong>
-      This is a BETA version of MLTSHP.
-      Anything you do here will be wiped before launch.
-      Please kick the tires, and report any issues in
-      the <a href="https://goo.gl/O3Jz4W">bug list</a>.
-      You can also join the #beta-testers channel on the
-      <a href="https://mlkshk-v2.signup.team/">MLTSHP</a> slack.
-      You can't import your MLKSHK yet, but all other
-      MLKSHK functionality should be working.
+        <strong>Attention!</strong>
+        This is a BETA version of MLTSHP.
+        Anything you do here will be wiped before launch.
+        Please kick the tires, and report any issues in
+        the <a href="https://github.com/MLTSHP/mltshp/issues">bug list</a>.
+        You can also join the #beta-testers channel on the
+        <a href="https://mlkshk-v2.signup.team/">MLTSHP</a> slack.
+        You can't import your MLKSHK yet, but all other
+        MLKSHK functionality should be working.
     </div>
-    <main class="page">
-      <div class="wrapper">
-        <div class="header">
-          <div class="logo">
-            <a href="/"><img src="{{ static_url("images/logo-compact.png") }}" alt="MLTSHP"></a>
-          </div>
+    <div class="page">
+        <div class="wrapper">
+            <header class="site-header">
+                <div class="site-branding">
+                    <a href="/"><img class="site-branding--logo" src="{{ static_url("images/logo-compact.png") }}" alt="MLTSHP"></a>
+                </div>
+                <nav id="site-nav" class="site-nav">
+                    <button type="button" class="site-nav--toggle">&#9776;</button>
+                    <ul class="site-nav--list">
+                        {% if current_user %}
+                            <li class="site-nav--item site-nav--shake-list">
+                                {{modules.ShakeDropdown(current_user_object)}}
+                            </li>
+                            <li class="site-nav--item site-nav--conversations">
+                                <a href="/conversations">Your Conversations</a>
+                            </li>
+                        {% else %}
+                            <li class="site-nav--item site-nav--popular">
+                                <a href="/popular">Popular</a>
+                            </li>
+                        {% end %}
+                        {% if not site_is_readonly %}
+                            {% if current_user %}
+                                <li class="site-nav--item site-nav--upload">
+                                    <div class="action-button">
+                                        <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
+                                    </div>
+                                </li>
+                            {% else %}
+                                <li class="site-nav--item site-nav--signup">
+                                    {% set handler_class = handler.__class__.__name__  %}
+                                    {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
+                                        <div class="call-out">Join us! Sign up to post images and create your own shake.</div>
+                                    {% end %}
+                                    <div class="action-button">
+                                        <a class="blue" href="/create-account"><span>Sign Up!</span></a>
+                                    </div>
+                                </li>
+                            {% end %}
+                        {% end %}
+                    </ul>
+                </nav>
+                <nav class="user-nav">
+                    <ul class="user-nav--list">
+                        {% if current_user %}
+                            {% if site_is_readonly %}
+                                <li class="user-nav--item">
+                                    The site is under maintenance right now.
+                                    We’re doing something cool with the database!
+                                </li>
+                            {% end %}
+                            {% if current_user_object and not current_user_object.email_confirmed %}
+                                {% if not site_is_readonly %}
+                                    <li class="user-nav--item">
+                                        Please visit settings to confirm your email!
+                                    </li>
+                                {% end %}
+                            {% end %}
+                            <li class="user-nav--item">
+                                <a href="/account/settings" class="user-nav--link">settings</a>
+                            </li>
+                            <li class="user-nav--item">
+                                <a href="/faq/" class="user-nav--link">faq</a>
+                            </li>
+                            <li class="user-nav--item">
+                                <a href="/sign-out/" class="user-nav--link">sign out</a>
+                            </li>
+                        {% else %}
+                            {% set handler_class = handler.__class__.__name__  %}
+                            <li class="user-nav--item">
+                                <a href="/sign-in?next={{request.path}}" class="user-nav--link">sign in</a>
+                            </li>
+                        {% end %}
+                    </ul>
+                </nav>
+            </header>
 
-          {% if current_user %}
-            {{modules.ShakeDropdown(current_user_object)}}
-            <div class="your-conversations-wrapper">
-              <a href="/conversations">Your Conversations</a>
-            </div>
-          {% else %}
-            <div class="navigation-incoming">
-              <a href="/popular">Popular</a>
-            </div>
-          {% end %}
+            <main class="site-main">
+                {% block main %}
+                    {{content}}
+                {% end %}
+            </main>
 
-          {% if not site_is_readonly %}
-            {% if current_user %}
-            <div class="upload">
-              <div class="action-button">
-                <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
-              </div>
-            </div>
-            {% else %}
-            <div class="sign-in">
-              {% set handler_class = handler.__class__.__name__  %}
-              {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
-                <div class="call-out">Join us! Sign up to post images and create your own shake.</div>
-              {% end %}
-              <div class="action-button">
-                <a class="blue" href="/create-account"><span>Sign Up!</span></a>
-              </div>
-            </div>
-            {% end %}
-          {% end %}
-
-          <div class="user-nav">
-            <ul>
-              {% if current_user %}
-                {% if site_is_readonly %}
-                <li>The site is under maintenance right now! We’re doing something cool with the database!</l1>
-                {% end %}
-                {% if current_user_object and not current_user_object.email_confirmed %}
-                {% if not site_is_readonly %}
-                <li>Please visit settings to confirm your email address! </li>
-                {% end %}
-                {% end %}
-                <li><a href="/account/settings">settings</a></li>
-                <li><a href="/faq/">faq</a></li>
-                <li><a href="/sign-out/">sign out</a></li>
-              {% else %}
-                {% set handler_class = handler.__class__.__name__  %}
-                <li><a href="/sign-in?next={{request.path}}">sign in</a></li>
-              {% end %}
-            </ul>
-          </div>
+            <footer class="site-footer">
+                <p>
+                    <a href="http://mltshp.tumblr.com/" target="_blank" class="link--primary">Read Our Blog</a>
+                    &amp;
+                    <a href="https://twitter.com/mltshphq" target="_blank" class="link--primary">Follow Us On Twitter</a>
+                </p>
+                <p>
+                    Are you a developer? <a href="/developers" class="link--primary">Check out our API</a>.
+                </p>
+                <p>
+                    &copy; <a href="http://new.mltshp.com/" target="_blank">MLTSHP, LLC</a>
+                    All Rights Reserved
+                    <a href="/terms-of-use">Terms of Use</a>
+                    <script type="text/javascript">
+                    //<![CDATA[
+                    <!--
+                    (function () {
+                    var x="function f(x){var i,o=\"\",l=x.length;for(i=0;i<l;i+=2) {if(i+1<l)o+=" +
+                    "x.charAt(i+1);try{o+=x.charAt(i);}catch(e){}}return o;}f(\"ufcnitnof x({)av" +
+                    " r,i=o\\\"\\\"o,=l.xelgnhtl,o=;lhwli(e.xhcraoCedtAl(1/)3=!84{)rt{y+xx=l;=+;" +
+                    "lc}tahce({)}}of(r=i-l;1>i0=i;--{)+ox=c.ahAr(t)i};erutnro s.buts(r,0lo;)f}\\" +
+                    "\"(3)11\\\\,!\\\"-(0=o.6#S{v$4c03\\\\\\\\17\\\\07\\\\02\\\\\\\\30\\\\06\\\\" +
+                    "SMO3T702\\\\0t\\\\\\\\\\\\27\\\\00\\\\01\\\\\\\\}+5y00\\\\\\\\::7017\\\\\\\\"+
+                    "%?=8(+03\\\\0.\\\\QSQ^\\\\rZ\\\\]GLF3F01\\\\\\\\0{03\\\\\\\\DEumx;7+7;17\\\\"+
+                    "\\\\hc77\\\\1`\\\\ruu-20\\\\01\\\\03\\\\\\\\27\\\\0r\\\\\\\\\\\\25\\\\03\\\\"+
+                    "03\\\\\\\\26\\\\0\\\\\\\\(\\\"}fo;n uret}r);+)y+^(i)t(eAodrCha.c(xdeCoarCho" +
+                    "mfrg.intr=So+7;12%=;y++)y13<1(iif){++;i<l;i=0(ior;fthnglex.l=\\\\,\\\\\\\"=" +
+                    "\\\",o iar{vy)x,f(n ioctun\\\"f)\")";
+                    while(x=eval(x));})();
+                    //-->
+                    //]]>
+                    </script>
+                    <a href="https://twitter.com/best_of_mltshp">@best_of_mltshp</a>
+                </p>
+                <p>
+                    <a href="/user/mltshp">Follow The MLTSHP User!</a>
+                </p>
+            </footer>
         </div>
-        <div class="clear"><!-- --></div>
-
-        {% block main %}
-          {{content}}
-        {% end %}
-
-        <div class="footer">
-          <div class="footer-top">
-            <a href="http://mltshp.tumblr.com/" target="_blank">Read Our Blog</a> &amp; <a href="https://twitter.com/mltshphq" target="_blank">Follow Us On Twitter</a>
-            <br>
-            Are you a developer? <a href="/developers">Check out our API</a>.
-            <br>
-          </div>
-          <div class="footer-bottom">
-            &copy; <a href="http://new.mltshp.com/" target="_blank">MLTSHP, LLC</a>&nbsp;&nbsp;All Rights Reserved&nbsp;&nbsp;<a href="/terms-of-use">Terms of Use</a>&nbsp;&nbsp;<script type="text/javascript">
-            //<![CDATA[
-            <!--
-            (function () {
-            var x="function f(x){var i,o=\"\",l=x.length;for(i=0;i<l;i+=2) {if(i+1<l)o+=" +
-            "x.charAt(i+1);try{o+=x.charAt(i);}catch(e){}}return o;}f(\"ufcnitnof x({)av" +
-            " r,i=o\\\"\\\"o,=l.xelgnhtl,o=;lhwli(e.xhcraoCedtAl(1/)3=!84{)rt{y+xx=l;=+;" +
-            "lc}tahce({)}}of(r=i-l;1>i0=i;--{)+ox=c.ahAr(t)i};erutnro s.buts(r,0lo;)f}\\" +
-            "\"(3)11\\\\,!\\\"-(0=o.6#S{v$4c03\\\\\\\\17\\\\07\\\\02\\\\\\\\30\\\\06\\\\" +
-            "SMO3T702\\\\0t\\\\\\\\\\\\27\\\\00\\\\01\\\\\\\\}+5y00\\\\\\\\::7017\\\\\\\\"+
-            "%?=8(+03\\\\0.\\\\QSQ^\\\\rZ\\\\]GLF3F01\\\\\\\\0{03\\\\\\\\DEumx;7+7;17\\\\"+
-            "\\\\hc77\\\\1`\\\\ruu-20\\\\01\\\\03\\\\\\\\27\\\\0r\\\\\\\\\\\\25\\\\03\\\\"+
-            "03\\\\\\\\26\\\\0\\\\\\\\(\\\"}fo;n uret}r);+)y+^(i)t(eAodrCha.c(xdeCoarCho" +
-            "mfrg.intr=So+7;12%=;y++)y13<1(iif){++;i<l;i=0(ior;fthnglex.l=\\\\,\\\\\\\"=" +
-            "\\\",o iar{vy)x,f(n ioctun\\\"f)\")";
-            while(x=eval(x));})();
-            //-->
-            //]]>
-            </script>
-            <a href="https://twitter.com/best_of_mltshp">@best_of_mltshp</a>
-            <br><a href="/user/mltshp">Follow The MLTSHP User!</a>
-          </div>
-        </div>
-      </div>
-    </main>
-    <div id="new-post-panel" class="new-post-panel"></div>
+    </div>
+    <div id="new-post-panel" class="new-post-panel"><div class="new-post-panel--inner"></div></div>
     <script type="text/javascript" charset="utf-8" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="{{ static_url("js/main.js")}}"></script>
     <script type="text/javascript" charset="utf-8" src="{{ static_url("js/paging_keys.js")}}"></script>
     {% block included_scripts %}
     {% end %}
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    ga('create', 'UA-96185399-1', 'auto');
-    ga('send', 'pageview');
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-96185399-1', 'auto');
+        ga('send', 'pageview');
     </script>
-  </body>
+</body>
 </html>

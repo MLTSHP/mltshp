@@ -11,8 +11,8 @@
         {{ xsrf_form_html() }}
         <div class="field">
           <label for="name">Username:</label>
-          <div class="field-input"> 
-            <input class="input-text" type="text" name="name" value="{{name}}" 
+          <div class="field-input">
+            <input class="input-text" type="text" name="name" value="{{name}}"
             autocorrect="off" autocapitalize="none">
             {% if errors.name %}
             <div class="error">
@@ -30,15 +30,15 @@
             <input class="input-text" type="password" name="password" >
           </div>
         </div>
-        <div class="field">
+        <div class="field field-submit">
           <div class="action-button"><a href=""><span>Sign In!</span></a></div>
-        </div>
-        <div class="field forgot-password-field">
-          <a href="/create-account">Not A Member?</a><br><br><a href="/account/forgot-password">I Forgot My Password</a>
         </div>
         <input type="hidden" name="next" value="{{escape(next)}}">
       </form>
       <div class="clear"><!-- --></div>
+      <div class="forgot-password-field">
+        <a href="/create-account">Not A Member?</a><br><br><a href="/account/forgot-password">I Forgot My Password</a>
+      </div>
     </div>
   </div>
 {% end %}

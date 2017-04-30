@@ -521,7 +521,7 @@ span.eqno {
 
     div.sphinxsidebar,
     div.related,
-    div.footer,
+    .site-footer,
     #top-link {
         display: none;
     }
@@ -596,10 +596,12 @@ span.eqno {
 
 li p { display: inline; }
 
-div#toc {
-    display: inline-block;
-    float: right;
-    margin-bottom: 2ex;
+@media screen and (min-width: 768px) {
+    div#toc {
+        display: inline-block;
+        float: right;
+        margin-bottom: 2ex;
+    }
 }
 
 a.headerlink { margin-left: 0.5em; }

@@ -1,20 +1,22 @@
 /* For now the core JS behavior needed accross the site */
 
 $(document).ready(function() {
-      
-    
+
+
     var NewPostPanel = function() {
       var panel_expanded = false;
-      
+
       var $new_post_panel;
+      var $new_post_panel_inner;
       var $new_post_button;
       var $save_video_form;
       var $save_video_form_button;
       var $post_video_form;
       var $post_video_form_button;
-      
+
       var init_dom = function() {
         $new_post_panel = $("#new-post-panel");
+        $new_post_panel_inner = $("#new-post-panel .new-post-panel--inner");
         $new_post_button = $("#new-post-button");
         // upload image
         $upload_image_input = $("#upload-image-input");
@@ -30,45 +32,45 @@ $(document).ready(function() {
         $shake_selector = $(".shake-selector");
       };
       init_dom();
-      
+
       $new_post_button.click(function() {
         NewPostPanel.load_new_post();
         return false;
       });
-      
+
       // We don't want click event on panel to bubble up to body
       // since a click to body closes the panel.
       $new_post_panel.click(function(ev) {
         ev.stopPropagation();
       });
-      
+
       // The events that are inside the panel that we want to initialize
       // when the panel loads.  These are the events that are subject
       // to change depending on content that is loaded.
       var init_events = function() {
-        $link_to_video.click(function() { 
+        $link_to_video.click(function() {
           NewPostPanel.load_post_video();
           return false;
         });
-        
+
         $save_video_form_button.click(function(e) {
           NewPostPanel.submit_save_video();
           return false;
         });
-        
+
         $post_video_form_button.click(function(e) {
           NewPostPanel.submit_post_video();
           return false;
         });
-        
+
         $upload_image_input.change(function() {
           $(this).closest('form').submit();
         });
-        
+
         $shake_selector.click(NewPostPanel.toggle_shake_selector);
         $shake_selector.find('ul a').click(NewPostPanel.choose_shake);
       };
-      
+
       var remove_events = function() {
         $save_video_form_button.unbind();
         $post_video_form_button.unbind();
@@ -82,7 +84,7 @@ $(document).ready(function() {
           ev.stopPropagation();
           ev.preventDefault();
         },
-        // Sets the text of the shake to the chosen one and 
+        // Sets the text of the shake to the chosen one and
         // sets a hidden input field with the proper shake id.
         choose_shake: function() {
           var $shake_selector = $(this).parents('.shake-selector');
@@ -154,8 +156,8 @@ $(document).ready(function() {
           }, 'json');
         },
         refresh_panel: function(response) {
-          $new_post_panel.html(response);
-          $new_post_panel.html();
+          $new_post_panel_inner.html(response);
+          $new_post_panel_inner.html();
           remove_events();
           init_dom();
           init_events();
@@ -166,7 +168,7 @@ $(document).ready(function() {
     var to_text = function(num, base) {
       return (num == 1) ? num + ' ' + "<span>" + base + "</span>" : num + ' ' + "<span>" + base + 's' + "</span>";
     }
-    
+
     var ShakesCache = {
       fetch: function() {
         if (this.result !== undefined) {
@@ -175,7 +177,7 @@ $(document).ready(function() {
           return false;
         }
       },
-      
+
       store: function(result) {
         this.result = result;
       }
@@ -185,13 +187,13 @@ $(document).ready(function() {
       this.$save_this = $(container);
       this.init();
     };
-    
+
     $.extend(SaveThisView.prototype, {
       init: function() {
         this.init_dom();
         this.init_events();
       },
-      
+
       init_dom: function() {
         this.$save_this_link = this.$save_this.find('.save-this-link');
         this.$form = this.$save_this.find('form');
@@ -214,7 +216,7 @@ $(document).ready(function() {
         }
         return false;
       },
-      
+
       click_choose_shake: function(ev) {
         ev.stopPropagation();
         var shake_id = ev.target.id.replace(/[^\d]+/, '');
@@ -222,7 +224,7 @@ $(document).ready(function() {
         this.submit_image_save();
         return false;
       },
-      
+
       click_close_selector: function(ev) {
         ev.stopPropagation();
         this.$shake_selector.remove();
@@ -231,7 +233,7 @@ $(document).ready(function() {
       show_shake_selector: function() {
         this.$save_this.append(this.$shake_selector);
         $('body').one('click', $.proxy(this.click_close_selector, this));
-        
+
         // Only query once per page.
         if (ShakesCache.fetch() !== false) {
           this.fetch_available_shakes(ShakesCache.fetch());
@@ -244,9 +246,9 @@ $(document).ready(function() {
         ShakesCache.store(response);
         var html = '<span class="close"></span><ul>';
         for (var i = 0; i < response['result'].length; i++) {
-          html += '<li><a class="shake-link" href="" id="save-this-shake-selector-' + 
-                  response['result'][i]['id'] + '">'+ 
-                  response['result'][i]['name'] + 
+          html += '<li><a class="shake-link" href="" id="save-this-shake-selector-' +
+                  response['result'][i]['id'] + '">'+
+                  response['result'][i]['name'] +
                   '</a></li>';
         }
         html += '</ul>';
@@ -262,7 +264,7 @@ $(document).ready(function() {
       process_image_save_response: function(response) {
         if (response['share_key']) {
           var count = response['count'];
-          var share_key = response['share_key'];  
+          var share_key = response['share_key'];
           var new_share_key = response['new_share_key'];
           var count_string = to_text(count, "Save");
           $("#save-count-amount-" + share_key).html(count_string);
@@ -276,11 +278,11 @@ $(document).ready(function() {
         }
       }
     });
-    
+
     $(".save-this").each(function() {
       var save_this_view = new SaveThisView(this);
     });
-    
+
     // when we hit enter on a form, we want to submit it
     // even though we don't have an type="submit" input
     // available, since we're using a styled button.
@@ -291,27 +293,27 @@ $(document).ready(function() {
         return false;
       }
     });
-    
+
     $(".action-button", $sign_in_form).click(function() {
       $sign_in_form.submit();
       return false;
     });
-    
+
     // Prompt user to confirm before flagging something as NSFW.
     $("#flag-image-permalink").click(function() {
       return confirm("Are you sure you want to flag this as NSFW?");
     });
-    
+
     // Prompt user to confirm before quitting a shake.
     $("#quit-shake-page").click(function() {
       return confirm("Are you sure you want to quit this shake?\n(If you are following this shake you will also have to unfollow with the button above.)");
     });
-    
+
     // Prompt user to confirm before deleting a sharedfile.
     $("#delete-post-text").click(function() {
       return confirm("Are you sure you want to delete this post?");
     });
-        
+
     // Inline editing of the title.
     $(".image-edit-title-form .cancel").click(function() {
       $(this).closest('.image-title').find(".image-edit-title").show();
@@ -324,7 +326,7 @@ $(document).ready(function() {
     }, function() {
       $(this).removeClass('image-edit-title-hover');
     });
-    
+
     $(".image-edit-title").click(function() {
       var $title_container = $(this).closest('.image-title');
       var url = $title_container.find('form').attr('action');
@@ -335,11 +337,11 @@ $(document).ready(function() {
           $(that).hide();
           $title_container.find('.title-input').val(result['title_raw']);
           $(that).next(".image-edit-title-form").show();
-        }        
+        }
       }, 'json');
-            
+
     });
-    
+
     $(".image-edit-title-form").submit(function() {
       var data = $(this).serialize();
       var url = $(this).attr('action');
@@ -354,7 +356,7 @@ $(document).ready(function() {
       }, 'json');
       return false;
     });
-    
+
     // Inline editing of the description.
     $(".description-edit-form").submit(function() {
       var data = $(this).serialize();
@@ -370,13 +372,13 @@ $(document).ready(function() {
       }, 'json');
       return false;
     });
-    
+
     $(".description-edit .the-description").hover(function() {
       $(this).addClass('the-description-hover');
     }, function() {
       $(this).removeClass('the-description-hover');
     });
-    
+
     $(".description-edit .the-description").click(function() {
       var $description_container = $(this).closest('.description-edit');
       var url = $description_container.find('form').attr('action');
@@ -387,29 +389,29 @@ $(document).ready(function() {
           $description_container.find('.description-edit-textarea').val(result['description_raw']);
           $(that).next(".description-edit-form").show();
         }
-      }, 'json'); 
+      }, 'json');
     });
-    
+
     $(".description-edit .cancel").click(function() {
       $(this).closest('.description-edit').find(".the-description").show();
       $(this).closest(".description-edit-form").hide();
       return false;
     });
-    
+
     $(".delete-from-shakes-form").click(function() {
       return confirm('Are you sure you want to remove it?');
     });
-    
+
     /* Like / Unlike button */
     $(".like-button, .unlike-button").click(function() {
       var to_text =  function(num, base) {
         return (num == 1) ? num + ' ' + "<span>" + base + "</span>" : num + ' ' + "<span>" + base + 's' + "</span>";
       }
-      
+
       var $form = $(this).parents('form');
       var url = $form.attr('action');
       var data = $form.serialize() + '&json=1';
-      
+
       var button = this;
       $.post(url, data, function(response) {
         if (response['error']) {
@@ -432,37 +434,37 @@ $(document).ready(function() {
       }, "json");
       return false;
     });
-    
+
     var ImageStats = function() {
       return {
         save_count: 0,
         like_count: 0
       }
     }
-    
+
     var SidebarStatsView = function(scope) {
       // if we aren't on a permalink page, just expose a dummy public API
       if ($(scope).length == 0) {
-        return { 
-          init: function() {}, 
-          refresh_likes: function() {}, 
-          refresh_saves: function() {} 
+        return {
+          init: function() {},
+          refresh_likes: function() {},
+          refresh_saves: function() {}
         };
       }
-      
+
       var image_stats = new ImageStats();
       $save_count = $('.save-count', scope);
       $like_count = $('.like-count', scope);
       image_stats.save_count = parseInt($save_count.html(), 10);
       image_stats.like_count = parseInt($like_count.html(), 10);
-      
+
       var $save_button = $(".sidebar-stats-saves", scope);
       var $like_button = $(".sidebar-stats-hearts", scope);
       var $content = $(".sidebar-stats-content", scope);
-      
+
       var saves_expanded = false;
       var likes_expanded = false;
-            
+
       return {
         init: function() {
           if (image_stats.save_count > 0) {
@@ -477,7 +479,7 @@ $(document).ready(function() {
             this.unbind_likes();
           }
         },
-        
+
         refresh_likes: function() {
           $like_count = $('.like-count', scope);
           image_stats.like_count = parseInt($like_count.html(), 10);
@@ -491,7 +493,7 @@ $(document).ready(function() {
             this.unbind_likes();
           }
         },
-        
+
         refresh_saves: function() {
           $save_count = $('.save-count', scope);
           image_stats.save_count = parseInt($save_count.html(), 10);
@@ -505,7 +507,7 @@ $(document).ready(function() {
             this.unbind_saves();
           }
         },
-        
+
         bind_saves: function() {
           $save_button.unbind('click');
           $save_button.addClass('enable-cursor');
@@ -513,22 +515,22 @@ $(document).ready(function() {
             SidebarStatsView.toggle_saves();
           });
         },
-        
+
         unbind_saves: function() {
           $save_button.removeClass('enable-cursor');
           $save_button.unbind('click');
           this.collapse();
         },
-        
+
         bind_likes: function() {
           $like_button.unbind('click');
           $like_button.addClass('enable-cursor');
           $like_button.click(function() {
             SidebarStatsView.toggle_likes();
           });
-          
+
         },
-        
+
         unbind_likes: function() {
           $like_button.removeClass('enable-cursor');
           $like_button.unbind('click');
@@ -547,7 +549,7 @@ $(document).ready(function() {
             this.collapse();
           }
         },
-        
+
         get_saves: function() {
           $.get(document.location.pathname + '/saves', function(response) {
             if (response['result']) {
@@ -568,7 +570,7 @@ $(document).ready(function() {
             this.collapse();
           }
         },
-        
+
         get_likes:function() {
           $.get(document.location.pathname + '/likes', function(response) {
             if (response['result']) {
@@ -576,7 +578,7 @@ $(document).ready(function() {
             }
           }, 'json');
         },
-        
+
         process_save: function(response) {
           if (response['count'] == 0) {
             this.disable_saves();
@@ -585,7 +587,7 @@ $(document).ready(function() {
             this.render_content(response);
           }
         },
-        
+
         process_like: function(response) {
           if (response['count'] == 0) {
             this.unbind_likes();
@@ -594,17 +596,17 @@ $(document).ready(function() {
             this.render_content(response);
           }
         },
-        
+
         to_text: function(num, base) {
           return (num == 1) ? num + ' ' + "<span>" + base + "</span>" : num + ' ' + "<span>" + base + 's' + "</span>";
         },
-        
+
         collapse: function(repsponse) {
           $like_button.removeClass('selected');
           $save_button.removeClass('selected');
-          $content.hide();          
+          $content.hide();
         },
-        
+
         render_content: function(response) {
           var html = "";
           for (var i = 0, len = response['result'].length;  i < len; i++ ) {
@@ -616,14 +618,14 @@ $(document).ready(function() {
           }
           $content.removeClass('loading').html(html);
         }
-        
-      } 
+
+      }
     }("#sidebar-stats");
     SidebarStatsView.init();
 
 
     var StreamStatsView = function($image_content_footer) {
-      this.$image_content_footer = $image_content_footer;      
+      this.$image_content_footer = $image_content_footer;
       this.share_key = this.$image_content_footer.attr('id').replace('image-content-footer-', '');
       this.can_submit_comments = true;
       this.init_dom();
@@ -638,7 +640,7 @@ $(document).ready(function() {
         this.$inline_details = this.$image_content_footer.find('.inline-details');
         this.init_comment_dom();
       },
-      
+
       init_comment_dom: function() {
         this.$post_comment_inline = this.$inline_details.find('.post-comment-inline')
         this.$comment_form = this.$inline_details.find('.post-comment-form');
@@ -665,7 +667,7 @@ $(document).ready(function() {
         this.$delete.click($.proxy(this.click_delete, this));
         // Fix for Webkit bug where textarea looses focus incorrectly on mouseup.
         // http://code.google.com/p/chromium/issues/detail?id=4505
-        this.$comment_textarea.mouseup(function(e) { e.preventDefault(); });        
+        this.$comment_textarea.mouseup(function(e) { e.preventDefault(); });
         this.$comment_form.submit($.proxy(this.submit_comment, this));
       },
 
@@ -675,23 +677,23 @@ $(document).ready(function() {
         this.$saves_button.removeClass('selected');
         this.$comments_button.removeClass('selected');
       },
-      
+
       // Start the "loading" state transition.
       start_loading: function() {
         this.$inline_details.addClass('inline-details-loading').html('').show();
       },
-      
+
       user_html: function(data) {
         var html = '';
         for (var i = 0; i < data.result.length; i++) {
-          html += '<a href="/user/' + data.result[i]['user_name'] + '"><img src="' + 
+          html += '<a href="/user/' + data.result[i]['user_name'] + '"><img src="' +
                   data.result[i]['user_profile_image_url'] + '" height="20" width="20">' +
                   '<span class="name">' +
                   data.result[i]['user_name'] + '</span></a>';
         }
         return html;
       },
-      
+
       click_like: function() {
         if (this.$likes_button.hasClass('selected')) {
           this.clear_tab_selection();
@@ -704,57 +706,57 @@ $(document).ready(function() {
         this.load_likes();
         return false;
       },
-      
+
       load_likes: function() {
         var url = '/p/' + this.share_key + '/likes';
         $.get(url, $.proxy(this.process_like_response, this), 'json');
       },
-      
+
       process_like_response: function(data) {
         var html = '<div class="user-saves-likes">' + this.user_html(data) + '</div>';
         this.$inline_details.html(html);
       },
-      
+
       click_saves: function() {
         if (this.$saves_button.hasClass('selected')) {
           this.clear_tab_selection();
           this.$inline_details.hide();
           return false;
         }
-        
+
         this.clear_tab_selection();
         this.$saves_button.addClass('selected');
         this.start_loading();
         this.load_saves();
         return false;
       },
-      
+
       load_saves: function() {
         var url = '/p/' + this.share_key + '/saves';
         $.get(url, $.proxy(this.process_like_response, this), 'json');
       },
-      
+
       click_comments: function() {
         if (this.$comments_button.hasClass('selected')) {
           this.clear_tab_selection();
           this.$inline_details.hide();
           return false;
         }
-        
+
         this.clear_tab_selection();
         this.$comments_button.addClass('selected');
         this.start_loading();
         var url = '/p/' + this.share_key + '/quick-comments';
         $.get(url, $.proxy(this.process_comments_response, this), 'json');
-        return false; 
+        return false;
       },
-      
+
       click_more_comments: function() {
         this.$comment.show();
         this.$show_more_comments.hide();
         return false;
       },
-      
+
       process_comments_response: function(data) {
         this.can_submit_comments = true;
         if (data['result'] == 'ok') {
@@ -764,7 +766,7 @@ $(document).ready(function() {
           this.init_comment_events();
         }
       },
-      
+
       click_reply_to: function(ev) {
         this.click_comment_textarea();
         var username = $(ev.target).parents('.comment').find('.username').html();
@@ -774,7 +776,7 @@ $(document).ready(function() {
         setCaret(this.$comment_textarea.get(0));
         return false;
       },
-      
+
       click_delete: function(ev) {
         var $delete_form = $("#" + ev.target.id + '-form'),
                      url = $delete_form.attr('action'),
@@ -784,7 +786,7 @@ $(document).ready(function() {
         }
         return false;
       },
-      
+
       submit_comment: function() {
         if (this.can_submit_comments === false) {
           return false;
@@ -795,7 +797,7 @@ $(document).ready(function() {
         $.post(url, data, $.proxy(this.process_comments_response, this), 'json');
         return false;
       },
-      
+
       click_comment_textarea: function(e) {
         this.$post_comment_inline.addClass('post-comment-inline-expanded');
         if (this.$comment_textarea.val().indexOf('Write a comment') === 0) {
@@ -804,13 +806,13 @@ $(document).ready(function() {
         this.click_more_comments();
         this.$comment_textarea.css('height', '60px');
       },
-      
+
       refresh_likes: function() {
         if (this.$likes_button.hasClass('selected')) {
           this.load_likes();
         }
       },
-      
+
       refresh_saves: function() {
         if (this.$saves_button.hasClass('selected')) {
           this.load_saves();
@@ -839,17 +841,17 @@ $(document).ready(function() {
         return this.files_on_page[share_key];
       }
     }
-    
+
     var NSFWCover = function($root) {
       this.$root = $root;
       this.init();
     }
-    
+
     $.extend(NSFWCover.prototype, {
       init: function() {
         this.$root.delegate('a', 'click', $.proxy(this.click_show_image, this));
       },
-      
+
       click_show_image: function(ev) {
         var location = document.location,
             host = location.host,
@@ -859,11 +861,11 @@ $(document).ready(function() {
         $.get(base_path + "/services/oembed?include_embed=1&url=" + escape(base_path + file_path), $.proxy(this.load_image, this), 'json');
         return false;
       },
-      
+
       load_image: function(response) {
         var parent = this.$root.parent(),
             parent_height = parent.height();
-        
+
         if (response['type'] == 'photo') {
           this.$root.parent().css('min-height', parent_height + 'px').html('<img class="unsized" src="' + response['url'] + '">');
         } else if (response['embed_html']) {
@@ -871,7 +873,7 @@ $(document).ready(function() {
         }
       }
     });
-    
+
     $(".image-content").each(function() {
       var $image_content = $(this),
           $image_footer = $image_content.find(".image-content-footer"),
@@ -880,13 +882,13 @@ $(document).ready(function() {
       StreamStatsViewRegistry.register(stream_stats_view);
       var nsfw_cover = new NSFWCover($nsfw_cover);
     });
-    
-    
+
+
     /* Open / close notification boxes */
     $(".notification-block-hd").live('click', function() {
       $(this).next().toggle();
     });
-    
+
     /* User follow module */
     $('.user-follow .submit-form').live('click', function() {
       var $container = $(this).parents('.user-follow');
@@ -906,11 +908,11 @@ $(document).ready(function() {
             $(that).addClass('follow-button').removeClass('unfollow-button');
           }
         }
-        
+
       }, 'json');
       return false;
     });
-    
+
     $('.notification-close').live('click', function() {
       $notification = $(this).parent('.notification');
       var $notification_block = $(this).parents('.notification-block');
@@ -930,7 +932,7 @@ $(document).ready(function() {
       }, 'json');
       return false;
     });
-    
+
     $('.notification-block .clear-all a').live('click', function() {
       var url = $(this).attr('href');
       var $notification_block = $(this).parents('.notification-block');
@@ -942,19 +944,19 @@ $(document).ready(function() {
           $notification_block.find('.notification-block-bd').html('').toggle();
         }
       }, 'json');
-    
+
       return false;
     });
-    
-    
+
+
     /* Notification block: invitations: */
     $("#notifcation-block-invitations form").live('submit', function() {
       var data = $(this).serialize();
       var url  = $(this).attr('action');
-      
+
       var that = this;
       $.post(url, data, function(response) {
-        
+
         if (response['error']) {
           $(that).find(".main-message").html('<p>' + response['error'] + '</p>');
         } else {
@@ -970,22 +972,22 @@ $(document).ready(function() {
           }
         }
       }, 'json');
-      
+
       return false;
     });
-    
+
     /* Notification block: shake invitations: */
     $("#notifcation-block-shakeinvitation form").live('submit', function() {
       var data = $(this).serialize();
       var url  = $(this).attr('action');
       var $block = $(this).parents('.notification');
       var $header = $("#notifcation-block-shakeinvitation .notification-block-hd");
-      
+
       var that = this;
       $.post(url, data, function(response) {
         if (!response['error']) {
           $block.remove();
-          // we update the header differently when presenting only one 
+          // we update the header differently when presenting only one
           // invitation on the shake page itself.
           if ($header.hasClass('invitation-single')) {
             $header.html('Got it.');
@@ -995,15 +997,15 @@ $(document).ready(function() {
           }
         }
       }, 'json');
-      
+
       return false;
     });
-    
+
     var NotificationInvitationContainer = function($root) {
       this.$root = $root;
       this.init();
     };
-    
+
     $.extend(NotificationInvitationContainer.prototype, {
       init: function() {
         this.$hd = this.$root.find('.notification-block-hd');
@@ -1014,7 +1016,7 @@ $(document).ready(function() {
           var new_invitation_request = new NotificationInvitationRequest($(this), that);
         });
       },
-      
+
       update_count: function(count) {
         if (!this.on_shake_page) {
           var request_text = count == 1 ? " request" : " requests";
@@ -1025,59 +1027,59 @@ $(document).ready(function() {
         }
       }
     });
-    
+
     var NotificationInvitationRequest = function($root, container) {
       this.$root = $root;
       this.container = container;
       this.init_dom();
       this.init_events();
     };
-    
+
     $.extend(NotificationInvitationRequest.prototype, {
       init_dom: function() {
         this.$form = this.$root.find('form');
         this.$form_approve_invitation = this.$root.find('.approve-invitation');
         this.$form_decline_invitation = this.$root.find('.decline-invitation');
       },
-      
+
       init_events: function() {
         this.$root.delegate('.approve-invitation', 'submit', $.proxy(this.submit_approve_invitation, this));
         this.$root.delegate('.decline-invitation', 'submit', $.proxy(this.submit_decline_invitation, this));
       },
-      
+
       submit_approve_invitation: function(ev) {
         ev.preventDefault();
         this.submit_form(this.$form_approve_invitation);
       },
-      
+
       submit_decline_invitation: function(ev) {
         ev.preventDefault();
         this.submit_form(this.$form_decline_invitation);
       },
-            
+
       submit_form: function($form) {
         var url = $form.attr('action');
         var data = $form.serialize();
         $.post(url, data, $.proxy(this.clear_notification, this), 'json');
       },
-      
+
       clear_notification: function(response) {
         if (response['status'] == 'ok') {
-          this.$root.remove();          
+          this.$root.remove();
           this.container.update_count(response['count']);
         }
       }
-      
+
     });
-    
+
     var init_notification_invitation_request = function() {
       $notification_invitation_request = $("#notification-block-invitation-request");
       if ($notification_invitation_request.length > 0) {
-        var invitation_requests = new NotificationInvitationContainer($notification_invitation_request);        
+        var invitation_requests = new NotificationInvitationContainer($notification_invitation_request);
       }
     }
     init_notification_invitation_request();
-    
+
     // Expand all notifications.
     $("#notification-block-aggregate").click(function() {
       $(this).find(".notification-block-hd").html("Loading...");
@@ -1086,43 +1088,66 @@ $(document).ready(function() {
         init_notification_invitation_request();
       });
     });
-    
+
     /* Action button */
     $('.action-button').hover(function() {
       $(this).addClass('action-button-hover');
     }, function(){
       $(this).removeClass('action-button-hover');
     });
-    
+
     /* Action Button in a Fun Form, should submit the form */
     $(".field-submit .action-button a").click(function() {
       $(this).closest("form").submit();
       return false;
     })
-    
-    /* Choose a shake dropdown */
-    $choose_a_shake = $("#choose-a-shake");
-    var expanded = false;
-    $("#choose-a-shake .choose-a-shake-hd").click(function(event) {
+
+    /* Site Nav dropdown */
+    $site_nav = $("#site-nav");
+    var site_nav_expanded = false;
+    $("#site-nav .site-nav--toggle").click(function(event) {
       event.stopPropagation();
-      if (expanded == false) {
-        expanded = true;
-        $choose_a_shake.addClass("choose-a-shake-expanded");
+      if (site_nav_expanded == false) {
+        site_nav_expanded = true;
+        $site_nav.addClass("is-expanded");
         $('body').one('click', function() {
-          $choose_a_shake.removeClass("choose-a-shake-expanded");
-          expanded = false;
+          $site_nav.removeClass("is-expanded");
+          site_nav_expanded = false;
         });
       } else {
-        $choose_a_shake.removeClass("choose-a-shake-expanded");
+        $site_nav.removeClass("is-expanded");
         $('body').unbind('click');
-        expanded = false;
+        site_nav_expanded = false;
       }
     });
-    
-    $("#choose-a-shake .choose-a-shake-bd").click(function(event) {
+
+    $("#site-nav .site-nav--list").click(function(event) {
       event.stopPropagation();
     });
-    
+
+    /* Choose a shake dropdown */
+    $choose_a_shake = $("#choose-a-shake");
+    var shake_expanded = false;
+    $("#choose-a-shake .choose-a-shake--toggle").click(function(event) {
+      event.stopPropagation();
+      if (shake_expanded == false) {
+        shake_expanded = true;
+        $choose_a_shake.addClass("is-expanded");
+        $('body').one('click', function() {
+          $choose_a_shake.removeClass("is-expanded");
+          shake_expanded = false;
+        });
+      } else {
+        $choose_a_shake.removeClass("is-expanded");
+        $('body').unbind('click');
+        shake_expanded = false;
+      }
+    });
+
+    $("#choose-a-shake .choose-a-shake--dropdown").click(function(event) {
+      event.stopPropagation();
+    });
+
     /* Conversations - mute this button */
     $(".mute-this-conversation").click(function() {
       var $form = $(this).next('.mute-this-conversation-form');
@@ -1134,8 +1159,8 @@ $(document).ready(function() {
       });
       return false;
     });
-    
-        
+
+
     // http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity
     function setCaret(el)
     {
@@ -1154,18 +1179,18 @@ $(document).ready(function() {
             range.select();
         }
     }
-    
+
     var PermalinkCommentsView = function($root) {
       this.$root = $root;
       this.init();
       this.init_events();
     };
-    
+
     $.extend(PermalinkCommentsView.prototype, {
       init: function() {
         this.$post_comment_body = $("#post-comment-body");
       },
-      
+
       init_events: function() {
         this.$root.delegate('.comment', 'hover', function() {
           $(this).toggleClass('comment-hover');
@@ -1173,7 +1198,7 @@ $(document).ready(function() {
         this.$root.delegate('.reply-to', 'click', $.proxy(this.click_reply_to, this));
         this.$root.delegate('.delete', 'click', $.proxy(this.click_delete, this));
       },
-      
+
       click_reply_to: function(ev) {
         var $target = $(ev.target);
         var $meta = $target.parent();
@@ -1185,7 +1210,7 @@ $(document).ready(function() {
         window.location.hash = "post-comment";
         return false;
       },
-      
+
       click_delete: function(ev) {
         var $delete_form = $("#" + ev.target.id + '-form');
         if (confirm("Are you sure you want to delete this?")) {
@@ -1194,17 +1219,17 @@ $(document).ready(function() {
         return false;
       }
     });
-    
+
     var $image_comments_permalink = $("#image-comments-permalink");
     if ($image_comments_permalink.length > 0) {
       var new_comment = new PermalinkCommentsView($image_comments_permalink);
     }
-    
+
     $("#nsfw-filter-button a").click(function() {
       $(this).parents('form').submit();
       return false;
     });
-    
+
     $("#apps .disconnect").click(function() {
       if (confirm('Are you sure you want to disconnect this app?')) {
         var $form = $(this).parent().next('form');
@@ -1228,7 +1253,7 @@ $(document).ready(function() {
         return false;
       });
     }
-    
+
     // Tools: Recommended group shakes
     if ($("#shake-categories").length > 0) {
       var RecommendedShakeCategory = function(root) {
@@ -1237,16 +1262,16 @@ $(document).ready(function() {
         this.fetched = false;
         this.init_events();
       };
-      
+
       $.extend(RecommendedShakeCategory.prototype, {
-        
+
         init_events: function() {
           this.$toggle = this.$root.find('.shake-category-toggle');
           this.$body = this.$root.find('.shake-category-body');
           this.$toggle.click($.proxy(this.click_toggle, this));
-  
+
         },
-        
+
         click_toggle: function() {
           if (!this.fetched) {
             var url = '/tools/find-shakes/quick-fetch-category/' + this.$toggle.attr('href').replace('#', '');
@@ -1256,32 +1281,32 @@ $(document).ready(function() {
           }
           return false;
         },
-        
+
         populate_results: function(results) {
           this.fetched = true;
           this.$body.html(results);
           this.toggle();
         },
-        
+
         toggle: function(result) {
           this.$root.toggleClass('shake-category-selected');
         }
-        
+
       });
-      
-      
+
+
       $("#shake-categories .shake-category").each(function() {
         var new_category = new RecommendedShakeCategory(this)
       });
     }
-    
+
     // Shake Page - change image.
     $("#shake-image-edit").hover(function() {
       $(this).addClass('shake-image-hover');
     }, function() {
       $(this).removeClass('shake-image-hover');
     });
-    
+
     $shake_image_input = $("#shake-image-edit .shake-image-input");
     var shake_image_position = $shake_image_input.offset();
     $("#shake-image-edit").mousemove(function(ev) {
@@ -1289,12 +1314,12 @@ $(document).ready(function() {
       var top = ev.pageY - shake_image_position.top - 10;
       $shake_image_input.css('left', left + 'px').css('top', top + 'px');
     });
-        
+
     // Shake Page: choosing file to upload.
     $("#shake-image-edit input").change(function() {
       $(this).closest("form").submit();
     });
-    
+
     // Shake Page: inline editing title & description:
     $(".shake-edit-title-form .cancel").click(function() {
       $(this).parents('.shake-details').find(".shake-edit-title").show();
@@ -1307,7 +1332,7 @@ $(document).ready(function() {
     }, function() {
       $(this).removeClass('shake-edit-title-hover');
     });
-    
+
     $(".shake-edit-title").click(function() {
       var $title_container = $(this).closest('.shake-details');
       var url = $title_container.find('form').attr('action');
@@ -1320,9 +1345,9 @@ $(document).ready(function() {
           $(that).next(".shake-edit-title-form").show();
         }
       }, 'json');
-            
+
     });
-    
+
     $(".shake-edit-title-form").submit(function() {
       var data = $(this).serialize();
       var url = $(this).attr('action');
@@ -1337,8 +1362,8 @@ $(document).ready(function() {
       }, 'json');
       return false;
     });
-    
-    
+
+
     // Shake Page: Edit Description
     $(".shake-edit-description-form .cancel").click(function() {
       $(this).parents('.shake-details').find(".shake-edit-description").show();
@@ -1351,7 +1376,7 @@ $(document).ready(function() {
     }, function() {
       $(this).removeClass('shake-edit-description-hover');
     });
-    
+
     $(".shake-edit-description").click(function() {
       var $title_container = $(this).closest('.shake-details');
       var url = $title_container.find('form').attr('action');
@@ -1364,9 +1389,9 @@ $(document).ready(function() {
           $(that).next(".shake-edit-description-form").show();
         }
       }, 'json');
-            
+
     });
-    
+
     $(".shake-edit-description-form").submit(function() {
       var data = $(this).serialize();
       var url = $(this).attr('action');
@@ -1381,7 +1406,7 @@ $(document).ready(function() {
       }, 'json');
       return false;
     });
-    
+
     var $user_counts = $("#user-counts");
     if ($user_counts.length > 0) {
 
@@ -1389,8 +1414,8 @@ $(document).ready(function() {
         var $root = $user_counts,
             name = $root.attr('name');
         $.get('/user/' + name + '/counts', function(result) { UserCounts.display_results(result); }, 'json');
-        
-        return {       
+
+        return {
           display_results: function(result) {
             if ('views' in result) {
               $root.find('.views .num').html(UserCounts.format(result['views']));
@@ -1408,54 +1433,54 @@ $(document).ready(function() {
           }
         };
       }();
-      
+
     }
-    
+
     /* Shake Page: Request invitation to shake */
     var RequestInvitation = function($root) {
       this.$root = $root;
       this.init_dom();
       this.init_events();
     };
-    
+
     $.extend(RequestInvitation.prototype, {
       init_dom: function() {
         this.$form = this.$root.find('form');
       },
-      
+
       init_events: function() {
         this.$root.delegate('form', 'submit', $.proxy(this.submit_request, this));
       },
-      
+
       submit_request: function() {
         var url =this.$form.attr('action');
         var data = this.$form.serialize();
         $.post(url, data, $.proxy(this.process_response, this));
         return false;
       },
-      
+
       process_response: function() {
         this.$root.html('<span>Ok! Request sent.</span>')
       }
-      
+
     });
-    
-    
+
+
     var $request_invitation = $("#request-invitation");
     if ($request_invitation.length > 0) {
       request_invitation = new RequestInvitation($request_invitation);
     }
-    
+
     // Button to remove from shake.
     $(".remove-from-shake").click(function() {
       $form = $(this).find('form').submit();
       return false;
     });
-    
+
     //make incoming clickable (I know.)
     $('.incoming-header').click(function(){
         document.location = 'http://' + document.location.host + '/incoming';
-        
+
     });
 
 
@@ -1469,11 +1494,11 @@ $(document).ready(function() {
       var $title = $main_module.find('h3');
       var search_results = [];
       var last_search = "";
-      
+
       $input_field.keyup(function(ev) {
         InviteMember.search_names(ev);
       });
-      
+
       $form.submit(function(ev) {
         return InviteMember.submit_form();
       });
@@ -1481,12 +1506,12 @@ $(document).ready(function() {
       $shake_results.click(function(ev) {
         InviteMember.select_user($(ev.target).text());
       });
-      
+
       $invite_button.click(function() {
         InviteMember.send_invite();
         return false;
       });
-      
+
       return {
         search_names: function() {
           if ($input_field.val() == '') {
@@ -1494,12 +1519,12 @@ $(document).ready(function() {
             this.clear_input();
             return false;
           }
-          
+
           // don't search again if field hasn't changed.
           if ($input_field.val() == last_search) {
             return false;
           }
-          
+
           last_search = $input_field.val();
           var data = $form.serialize();
           var that = this;
@@ -1509,7 +1534,7 @@ $(document).ready(function() {
              }
           }, 'json');
         },
-        
+
         update_results: function(users) {
           search_results = users
           if (search_results.length == 0) {
@@ -1518,20 +1543,20 @@ $(document).ready(function() {
              this.render_results();
            }
         },
-                
+
         render_results: function() {
           $shake_results.html('').show();
           for (var i = 0; i < search_results.length; i++) {
             $shake_results.append('<li><img src="'+ search_results[i].profile_image_url + '" width="24" height="24"><span>' + search_results[i].name + '</span></li>');
           }
         },
-        
+
         select_user: function(user_name) {
           this.clear_results();
           $input_field.val(user_name);
           $invite_button.removeClass('invite-button-inactive');
         },
-        
+
         submit_form: function(ev) {
           if (search_results.length == 1 && search_results[0].name == $input_field.val()) {
             this.select_user(search_results[0].name);
@@ -1540,17 +1565,17 @@ $(document).ready(function() {
           }
           return false;
         },
-        
+
         clear_results: function() {
           last_search = "";
           $shake_results.hide().html('');
         },
-        
+
         clear_input: function() {
           $input_field.val('');
           $invite_button.addClass('invite-button-inactive');
         },
-        
+
         send_invite: function() {
           if ($invite_button.hasClass('invite-button-inactive')) {
             return false;
@@ -1564,7 +1589,7 @@ $(document).ready(function() {
             return false;
           }
         },
-        
+
         data_sent: function() {
           $title.html('Your invitation has been sent');
           this.clear_input();
@@ -1572,41 +1597,41 @@ $(document).ready(function() {
         }
       }
     }();
-    
-    
+
+
     /* Shake Page: Remove Members From Shake */
     var ShakeMemberList = function($root) {
       this.$root = $root;
       this.init_events();
     };
-    
+
     $.extend(ShakeMemberList.prototype, {
       init_events: function() {
         this.$root.delegate('.remove-from-shake-button-link', 'click', $.proxy(this.remove_from_shake, this));
       },
-      
+
       remove_from_shake: function(ev) {
         var $target = $(ev.target),
             $li = $target.parents("li"),
             $form = $target.next(),
             url = $form.attr('action');
             data = $form.serialize();
-            
+
         if (confirm("Are you sure you want to remove this user from a shake? If they have notifications on an email will be sent informing them of the change.")) {
           $.post(url, data, $.proxy(this.process_remove, $li));
         }
         return false;
       },
-      
+
       process_remove: function(response) {
         this.remove();
       }
     });
-    
+
     var $shake_member_list = $("#shake-members-list");
     if ($shake_member_list.length > 0) {
       var shake_member_list = new ShakeMemberList($shake_member_list);
     }
-    
-    
+
+
 });
