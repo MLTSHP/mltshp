@@ -386,6 +386,13 @@ a:active {
   }
 }
 
+.content-account .migration-reminder {
+  padding: 0.3em 1em;
+  font-weight: bold;
+  background: #ffffb5;
+  color: #ffac1e;
+}
+
 /* Two Column Layout */
 .content-with-sidebar {
   display: flex;
@@ -931,11 +938,21 @@ iframe {
   margin-top: 0;
 }
 
+.migration-block,
 .member-status-block,
 .archive-block {
   padding: 15px;
   background: #dfffcb;
   border-radius: 10px;
+}
+
+.migration-block {
+  background: #e5fcff;
+  margin-bottom: 20px;
+}
+
+.migration-block h3 {
+  color: #00aeff;
 }
 
 .archive-block {
@@ -951,6 +968,7 @@ iframe {
   color: #00aeff;
 }
 
+.migration-block-content,
 .member-status-block-content,
 .archive-block-content {
   background: #fff;
@@ -961,6 +979,7 @@ iframe {
   margin-top: 8px;
 }
 
+.migration-block-content::after,
 .member-status-block-content::after,
 .archive-block-content::after {
   content: "";
@@ -968,11 +987,13 @@ iframe {
   clear: both;
 }
 
+.migration-block :first-child,
 .member-status-block :first-child,
 .archive-block :first-child {
   margin-top: 0;
 }
 
+.migration-block :last-child,
 .member-status-block :last-child,
 .archive-block :last-child {
   margin-bottom: 0;

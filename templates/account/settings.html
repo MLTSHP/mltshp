@@ -83,15 +83,30 @@
         </form>
       </div>
       <div class="settings-subscription-sidebar">
+        {% if (has_data_to_migrate and not site_is_readonly) or migrated_flag %}
+        <div class="migration-block">
+            <h3>MLKSHK Restore Status</h3>
+            <div class="migration-block-content">
+                {% if migrated_flag %}
+                <p>
+                  Your MLKSHK content is being restored and should be available very soon.
+                  Thanks for all your posts!
+                </p>
+                {% else %}
+                <p>
+                  Your MLKSHK posts are safe and sound and ready to be restored. Click the button below
+                  to start restoring your content.
+                </p>
+                <div class="action-button"><a href="/account/mlkshk-migrate"><span>Let's Go!</span></a></div>
+                {% end %}
+            </div>
+        </div>
+        {% end %}
+
         <div class="member-status-block">
           <h3>Membership Status</h3>
           <div class="member-status-block-content">
             {% if user.is_paid %}
-              {% if has_data_to_migrate and not site_is_readonly %}
-              <h3><a href="/account/mlkshk-migrate">YOUR MLKSHK IS READY TO MIGRATE!</a></h3>
-              <br><br>
-              {% end %}
-
               <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
 
               <p>Your last 3 payments or credits:</p>

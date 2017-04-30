@@ -419,9 +419,6 @@ class MlkshkMigrationHandler(BaseHandler):
     @require_membership
     def post(self):
         user = self.get_current_user_object()
-        if not user:
-            return self.redirect("/account/settings")
-
         state = MigrationState.has_migrated(user.id)
 
         if not state:
