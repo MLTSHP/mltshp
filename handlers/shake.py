@@ -154,10 +154,10 @@ class QuickDetailsHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def get(self, shake_name):
-        shake = Shake.get("name=%s", shake_name)
+        shake = Shake.get("name=%s and deleted=0", shake_name)
         if not shake:
             raise tornado.web.HTTPError(404)
-        
+
         value = {
             'title' : escape.xhtml_escape(shake.title) if shake.title else '',
             'title_raw' : shake.title if shake.title else '',
@@ -169,12 +169,12 @@ class QuickDetailsHandler(BaseHandler):
         self.set_header("Pragma","no-cache");
         self.set_header("Expires", 0);
         return self.write(escape.json_encode(value))
-    
+
     @tornado.web.authenticated
     @require_membership
     def post(self, shake_name):
         current_user = self.get_current_user_object()
-        shake_to_update = Shake.get('name=%s and user_id=%s and type=%s', shake_name, current_user.id, 'group')
+        shake_to_update = Shake.get('name=%s and user_id=%s and type=%s and deleted=0', shake_name, current_user.id, 'group')
         new_title = self.get_argument('title', None)
         new_description = self.get_argument('description', None)
 
@@ -204,7 +204,7 @@ class UpdateShakeHandler(BaseHandler):
 
         if shake_name is None:
             shake_name = self.get_argument('shake_name', None)
-        shake_to_update = Shake.get('name=%s and user_id=%s and type=%s', shake_name, current_user.id, 'group')
+        shake_to_update = Shake.get('name=%s and user_id=%s and type=%s and deleted=0', shake_name, current_user.id, 'group')
         json = self.get_argument('json', None)
         new_title = self.get_argument('title', None)
         new_description = self.get_argument('description', None)
@@ -246,14 +246,14 @@ class SubscribeShakeHandler(BaseHandler):
     def post(self, shake_id):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
-                
-        shake = Shake.get('id=%s', shake_id)
+
+        shake = Shake.get('id=%s and deleted=0', shake_id)
         if not shake:
             if is_json:
                 return self.write(json_encode({'error':'Shake not found.'}))
             else:
                 return self.redirect(shake.path())
-                
+
         if not user.subscribe(shake):
             if is_json:
                 return self.write(json_encode({'error':'error'}))
@@ -275,14 +275,14 @@ class UnsubscribeShakeHandler(BaseHandler):
     def post(self, shake_id):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
-        
-        shake = Shake.get('id=%s', shake_id)
+
+        shake = Shake.get('id=%s and deleted=0', shake_id)
         if not shake:
             if is_json:
                 return self.write({'error':'Shake not found.'})
             else:
                 return self.redirect(shake.path())
-                
+
         if not user.unsubscribe(shake):
             if is_json:
                 return self.write({'error':'error'})
@@ -306,16 +306,16 @@ class InviteMemberHandler(BaseHandler):
         if not shake:
             raise tornado.web.HTTPError(404) 
         sender = self.get_current_user_object()
-        receiver = User.get('name=%s', self.get_argument('name', None))
+        receiver = User.get('name=%s and deleted=0', self.get_argument('name', None))
         is_json = self.get_argument('json', None)
-        
+
         if not receiver:
             if is_json:
                 return self.write({'error':'error'})
             else:
                 return self.redirect('/%s' % (shake_name))
         Notification.new_invitation(sender, receiver, shake.id)
-        
+
         if is_json:
             return self.write({'invitation_status':True})
         else:
@@ -340,7 +340,7 @@ class AcceptInvitationHandler(BaseHandler):
                 return self.write({'error':'error'})
             else:
                 return self.redirect("/")
-        
+
         shake_object = Shake.get('id = %s', invitation_notification.action_id)        
         shake_manager = ShakeManager.get('user_id = %s and shake_id = %s', current_user_object.id, shake_object.id)
         if shake_manager:
@@ -349,19 +349,19 @@ class AcceptInvitationHandler(BaseHandler):
         else:
             shake_manager = ShakeManager(user_id=current_user_object.id, shake_id=shake_object.id)
             shake_manager.save()
-        
+
         invitation_notification.deleted = 1
         invitation_notification.save()
-        
+
         #send email to owner of shake
-        
+
         #set all invitation notifications for this shake, user, to deleted
         all_notifications = Notification.where('sender_id = %s and action_id = %s and receiver_id = %s and deleted = 0',
             invitation_notification.sender_id, invitation_notification.action_id, invitation_notification.receiver_id)
         for n in all_notifications:
             n.deleted = 1
             n.save()
-        
+
         if is_json:
             remaining_notifications_count = Notification.where_count("type = %s and receiver_id = %s and deleted = 0", \
                                                                      "invitation", current_user_object.id)
@@ -378,12 +378,12 @@ class RequestInvitationHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, shake_name=None):
-        shake = Shake.get('name=%s', shake_name)
+        shake = Shake.get('name=%s and deleted=0', shake_name)
         current_user_object = self.get_current_user_object()
-        
+
         if not shake:
             raise tornado.web.HTTPError(404)
-            
+
         if current_user_object.can_request_invitation_to_shake(shake.id):
             current_user_object.request_invitation_to_shake(shake.id)
             if self.get_argument('json', None):
@@ -404,13 +404,13 @@ class ApproveInvitationHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, shake_name=None):
-        shake = Shake.get('name=%s', shake_name)
+        shake = Shake.get('name=%s and deleted=0', shake_name)
         current_user_object = self.get_current_user_object()
         requestor = User.get('id = %s', self.get_argument('user_id', None))
-        
+
         if not shake:
             raise tornado.web.HTTPError(404)
-            
+
         if not requestor:
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
@@ -447,19 +447,19 @@ class DeclineInvitationHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, shake_name=None):
-        shake = Shake.get('name=%s', shake_name)
+        shake = Shake.get('name=%s and deleted=0', shake_name)
         current_user_object = self.get_current_user_object()
         requestor = User.get('id = %s', self.get_argument('user_id', None))
-        
+
         if not shake:
             raise tornado.web.HTTPError(404)
-            
+
         if not requestor:
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
             else:
                 return self.redirect('/%s', shake.name)
-        
+
         no = Notification.get('sender_id = %s and receiver_id = %s and action_id = %s and deleted = 0', requestor.id, current_user_object.id, shake.id)
 
         if not no:
@@ -467,9 +467,9 @@ class DeclineInvitationHandler(BaseHandler):
                 return self.write({'status':'error'})
             else:
                 return self.redirect('/%s' % (shake.name))
-        
+
         no.delete()
-        
+
         if self.get_argument('json', None):
             return self.write({'status':'ok', 'count' : Notification.count_for_user_by_type(current_user_object.id, 'invitation_request')})
         else:
@@ -482,7 +482,7 @@ class RSSFeedHandler(BaseHandler):
         20 posts
     """
     def get(self, shake_name=None):
-        shake = Shake.get("name=%s", shake_name)
+        shake = Shake.get("name=%s and deleted=0", shake_name)
         if not shake:
             raise tornado.web.HTTPError(404)
         build_date = shake.feed_date()
@@ -531,7 +531,7 @@ class MembersHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def get(self, shake_name):
-        shake = Shake.get("name=%s", shake_name)
+        shake = Shake.get("name=%s and deleted=0", shake_name)
         if not shake:
             raise tornado.web.HTTPError(404)
         
@@ -565,7 +565,7 @@ class QuitHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, shake_name=None):
-        shake = Shake.get("name=%s", shake_name)
+        shake = Shake.get("name=%s and deleted=0", shake_name)
         if not shake:
             raise tornado.web.HTTPError(404)
         current_user_object = self.get_current_user_object()
@@ -583,7 +583,7 @@ class RemoveMemberHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, shake_name=None):
-        shake = Shake.get('name=%s and user_id = %s', shake_name, self.current_user['id'])
+        shake = Shake.get('name=%s and user_id = %s and deleted=0', shake_name, self.current_user['id'])
 
         if not shake:
             raise tornado.web.HTTPError(404)

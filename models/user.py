@@ -553,24 +553,6 @@ hello@mltshp.com
 
         return True
 
-    def restore(self):
-        """
-        Restores a soft-deleted user (we will use this to migrate "deleted" MLKSHK
-        accounts to MLTSHP).
-
-        """
-        if options.readonly:
-            return False
-
-        migrate_for_user.delay_or_run(self.id)
-
-        # restore User object immediately since the user may be
-        # using it.
-        if self.deleted != 0:
-            self.deleted = 0
-            self.save()
-        return True
-
     def shake(self):
         return shake.Shake.get('user_id=%s and type=%s and deleted=0', self.id, 'user')
 
@@ -964,7 +946,7 @@ hello@mltshp.com
         following = [somebody['id'] for somebody in following]
 
         all_users_sql = """
-            select id from user
+            select id from user where deleted=0
         """
         all_users = self.query(all_users_sql)
         all_users = [somebody['id'] for somebody in all_users]
@@ -1013,7 +995,7 @@ hello@mltshp.com
         if name == '' or name == None:
             return []
         name = name + '%'
-        return User.where("name like %s limit %s", name, limit)
+        return User.where("name like %s limit %s and deleted=0", name, limit)
 
     @staticmethod
     def authenticate(name, password):
