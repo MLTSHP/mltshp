@@ -173,7 +173,7 @@ class Shake(ModelQueryCache, Model):
             self.add_error('name', 'Username can only contain letters, numbers, and dashes.')
             return False
 
-        existing_shake = shake.Shake.get("name = %s and deleted=0", self.name)
+        existing_shake = shake.Shake.get("name = %s and deleted <> 1", self.name)
         if existing_shake and existing_shake.id != self.id:
             self.add_error('name', 'That URL is already taken.')
             return False
