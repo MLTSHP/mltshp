@@ -12,10 +12,16 @@
 <p>
   {% if app.redirect_url != None%}{{app.redirect_url}}{% end %}
 </p>
-<p>
-  Key: <code>{{app.key()}}</code><br>
-  Secret: <pre>{{app.secret}}</pre>
-</p>
+<table>
+  <tr>
+    <td>Key: </td>
+    <td><code>{{app.key()}}</code></td>
+  </tr>
+  <tr>
+    <td>Secret: </td>
+    <td><pre>{{app.secret}}</pre></td>
+  </tr>
+</table>
 <p>
   <a href="/developers/edit-app/{{app.id}}">Edit This Application</a><br>
   <a href="/developers/apps">My MLTSHP API Applications</a>

@@ -8,10 +8,16 @@
 <p>
 <a href="/developers/apps">Back To API Application List</a>
 </p>
-<p>
-  Consumer Key: <code>{{app.key()}}</code><br>
-  Consumer Secret: <pre>{{app.secret}}</pre><br>
-</p>
+<table>
+  <tr>
+    <td>Key: </td>
+    <td><code>{{app.key()}}</code></td>
+  </tr>
+  <tr>
+    <td>Secret: </td>
+    <td><pre>{{app.secret}}</pre></td>
+  </tr>
+</table>
 <div class="fun-form">
 
 <form method="POST" action="/developers/edit-app/{{app.id}}">
