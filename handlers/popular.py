@@ -9,8 +9,6 @@ from models import sharedfile, notification, user
 
 
 class IndexHandler(BaseHandler):
-    @tornado.web.authenticated
-    @require_membership
     def get(self):
         current_user_obj = self.get_current_user_object()
         now = datetime.utcnow()
