@@ -39,7 +39,7 @@ class AccountTests(test.base.BaseAsyncTestCase):
         response = self.fetch_url('/user/admin/rss')
         self.assertEqual(response.code, 404)
 
-        def test_like_save_view_count_is_returned(self):
+    def test_like_save_view_count_is_returned(self):
         sharedfile = test.factories.sharedfile(self.user, view_count=25, save_count=50, like_count=100)
         response = self.fetch_url('/user/%s/counts' % self.user.name)
         j_response = json_decode(response.body)
