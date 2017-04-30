@@ -18,7 +18,7 @@
         <li>
           <a href="/user/{{escape(user.name)}}"><img class="avatar" src="{{user.profile_image_url()}}" width="48" height="48"></a>
           <div class="details">
-            <h4><a class="icon" href="/user/{{escape(user.name)}}">{{ escape(user.display_name()) }}</a> {% if user.is_paid %}<img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center">{% end %}</h4>
+            <h4><a class="icon" href="/user/{{escape(user.name)}}">{{ escape(user.display_name()) }}</a> {% if user.is_plus() %}<img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center">{% end %}</h4>
             <p class="about">{{escape(user.about)}}
             {% if user.website %}
               <br>

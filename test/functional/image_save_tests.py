@@ -9,22 +9,22 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(ImageSaveTests, self).setUp()
         # uploader
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
 
         # saver
-        self.bob = User(name='bob', email='bob@mltshp.com', email_confirmed=1)
+        self.bob = User(name='bob', email='bob@mltshp.com', email_confirmed=1, is_paid=1)
         self.bob.set_password('asdfasdf')
         self.bob.save()
 
         # saver
-        self.tom = User(name='tom', email='tom@mltshp.com', email_confirmed=1)
+        self.tom = User(name='tom', email='tom@mltshp.com', email_confirmed=1, is_paid=1)
         self.tom.set_password('asdfasdf')
         self.tom.save()
 
         # unconfirmed user
-        self.jim = User(name='jim', email='jim@mltshp.com', email_confirmed=0)
+        self.jim = User(name='jim', email='jim@mltshp.com', email_confirmed=0, is_paid=1)
         self.jim.set_password('asdfasdf')
         self.jim.save()
         

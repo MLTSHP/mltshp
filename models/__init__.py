@@ -31,3 +31,4 @@ from tag import Tag
 from tagged_file import TaggedFile
 from voucher import Voucher
 from promotion import Promotion
+from migration_state import MigrationState

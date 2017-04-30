@@ -29,7 +29,8 @@ def user(**kwargs):
     defaults = {
         'name' : 'admin',
         'email' : 'admin@mltshp.com',
-        'email_confirmed' : 1
+        'email_confirmed' : 1,
+        'is_paid': 1,
     }    
     user = models.User(**dict(defaults, **kwargs))
     user.set_password('password')

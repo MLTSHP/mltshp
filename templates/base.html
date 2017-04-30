@@ -49,7 +49,7 @@
                 <nav id="site-nav" class="site-nav">
                     <button type="button" class="site-nav--toggle">&#9776;</button>
                     <ul class="site-nav--list">
-                        {% if current_user %}
+                        {% if current_user and current_user_object.is_member() %}
                             <li class="site-nav--item site-nav--shake-list">
                                 {{modules.ShakeDropdown(current_user_object)}}
                             </li>
@@ -62,13 +62,14 @@
                             </li>
                         {% end %}
                         {% if not site_is_readonly %}
-                            {% if current_user %}
+                            {% if current_user and current_user_object.can_post() %}
                                 <li class="site-nav--item site-nav--upload">
                                     <div class="action-button">
                                         <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
                                     </div>
                                 </li>
                             {% else %}
+                                {% if not current_user %}
                                 <li class="site-nav--item site-nav--signup">
                                     {% set handler_class = handler.__class__.__name__  %}
                                     {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
@@ -78,6 +79,7 @@
                                         <a class="blue" href="/create-account"><span>Sign Up!</span></a>
                                     </div>
                                 </li>
+                                {% end %}
                             {% end %}
                         {% end %}
                     </ul>
@@ -125,7 +127,7 @@
 
             <footer class="site-footer">
                 <p>
-                    <a href="http://mltshp.tumblr.com/" target="_blank" class="link--primary">Read Our Blog</a>
+                    <a href="https://mltshp.tumblr.com/" target="_blank" class="link--primary">Read Our Blog</a>
                     &amp;
                     <a href="https://twitter.com/mltshphq" target="_blank" class="link--primary">Follow Us On Twitter</a>
                 </p>
@@ -133,7 +135,7 @@
                     Are you a developer? <a href="/developers" class="link--primary">Check out our API</a>.
                 </p>
                 <p>
-                    &copy; <a href="http://new.mltshp.com/" target="_blank">MLTSHP, LLC</a>
+                    &copy; <a href="http://new.mltshp.com/" target="_blank">MLTSHP, Inc.</a>
                     All Rights Reserved
                     <a href="/terms-of-use">Terms of Use</a>
                     <script type="text/javascript">

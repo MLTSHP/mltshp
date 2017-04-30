@@ -2,12 +2,14 @@ import tornado.web
 from tornado.escape import json_encode
 from tornado import escape
 
-from base import BaseHandler
+from base import BaseHandler, require_membership
 from models import Tag, TaggedFile
 from lib.utilities import base36decode
 
 
 class TagHandler(BaseHandler):
+    @tornado.web.authenticated
+    @require_membership
     def get(self, tag_name=None, before_or_after=None, base36_id=None):
         tag = Tag.get("name=%s", tag_name.lower())
         older_link, newer_link = None, None
@@ -16,18 +18,18 @@ class TagHandler(BaseHandler):
 
         if not tag:
             raise tornado.web.HTTPError(404)
-        
+
         if base36_id:
             sharedfile_id = base36decode(base36_id)
-        
+
         max_id, since_id = None, None
         if sharedfile_id and before_or_after == 'before':
             max_id = sharedfile_id
         elif sharedfile_id and before_or_after == 'after':
             since_id = sharedfile_id
-        
-        current_user = self.get_current_user_object()            
-        
+
+        current_user = self.get_current_user_object()
+
         # We're going to older, so ony use max_id.
         if max_id:
             shared_files = tag.sharedfiles_paginated(max_id=max_id, per_page=11)

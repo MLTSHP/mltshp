@@ -8,7 +8,7 @@ from lib.utilities import base36encode
 class HomeTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(HomeTests, self).setUp()
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
         self.sign_in('admin', 'asdfasdf')
@@ -43,7 +43,7 @@ class HomeTests(test.base.BaseAsyncTestCase):
         still will only have one bookmark if no files have been uploaded between visits.
         """
         for x in range(10):
-            user = User(name='test%s' % (x), email='test%s@example.com' % (x), email_confirmed=1)
+            user = User(name='test%s' % (x), email='test%s@example.com' % (x), email_confirmed=1, is_paid=1)
             user.save()
             sf = test.factories.sharedfile(user)
             sf.add_to_shake(user.shake())
@@ -73,7 +73,7 @@ class HomeTests(test.base.BaseAsyncTestCase):
         We check the stream for correctness by checking for presence of sharefile
         titles that appear on the page.
         """
-        user = User(name='user2', email='user2@example.com', email_confirmed=1)
+        user = User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         user.save()
         self.admin.subscribe(user.shake())
 
@@ -111,7 +111,7 @@ class HomeTests(test.base.BaseAsyncTestCase):
         When a browser bot accesses the home page, no bookmarks should be
         set.
         """
-        user = User(name='user2', email='user2@example.com', email_confirmed=1)
+        user = User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         user.save()
         self.admin.subscribe(user.shake())
 

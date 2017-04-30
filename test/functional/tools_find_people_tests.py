@@ -19,7 +19,7 @@ class ToolsFindPeopleTests(test.base.BaseAsyncTestCase):
 
     def setUp(self):
         super(ToolsFindPeopleTests, self).setUp()
-        self.user = models.User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = models.User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('pass')
         self.user.save()
         
@@ -55,7 +55,7 @@ class ToolsFindPeopleTests(test.base.BaseAsyncTestCase):
             type=models.Externalservice.TWITTER, service_key='asdf', service_secret='qwer')
         self.user_service.save()
         
-        user2 = models.User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        user2 = models.User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         user2.save()
         user2_service = models.Externalservice(user_id=user2.id, service_id=2000, screen_name='user2', 
             type=models.Externalservice.TWITTER, service_key='asdf', service_secret='qwer')

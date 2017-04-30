@@ -2,17 +2,19 @@ from models import Notification, User, Sourcefile, Sharedfile, Comment, Subscrip
 from base import BaseTestCase
 from settings import test_settings as settings
 
-class NotificationModelTests(BaseTestCase):    
+class NotificationModelTests(BaseTestCase):
     def setUp(self):
         """
         Create a user, source and shared file.
         """
         super(NotificationModelTests, self).setUp()
-        self.user = User(name='example',email='user1@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+        self.user = User(name='example',email='user1@example.com',
+            verify_email_token = 'created', password='examplepass', email_confirmed=1,
+            is_paid=1)
         self.user.save()
-        self.user2 = User(name='example2',email='user2@example.com', \
-            verify_email_token = 'created', password='examplepass', email_confirmed=1)
+        self.user2 = User(name='example2',email='user2@example.com',
+            verify_email_token = 'created', password='examplepass', email_confirmed=1,
+            is_paid=1)
         self.user2.save()
 
 
@@ -22,14 +24,14 @@ class NotificationModelTests(BaseTestCase):
         self.sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file", \
             user_id=self.user.id, content_type="image/png", share_key="ok")
         self.sharedfile.save()
-    
+
     def test_new_subscriber_notification(self):
         #generate a notification
         new_sub = Subscription(user_id=self.user2.id, shake_id=1)
         new_sub.save()
-        
+
         notification = Notification.new_subscriber(sender=self.user2, receiver=self.user, action_id=new_sub.id)
-        
+
         sent_notification = Notification.get("id=%s", notification.id)
         self.assertEqual(sent_notification.id, notification.id)
         self.assertEqual(sent_notification.sender_id, self.user2.id)

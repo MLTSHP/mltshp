@@ -15,16 +15,16 @@ from models import Sourcefile, User
 class AccountInfoTests(BaseAsyncTestCase):
     def setUp(self):
         super(AccountInfoTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
-        
+
         self.test_file1_path = os.path.abspath("test/files/1.png")
         self.test_file1_sha1 = Sourcefile.get_sha1_file_key(self.test_file1_path) 
         self.test_file1_content_type = "image/png"
-        
+
         self.test_file2_path = os.path.abspath("test/files/love.gif")
         self.test_file2_sha1 = Sourcefile.get_sha1_file_key(self.test_file2_path) 
         self.test_file2_content_type = "image/gif"
@@ -42,11 +42,18 @@ class AccountInfoTests(BaseAsyncTestCase):
 class FileViewTests(BaseAsyncTestCase):
     def setUp(self):
         super(FileViewTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
-        self.sid = self.sign_in('admin', 'asdfasdf')
+
+        self.user2 = User(name="user2", email="user2@mltshp.com", email_confirmed=1, is_paid=1)
+        self.user2.set_password("asdfasdf")
+        self.user2.save()
+        self.sid2 = self.sign_in("user2", "asdfasdf")
+
+        self.sid = self.sign_in("admin", "asdfasdf")
         self.xsrf = self.get_xsrf()
+
         self.test_file1_path = os.path.abspath("test/files/1.png")
         self.test_file1_sha1 = Sourcefile.get_sha1_file_key(self.test_file1_path) 
         self.test_file1_content_type = "image/png"
@@ -67,27 +74,31 @@ class FileViewTests(BaseAsyncTestCase):
 
         response = self.wait()
         options.use_cdn = False
-        self.assertEquals(response.headers['location'], 'http://s.mltshp-cdn.com/r/1')
+        self.assertEquals(response.headers['location'], 'https://cdn.mltshp.com/r/1')
 
     def test_raw_image_view_counts(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1,
             self.test_file1_content_type, 1, self.sid, self.xsrf)
-        self.http_client.fetch(self.get_url("/user/admin"), self.stop)
+        request = HTTPRequest(self.get_url('/user/admin'), 'GET',
+            {"Cookie":"sid=%s" % (self.sid)})
+        self.http_client.fetch(request, self.stop)
         response = self.wait()
-        self.assertTrue(response.body.find("1.png") > 0)
-        
+        self.assertTrue(response.body.find("1.png") > -1)
+
         for i in range(0,10):
             if i % 2 == 0:
+                # views by owner aren't counted
                 request = HTTPRequest(self.get_url('/r/1'), 'GET',
                     {"Cookie":"sid=%s" % (self.sid)})
             else:
+                # views by non-owner are counted
                 request = HTTPRequest(self.get_url('/r/1'), 'GET')
             self.http_client.fetch(request, self.stop)
             response = self.wait()
 
         imageviews = self.db.query("SELECT id, user_id, sharedfile_id, created_at from fileview")
         self.assertEqual(len(imageviews), 10)
-        
+
         imageviews = self.db.query("SELECT id, user_id, sharedfile_id, created_at from fileview WHERE user_id = 0")
         self.assertEqual(len(imageviews), 5)
 
@@ -95,7 +106,7 @@ class FileViewTests(BaseAsyncTestCase):
 class AuthenticationTests(BaseAsyncTestCase):
     def setUp(self):
         super(AuthenticationTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
                 

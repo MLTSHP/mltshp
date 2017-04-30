@@ -37,7 +37,8 @@ class CreateAccountTests(test.base.BaseAsyncTestCase):
         existant_user = User(
             name='admin',
             email='admin@mltshp.com',
-            email_confirmed=1
+            email_confirmed=1,
+            is_paid=1
         )
         existant_user.set_password('asdfasdf')
         existant_user.save()
@@ -71,7 +72,8 @@ class CreateAccountTests(test.base.BaseAsyncTestCase):
         existant_user = User(
             name='admin',
             email='admin@mltshp.com',
-            email_confirmed=1
+            email_confirmed=1,
+            is_paid=1
         )
         existant_user.set_password('asdfasdf')
         existant_user.save()

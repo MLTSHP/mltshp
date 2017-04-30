@@ -340,7 +340,8 @@ class Sharedfile(ModelQueryCache, Model):
             select shake.* from shake
             left join shakesharedfile on
             shakesharedfile.shake_id = shake.id
-            where shakesharedfile.sharedfile_id = %s
+            where shake.deleted = 0
+            and shakesharedfile.sharedfile_id = %s
             and shakesharedfile.deleted = 0;
         """
         return shake.Shake.object_query(select, self.id)
@@ -583,6 +584,7 @@ class Sharedfile(ModelQueryCache, Model):
             constraint_sql = "AND post.sharedfile_id > %s" % (int(after_id))
 
         select = """SELECT sharedfile_id, shake_id FROM post
+                    JOIN sharedfile on sharedfile.id = sharedfile_id and sharedfile.deleted = 0
                     WHERE post.user_id = %s
                     AND post.seen = 0
                     AND post.deleted = 0
@@ -611,6 +613,7 @@ class Sharedfile(ModelQueryCache, Model):
                   AND post.sharedfile_id = sharedfile.id
                   AND post.seen = 0
                   AND post.deleted = 0
+                  AND sharedfile.deleted = 0
                   ORDER BY post.created_at desc limit %s, %s""" % (int(user_id), int(limit_start), per_page)
         return self.object_query(select)
 
@@ -634,6 +637,7 @@ class Sharedfile(ModelQueryCache, Model):
                     on favorite.sharedfile_id = sharedfile.id
                     WHERE favorite.user_id = %s
                     AND favorite.deleted = 0
+                    AND sharedfile.deleted = 0
                     %s
                     GROUP BY sharedfile.source_id
                     ORDER BY favorite.id %s limit 0, %s""" % (int(user_id), constraint_sql, order, per_page)
@@ -712,9 +716,9 @@ class Sharedfile(ModelQueryCache, Model):
         # If we have no shake_id, drop in user's main shake. Otherwise, validate that the specififed
         # shake is a group shake that the user has permissions for.
         if not shake_id:
-            destination_shake = shake.Shake.get('user_id = %s and type=%s', user_id, 'user')
+            destination_shake = shake.Shake.get('user_id = %s and type=%s and deleted=0', user_id, 'user')
         else:
-            destination_shake = shake.Shake.get('id=%s', shake_id)
+            destination_shake = shake.Shake.get('id=%s and deleted=0', shake_id)
             if not destination_shake:
                 return None
             if not destination_shake.can_update(user_id):

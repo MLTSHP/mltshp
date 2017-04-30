@@ -26,9 +26,9 @@ class CeleryTaskTests(BaseTestCase):
         super(CeleryTaskTests, self).setUp() # register connection.
 
         #create two users.
-        self.user_a = User(name='user_a',email='user_a@example.com',verify_email_token='created')
+        self.user_a = User(name='user_a',email='user_a@example.com',verify_email_token='created', is_paid=1)
         self.user_a.save()
-        self.user_b = User(name='user_b',email='user_b@example.com',verify_email_token='created')
+        self.user_b = User(name='user_b',email='user_b@example.com',verify_email_token='created', is_paid=1)
         self.user_b.save()
 
         #have the second user follow the first

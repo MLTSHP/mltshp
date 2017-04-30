@@ -32,7 +32,7 @@ class FileDeleteTests(BaseAsyncTestCase):
     def setUp(self):
         super(FileDeleteTests, self).setUp()
 
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
 
@@ -53,7 +53,7 @@ class FileDeleteTests(BaseAsyncTestCase):
         self.assertEqual(sf.deleted, 1)
 
     def test_delete_button_only_shows_for_owner(self):
-        bill = User(name='bill', email='bill@mltshp.com', email_confirmed=1)
+        bill = User(name='bill', email='bill@mltshp.com', email_confirmed=1, is_paid=1)
         bill.set_password('asdfasdf')
         bill.save()
 
@@ -68,7 +68,7 @@ class FileDeleteTests(BaseAsyncTestCase):
         self.assertTrue(response.body.find('/p/1/delete') > 0)
 
     def test_delete_button_only_works_for_owner(self):
-        bill = User(name='bill', email='bill@mltshp.com', email_confirmed=1)
+        bill = User(name='bill', email='bill@mltshp.com', email_confirmed=1, is_paid=1)
         bill.set_password('asdfasdf')
         bill.save()
         sid = self.sign_in("bill", "asdfasdf")
@@ -83,9 +83,15 @@ class FileDeleteTests(BaseAsyncTestCase):
 class FileViewTests(BaseAsyncTestCase):
     def setUp(self):
         super(FileViewTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
+
+        self.user2 = User(name='user', email='user@mltshp.com', email_confirmed=1, is_paid=1)
+        self.user2.set_password('asdfasdf')
+        self.user2.save()
+
+        self.sid2 = self.sign_in('user', 'asdfasdf')
 
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
@@ -100,7 +106,8 @@ class FileViewTests(BaseAsyncTestCase):
 
     def test_raw_image_view_counts(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        self.http_client.fetch(self.get_url("/user/admin"), self.stop)
+        request = HTTPRequest(self.get_url('/user/admin'), 'GET', {"Cookie":"sid=%s" % (self.sid2)})
+        self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("1.png") > 0)
 
@@ -120,7 +127,8 @@ class FileViewTests(BaseAsyncTestCase):
 
     def test_raw_load_with_extension(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        self.http_client.fetch(self.get_url("/user/admin"), self.stop)
+        request = HTTPRequest(self.get_url('/user/admin'), 'GET', {"Cookie":"sid=%s" % (self.sid2)})
+        self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("1.png") > 0)
 
@@ -174,7 +182,7 @@ class FileViewTests(BaseAsyncTestCase):
 class SharedFileTests(BaseAsyncTestCase):
     def setUp(self):
         super(SharedFileTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
@@ -270,7 +278,7 @@ class SharedFileTests(BaseAsyncTestCase):
 class VideoPickerTests(BaseAsyncTestCase):
     def setUp(self):
         super(VideoPickerTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.user_shake = self.user.shake()
@@ -281,7 +289,7 @@ class VideoPickerTests(BaseAsyncTestCase):
         return tornado.ioloop.IOLoop.instance()
 
     def test_save_video_allows_link_to_vimeo_youtube(self):
-        video_sites = {'vimeo':'http://vimeo.com/20379529', 'youtube':'http://www.youtube.com/watch?v=EmcMG4uxiHk', 'flickr':'http://www.flickr.com/photos/dahliablack/5497635343/', 'vine': 'https://vine.co/v/hbQXrhighqA'}
+        video_sites = {'vimeo':'http://vimeo.com/20379529', 'youtube':'http://www.youtube.com/watch?v=EmcMG4uxiHk', 'flickr':'http://www.flickr.com/photos/dahliablack/5497635343/'}
         for site in video_sites.keys():
             request = HTTPRequest(self.get_url('/tools/save-video?url=%s' % (url_escape(video_sites[site]))), 'GET', {"Cookie":"sid=%s" % (self.sid)})
             self.http_client.fetch(request, self.stop)
@@ -292,8 +300,6 @@ class VideoPickerTests(BaseAsyncTestCase):
                 self.assertTrue(response.body.find('value="https://www.youtube.com/watch?v=EmcMG4uxiHk">') > -1)
             elif site == 'flickr':
                 self.assertTrue(response.body.find('value="http://www.flickr.com/photos/dahliablack/5497635343/">') > -1)
-            elif site == 'vine':
-                self.assertTrue(response.body.find('value="https://vine.co/v/hbQXrhighqA">') > -1)
 
     def test_save_video_correctly_processes_various_youtube_urls(self):
         urls = ['http://www.youtube.com/watch?v=EmcMG4uxiHk&recommended=0', 'http://youtu.be/EmcMG4uxiHk', 'http://www.youtube.com/watch?v=EmcMG4uxiHk&feature=rec-LGOUT-real_rev-rn-1r-11-HM']
@@ -317,7 +323,7 @@ class VideoPickerTests(BaseAsyncTestCase):
     #        self.assertTrue(len(source_file.data) > 0)
 
     def test_adding_video_makes_it_show_up_in_friends_shake(self):
-        user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1)
+        user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         user2.set_password('asdfasdf')
         user2.save()
         user2.subscribe(self.user.shake())
@@ -334,7 +340,7 @@ class VideoPickerTests(BaseAsyncTestCase):
 class FilePickerTests(BaseAsyncTestCase):
     def setUp(self):
         super(FilePickerTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.user_shake = self.user.shake()
@@ -433,7 +439,7 @@ class FilePickerTests(BaseAsyncTestCase):
 class FileUploadTests(BaseAsyncTestCase):
     def setUp(self):
         super(FileUploadTests, self).setUp()
-        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.user = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.user_shake = self.user.shake()
@@ -493,14 +499,17 @@ class FileUploadTests(BaseAsyncTestCase):
 
         with test_option('max_mb_per_month', -1):
             # now we overeride the max_mb_ and try to upload, should fail.
-            response = self.upload_test_file()
-            self.assertEqual(True, response.body.find('Free Account Limit') > 0)
-
-            # but if they paid, we're good.
-            self.user.is_paid = True
+            self.user.stripe_plan_id = "mltshp-single"
             self.user.save()
             response = self.upload_test_file()
-            self.assertEqual(False, response.body.find('Free Account Limit') > 0)
+            self.assertEqual(True, response.body.find('Single Scoop Account Limit') > -1)
+
+            # but if they paid, we're good.
+            self.user.stripe_plan_id = "mltshp-double"
+            self.user.save()
+
+            response = self.upload_test_file()
+            self.assertEqual(True, response.body.find('Single Scoop Account Limit') == -1)
 
     def test_uploading_file_creates_post_record_for_user(self):
         response = self.upload_test_file()

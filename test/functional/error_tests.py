@@ -7,7 +7,7 @@ from models import User, Sourcefile, Sharedfile, Shakesharedfile, Bookmark
 class ErrorTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(ErrorTests, self).setUp()
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
         self.sign_in('admin', 'asdfasdf')

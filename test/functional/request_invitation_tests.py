@@ -5,12 +5,12 @@ from tornado.escape import json_decode
 class RequestInvitationTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(RequestInvitationTests, self).setUp()
-        self.user = User(name='joe', email='joe@example.com', email_confirmed=1)
+        self.user = User(name='joe', email='joe@example.com', email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
         self.sign_in("joe", "asdfasdf")        
         
-        self.manager = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.manager = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.manager.set_password('asdfasdf')
         self.manager.save()
 

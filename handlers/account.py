@@ -11,10 +11,13 @@ import torndb
 import postmark
 from recaptcha.client import captcha
 
-from base import BaseHandler
-from models import User, Invitation, Shake, Notification, Conversation, Invitation, App, PaymentLog, Voucher, Promotion
-from lib.utilities import email_re, base36decode, is_valid_voucher_key, payment_notifications, uses_a_banned_phrase
+from base import BaseHandler, require_membership
+from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
+    App, PaymentLog, Voucher, Promotion, MigrationState
+from lib.utilities import email_re, base36decode, is_valid_voucher_key,\
+    payment_notifications, uses_a_banned_phrase, plan_name
 import stripe
+from tasks.migration import migrate_for_user
 
 
 class VerifyEmailHandler(BaseHandler):
@@ -37,6 +40,8 @@ class VerifyEmailHandler(BaseHandler):
 
 
 class AccountImagesHandler(BaseHandler):
+    @tornado.web.authenticated
+    @require_membership
     def get(self, user_name=None, page=None):
         if not user_name:
             raise tornado.web.HTTPError(404)
@@ -62,14 +67,14 @@ class AccountImagesHandler(BaseHandler):
         following_shakes = user.following()
         following_shakes_count = len(following_shakes)
 
-        followers = user.shake().subscribers()
-        follower_count = len(followers)
-
-        other_shakes = user.shakes(include_managed=False, include_only_group_shakes=True)
-
         user_shake = user.shake()
+        followers = user_shake.subscribers()
+        follower_count = len(followers)
         count = user_shake.sharedfiles_count()
         images = user_shake.sharedfiles(page=page)
+        has_data_to_migrate = not MigrationState.has_migrated(user.id)
+
+        other_shakes = user.shakes(include_managed=False, include_only_group_shakes=True)
 
         if not images and page != 1:
             raise tornado.web.HTTPError(404)
@@ -78,7 +83,8 @@ class AccountImagesHandler(BaseHandler):
             url_format=url_format, can_follow=can_follow,
             following_shakes=following_shakes[:10],
             following_shakes_count=following_shakes_count, followers=followers[:10],
-            follower_count=follower_count, other_shakes=other_shakes)
+            follower_count=follower_count, other_shakes=other_shakes,
+            has_data_to_migrate=has_data_to_migrate)
 
 
 class UserLikesHandler(BaseHandler):
@@ -89,6 +95,8 @@ class UserLikesHandler(BaseHandler):
           /user/{name}/likes/before/{id}
           /user/{name}/likes/after/{id}
     """
+    @tornado.web.authenticated
+    @require_membership
     def get(self, user_name=None, before_or_after=None, favorite_id=None):
         user = User.get("name = %s", user_name)
         if not user:
@@ -159,11 +167,20 @@ class SettingsHandler(BaseHandler):
             payments = PaymentLog.last_payments(count=3, user_id = user.id)
 
         already_requested = self.get_secure_cookie("image_request")
+        cancel_flag = self.get_argument('cancel', 0)
+        cancel_flag = self.get_argument('cancel', 0)
+        migrated_flag = self.get_argument('migrated', 0)
 
         promotions = Promotion.active()
 
+        has_data_to_migrate = not MigrationState.has_migrated(user.id)
+
         return self.render("account/settings.html", user=user, payments=payments,
-            already_requested=already_requested, promotions=promotions)
+            already_requested=already_requested, promotions=promotions,
+            plan_name=plan_name(user.stripe_plan_id),
+            has_data_to_migrate=has_data_to_migrate,
+            migrated_flag=migrated_flag,
+            cancel_flag=cancel_flag)
 
     @tornado.web.authenticated
     def post(self):
@@ -328,7 +345,6 @@ class SignInHandler(BaseHandler):
         else:
             self.next = ""
 
-
     def get(self):
         """
         If user is already logged in, redirect to home. Otherwise, render the sign-in page.
@@ -353,8 +369,62 @@ class SignInHandler(BaseHandler):
             else:
                 return self.redirect("/")
         else:
+            unmigrated_user = User.find_unmigrated_user(name, password)
+            if unmigrated_user:
+                if not MigrationState.has_migrated(unmigrated_user.id):
+                    # undelete the user account and log them in...
+                    unmigrated_user.deleted = 0
+                    unmigrated_user.save()
+                    # also, find their personal shake and restore that
+                    # specifically. does not restore any images within it--
+                    # the user will need to invoke a migration for that.
+                    shake = Shake.get('user_id=%s and type=%s and deleted=2', unmigrated_user.id, 'user')
+                    if shake is not None:
+                        shake.deleted = 0
+                        shake.save()
+
+                    self.log_user_in(unmigrated_user)
+                    return self.redirect("/account/welcome-to-mltshp")
+
             self.add_error('name', "I could not find that user name and password combination.")
             return self.render(self.use_template, name=name, next=self.next)
+
+
+class WelcomeToMltshp(BaseHandler):
+    def prepare(self):
+        self.use_template = "account/welcome-to-mltshp.html"
+
+    def get(self):
+        """
+        If user is already logged in, redirect to home. Otherwise, render the sign-in page.
+        """
+        user = self.get_current_user_object()
+        if not user:
+            return self.redirect("/sign-in")
+
+        return self.render(self.use_template, name=user.name)
+
+
+class MlkshkMigrationHandler(BaseHandler):
+    @tornado.web.authenticated
+    @require_membership
+    def get(self):
+        user = self.get_current_user_object()
+        state = MigrationState.has_migrated(user.id)
+        return self.render(
+            "account/migrate.html",
+            name=user.name, has_migrated=state)
+
+    @tornado.web.authenticated
+    @require_membership
+    def post(self):
+        user = self.get_current_user_object()
+        state = MigrationState.has_migrated(user.id)
+
+        if not state:
+            migrate_for_user.delay_or_run(user.id)
+
+        return self.redirect("/account/settings?migrated=1")
 
 
 class SignOutHandler(BaseHandler):
@@ -381,7 +451,8 @@ class ConfirmAccountHandler(BaseHandler):
                     promotion = Promotion.get("id=%s", voucher.promotion_id)
                     if promotion is not None:
                         shake = promotion.shake()
-        return self.render("account/confirm.html", promotion=promotion,
+        return self.render(
+            "account/confirm.html", promotion=promotion,
             promotion_shake=shake, voucher=voucher, current_user_obj=user)
 
 
@@ -390,6 +461,7 @@ class SubscribeHandler(BaseHandler):
     path: /user/{user_name}/subscribe
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, user_name):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
@@ -415,6 +487,7 @@ class UnsubscribeHandler(BaseHandler):
     path: /user/{user_name}/unsubscribe
     """
     @tornado.web.authenticated
+    @require_membership
     def post(self, user_name):
         is_json = self.get_argument('json', None)
         user = self.get_current_user_object()
@@ -502,10 +575,13 @@ class CreateAccountHandler(BaseHandler):
 
         promotions = Promotion.active()
 
-        # Amazon's ELB will set this header to inform us what scheme is in use
-        # Fallback to checking Tornado's protocol if it is absent
-        using_https = self.request.headers.get("X-Forwarded-Proto",
-            self.request.protocol) == "https"
+        # If we're using cdn.mltshp.com, we know that we can use
+        # https; if something else is configured, check the
+        # X-Forwarded-Proto header and fallback to the protocol
+        # of the request
+        using_https = options.cdn_ssl_host == "cdn.mltshp.com" or \
+            self.request.headers.get("X-Forwarded-Proto",
+                self.request.protocol) == "https"
 
         #recaptcha hot fix
         if options.recaptcha_public_key:
@@ -663,6 +739,7 @@ class QuickNotificationsHandler(BaseHandler):
 class QuickSendInvitationHandler(BaseHandler):
 
     @tornado.web.authenticated
+    @require_membership
     def post(self):
         """
         Ajax call to send an invitation on behalf of a user.
@@ -764,14 +841,131 @@ class QuickNameSearch(BaseHandler):
         return self.write({'users': users})
 
 
-class UpgradeHandler(BaseHandler):
+class MembershipHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        current_user = self.get_current_user_object()
+
+        token_id = None
+        if current_user.stripe_customer_id is None:
+            token_id = self.get_argument("token")
+            if token_id is None:
+                # invalid request
+                raise "Invalid request"
+
+        plan_id = self.get_argument("plan_id")
+        if plan_id is None:
+            # invalid request
+            raise "Invalid request"
+        if plan_id not in ("mltshp-single", "mltshp-double"):
+            raise "Invalid request"
+
+        quantity = 1
+        if plan_id == "mltshp-double":
+            quantity = int(float(self.get_argument("quantity")))
+            if quantity < 24 or quantity > 500:
+                raise "Invalid request"
+
+        customer = None
+        sub = None
+        stripe_customer_id = current_user.stripe_customer_id
+        if stripe_customer_id is not None:
+            try:
+                customer = stripe.Customer.retrieve(stripe_customer_id)
+            except stripe.error.InvalidRequestError:
+                pass
+            if customer and getattr(customer, "deleted", False):
+                customer = None
+
+        try:
+            if customer is None:
+                if token_id is None:
+                    # FIXME: handle this more gracefully...
+                    raise "Invalid request"
+
+                # create a new customer object for this subscription
+                customer = stripe.Customer.create(
+                    description="MLTSHP user %s" % current_user.name,
+                    email=current_user.email,
+                    metadata={"mltshp_user": current_user.name},
+                    source=token_id,
+                )
+
+            # if this works, we should have a customer with 1 subscription, this one
+            if customer.subscriptions.total_count > 0:
+                sub = customer.subscriptions.data[0]
+                if sub.plan != plan_id:
+                    sub.plan = plan_id
+                    if plan_id == "mltshp-double":
+                        sub.quantity = quantity
+                    else:
+                        sub.quantity = 1
+                    sub.save()
+            else:
+                if plan_id == "mltshp-double":
+                    sub = customer.subscriptions.create(
+                        plan=plan_id, quantity=quantity)
+                else:
+                    sub = customer.subscriptions.create(
+                        plan=plan_id)
+        except stripe.error.CardError as ex:
+            return self.render("account/return-subscription-completed.html",
+                error=unicode(ex),
+                has_data_to_migrate=False)
+
+        if not sub:
+            raise Exception("Error issuing subscription")
+
+        amount = "USD %0.2f" % ((sub.plan.amount / 100.0) * quantity)
+        payment_log = PaymentLog(
+            processor                 = PaymentLog.STRIPE,
+            user_id                   = current_user.id,
+            status                    = "subscribed",
+            reference_id              = sub.id, # ??
+            transaction_id            = sub.id, # ??
+            operation                 = "order",
+            transaction_date          = datetime.datetime.fromtimestamp(sub.current_period_start).strftime("%Y-%m-%d %H:%M:%S"),
+            next_transaction_date     = datetime.datetime.fromtimestamp(sub.current_period_end).strftime("%Y-%m-%d %H:%M:%S"),
+            buyer_email               = current_user.email,
+            buyer_name                = current_user.display_name(),
+            recipient_email           = "subscriptions@mltshp.com",
+            recipient_name            = "MLTSHP, Inc.",
+            payment_reason            = "MLTSHP Membership",
+            transaction_serial_number = 1,
+            subscription_id           = sub.id,
+            payment_method            = "CC",
+            transaction_amount        = amount,
+        )
+        payment_log.save()
+        current_user.is_paid = 1
+        current_user.stripe_plan_id = plan_id
+
+        if current_user.stripe_customer_id != customer.id:
+            current_user.stripe_customer_id = customer.id
+
+        current_user.save()
+
+        if options.postmark_api_key:
+            pm = postmark.PMMail(api_key=options.postmark_api_key,
+                sender="hello@mltshp.com", to="subscriptions@mltshp.com",
+                subject="%s has created a subscription" % (payment_log.buyer_name),
+                text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (payment_log.subscription_id, payment_log.buyer_name, payment_log.buyer_email, current_user.id))
+            pm.send()
+
+        payment_notifications(current_user, "subscription", amount)
+
+        has_data_to_migrate = not MigrationState.has_migrated(current_user.id)
+
+        return self.render("account/return-subscription-completed.html",
+                has_data_to_migrate=has_data_to_migrate)
+
     @tornado.web.authenticated
     def get(self):
         current_user = self.get_current_user_object()
-        if current_user.is_paid:
-            return self.redirect("/account/settings")
-
-        return self.render('account/upgrade.html')
+        return self.render('account/membership.html',
+            current_plan=current_user.stripe_plan_id,
+            stripe_customer_id=current_user.stripe_customer_id,
+            stripe_public_key=options.stripe_public_key)
 
 
 class RSSFeedHandler(BaseHandler):
@@ -800,145 +994,33 @@ class RSSFeedHandler(BaseHandler):
             app_host=options.app_host, build_date=build_date)
 
 
-class SubscriptionHandler(BaseHandler):
-    @tornado.web.authenticated
-    def post(self):
-        current_user = self.get_current_user_object()
-        # an existing, paying user can't subscribe again...
-        # we also won't allow users with unconfirmed emails to subscribe
-        # should we message here?
-        if current_user.is_paid == 1 or current_user.email_confirmed != 1:
-            return self.redirect("/account/settings")
-
-        token_id = self.get_argument("token")
-        if token_id is None:
-            # invalid request
-            raise "Invalid request"
-
-        customer = None
-        sub = None
-        stripe_customer_id = current_user.stripe_customer_id
-        if stripe_customer_id is not None:
-            try:
-                customer = stripe.Customer.retrieve(stripe_customer_id)
-            except stripe.error.InvalidRequestError:
-                pass
-            if customer and getattr(customer, "deleted", False):
-                customer = None
-
-        try:
-            if customer is None:
-                # create a new customer object for this subscription
-                customer = stripe.Customer.create(
-                    description="MLTSHP user %s" % current_user.name,
-                    email=current_user.email,
-                    plan=options.stripe_annual_plan_id,
-                    card=token_id, # obtained with Checkout.js
-                    metadata={"mltshp_user": current_user.name},
-                )
-                # if this works, we should have a customer with 1 subscription, this one
-                if customer.subscriptions.total_count > 0:
-                    sub = customer.subscriptions.data[0]
-            else:
-                sub = customer.subscriptions.create(plan=options.stripe_annual_plan_id,
-                    card=token_id)
-        except stripe.error.CardError as ex:
-            return self.render("account/return-subscription-completed.html",
-                error=unicode(ex))
-
-        if not sub:
-            raise Exception("Error issuing subscription")
-
-        amount = "USD %0.2f" % (sub.plan.amount / 100.0)
-        payment_log = PaymentLog(
-            processor                 = PaymentLog.STRIPE,
-            user_id                   = current_user.id,
-            status                    = "subscribed",
-            reference_id              = sub.id, # ??
-            transaction_id            = sub.id, # ??
-            operation                 = "order",
-            transaction_date          = datetime.datetime.fromtimestamp(sub.current_period_start).strftime("%Y-%m-%d %H:%M:%S"),
-            next_transaction_date     = datetime.datetime.fromtimestamp(sub.current_period_end).strftime("%Y-%m-%d %H:%M:%S"),
-            buyer_email               = current_user.email,
-            buyer_name                = current_user.display_name(),
-            recipient_email           = "subscriptions@mltshp.com",
-            recipient_name            = "MLTSHP, LLC",
-            payment_reason            = "MLTSHP Paid Account",
-            transaction_serial_number = 1,
-            subscription_id           = sub.id,
-            payment_method            = "CC",
-            transaction_amount        = amount,
-        )
-        payment_log.save()
-        current_user.is_paid = 1
-
-        if current_user.stripe_customer_id != customer.id:
-            current_user.stripe_customer_id = customer.id
-
-        current_user.save()
-
-        if options.postmark_api_key:
-            pm = postmark.PMMail(api_key=options.postmark_api_key,
-                sender="hello@mltshp.com", to="subscriptions@mltshp.com",
-                subject="%s has created a subscription" % (payment_log.buyer_name),
-                text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (payment_log.subscription_id, payment_log.buyer_name, payment_log.buyer_email, current_user.id))
-            pm.send()
-
-        payment_notifications(current_user, "subscription", amount)
-
-        return self.render("account/return-subscription-completed.html")
-
-    @tornado.web.authenticated
-    def get(self):
-        current_user = self.get_current_user_object()
-        if current_user.is_paid:
-            return self.redirect("/account/settings")
-
-        promotions = Promotion.active()
-
-        return self.render('account/subscribe.html',
-            stripe_public_key=options.stripe_public_key,
-            promotions=promotions)
-
-
 class PaymentCancelHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self):
         user = self.get_current_user_object()
-        sub = user.active_paid_subscription()
-        if sub:
+        if user.stripe_customer_id:
             try:
-                # TBD:
                 customer = stripe.Customer.retrieve(user.stripe_customer_id)
-                if customer:
-                    subscription = customer.subscriptions.retrieve(sub["id"])
+                if customer and customer.subscriptions.total_count > 0:
+                    subscription = customer.subscriptions.data[0]
                     if subscription:
-                        subscription.delete()
+                        subscription.delete(at_period_end=True)
 
-                user.is_paid = 0
-                user.save()
+                        if options.postmark_api_key:
+                            pm = postmark.PMMail(api_key=options.postmark_api_key,
+                                sender="hello@mltshp.com", to="subscriptions@mltshp.com",
+                                subject="%s has cancelled a subscription" % (user.display_name()),
+                                text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (sub["id"], user.display_name(), user.email, user.id))
+                            pm.send()
 
-                if options.postmark_api_key:
-                    pm = postmark.PMMail(api_key=options.postmark_api_key,
-                        sender="hello@mltshp.com", to="subscriptions@mltshp.com",
-                        subject="%s has cancelled a subscription" % (user.display_name()),
-                        text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (sub["id"], user.display_name(), user.email, user.id))
-                    pm.send()
-
-                payment_notifications(user, 'cancellation')
+                        payment_notifications(user, 'cancellation')
             except stripe.error.InvalidRequestError:
                 pass
-        self.redirect('/account/settings')
+        return self.redirect('/account/settings?cancel=1')
 
     @tornado.web.authenticated
     def get(self):
-        user = self.get_current_user_object()
-        sub = user.active_paid_subscription()
-        if sub:
-            return self.render('account/payment-cancel.html',
-                subscription=sub)
-        else:
-            return self.redirect("/account/settings")
+        return self.render('account/payment-cancel.html')
 
 
 class ResendVerificationEmailHandler(BaseHandler):

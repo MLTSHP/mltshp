@@ -63,6 +63,7 @@ CREATE TABLE `user` (
   `verify_email_token` varchar(40) DEFAULT NULL,
   `reset_password_token` varchar(40) DEFAULT NULL,
   `stripe_customer_id` varchar(40) DEFAULT NULL,
+  `stripe_plan_id` varchar(40) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -128,6 +129,7 @@ CREATE TABLE `shake` (
   `recommended` tinyint(1) NOT NULL DEFAULT '0',
   `featured` tinyint(1) NOT NULL DEFAULT '0',
   `shake_category_id` INT(11) NOT NULL DEFAULT 0,
+  `deleted` tinyint(1) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -423,4 +425,9 @@ CREATE TABLE `voucher` (
   `promotion_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `voucher_key` (`voucher_key`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `migration_state` (
+    `user_id` int(11) NOT NULL PRIMARY KEY,
+    `is_migrated` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -2,7 +2,7 @@
 
 {% block included_headers %}
 
-  {% if user.is_paid %}
+  {% if user.is_plus() %}
   <link rel="alternate" type="application/rss+xml" title="RSS" href="http://new.mltshp.com/user/{{user.name}}/rss">
   {% end %}
 {% end %}
@@ -90,6 +90,12 @@
     {% end %}
   </div>
   <div class="body">
+    {% if has_data_to_migrate %}
+    <div class="migration-reminder">
+      <p>Hey! You still have MLKSHK posts that you haven&#x27;t restored! If you want to
+        restore your content now, <a href="/account/mlkshk-migrate">head this way.</a></p>
+    </div>
+    {% end %}
     <div class="image-content-list">
       {% for sharedfile in images %}
         {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=False)}}

@@ -3,7 +3,7 @@
   <a class="icon" href="{{shake.path()}}"><img src="{{shake.thumbnail_url()}}" width="{{avatar_size}}" height="{{avatar_size}}"></a>
     <div class="follow">
       <div class="details">
-        <h4><a class="icon" href="{{shake.path()}}">{{ escape(shake.display_name()) }}</a> {% if follow_user and follow_user.is_paid %}<a href="/account/subscribe" title="upgraded their account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></a>{% end %}</h4>
+        <h4><a class="icon" href="{{shake.path()}}">{{ escape(shake.display_name()) }}</a> {% if follow_user and follow_user.is_plus() %}<a href="/account/membership" title="upgraded their account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></a>{% end %}</h4>
         {% if follow_user %}
           <p class="about">{{escape(follow_user.about)}}</p>
           <p class="website">{{linkify(follow_user.website, True, extra_params='rel="nofollow" target="_blank"')}}</p>
@@ -32,7 +32,7 @@
 <div class="user-follow">
     <a class="icon" href="{{shake.path()}}"><img src="{% if avatar_size > 48 %}{{ shake.page_image() }}{% else %}{{shake.thumbnail_url()}}{% end %}" width="{{avatar_size}}" height="{{avatar_size}}"></a>
     <div class="follow">
-      <h4><a href="{{shake.path()}}">{{ escape(shake.display_name()) }}</a> {% if follow_user %}{% if follow_user.is_paid %}<a href="/account/subscribe" title="{{follow_user.name}} upgraded their account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></a>{% end %}{% end %}{{post_name_text}}</h4>
+      <h4><a href="{{shake.path()}}">{{ escape(shake.display_name()) }}</a> {% if follow_user %}{% if follow_user.is_plus() %}<a href="/account/membership"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></a>{% end %}{% end %}{{post_name_text}}</h4>
       {% if not site_is_readonly %}
         {% if current_user and current_user.id != shake.user_id %}
           {% if can_follow %}

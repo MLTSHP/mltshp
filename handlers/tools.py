@@ -13,13 +13,14 @@ from tornado.options import define, options
 from BeautifulSoup import BeautifulSoup
 
 from models import Externalservice, User, Sourcefile, Sharedfile, Shake, ExternalRelationship, ShakeCategory
-from base import BaseHandler
+from base import BaseHandler, require_membership
 from lib.utilities import base36encode
 import lib.feathers
 
 
 class PickerPopupHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         url = self.get_argument('url', None)
         source_url = self.get_argument('source_url', '')
@@ -76,6 +77,7 @@ class PickerPopupHandler(BaseHandler):
 
     @tornado.web.authenticated
     @tornado.web.asynchronous
+    @require_membership
     def post(self):
         """
         TODO: better determination of correct file name, if it is indeed a file, plus type.
@@ -162,24 +164,30 @@ class PickerPopupHandler(BaseHandler):
 
 
 class PluginsHandler(BaseHandler):
+    @tornado.web.authenticated
+    @require_membership
     def get(self):
         return self.render("tools/plugins.html")
 
 
-
 class ToolsTwitterHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         return self.render("tools/twitter.html")
 
+
 class ToolsTwitterHowToHandler(BaseHandler):
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         return self.render("tools/twitter-how-to.html")
+
 
 class ToolsTwitterConnectHandler(BaseHandler, tornado.auth.TwitterMixin):
     @tornado.web.asynchronous
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         if self.get_argument("oauth_token", None):
             self.get_authenticated_user(self._on_auth)
@@ -220,6 +228,7 @@ class BookmarkletPageHandler(BaseHandler):
     """Displays a page for a user to save the bookmarklet."""
 
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         return self.render("tools/bookmarklet.html", app_host=options.app_host)
 
@@ -228,6 +237,7 @@ class NewPostHandler(BaseHandler):
     Renders a panel to kick off the new post process.
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         user = self.get_current_user_object();
         shakes = user.shakes(include_managed=True)
@@ -235,9 +245,11 @@ class NewPostHandler(BaseHandler):
         return self.render("tools/new-post.html", shakes=shakes, \
             can_upload_this_month=can_upload_this_month)
 
+
 class SaveVideoHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         url = self.get_argument('url', None)
         shake_id = self.get_argument('shake_id', "")
@@ -393,6 +405,7 @@ class SaveVideoHandler(BaseHandler):
 
     @tornado.web.asynchronous
     @tornado.web.authenticated
+    @require_membership
     def post(self):
         url = self.get_argument('url', None)
         if not url:
@@ -423,6 +436,7 @@ class FindShakesGroups(BaseHandler):
     Returns a list of recommended group shakes.
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         user = self.get_current_user_object()
         categories = ShakeCategory.all('ORDER BY name')
@@ -440,6 +454,7 @@ class FindShakesPeople(BaseHandler):
     Returns a list of recommended users.
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         user = self.get_current_user_object()
         users = User.random_recommended(limit=30)
@@ -455,6 +470,7 @@ class FindShakesTwitter(BaseHandler):
     twitter friends.
     """
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         user = self.get_current_user_object()
         users_sidebar = User.recommended_for_user(user)
@@ -464,6 +480,7 @@ class FindShakesTwitter(BaseHandler):
 class FindShakesQuickFetchCategory(BaseHandler):
 
     @tornado.web.authenticated
+    @require_membership
     def get(self, name):
         category = ShakeCategory.get("short_name = %s", name)
         if not category:
@@ -493,6 +510,7 @@ class FindShakesQuickFetchTwitter(BaseHandler):
 
     @tornado.web.asynchronous
     @tornado.web.authenticated
+    @require_membership
     def get(self):
         refresh = self.get_argument('refresh', None)
         self.user = self.get_current_user_object()

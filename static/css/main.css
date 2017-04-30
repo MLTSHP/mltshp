@@ -386,6 +386,13 @@ a:active {
   }
 }
 
+.content-account .migration-reminder {
+  padding: 0.3em 1em;
+  font-weight: bold;
+  background: #ffffb5;
+  color: #ffac1e;
+}
+
 /* Two Column Layout */
 .content-with-sidebar {
   display: flex;
@@ -931,11 +938,21 @@ iframe {
   margin-top: 0;
 }
 
+.migration-block,
 .member-status-block,
 .archive-block {
   padding: 15px;
   background: #dfffcb;
   border-radius: 10px;
+}
+
+.migration-block {
+  background: #e5fcff;
+  margin-bottom: 20px;
+}
+
+.migration-block h3 {
+  color: #00aeff;
 }
 
 .archive-block {
@@ -951,6 +968,7 @@ iframe {
   color: #00aeff;
 }
 
+.migration-block-content,
 .member-status-block-content,
 .archive-block-content {
   background: #fff;
@@ -961,6 +979,7 @@ iframe {
   margin-top: 8px;
 }
 
+.migration-block-content::after,
 .member-status-block-content::after,
 .archive-block-content::after {
   content: "";
@@ -968,11 +987,13 @@ iframe {
   clear: both;
 }
 
+.migration-block :first-child,
 .member-status-block :first-child,
 .archive-block :first-child {
   margin-top: 0;
 }
 
+.migration-block :last-child,
 .member-status-block :last-child,
 .archive-block :last-child {
   margin-bottom: 0;
@@ -1141,36 +1162,92 @@ iframe {
 
 
 /*----------------------------------------------
-  Area: Account Upgrade
+  Area: Account Membership / Migration
    - also used for payment thank you page.
 ---------------------------------------------- */
 
-.content-upgrade {
+.content-migrate,
+.content-membership {
   padding: 15px;
+  background-color: #fff;
+}
+
+.content-migrate {
   background: #fff url('/static/images/burger-upgrade.gif') no-repeat;
   background-position: bottom 15px center;
   padding-bottom: 530px;
 }
 
 @media screen and (min-width: 768px) {
-  .content-upgrade {
+  .content-migrate,
+  .content-membership {
     padding: 40px;
+  }
+
+  .content-migrate {
     background-position: 40px 40px;
     padding-left: 430px;
     min-height: 580px;
   }
 }
 
-.content-upgrade h1 {
+.content-migrate h1,
+.content-membership h1 {
   text-shadow: 2px 4px 1px #e0e0e0;
 }
 
-.content-upgrade h1.thank-you {
+.content-membership .membership-plan-option {
+  width: 42%;
+  margin: 10px 20px;
+  float: left;
+  padding: 10px;
+}
+.content-membership .membership-plan-option.current-plan {
+  border: 3px solid #00c;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+.content-membership li {
+  list-style: disc;
+  margin-left: 2em;
+  font-size: 20px;
+}
+
+.content-membership .subscribe-plan-quantity-wrapper {
+  margin-left: 20px;
+}
+.content-membership .input-plan-quantity {
+  border: 1px solid rgba(1,1,1,0);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #333;
+  width: auto;
+  font-size: 23px;
+  padding: 20px 0;
+  font-weight: bold;
+}
+.content-membership .input-plan-quantity:focus {
+  outline: none;
+}
+.content-membership .input-plan-quantity:invalid {
+  color: #c00;
+}
+.content-membership .subscribe-plan-quantity-wrapper i {
+  font-style: normal;
+  font-size: 23px;
+  color: #777;
+}
+
+.content-migrate h1.thank-you,
+.content-membership h1.thank-you {
   margin-top: 100px;
   font-size: 80px;
 }
 
-.content-upgrade ul {
+.content-migrate ul,
+.content-membership ul {
   font-size: 24px;
   color: #333;
   margin: 40px 0;
@@ -1178,12 +1255,13 @@ iframe {
   list-style: none;
 }
 
-.content-upgrade li {
+.content-migrate li,
+.content-membership li {
   margin-bottom: 20px;
 }
 
-
-.content-upgrade .subscription-button {
+.content-migrate .button,
+.content-membership .subscription-button {
   color: #fff;
   font-size: 23px;
   padding: 20px;
@@ -1206,22 +1284,26 @@ iframe {
   cursor: pointer;
 }
 
-.content-upgrade .subscription-button:hover {
+.content-migrate .button:hover,
+.content-membership .subscription-button:hover {
   background-color: #db008b;
 }
 
-.content-upgrade p {
+.content-migrate p,
+.content-membership p {
   line-height: 1.4;
   font-size: 20px;
   color: #333;
   margin: 30px 0;
 }
 
-.content-upgrade p a {
+.content-migrate p a,
+.content-membership p a {
   color: #ff0080;
 }
 
-.content-upgrade .fine-print {
+.content-migrate .fine-print,
+.content-membership .fine-print {
   margin-top: 30px;
   font-size: 12px;
   color: #333;

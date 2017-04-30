@@ -1,4 +1,4 @@
-.PHONY: init-dev run shell test destroy
+.PHONY: init-dev run shell test destroy migrate
 
 init-dev:
 	cp settings.example.py settings.py
@@ -15,8 +15,11 @@ shell:
 	docker exec -it mltshp_mltshp_1 bash
 
 test:
-	docker-compose run mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $*"
+	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $*"
 
 destroy:
 	docker-compose down
 	rm -rf mounts
+
+migrate:
+	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"

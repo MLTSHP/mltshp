@@ -12,8 +12,8 @@ define('dump_settings', type=bool, default=False, help="Dump evaluated settings 
 
 # app settings
 define('app_host', default='mltshp.com', metavar="HOST", help="Base hostname for web site")
-define('cdn_host', default='s.mltshp-cdn.com', metavar="HOST", help="Hostname for CDN")
-define('cdn_ssl_host', default='mltshp-ada.kxcdn.com', metavar="HOST", help="Hostname for SSL CDN")
+define('cdn_host', default='cdn.mltshp.com', metavar="HOST", help="Hostname for CDN")
+define('cdn_ssl_host', default='cdn.mltshp.com', metavar="HOST", help="Hostname for SSL CDN")
 define('disable_signups', type=bool, default=False, help="Are new user signups disabled")
 define('readonly', type=bool, default=False, help="Switch to enable site-wide readonly mode (disables posts, signups, etc).")
 define('show_ads', type=bool, default=False, help="Are we showing ad banners")

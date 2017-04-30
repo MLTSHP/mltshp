@@ -9,12 +9,12 @@ class TagTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(TagTests, self).setUp()
         # uploader
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
 
         # saver
-        self.bob = User(name='bob', email='bob@mltshp.com', email_confirmed=1)
+        self.bob = User(name='bob', email='bob@mltshp.com', email_confirmed=1, is_paid=1)
         self.bob.set_password('asdfasdf')
         self.bob.save()
         

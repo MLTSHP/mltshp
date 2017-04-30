@@ -22,3 +22,4 @@ backports.ssl==0.0.9
 requests==2.13.0
 stripe==1.51.0
 newrelic==2.82.0.62
+yoyo-migrations==5.0.5

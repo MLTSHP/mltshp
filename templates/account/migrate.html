@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Restore from MLKSHK?{% end %}
+
+{% block main %}
+  <div class="content content-migrate">
+
+    {% if has_migrated %}
+    <h1>MLKSHK Restore Complete!</h1>
+
+    <p>Thanks for joining MLTSHP and for all your posts!</p>
+
+    <form id="migration-form" action="/" method="GET">
+    <input type="submit"
+      class="button" value="Take me home!" border="0">
+    </form>
+    {% else %}
+    <h2>Restore Your MLKSHK Content?</h2>
+
+    <p>
+        Would you like to restore your content from MLKSHK.com
+        or start over with a clean account? If you choose to restore,
+        all your posts, shakes, and comments will be brought over (with
+        the same IDs, exactly as on MLKSHK).
+    </p>
+
+    <p>
+        Posts you have favorited may not all be restored, since those
+        are owned by others; once those members restore their content,
+        you&#x27;ll see them again.
+    </p>
+
+    <p>
+        You&#x27;ll have until <strong>December 31st, 2017</strong> to choose to
+        restore your content. After that time, we will need to remove it
+        permanently.
+    </p>
+
+    <div style="float:left">
+        <form id="migration-form" action="/account/mlkshk-migrate" method="POST">
+        {{ xsrf_form_html() }}
+        <input type="submit"
+          class="button" value="Restore It!" border="0">
+      </form>
+    </div>
+    <div style="float:left; margin-left: 20px">
+      <form id="migration-form" action="/account/settings" method="GET">
+      <input type="submit"
+        class="button" value="I&#x27;ll Decide Later!" border="0">
+      </form>
+    </div>
+
+    {% end %}
+
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}

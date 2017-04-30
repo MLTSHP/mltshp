@@ -22,10 +22,10 @@
 
     {{modules.ShakeFollow(follow_user=best_of_user, follow_shake=best_of_shake, current_user=current_user_obj, avatar_size=100, extended=True)}}
 
-    {% if current_user_obj and not current_user_obj.is_paid %}
+    {% if current_user_obj and not current_user_obj.is_member() %}
     <div class="upgrade-account-block">
       <div class="upgrade-account-block-content">
-        <h3><a href="/account/subscribe">Upgrade your account &raquo;</a></h3>
+        <h3><a href="/account/membership">Become a Member &raquo;</a></h3>
         <p>Get <strong>100</strong> group shakes for just $2 per month and support MLTSHP!</p>
       </div>
     </div>

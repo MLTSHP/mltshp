@@ -8,11 +8,11 @@ from models import User, Sharedfile, Sourcefile, Conversation, Comment
 class ConversationTests(test.base.BaseAsyncTestCase):
     def setUp(self):
         super(ConversationTests, self).setUp()
-        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
+        self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
         
-        self.user2 = User(name='user2', email='user2@example.com', email_confirmed=1)
+        self.user2 = User(name='user2', email='user2@example.com', email_confirmed=1, is_paid=1)
         self.user2.set_password('asdfasdf')
         self.user2.save()
         

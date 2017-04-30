@@ -32,7 +32,7 @@ class Promotion(ModelQueryCache, Model):
         return super(Promotion, self).save(*args, **kwargs)
 
     def shake(self):
-        return Shake.get('id=%s', self.promotion_shake_id)
+        return Shake.get('id=%s and deleted=0', self.promotion_shake_id)
 
     @classmethod
     def active(cls):

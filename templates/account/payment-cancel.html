@@ -1,17 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Cancel Your Subscription{% end %}
 {% block main %}
-  <div class="content content-upgrade">
+  <div class="content content-membership">
     <h1 class="thank-you">Canceling</h1>
     <p>
       Thanks for trying us out, we're sorry to see you go but understand the site isn't for everyone.
     </p>
-    {% if "cancel_link" in subscription %}
-    <p>
-      To cancel your account right now <a href="{{ subscription["cancel_link"] }}">head over to {{ subscription["processor_name"] }} and select the subscription from your subscriptions</a>. 
-      Choose cancel and it will be processed immediately.
-    </p>
-    {% else %}
     <p>
       To cancel your account right now, click this button to confirm your the cancellation of your
       subscription:
@@ -22,32 +16,11 @@
       <input type="submit"
         class="subscription-button" value="Yes, Please Cancel" border="0">
     </form>
-    {% end %}
 
     <div class="clear"><!-- --></div>
     <p>
-      If you have any questions or need help please email us at <script type="text/javascript">
-      //<![CDATA[
-      <!--
-      var x="function f(x,y){var i,o=\"\",l=x.length;for(i=0;i<l;i++){if(i>(50+y))" +
-      "y*=2;y%=127;o+=String.fromCharCode(x.charCodeAt(i)^(y++));}return o;}f(\"TF" +
-      "ZVB^WW\\032]\\024E\\027D6 0c-i)zjkf$ p6a<4<4 =z;e66`+573\\005I\\032M\\007\\" +
-      "r\\007\\025+\\006\\016\\016-\\031F\\003_@AZUHOEQ\\002\\016\\t\\005\\006\\00" +
-      "6+?~5r\\025\\002,z? %1%/`,c010( \\\"y;n8xgl1ggkg4srI\\032\\rHY\\035H\\004\\" +
-      "000\\010\\030*\\030E\\007FK\\014\\000\\026\\000\\000\\004\\031X\\026T\\010\\"+
-      "t\\037\\rtp.>2Q\\022)9{h6\\034W31*R<\\016D2##6z\\025Aole^(\\014N\\\\^2<.b\\" +
-      "\"036RB\\017L0^Z;,\\016\\\"\\\\74>BbI526RB\\rM0^Z=-\\016\\\"\\\\05>BbH02ZR/" +
-      "\\016N\\\\^7=.b\\\"516RBL\\\"\\\\45>BbH12ZR(\\rN\\\\^7=.b\\\"WH=J'gH02ZR(\\" +
-      "017N\\\\^3<.b\\\"t^Z%`\\tI1^Z>.\\016\\\"\\\\434h\\002@&=91/\\014N\\\\^%/?\\" +
-      "032F;!=%*\\032N7{+;2h!P45>Bb\\031726RBa#E\\\\3<.b\\\"U57>BbN22ZR/\\rN\\\\^X" +
-      "MUg;Y_1>.b\\\"\\\\^ZRW}6QBKKB\\034Vf\\177=a>P\\014uvc|c\\005W))-w6`Wi*rO{Z\\"+
-      "021Cpgf}\\020\\006(gba]L\\037hAkalXPglo|jmC+m=9,\\017C%{}'5\\025\\027;n:g%\\"+
-      "016Ci*tax\\005\\026tehkr\\020\\006=n*R<b\\\\=m*g>L\\037vy/w2FVf\\\"hawJ\\03" +
-      "5nw`,7\",50)"                                                                ;
-      while(x=eval(x));
-      //-->
-      //]]>
-      </script> and we'll get back to you as soon as possible.
+      If you have any questions or need help please email us at <a href="mailto:subscriptions@mltshp.com">subscriptions@mltshp.com</a>
+      and we'll get back to you as soon as possible.
     </p>
   </div>
 {% end %}

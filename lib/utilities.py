@@ -17,6 +17,16 @@ from tornado.httpclient import HTTPRequest
 from xml.dom import minidom
 
 
+PLANS = {
+    "mltshp-single": "Single Scoop",
+    "mltshp-double": "Double Scoop",
+}
+
+
+def plan_name(plan_id):
+    return PLANS.get(plan_id) or "None"
+
+
 def undom(dom):
     children = dom.childNodes
     if len(children) == 0:
@@ -36,7 +46,7 @@ def undom(dom):
 
 def parse_xml(xml_string):
     return undom(minidom.parseString(xml_string))
-    
+
 
 def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None, 
                              seconds=3600, https=False):
@@ -80,13 +90,14 @@ def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
 
 def base36decode(number):
     return int(number,36)
-    
+
 
 def generate_digest_from_dictionary(values):
     h = hashlib.sha1()
     for value in values:
         h.update("%s" % (value))
     return h.hexdigest()
+
 
 # Adapted from http://stackoverflow.com/questions/1551382/python-user-friendly-time-format
 def pretty_date(time=False):
@@ -275,5 +286,4 @@ def uses_a_banned_phrase(s):
     of words. Used in conjunction with saving post title, description
     as a stop-gap mechanism to prevent spammers from self-promotion.
     """
-    s = s.lower()
-    return "garage" in s and "door" in s
+    return False
