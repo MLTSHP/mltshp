@@ -10,3 +10,4 @@ pip-log.txt
 *.swp
 env
 mounts
+.deploy.env

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -f ".deploy.env" ]; then
+    source .deploy.env
+fi
+
 # StackScript for "MLTSHP Web Node" - 77953
 STACKSCRIPT="MLTSHP Web Node"
 
@@ -17,13 +21,14 @@ PUBLIC_KEY="setup/production/mltshp-web-key.pub"
 
 # Get a list of nodes from the cluster
 nodes=$( linode nodebalancer --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )
+node_list=$( echo $nodes | xargs -- printf "%s, " | sed "s/, $//" )
 
 echo "This script will rebuild all active MLTSHP web nodes"
 echo "using a Docker Cloud image."
 echo
 echo "Docker image to deploy: $DOCKER_IMAGE_NAME"
 echo "Linode NodeBalancer: $NODEBALANCER_NAME"
-echo "Web Nodes to rebuild: ${nodes}"
+echo "Web Nodes to rebuild: ${node_list}"
 echo "StackScript to deploy: $STACKSCRIPT"
 echo "Public key to assign: $PUBLIC_KEY"
 echo
@@ -40,7 +45,7 @@ function rebuild_node() {
         --label "$NODEBALANCER_NAME" \
         --port 80 \
         --name "$NODE_NAME" \
-        --mode "reject"
+        --mode "reject" > /dev/null
 
     echo "Rebuilding $NODE_NAME..."
 
@@ -50,7 +55,7 @@ function rebuild_node() {
         --label "$NODEBALANCER_NAME" \
         --port 80 \
         --name "$NODE_NAME" \
-        --mode "drain"
+        --mode "drain" > /dev/null
 
     linode --action rebuild \
         --label "$NODE_NAME" \
@@ -59,7 +64,7 @@ function rebuild_node() {
         --pubkey-file $PUBLIC_KEY \
         --stackscript "$STACKSCRIPT" \
         --stackscriptjson "{\"docker_image_name\": \"$DOCKER_IMAGE_NAME\"}" \
-        --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)"
+        --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)" > /dev/null
 
     echo -n "Waiting for node availability..."
     sleep 60
@@ -67,8 +72,8 @@ function rebuild_node() {
     while true; do
         echo -n '.'
         status=$( linode nodebalancer --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
-        if [ -n "$status" ]
-            then echo 'UP'; break;
+        if [ -n "$status" ]; then
+            echo 'UP'; break;
         fi
         sleep 10
     done
@@ -80,7 +85,7 @@ function rebuild_node() {
         --label "$NODEBALANCER_NAME" \
         --port 80 \
         --name "$NODE_NAME" \
-        --mode "accept"
+        --mode "accept" > /dev/null
 
     echo "Node $NODE_NAME rebuilt!"
     echo
