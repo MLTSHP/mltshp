@@ -5,6 +5,7 @@ init-dev:
 	cp celeryconfig.example.py celeryconfig.py
 	mkdir -p mounts/mysql
 	mkdir -p mounts/logs
+	mkdir -p mounts/fakes3
 	mkdir -p mounts/uploaded
 
 run:
