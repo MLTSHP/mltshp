@@ -12,5 +12,6 @@ steps = [
             user_id int(11) NOT NULL PRIMARY KEY,
             is_migrated tinyint(1) NOT NULL DEFAULT '0'
         )
-        """)
+        """,
+        """DROP TABLE migration_state""")
 ]
