@@ -8,4 +8,4 @@ services:
 
 script:
   - cp ./settings.example.py ./settings.py
-  - docker-compose --file docker-compose-test.yml run mltshp ./test.py
+  - docker-compose --file docker-compose.travis-ci.yml run mltshp ./test.py
