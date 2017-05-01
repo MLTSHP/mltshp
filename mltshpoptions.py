@@ -12,8 +12,8 @@ define('dump_settings', type=bool, default=False, help="Dump evaluated settings 
 
 # app settings
 define('app_host', default='mltshp.com', metavar="HOST", help="Base hostname for web site")
-define('cdn_host', default='cdn.mltshp.com', metavar="HOST", help="Hostname for CDN")
-define('cdn_ssl_host', default='cdn.mltshp.com', metavar="HOST", help="Hostname for SSL CDN")
+define('cdn_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for CDN")
+define('cdn_ssl_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for SSL CDN")
 define('disable_signups', type=bool, default=False, help="Are new user signups disabled")
 define('readonly', type=bool, default=False, help="Switch to enable site-wide readonly mode (disables posts, signups, etc).")
 define('show_ads', type=bool, default=False, help="Are we showing ad banners")
@@ -36,7 +36,7 @@ define('database_password', metavar="PASSWORD", help="Password for database conn
 define('uploaded_files', metavar='PATH', help="Path on disk where uploaded files go")
 define('use_workers', type=bool, default=True, help="Use asynchronous Celery workers")
 define('debug_workers', type=bool, default=False, help="Wait for asynchronous workers to complete (for testing)")
-define('use_cdn', type=bool, default=False, help="Enable if s.mltshp.com should redirect to cdn.mltshp.com for images")
+define('use_cdn', type=bool, default=False, help="Enable if s.mltshp.com should redirect to mltshp-cdn.com for images")
 
 # APIs
 define('aws_key', metavar="KEY", help="Amazon API key for S3 & Payments")
