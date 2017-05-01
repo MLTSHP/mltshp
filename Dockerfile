@@ -76,4 +76,4 @@ WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
 
 EXPOSE 80
-CMD ["python migrate.py && /usr/bin/supervisord"]
+CMD ["/bin/sh", "-c", "python migrate.py && /usr/bin/supervisord"]
