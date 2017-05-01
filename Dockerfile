@@ -74,6 +74,7 @@ COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
+RUN time python migrate.py
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]
