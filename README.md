@@ -75,6 +75,20 @@ The directory structure looks like this:
             (mysql data files)
 
 
+## Database Migrations
+
+Occassionally, a database migration will need to be performed to
+bring an older database schema up to date. This will be necessary
+if you have a MySQL database you use locally for development and
+testing and keep it versus using the `destroy` and `init-dev`
+commands to make a new one. To update your database, just do this:
+
+    $ make shell
+    docker-shell$ cd /srv/mltshp.com/mltshp; python migrate.py
+
+That should do it.
+
+
 ## Tests
 
 With your copy of MLTSHP running, you may want to run unit tests. Some
