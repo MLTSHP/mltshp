@@ -85,7 +85,7 @@ class StripeWebhook(BaseHandler):
             #   total
             line_items = [item for item in evt.data.object.lines.data
                 if item.type == "subscription" and
-                   item.plan.id in (options.stripe_annual_plan_id, options.stripe_monthly_plan_id)]
+                   item.plan.id in ("mltshp-double", "mltshp-single")]
             if line_items:
                 line_item = line_items[0]
                 stripe_customer_id = evt.data.object.customer

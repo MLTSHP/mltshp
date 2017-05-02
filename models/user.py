@@ -810,7 +810,7 @@ hello@mltshp.com
                 subs = []
                 if customer.subscriptions.total_count > 0:
                     subs = [s for s in customer.subscriptions.data
-                        if s.status == "active" and s.plan.id == options.stripe_annual_plan_id]
+                        if s.status == "active" and s.plan.id in ("mltshp-single", "mltshp-double")]
                 if subs:
                     return {
                         "processor_name": "Stripe",

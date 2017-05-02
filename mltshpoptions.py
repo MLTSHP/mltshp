@@ -56,5 +56,3 @@ define('slack_webhook_url', metavar="SECRET", help="URL for posting notification
 # Stripe
 define('stripe_secret_key', metavar='SECRET', help='Stripe.com secret key')
 define('stripe_public_key', metavar='KEY', help='Stripe.com public key')
-define('stripe_annual_plan_id', help='Stripe plan ID for an annual MLTSHP subscription')
-define('stripe_monthly_plan_id', help='Stripe plan ID for an monthly MLTSHP subscription')
