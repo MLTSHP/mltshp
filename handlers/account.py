@@ -928,7 +928,7 @@ class MembershipHandler(BaseHandler):
             next_transaction_date     = datetime.datetime.fromtimestamp(sub.current_period_end).strftime("%Y-%m-%d %H:%M:%S"),
             buyer_email               = current_user.email,
             buyer_name                = current_user.display_name(),
-            recipient_email           = "subscriptions@mltshp.com",
+            recipient_email           = "hello@mltshp.com",
             recipient_name            = "MLTSHP, Inc.",
             payment_reason            = "MLTSHP Membership",
             transaction_serial_number = 1,
@@ -947,7 +947,7 @@ class MembershipHandler(BaseHandler):
 
         if options.postmark_api_key:
             pm = postmark.PMMail(api_key=options.postmark_api_key,
-                sender="hello@mltshp.com", to="subscriptions@mltshp.com",
+                sender="hello@mltshp.com", to="hello@mltshp.com",
                 subject="%s has created a subscription" % (payment_log.buyer_name),
                 text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (payment_log.subscription_id, payment_log.buyer_name, payment_log.buyer_email, current_user.id))
             pm.send()
@@ -1008,7 +1008,7 @@ class PaymentCancelHandler(BaseHandler):
 
                         if options.postmark_api_key:
                             pm = postmark.PMMail(api_key=options.postmark_api_key,
-                                sender="hello@mltshp.com", to="subscriptions@mltshp.com",
+                                sender="hello@mltshp.com", to="hello@mltshp.com",
                                 subject="%s has cancelled a subscription" % (user.display_name()),
                                 text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (sub["id"], user.display_name(), user.email, user.id))
                             pm.send()
