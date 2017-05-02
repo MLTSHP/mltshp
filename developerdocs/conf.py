@@ -41,7 +41,7 @@ master_doc = 'docindex'
 
 # General information about the project.
 project = u'mltshp'
-copyright = u'2017 MLTSHP, LLC'
+copyright = u'2017 MLTSHP, Inc.'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

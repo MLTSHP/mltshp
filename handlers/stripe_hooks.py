@@ -35,7 +35,7 @@ class StripeWebhook(BaseHandler):
         if evt.type == 'invoice.payment_failed':
             # subscription failed to be paid due to a problem
             # with the member's credit card or something
-            # for now, just email subscriptions@mltshp.com about this
+            # for now, just email hello@mltshp.com about this
             stripe_customer_id = evt.data.object.customer
 
             subscriber = User.get("stripe_customer_id=%s and deleted=0",
@@ -44,7 +44,7 @@ class StripeWebhook(BaseHandler):
             if subscriber and options.postmark_api_key:
                 pm = postmark.PMMail(
                     api_key=options.postmark_api_key,
-                    sender="hello@mltshp.com", to="subscriptions@mltshp.com",
+                    sender="hello@mltshp.com", to="hello@mltshp.com",
                     subject="%s has a subscription failure" % (subscriber.display_name()),
                     text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" %
                     (subscription_id, subscriber.display_name(),
@@ -125,8 +125,8 @@ class StripeWebhook(BaseHandler):
             next_transaction_date     = datetime.datetime.fromtimestamp(period_end).strftime("%Y-%m-%d %H:%M:%S"),
             buyer_email               = subscriber.email,
             buyer_name                = subscriber.display_name(),
-            recipient_email           = "subscriptions@mltshp.com",
-            recipient_name            = "MLTSHP, LLC",
+            recipient_email           = "hello@mltshp.com",
+            recipient_name            = "MLTSHP, Inc.",
             payment_reason            = "MLTSHP Paid Account",
             transaction_serial_number = 1,
             subscription_id           = subscription_id,
