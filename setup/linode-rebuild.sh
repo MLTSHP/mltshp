@@ -16,6 +16,9 @@ DOCKER_IMAGE_NAME=${1:-mltshp/mltshp-web:latest}
 # Prefix for all nodes attached to the NodeBalancer
 NODE_PREFIX="mltshp-web"
 
+# The Linode instance size for our web nodes
+NODE_PLAN="linode1024"
+
 # A public key for assigning to each node we rebuild (root account)
 PUBLIC_KEY="setup/production/mltshp-web-key.pub"
 
@@ -59,7 +62,7 @@ function rebuild_node() {
 
     linode --action rebuild \
         --label "$NODE_NAME" \
-        --plan linode2048 \
+        --plan "$NODE_PLAN" \
         --distribution "Ubuntu 16.04 LTS" \
         --pubkey-file $PUBLIC_KEY \
         --stackscript "$STACKSCRIPT" \
@@ -103,7 +106,7 @@ function slackpost {
 
         escapedText=$(echo $text | sed 's/"/\"/g' | sed "s/'/\'/g" )
         json="{\"channel\": \"$channel\", \"icon_emoji\": \":mltshp:\", \"text\": \"$escapedText\"}"
-        curl -s -d "payload=$json" "$SLACK_WEBHOOK_URL"
+        curl -s -d "payload=$json" "$SLACK_WEBHOOK_URL" > /dev/null
     fi
 }
 
