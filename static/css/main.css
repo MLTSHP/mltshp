@@ -250,14 +250,14 @@ a:active {
 
 .choose-a-shake--dropdown ul.group-shakes li a {
   text-decoration: none;
-  padding: 10px 0 10px 15px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
+  padding: 10px 15px;
   border-radius: 10px;
   display: block;
   font-size: 14px;
   color: #ff0080;
   font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .choose-a-shake--dropdown ul.group-shakes li a:hover {
@@ -1642,6 +1642,12 @@ iframe {
   margin-bottom: 8px;
 }
 
+.permalink-sidebar .in-these-shakes li a {
+  display: block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .permalink-sidebar .in-these-shakes li .input-checkbox {
   margin-right: 10px;
 }
@@ -1843,6 +1849,8 @@ iframe {
   -moz-border-radius: 10px;
   border-radius: 10px;
   position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .notification-block-bd .notification .notification-close {
@@ -2450,10 +2458,13 @@ iframe {
 .other-shakes {
   background-color: #DFFFCB;
   padding: 15px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
   border-radius: 10px;
+}
 
+.other-shakes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .other-shakes a {
@@ -2463,6 +2474,8 @@ iframe {
   font-size: 14px;
   text-decoration: none;
   font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
@@ -2934,6 +2947,7 @@ iframe {
 }
 
 .image-content .the-description {
+  word-break: break-all;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -3041,26 +3055,29 @@ textarea {
   -moz-border-radius: 5px;
   border-radius: 5px;
   margin-bottom: 7px;
+  display: flex;
 }
 
 .image-content .inline-details .comment .avatar {
-  float: left;
+  flex: none;
 }
 
 .image-content .inline-details .comment .comment-body {
-  float: left;
   padding-left: 7px;
   overflow: hidden;
+  flex: 1;
 }
 
 .image-content .inline-details .comment .comment-body-text {
   clear: both;
   padding-top: 3px;
   color: #333;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.image-content .inline-details .comment .meta a {
-  float: left;
+.image-content .inline-details .comment .meta {
+  display: flex;
 }
 
 .image-content .inline-details .comment .delete-form {
@@ -3076,7 +3093,6 @@ textarea {
 .image-content .inline-details .comment .created-at {
   margin-left: 10px;
   padding-top: 0;
-  float: left;
 }
 
 .image-content .inline-details .comment .reply-to {
@@ -3087,7 +3103,6 @@ textarea {
   text-decoration: none;
   background: url('/static/images/icon-reply-arrow.gif') 0 -3px no-repeat;
   display: none;
-  float: left;
 }
 
 .image-content .inline-details .comment .delete {
@@ -3099,7 +3114,6 @@ textarea {
   padding-left: 20px;
   text-decoration: none;
   display: none;
-  float: left;
   cursor: pointer;
 }
 
@@ -3331,6 +3345,12 @@ textarea {
   padding-top: 20px;
   color: #7f7f7f;
   font-size: 12px;
+}
+
+.image-comments .comment .comment-body-text {
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .image-comment-form {
@@ -4178,6 +4198,8 @@ span.previous-link {
   font-size: 14px;
   line-height: 18px;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .shake-details .shake-edit-description-input {
@@ -4481,6 +4503,8 @@ span.previous-link {
   font-size: 14px;
   display: block;
   padding: 5px 15px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .new-post-panel .shake-selector ul li a:hover {

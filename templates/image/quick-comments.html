@@ -6,7 +6,7 @@
     <div class="comment-body">
       {% set commenting_user = comment.user() %}
       <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_plus() %}<a href="/account/membership"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center"></a>{% end %}
-        <span class="created-at">{{comment.pretty_created_at()}}</span> 
+        <span class="created-at">{{comment.pretty_created_at()}}</span>
         {% if not site_is_readonly %}
           {% if current_user and current_user_object.email_confirmed == 1 %}
         <a class="reply-to" href="">Reply</a>
@@ -23,7 +23,6 @@
         {{comment.body_formatted()}}
       </div>
     </div>
-    <div class="clear"><!-- --></div>
   </div>
 {% end %}
 {% if len(comments) > 3 and expanded is False %}
