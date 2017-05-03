@@ -42,11 +42,11 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
 
         # configure static hostname for static assets
         if options.use_cdn:
-            # If we're using cdn.mltshp.com, we know that we can use
+            # If we're using mltshp-cdn.com, we know that we can use
             # https; if something else is configured, check the
             # X-Forwarded-Proto header and fallback to the protocol
             # of the request
-            using_https = options.cdn_ssl_host == "cdn.mltshp.com" or \
+            using_https = options.cdn_ssl_host == "mltshp-cdn.com" or \
                 self.request.headers.get("X-Forwarded-Proto",
                     self.request.protocol) == "https"
             self.settings['static_url_prefix'] = "%s://%s/static/" % \
