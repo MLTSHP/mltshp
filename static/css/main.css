@@ -2565,6 +2565,7 @@ iframe {
 
 .user-follow .icon {
   margin-right: 10px;
+  flex: none;
 }
 
 
@@ -2572,6 +2573,8 @@ iframe {
   font-size: 14px;
   color: #333;
   margin-bottom: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .user-follow h4 a {
@@ -2619,10 +2622,11 @@ iframe {
 
 .user-follow-extended .icon {
   margin-right: 10px;
+  float: left;
 }
 
 .user-follow-extended {
-  clear: left;
+  display: block;
   margin: 20px 5px;
 }
 
@@ -2655,6 +2659,8 @@ iframe {
   color: #333;
   margin-bottom: 10px;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .user-follow-extended .website {
