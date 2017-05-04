@@ -253,7 +253,7 @@ hello@mltshp.com
         else:
             if include_protocol:
                 protocol = 'http://%s' % (options.app_host)
-            return "%s/static/images/default-icon-venti.png" % (protocol)
+            return "%s/static/images/default-icon-venti.svg" % (protocol)
 
     def sharedfiles(self, page=1, per_page=10):
         """
@@ -631,7 +631,7 @@ hello@mltshp.com
         us_list = []
         for us in users_and_shakes:
             this_follow = {}
-            this_follow['image'] = '/static/images/default-icon-venti.png'
+            this_follow['image'] = '/static/images/default-icon-venti.svg'
             if us['shake_type'] == 'user':
                 this_follow['id'] = us['user_id']
                 this_follow['path'] = '/user/%s' % (us['user_name'])

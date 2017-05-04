@@ -268,7 +268,7 @@ $(document).ready(function() {
           var new_share_key = response['new_share_key'];
           var count_string = to_text(count, "Save");
           $("#save-count-amount-" + share_key).html(count_string);
-          var output = '<a href="/p/' + new_share_key + '" title="Saved It!"><img src="/static/images/saved-this.gif"></a>';
+          var output = '<a href="/p/' + new_share_key + '" title="Saved It!"><img width="29" height="22" src="/static/images/saved-this.svg"></a>';
           this.$shake_selector.remove();
           this.$save_this.html(output);
           SidebarStatsView.refresh_saves();
@@ -423,10 +423,10 @@ $(document).ready(function() {
           $("#like-count-amount-" + share_key).html(count_string);
           if (response['like'] === true) {
             $form.attr('action', '/p/' + share_key + '/unlike');
-            $(button).attr('src', '/static/images/liked-this.gif');
+            $(button).attr('src', '/static/images/liked-this.svg');
           } else {
             $form.attr('action', '/p/' + share_key + '/like');
-            $(button).attr('src', '/static/images/like-this.gif');
+            $(button).attr('src', '/static/images/like-this.svg');
           }
           SidebarStatsView.refresh_likes();
           StreamStatsViewRegistry.refresh_likes(share_key);

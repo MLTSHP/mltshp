@@ -4,7 +4,7 @@
     <div class="image-to-save">
       <img src="{{url}}">
     </div>
-    
+
     <form class="fun-form tools-fun-form" method="post" action="/tools/p">
       {% if len(shakes) > 1 %}
         <select name="shake_id">
@@ -27,7 +27,7 @@
           {% end %}
         </div>
       </div>
-      
+
       <div class="field field-textarea">
         <div class="field-input">
           <div class="field-input-inner">
@@ -45,7 +45,7 @@
       </div>
       <input type="hidden" name="source_url" value="{{escape(source_url)}}">
       <div class="tools-save-this">
-        <input type="image" src="{{ static_url("images/tools-save-this.gif") }}" width="171" height="79" alt="Save This">
+        <input type="image" src="{{ static_url("images/tools-save-this.svg") }}" width="171" height="84" alt="Save This">
       </div>
       {{ xsrf_form_html() }}
       <input type="hidden" name="url" value="{{url}}">

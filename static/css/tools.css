@@ -12,7 +12,8 @@ a, a:link {
 .header {
   text-align: right;
   padding: 20px;
-  background: transparent url('/static/images/mlkshk-tools-small.gif') 20px 0 no-repeat;
+  background: transparent url('/static/images/mltshp-tools-small.svg') 20px 0 no-repeat;
+  background-size: 100px 49px;
   font-size: 12px;
   color: #666;
 }
@@ -26,7 +27,7 @@ a, a:link {
   background-color: #fff;
 }
 
-/* wrapper for floated elements, so they don't drop 
+/* wrapper for floated elements, so they don't drop
 on resize or other factors */
 .content-inner {
   margin: 0 auto;
@@ -76,7 +77,8 @@ on resize or other factors */
 
 .error-uh-oh {
   padding-top: 160px;
-  background: transparent url('/static/images/tools-uh-oh.gif') 0 0 no-repeat;
+  background: transparent url('/static/images/tools-uh-oh.svg') 0 0 no-repeat;
+  background-size: 282px 133px;
   font-weight: bold;
   font-size: 36px;
 }
@@ -85,7 +87,8 @@ on resize or other factors */
 
 .tools-saved-it {
   padding-top: 160px;
-  background: transparent url('/static/images/tools-saved-it.gif') 0 0 no-repeat;
+  background: transparent url('/static/images/tools-saved-it.svg') 0 0 no-repeat;
+  background-size: 320px 133px;
   font-weight: bold;
   font-size: 36px;
 }
@@ -97,7 +100,7 @@ on resize or other factors */
 }
 
 .image-info .meta {
-  margin: 30px 0; 
+  margin: 30px 0;
 }
 
 .image-info .meta h3 {
@@ -107,7 +110,7 @@ on resize or other factors */
 }
 
 .image-info .meta p {
- color: #666; 
+ color: #666;
 }
 
 

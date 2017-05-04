@@ -180,7 +180,8 @@ a:active {
 /* TODO: Make this a reusable button style */
 .choose-a-shake--toggle {
   background-color: #b9ff8d;
-  background-image: url('/static/images/choose-a-shake-arrow-down.gif');
+  background-image: url('/static/images/choose-a-shake-arrow-down.svg');
+  background-size: 19px 12px;
   background-position: right 13px center;
   background-repeat: no-repeat;
   border-radius: 10px;
@@ -193,7 +194,7 @@ a:active {
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--toggle {
-  background-image: url('/static/images/choose-a-shake-arrow-up.gif');
+  background-image: url('/static/images/choose-a-shake-arrow-up.svg');
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   box-shadow: 5px 5px 0 #e5e5e5;
@@ -1173,7 +1174,8 @@ iframe {
 }
 
 .content-migrate {
-  background: #fff url('/static/images/burger-upgrade.gif') no-repeat;
+  background: #fff url('/static/images/burger-upgrade.svg') no-repeat;
+  background-size: 366px 481px;
   background-position: bottom 15px center;
   padding-bottom: 530px;
 }
@@ -1187,7 +1189,7 @@ iframe {
   .content-migrate {
     background-position: 40px 40px;
     padding-left: 430px;
-    min-height: 580px;
+    min-height: 481px;
   }
 }
 
@@ -1430,9 +1432,46 @@ iframe {
 }
 
 .image-content .image-interactions .save-this-shake-selector-loading {
-  background: #ff9d00 url('/static/images/loading-shakes.gif') 80px 14px no-repeat;
+  min-height: 100px;
 }
 
+.image-content .image-interactions .save-this-shake-selector-loading::after {
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-left-color: #ffffff;
+  box-sizing: border-box;
+  content: '';
+  display: block;
+  height: 50px;
+  margin: 1em auto;
+  -ms-transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  width: 50px;
+}
+
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
 .image-content .image-interactions .save-this-shake-selector ul {
   clear: both;
   margin: 0;
@@ -1448,6 +1487,8 @@ iframe {
   display: block;
   text-decoration: none;
   text-shadow: 1px 1px 1px #e48c00;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .image-content .image-interactions .save-this-shake-selector a:hover {
@@ -1670,7 +1711,8 @@ iframe {
 }
 
 .permalink-sidebar .flag-image {
-  background: #fff url('/static/images/flag-this-here.gif') 0 7px no-repeat;
+  background: #fff url('/static/images/flag-this-here.svg') 0 7px no-repeat;
+  background-size: 7px 9px;
   margin-top: 20px;
   color: #666;
   border: none;
@@ -1730,13 +1772,13 @@ iframe {
 }
 
 .incoming-header::before {
-  background: url('/static/images/incoming-header-back.gif') center no-repeat;
+  background: url('/static/images/incoming-header.svg') center no-repeat;
   background-size: 100%;
   content: '';
   display: block;
   height: 115px;
   max-width: 100%;
-  width: 393px;
+  width: 395px;
 }
 
 .incoming-header--title {
@@ -1901,8 +1943,8 @@ iframe {
 
 .notification-block-invitations .notification-block-hd span.invitation-dude {
   position: absolute;
-  background: transparent url('/static/images/invitation-dude.gif') 0 0 no-repeat;
-  height: 52px;
+  background: transparent url('/static/images/invitation-dude.svg') 0 0 no-repeat;
+  height: 63px;
   width: 84px;
   top: -4px;
   right: 10px;
@@ -2070,7 +2112,8 @@ iframe {
   color: #00aeff;
   font-size: 20px;
   font-weight: bold;
-  background: url('/static/images/find-shakes-block-back.gif') 0 -3px no-repeat;
+  background: url('/static/images/find-shakes-block-back.png') 0 0 no-repeat;
+  background-size: 23px 22px;
   padding-left: 35px;
 }
 
@@ -2188,25 +2231,30 @@ iframe {
 }
 
 .cool-tools-block .browser-tools li.bookmarklet a {
-  background: #fff url('/static/images/bookmarklet.gif') 5px 5px no-repeat;
+  background: #fff url('/static/images/bookmarklet.svg') 5px 5px no-repeat;
+  background-size: 40px 45px;
 }
 
 .cool-tools-block .browser-tools li.safari a {
-  background: #fff url('/static/images/cool-tools-safari.gif') 5px 5px no-repeat;
+  background: #fff url('/static/images/cool-tools-safari.png') 5px 5px no-repeat;
+  background-size: 40px 45px;
 }
 
 .cool-tools-block .browser-tools li.firefox a {
-  background: #fff url('/static/images/cool-tools-firefox.gif') 5px 5px no-repeat;
+  background: #fff url('/static/images/cool-tools-firefox.png') 5px 5px no-repeat;
+  background-size: 40px 45px;
 }
 
 .cool-tools-block .browser-tools li.chrome a {
-  background: #fff url('/static/images/cool-tools-chrome.gif') 5px 5px no-repeat;
+  background: #fff url('/static/images/cool-tools-chrome.png') 5px 5px no-repeat;
+  background-size: 40px 45px;
 }
 
 .cool-tools-block .twitter-setup {
   margin-top: 15px;
   display: block;
-  background: #f9f9f9 url('/static/images/cool-tools-twitter.gif') 5px 5px no-repeat;
+  background: #f9f9f9 url('/static/images/cool-tools-twitter.png') 5px 5px no-repeat;
+  background-size: 40px 45px;
   padding: 20px;
   padding-left: 55px;
   -webkit-border-radius: 10px;
@@ -2763,19 +2811,22 @@ iframe {
 }
 
 .image-content-footer .stats li.saves a {
-  background: url('/static/images/save-tiny.gif') 5px 8px no-repeat;
+  background: url('/static/images/save-tiny.svg') 5px 8px no-repeat;
+  background-size: 16px 11px;
   padding-left: 24px;
   color: #ff8400;
 }
 
 .image-content-footer .stats li.likes a {
-  background: url('/static/images/like-tiny.gif') 5px 8px no-repeat;
+  background: url('/static/images/like-tiny.svg') 5px 8px no-repeat;
+  background-size: 12px 9px;
   padding-left: 20px;
   color: #ff0000;
 }
 
 .image-content-footer .stats li.comments a {
-  background: url('/static/images/comment-tiny.gif') 5px 8px no-repeat;
+  background: url('/static/images/comment-tiny.svg') 5px 8px no-repeat;
+  background-size: 12px 9px;
   padding-left: 20px;
   color: #00aeff;
 }
@@ -3099,9 +3150,10 @@ textarea {
   margin-left: 10px;
   color: #00aeff;
   font-size: 12px;
-  padding-left: 20px;
+  padding-left: 15px;
   text-decoration: none;
-  background: url('/static/images/icon-reply-arrow.gif') 0 -3px no-repeat;
+  background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
+  background-size: 12px 11px;
   display: none;
 }
 
@@ -3110,7 +3162,8 @@ textarea {
   font-weight: bold;
   margin-left: 15px;
   font-size: 12px;
-  background: url('/static/images/icon-delete-comment.gif') 0 0 no-repeat;
+  background: url('/static/images/icon-delete-comment.svg') 0 0 no-repeat;
+  background-size: 13px 13px;
   padding-left: 20px;
   text-decoration: none;
   display: none;
@@ -3231,19 +3284,22 @@ textarea {
 }
 
 .image-medium .stats li.saves {
-  background: url('/static/images/save-tiny.gif') 0 2px no-repeat;
+  background: url('/static/images/save-tiny.svg') 0 2px no-repeat;
+  background-size: 16px 11px;
   padding-left: 19px;
   color: #ff8400;
 }
 
 .image-medium .stats li.likes {
-  background: url('/static/images/like-tiny.gif') 0 2px no-repeat;
+  background: url('/static/images/like-tiny.svg') 0 2px no-repeat;
+  background-size: 12px 9px;
   padding-left: 15px;
   color: #ff0000;
 }
 
 .image-medium .stats li.comments a {
-  background: url('/static/images/comment-tiny.gif') 0 2px no-repeat;
+  background: url('/static/images/comment-tiny.svg') 0 2px no-repeat;
+  background-size: 12px 9px;
   padding-left: 15px;
   color: #00aeff;
   text-decoration: none;
@@ -3300,8 +3356,9 @@ textarea {
   color: #00aeff;
   margin-left: 10px;
   font-size: 12px;
-  background: url('/static/images/icon-reply-arrow.gif') 0 -3px no-repeat;
-  padding-left: 20px;
+  background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
+  background-size: 12px 11px;
+  padding-left: 15px;
   text-decoration: none;
   display: none;
 }
@@ -3319,7 +3376,8 @@ textarea {
   font-weight: bold;
   margin-left: 10px;
   font-size: 12px;
-  background: url('/static/images/icon-delete-comment.gif') 0 0 no-repeat;
+  background: url('/static/images/icon-delete-comment.svg') 0 0 no-repeat;
+  background-size: 13px 13px;
   padding-left: 20px;
   text-decoration: none;
   display: none;
@@ -4065,7 +4123,8 @@ span.previous-link {
 .error-uh-oh {
   padding-top: 160px;
   text-align: center;
-  background: transparent url('/static/images/tools-uh-oh.gif') center top no-repeat;
+  background: transparent url('/static/images/tools-uh-oh.svg') center top no-repeat;
+  background-size: 282px 133px;
   font-weight: bold;
   font-size: 36px;
 }
@@ -4470,7 +4529,8 @@ span.previous-link {
 .new-post-panel .shake-selector h3 a span.green {
   color: #0caf8b;
   padding-right: 25px;
-  background: #fff url('/static/images/shake-selector-carrot.gif') 100% 3px no-repeat;
+  background: #fff url('/static/images/shake-selector-carrot.svg') 100% 3px no-repeat;
+  background-size: 15px 10px;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
