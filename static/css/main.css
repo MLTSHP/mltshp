@@ -2947,7 +2947,7 @@ iframe {
 }
 
 .image-content .the-description {
-  word-break: break-all;
+  word-break: break-word;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -4323,7 +4323,7 @@ span.previous-link {
   top: 0;
   left: 30px;
   right: 30px;
-  max-width: 520px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 15px;
   border-bottom-right-radius: 10px;
@@ -4351,6 +4351,7 @@ span.previous-link {
 
 .new-post-panel--inner > * {
   flex: 1 1 0;
+  min-width: 0;
 }
 
 .new-post-panel .email-unverified h2 {
@@ -4371,6 +4372,7 @@ span.previous-link {
   padding-top: 15px;
   border-bottom: 1px dashed #e0e0e0;
   padding-bottom: 15px;
+  padding-right: 25px;
 }
 
 @media screen and (min-width: 768px) {
@@ -4461,13 +4463,14 @@ span.previous-link {
 }
 
 .new-post-panel .shake-selector h3 a span {
-  display: inline-block;
 }
 
 .new-post-panel .shake-selector h3 a span.green {
   color: #0caf8b;
   padding-right: 25px;
   background: #fff url('/static/images/shake-selector-carrot.gif') 100% 3px no-repeat;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .new-post-panel .shake-selector h3 a:hover span.green {
