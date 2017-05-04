@@ -1,7 +1,12 @@
 #!/bin/bash
 
+LINODE_USER_ARG=""
+
 if [ -f ".deploy.env" ]; then
     source .deploy.env
+fi
+if [ -n "$LINODE_USER" ]; then
+    LINODE_USER_ARG="-u $LINODE_USER"
 fi
 
 # StackScript for "MLTSHP Web Node" - 77953
@@ -23,7 +28,7 @@ NODE_PLAN="linode1024"
 PUBLIC_KEY="setup/production/mltshp-web-key.pub"
 
 # Get a list of nodes from the cluster
-nodes=$( linode nodebalancer --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )
+nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )
 node_list=$( echo $nodes | xargs -- printf "%s, " | sed "s/, $//" )
 
 echo "This script will rebuild all active MLTSHP web nodes"
@@ -44,6 +49,7 @@ function rebuild_node() {
     echo "Removing $NODE_NAME from rotation..."
 
     linode nodebalancer \
+        $LINODE_USER_ARG \
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
@@ -54,6 +60,7 @@ function rebuild_node() {
 
     # Switch status of node to 'drain' to re-enable availability checks...
     linode nodebalancer \
+        $LINODE_USER_ARG \
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
@@ -61,6 +68,7 @@ function rebuild_node() {
         --mode "drain" > /dev/null
 
     linode --action rebuild \
+        $LINODE_USER_ARG \
         --label "$NODE_NAME" \
         --plan "$NODE_PLAN" \
         --distribution "Ubuntu 16.04 LTS" \
@@ -74,7 +82,7 @@ function rebuild_node() {
 
     while true; do
         echo -n '.'
-        status=$( linode nodebalancer --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
+        status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
         if [ -n "$status" ]; then
             echo 'UP'; break;
         fi
@@ -84,6 +92,7 @@ function rebuild_node() {
     # Put the node back into rotation
     echo "Placing $NODE_NAME back in rotation..."
     linode nodebalancer \
+        $LINODE_USER_ARG \
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
