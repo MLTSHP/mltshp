@@ -113,7 +113,7 @@ class FileViewTests(BaseAsyncTestCase):
 
         for i in range(0,10):
             if i % 2 == 0:
-                request = HTTPRequest(self.get_url('/r/1'), 'GET', {"Cookie":"sid=%s" % (self.sid)})
+                request = HTTPRequest(self.get_url('/r/1'), 'GET', {"Cookie":"sid=%s" % (self.sid2)})
             else:
                 request = HTTPRequest(self.get_url('/r/1'), 'GET')
             self.http_client.fetch(request, self.stop)
@@ -134,7 +134,7 @@ class FileViewTests(BaseAsyncTestCase):
 
         for i in range(0,10):
             if i % 2 == 0:
-                request = HTTPRequest(self.get_url('/r/1.jpg'), 'GET', {"Cookie":"sid=%s" % (self.sid)})
+                request = HTTPRequest(self.get_url('/r/1.jpg'), 'GET', {"Cookie":"sid=%s" % (self.sid2)})
             else:
                 request = HTTPRequest(self.get_url('/r/1.jpg'), 'GET')
             self.http_client.fetch(request, self.stop)
