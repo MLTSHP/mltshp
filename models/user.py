@@ -419,7 +419,7 @@ hello@mltshp.com
         """
         Returns the file like, save, and view counts
         """
-        counts = sharedfile.Sharedfile.query("SELECT sum(like_count) as likes, sum(save_count) as saves, sum(view_count) as views from sharedfile where user_id = %s", self.id)
+        counts = sharedfile.Sharedfile.query("SELECT sum(like_count) as likes, sum(save_count) as saves, sum(view_count) as views from sharedfile where user_id = %s AND deleted=0", self.id)
         counts = counts[0]
         for key, value in counts.items():
             if not value:

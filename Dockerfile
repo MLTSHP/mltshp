@@ -4,12 +4,14 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get -y update && apt-get install -y \
     supervisor \
+    cron \
     libmysqlclient-dev \
     mysql-client \
     python-dev \
     libjpeg-dev \
     libcurl4-openssl-dev \
     curl \
+    run-one \
     wget \
     vim \
     libpcre3 \
@@ -75,6 +77,7 @@ COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
+RUN crontab -u ubuntu setup/production/mltshp-web--crontab
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]

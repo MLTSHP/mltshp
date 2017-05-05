@@ -223,8 +223,9 @@ class ShowRawHandler(BaseHandler):
         else:
             user_id = None
 
-        # count view
-        sharedfile.add_view(user_id)
+        # count views, but not for the owner of the file
+        if sharedfile.user_id != user_id:
+            sharedfile.add_view(user_id)
 
         # determine if we are to serve via CDN or direct from S3:
         if self.request.host == ("s.%s" % options.app_host) and options.use_cdn:

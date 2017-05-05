@@ -89,7 +89,7 @@ class FileViewTests(BaseAsyncTestCase):
             if i % 2 == 0:
                 # views by owner aren't counted
                 request = HTTPRequest(self.get_url('/r/1'), 'GET',
-                    {"Cookie":"sid=%s" % (self.sid)})
+                    {"Cookie":"sid=%s" % (self.sid2)})
             else:
                 # views by non-owner are counted
                 request = HTTPRequest(self.get_url('/r/1'), 'GET')
