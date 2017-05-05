@@ -465,7 +465,7 @@ class Sharedfile(ModelQueryCache, Model):
         If a file is recent, show its live view count.
         """
         if datetime.utcnow() - self.created_at < timedelta(hours=24):
-            return self.calculate_view_count()
+            return (self.view_count or 0) + self.calculate_view_count()
         else:
             # if a file is not recent and also has zero
             # then try to pull a live count anyway.
