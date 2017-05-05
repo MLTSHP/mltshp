@@ -41,6 +41,7 @@ WORKDIR nginx-0.8.55
 
 RUN ./configure \
     --with-http_ssl_module \
+    --with-http_stub_status_module \
     --with-pcre \
     --sbin-path=/usr/sbin/nginx \
     --pid-path=/run/nginx.pid \

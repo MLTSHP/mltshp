@@ -120,7 +120,7 @@
     {% if is_shake_manager and not site_is_readonly %}
       <form class="quit-shake-form" method="post" action="/shake/{{shake.name}}/quit">
         {{ xsrf_form_html() }}
-        <input type="submit" class="quit-shake" id="quit-shake-page" value="Quit {{escape(shake.display_name())}} shake?">
+        <input type="submit" class="quit-shake" id="quit-shake-page" value="Quit this shake?">
       </form>
     {% end %}
   </p>

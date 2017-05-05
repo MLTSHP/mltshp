@@ -174,7 +174,7 @@ a:active {
 .choose-a-shake {
   position: relative;
   text-align: left;
-  z-index: 1;
+  z-index: 3;
 }
 
 /* TODO: Make this a reusable button style */
@@ -250,14 +250,14 @@ a:active {
 
 .choose-a-shake--dropdown ul.group-shakes li a {
   text-decoration: none;
-  padding: 10px 0 10px 15px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
+  padding: 10px 15px;
   border-radius: 10px;
   display: block;
   font-size: 14px;
   color: #ff0080;
   font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .choose-a-shake--dropdown ul.group-shakes li a:hover {
@@ -1642,6 +1642,12 @@ iframe {
   margin-bottom: 8px;
 }
 
+.permalink-sidebar .in-these-shakes li a {
+  display: block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .permalink-sidebar .in-these-shakes li .input-checkbox {
   margin-right: 10px;
 }
@@ -1821,28 +1827,26 @@ iframe {
 
 .notification-block-hd {
   font-weight: bold;
-  padding: 15px;
-  width: 255px;
+  padding: 15px 15px 5px;
   cursor: pointer;
 }
 
 .notification-block-bd {
   display: none;
-  float: left;
-  width: 285px;
+  padding: 10px;
 }
 
 .notification-block-bd .notification {
-  width: 245px;
-  float: left;
-  margin-bottom: 15px;
   background-color: #fff;
   padding: 10px;
-  margin: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
   border-radius: 10px;
   position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.notification-block-bd .notification + .notification {
+  margin-top: 10px;
 }
 
 .notification-block-bd .notification .notification-close {
@@ -1861,8 +1865,6 @@ iframe {
 }
 
 .notification-block-bd .notification .context {
- width: 135px;
- float: left;
  color: #4b4b4b;
  line-height: 1.2;
  font-size: 12px;
@@ -1872,7 +1874,7 @@ iframe {
 .notification-block-bd .clear-all {
   clear: both;
   text-align: right;
-  padding: 10px;
+  margin-top: 10px;
 }
 
 /* Notification block for new followers */
@@ -2022,7 +2024,7 @@ iframe {
 
 .notification-block-invitation-request .approve-invitation,
 .notification-block-invitation-request .decline-invitation {
-  float: left;
+  display: inline;
   margin-right: 10px;
 }
 
@@ -2450,10 +2452,13 @@ iframe {
 .other-shakes {
   background-color: #DFFFCB;
   padding: 15px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
   border-radius: 10px;
+}
 
+.other-shakes ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .other-shakes a {
@@ -2463,6 +2468,8 @@ iframe {
   font-size: 14px;
   text-decoration: none;
   font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
@@ -2552,6 +2559,7 @@ iframe {
 
 .user-follow .icon {
   margin-right: 10px;
+  flex: none;
 }
 
 
@@ -2559,6 +2567,8 @@ iframe {
   font-size: 14px;
   color: #333;
   margin-bottom: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .user-follow h4 a {
@@ -2606,10 +2616,11 @@ iframe {
 
 .user-follow-extended .icon {
   margin-right: 10px;
+  float: left;
 }
 
 .user-follow-extended {
-  clear: left;
+  display: block;
   margin: 20px 5px;
 }
 
@@ -2642,6 +2653,8 @@ iframe {
   color: #333;
   margin-bottom: 10px;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .user-follow-extended .website {
@@ -2934,6 +2947,7 @@ iframe {
 }
 
 .image-content .the-description {
+  word-break: break-word;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -3041,26 +3055,29 @@ textarea {
   -moz-border-radius: 5px;
   border-radius: 5px;
   margin-bottom: 7px;
+  display: flex;
 }
 
 .image-content .inline-details .comment .avatar {
-  float: left;
+  flex: none;
 }
 
 .image-content .inline-details .comment .comment-body {
-  float: left;
   padding-left: 7px;
   overflow: hidden;
+  flex: 1;
 }
 
 .image-content .inline-details .comment .comment-body-text {
   clear: both;
   padding-top: 3px;
   color: #333;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.image-content .inline-details .comment .meta a {
-  float: left;
+.image-content .inline-details .comment .meta {
+  display: flex;
 }
 
 .image-content .inline-details .comment .delete-form {
@@ -3076,7 +3093,6 @@ textarea {
 .image-content .inline-details .comment .created-at {
   margin-left: 10px;
   padding-top: 0;
-  float: left;
 }
 
 .image-content .inline-details .comment .reply-to {
@@ -3087,7 +3103,6 @@ textarea {
   text-decoration: none;
   background: url('/static/images/icon-reply-arrow.gif') 0 -3px no-repeat;
   display: none;
-  float: left;
 }
 
 .image-content .inline-details .comment .delete {
@@ -3099,7 +3114,6 @@ textarea {
   padding-left: 20px;
   text-decoration: none;
   display: none;
-  float: left;
   cursor: pointer;
 }
 
@@ -3331,6 +3345,12 @@ textarea {
   padding-top: 20px;
   color: #7f7f7f;
   font-size: 12px;
+}
+
+.image-comments .comment .comment-body-text {
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .image-comment-form {
@@ -3665,6 +3685,9 @@ span.previous-link {
   line-height: 50px;
   font-weight: bold;
   padding-left: 24px;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .image-poster {
@@ -4178,6 +4201,8 @@ span.previous-link {
   font-size: 14px;
   line-height: 18px;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .shake-details .shake-edit-description-input {
@@ -4295,13 +4320,12 @@ span.previous-link {
 
 .new-post-panel {
   display: none;
-  z-index: 10;
   background-color: #fff;
   position: absolute;
   top: 0;
   left: 30px;
   right: 30px;
-  max-width: 520px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 15px;
   border-bottom-right-radius: 10px;
@@ -4329,6 +4353,7 @@ span.previous-link {
 
 .new-post-panel--inner > * {
   flex: 1 1 0;
+  min-width: 0;
 }
 
 .new-post-panel .email-unverified h2 {
@@ -4349,6 +4374,7 @@ span.previous-link {
   padding-top: 15px;
   border-bottom: 1px dashed #e0e0e0;
   padding-bottom: 15px;
+  padding-right: 25px;
 }
 
 @media screen and (min-width: 768px) {
@@ -4439,13 +4465,14 @@ span.previous-link {
 }
 
 .new-post-panel .shake-selector h3 a span {
-  display: inline-block;
 }
 
 .new-post-panel .shake-selector h3 a span.green {
   color: #0caf8b;
   padding-right: 25px;
   background: #fff url('/static/images/shake-selector-carrot.gif') 100% 3px no-repeat;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .new-post-panel .shake-selector h3 a:hover span.green {
@@ -4481,6 +4508,8 @@ span.previous-link {
   font-size: 14px;
   display: block;
   padding: 5px 15px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .new-post-panel .shake-selector ul li a:hover {
