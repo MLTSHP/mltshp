@@ -1827,30 +1827,26 @@ iframe {
 
 .notification-block-hd {
   font-weight: bold;
-  padding: 15px;
-  width: 255px;
+  padding: 15px 15px 5px;
   cursor: pointer;
 }
 
 .notification-block-bd {
   display: none;
-  float: left;
-  width: 285px;
+  padding: 10px;
 }
 
 .notification-block-bd .notification {
-  width: 245px;
-  float: left;
-  margin-bottom: 15px;
   background-color: #fff;
   padding: 10px;
-  margin: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
   border-radius: 10px;
   position: relative;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+.notification-block-bd .notification + .notification {
+  margin-top: 10px;
 }
 
 .notification-block-bd .notification .notification-close {
@@ -1869,8 +1865,6 @@ iframe {
 }
 
 .notification-block-bd .notification .context {
- width: 135px;
- float: left;
  color: #4b4b4b;
  line-height: 1.2;
  font-size: 12px;
@@ -1880,7 +1874,7 @@ iframe {
 .notification-block-bd .clear-all {
   clear: both;
   text-align: right;
-  padding: 10px;
+  margin-top: 10px;
 }
 
 /* Notification block for new followers */
@@ -2030,7 +2024,7 @@ iframe {
 
 .notification-block-invitation-request .approve-invitation,
 .notification-block-invitation-request .decline-invitation {
-  float: left;
+  display: inline;
   margin-right: 10px;
 }
 
