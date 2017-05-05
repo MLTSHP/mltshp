@@ -4,6 +4,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get -y update && apt-get install -y \
     supervisor \
+    cron \
     libmysqlclient-dev \
     mysql-client \
     python-dev \
