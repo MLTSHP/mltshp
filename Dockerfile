@@ -20,6 +20,7 @@ RUN apt-get -y update && apt-get install -y \
     libffi-dev \
     python-pip \
     && rm -rf /var/lib/apt/lists/*
+RUN service cron start
 
 RUN pip install -U pip setuptools distribute
 # Fix for a really weird issue when installing postmark library
@@ -77,7 +78,7 @@ COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
-RUN crontab -u ubuntu setup/production/mltshp-web--crontab && service cron start
+RUN crontab -u ubuntu setup/production/mltshp-web--crontab
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]
