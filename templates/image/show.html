@@ -82,7 +82,7 @@
               {% if can_delete and len(in_these_shakes) > 1 %}
                 <form class="delete-from-shakes-form" action="/p/{{sharedfile.share_key}}/shakes/{{shake.id}}/delete" method="post">
                   {{ xsrf_form_html() }}
-                  <input src="{{ static_url("images/remove-from-shake.gif") }}" width="16" height="15" type="image" value="delete">
+                  <input src="{{ static_url("images/remove-from-shake.svg") }}" width="16" height="15" type="image" value="delete">
                 </form>
               {% end %}
               {% if current_user_obj and current_user_obj.display_name() == shake.display_name() and shake.type == 'user' %}
@@ -95,7 +95,7 @@
         </div>
       {% end %}
 
-      <p style="float:left;padding-right:5px;">
+      <div>
         <!-- Place this tag where you want the su badge to render -->
         <su:badge layout="4"></su:badge>
 
@@ -108,8 +108,8 @@
           })();
         </script>
 
-      </p>
-      <p style="float:left;">
+      </div>
+      <p>
         <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
         <img id="fb_share_button" src="{{ static_url("images/fb_icon.png") }}" alt="Post to Facebook" height="21" width="21" alt="">
       </p>
@@ -154,7 +154,7 @@
           </div>
           <div class="body">
             {% set commenting_user = comment.user() %}
-            <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_plus() %}<a href="/account/membership" title="upgrade your account!"><img src="{{ static_url("images/icon_plus.gif") }}" width="12" height="12" border="0" valign="center" alt="+"></a>{% end %}
+            <div class="meta"><a class="username" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a> {% if commenting_user.is_plus() %}<a href="/account/membership" title="upgrade your account!"><img src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center" alt="+"></a>{% end %}
               <span class="created-at">{{comment.pretty_created_at()}}</span>
               {% if not site_is_readonly %}
                 {% if can_comment %}

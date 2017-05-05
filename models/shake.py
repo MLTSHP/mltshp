@@ -107,7 +107,7 @@ class Shake(ModelQueryCache, Model):
             if self.image:
                 return "//%s.s3.amazonaws.com/account/%s/shake_%s_small.jpg" % (options.aws_bucket, self.user_id, self.name)
             else:
-                return "/static/images/default-icon-venti.png"
+                return "/static/images/default-icon-venti.svg"
 
     def path(self):
         """

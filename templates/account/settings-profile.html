@@ -23,7 +23,7 @@
               {% if user.profile_image and user.email_confirmed == 1 %}
                 <img src="{{user.profile_image_url()}}" width="100" height="100"><br>
               {% else %}
-                <img src="{{ static_url("images/default-icon-venti.png") }}" width="100" height="100"><br>
+                <img src="{{ static_url("images/default-icon-venti.svg") }}" width="100" height="100"><br>
               {% end %}
             </div>
             <div class="profile-photo-meta">

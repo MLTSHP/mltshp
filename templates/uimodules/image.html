@@ -88,7 +88,7 @@
         <div class="like-this">
           <form id="like-form-{{sharedfile.share_key}}" method="POST" action="/p/{{sharedfile.share_key}}/like">
             {{ xsrf_form_html() }}
-            <input type="image" class="like-button" src="{{ static_url("images/like-this.gif") }}" height="22" value="Like This">
+            <input type="image" class="like-button" src="{{ static_url("images/like-this.svg") }}" height="22" value="Like This">
           </form>
         </div>
       {% end %}
@@ -96,14 +96,14 @@
         <div class="like-this">
           <form id="like-form-{{sharedfile.share_key}}"  method="POST" action="/p/{{sharedfile.share_key}}/unlike">
             {{ xsrf_form_html() }}
-            <input type="image" class="like-button" src="{{ static_url("images/liked-this.gif") }}" height="22" value="Unlike This">
+            <input type="image" class="like-button" src="{{ static_url("images/liked-this.svg") }}" height="22" value="Unlike This">
           </form>
         </div>
       {% end %}
       {% if can_save and not site_is_readonly %}
         <div class="save-this">
           {% if has_saved %}
-            <a href="/p/{{has_saved.share_key}}" title="Already saved!"><img height="22" src="{{ static_url("images/saved-this.gif") }}" alt="Saved"></a>
+            <a href="/p/{{has_saved.share_key}}" title="Already saved!"><img height="22" width="29" src="{{ static_url("images/saved-this.svg") }}" alt="Saved"></a>
           {% else %}
             <form method="post" action="/p/{{sharedfile.share_key}}/save">
               <input type="hidden" name="shake_id" class="shake-id-input" value="">
@@ -111,9 +111,9 @@
               {{ xsrf_form_html() }}
             </form>
             {% if has_multiple_shakes %}
-              <a class="save-this-link save-this-link-multiple" href=""><img src="{{ static_url("images/save-this-multiple.gif") }}" height="22" alt="Save This"></a>
+              <a class="save-this-link save-this-link-multiple" href=""><img src="{{ static_url("images/save-this-multiple.svg") }}" height="22" width="87" alt="Save This"></a>
             {% else %}
-              <a class="save-this-link" href=""><img src="{{ static_url("images/save-this.gif") }}" height="22" alt="Save This"></a>
+              <a class="save-this-link" href=""><img src="{{ static_url("images/save-this.svg") }}" height="22" width="69" alt="Save This"></a>
             {% end %}
           {% end %}
         </div>
