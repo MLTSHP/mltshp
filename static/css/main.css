@@ -174,7 +174,7 @@ a:active {
 .choose-a-shake {
   position: relative;
   text-align: left;
-  z-index: 1;
+  z-index: 3;
 }
 
 /* TODO: Make this a reusable button style */
@@ -3685,6 +3685,9 @@ span.previous-link {
   line-height: 50px;
   font-weight: bold;
   padding-left: 24px;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .image-poster {
@@ -4317,7 +4320,6 @@ span.previous-link {
 
 .new-post-panel {
   display: none;
-  z-index: 10;
   background-color: #fff;
   position: absolute;
   top: 0;
