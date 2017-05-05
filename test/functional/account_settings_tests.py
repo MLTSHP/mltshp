@@ -163,7 +163,7 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         Emulate the variables that nginx passes in via the upload module
         and see if the file gets uploaded.
         """
-        photo_path = os.path.abspath("static/images/default-icon-venti.svg")
+        photo_path = os.path.abspath("static/images/test-avatar.png")
         arguments = {
             'photo_path': photo_path,
             'photo_content_type': "image/png",
