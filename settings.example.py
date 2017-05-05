@@ -21,6 +21,7 @@ settings = {
     "uploaded_files" : "/srv/mltshp.com/uploaded",
     "use_workers": True,
     "xsrf_cookies": True,
+    "server_id": "mltshp-web-1",
 }
 
 # Default settings for running tests; app host/cdn host are wired for
