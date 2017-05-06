@@ -20,7 +20,6 @@ RUN apt-get -y update && apt-get install -y \
     libffi-dev \
     python-pip \
     && rm -rf /var/lib/apt/lists/*
-RUN service cron start
 
 RUN pip install -U pip setuptools distribute
 # Fix for a really weird issue when installing postmark library
