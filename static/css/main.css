@@ -3423,21 +3423,25 @@ textarea {
 .image-comment-form h3 {
   float: left;
   display: block;
-  background: transparent url('/static/images/comment-quip-left.gif') left top no-repeat;
+  background: transparent url('/static/images/comment-quip-left.svg') left top no-repeat;
+  background-size: auto 45px;
   position: relative;
   left: -10px;
+  border-top-right-radius: 25px 20px;
+  border-bottom-right-radius: 15px;
 }
 
 .image-comment-form h3 span {
   height: 45px;
   display: block;
-  background: transparent url('/static/images/comment-quip-right.gif') right top no-repeat;
   color: #fff600;
-  padding-top: 13px;
-  padding-left: 40px;
-  padding-right: 30px;
+  line-height: 45px;
+  white-space: nowrap;
+  padding-left: 35px;
+  padding-right: 20px;
   font-weight: bold;
   font-size: 18px;
+  box-sizing: border-box;
 }
 
 .image-comment-form .field {
