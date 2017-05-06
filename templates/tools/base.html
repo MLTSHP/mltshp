@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block title%}mltshp{% end %}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/normalize.css") }}">
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/fun-form.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/main.css") }}">
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/tools.css") }}">
+
     {% block included_headers %}{% end %}
 
     <script type="text/javascript" charset="utf-8">
@@ -14,9 +19,11 @@
     </script>
   </head>
   <body>
+
     <div class="header">
       you are signed in as {{current_user['name']}} | <a href="/sign-out" target="_blank">sign out</a>
     </div>
+
     <div class="content">
       <div class="content-inner">
       {% block main %}
@@ -24,6 +31,7 @@
       {% end %}
       </div>
     </div>
+
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="{{ static_url("js/tools.js")}}" charset="utf-8"></script>
     {% block included_scripts %}{% end %}

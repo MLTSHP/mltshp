@@ -1678,18 +1678,21 @@ iframe {
 }
 
 .permalink-sidebar .in-these-shakes li {
-  clear: both;
   font-size: 14px;
   margin-bottom: 8px;
+  display: flex;
 }
 
 .permalink-sidebar .in-these-shakes li a {
+  flex: 1;
   display: block;
+  word-break: break-word;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 .permalink-sidebar .in-these-shakes li .input-checkbox {
+  flex: none;
   margin-right: 10px;
 }
 
@@ -1708,6 +1711,17 @@ iframe {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
+}
+
+.permalink-sidebar .permalink-social {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+.permalink-sidebar .permalink-social > li + li {
+  margin-left: 8px;
 }
 
 .permalink-sidebar .flag-image {
@@ -1869,13 +1883,13 @@ iframe {
 
 .notification-block-hd {
   font-weight: bold;
-  padding: 15px 15px 5px;
+  padding: 15px;
   cursor: pointer;
 }
 
 .notification-block-bd {
   display: none;
-  padding: 10px;
+  padding: 0 10px 10px;
 }
 
 .notification-block-bd .notification {
@@ -1885,6 +1899,12 @@ iframe {
   position: relative;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+.notification-block-bd .notification::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .notification-block-bd .notification + .notification {
@@ -3423,21 +3443,25 @@ textarea {
 .image-comment-form h3 {
   float: left;
   display: block;
-  background: transparent url('/static/images/comment-quip-left.gif') left top no-repeat;
+  background: transparent url('/static/images/comment-quip-left.svg') left top no-repeat;
+  background-size: auto 45px;
   position: relative;
   left: -10px;
+  border-top-right-radius: 25px 20px;
+  border-bottom-right-radius: 15px;
 }
 
 .image-comment-form h3 span {
   height: 45px;
   display: block;
-  background: transparent url('/static/images/comment-quip-right.gif') right top no-repeat;
   color: #fff600;
-  padding-top: 13px;
-  padding-left: 40px;
-  padding-right: 30px;
+  line-height: 45px;
+  white-space: nowrap;
+  padding-left: 35px;
+  padding-right: 20px;
   font-weight: bold;
   font-size: 18px;
+  box-sizing: border-box;
 }
 
 .image-comment-form .field {
@@ -3754,18 +3778,30 @@ span.previous-link {
 }
 
 .bookmark {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+@media screen and (min-width: 480px) {
+  .bookmark {
+    flex-direction: row;
+  }
+}
+
+.bookmark-flag {
+  flex: none;
   margin-top: -3px;
   margin-left: -3px;
   color: #fff;
   font-weight: bold;
   font-size: 12px;
-  float: left;
   background: transparent url('/static/images/bookmark-back.gif') 0 0 no-repeat;
   position: relative;
   z-index: 2;
 }
 
-.bookmark span {
+.bookmark-flag span {
   display: block;
   padding-right: 20px;
   padding-left: 20px;
@@ -3775,7 +3811,7 @@ span.previous-link {
 }
 
 .jump-back {
-    display:inline;
+    flex: 1;
     height:23px;
     margin-left: 10px;
     margin-top:4px;
@@ -4482,14 +4518,11 @@ span.previous-link {
   position: absolute;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   opacity: 0;
-  -moz-opacity: 0;
   cursor: pointer;
-  width: 260px;
-  height: 30px;
-  filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
 }
-
 
 .new-post-panel .link-to-video h2 {
   font-size: 28px;

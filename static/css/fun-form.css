@@ -69,6 +69,9 @@
 /* text-y inputs */
 .fun-form .input-text,
 .fun-form textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     background: #f2fdff;
     border: 1px solid #e4eff1;
     border-radius: 10px;
@@ -89,6 +92,11 @@
 .fun-form textarea {
     height: 135px;
     resize: none;
+}
+
+/* dropdowns */
+.fun-form select {
+    width: 100%;
 }
 
 /* checkboxes & radio buttons */
