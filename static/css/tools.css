@@ -5,6 +5,10 @@ body, html {
   background-color: #dbfaff;
 }
 
+body {
+  margin: 8px;
+}
+
 a, a:link {
   color: #ff0080;
 }
@@ -25,62 +29,54 @@ a, a:link {
 .content {
   padding: 20px;
   background-color: #fff;
+  border-radius: 15px;
 }
 
 /* wrapper for floated elements, so they don't drop
 on resize or other factors */
 .content-inner {
   margin: 0 auto;
-  width: 785px;
+  display: flex;
+  flex-direction: column;
 }
 
-.image-to-save {
-  width: 365px;
-  overflow: visible;
-  font-size: 12px;
-  float: right;
+.content-inner > * {
+  min-width: 0; /* https://github.com/philipwalton/flexbugs/issues/39 */
 }
 
-.image-to-save img {
-  float: right;
-  max-width: 365px;
+.content-inner > * + * {
+  margin-top: 20px;
 }
+
+@media screen and (min-width: 768px) {
+
+  .content-inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .content-inner > * {
+    flex-basis: calc(50% - 10px);
+  }
+
+  .content-inner > * + * {
+    margin-top: 0;
+  }
+
+  .content-inner .full-width {
+    flex: 1;
+  }
+}
+
 
 /* Override fun-form for tools area */
 
 .tools-fun-form {
   margin-top: 0;
-  width: 420px;
-  float: left;
-}
-
-.tools-fun-form .field,
-.tools-fun-form label,
-.tools-fun-form .field-input {
-  float:none;
-}
-
-.tools-fun-form .field {
-  width: 420px;
-}
-
-.tools-fun-form label {
-  padding: 10px 5px;
-  text-align: left;
 }
 
 .tools-fun-form .tools-field-title .input-text {
   font-weight: bold;
-}
-
-/* Error Page */
-
-.error-uh-oh {
-  padding-top: 160px;
-  background: transparent url('/static/images/tools-uh-oh.svg') 0 0 no-repeat;
-  background-size: 282px 133px;
-  font-weight: bold;
-  font-size: 36px;
 }
 
 /* Success Page */
@@ -89,41 +85,13 @@ on resize or other factors */
   padding-top: 160px;
   background: transparent url('/static/images/tools-saved-it.svg') 0 0 no-repeat;
   background-size: 320px 133px;
-  font-weight: bold;
-  font-size: 36px;
+  font-size: 28px;
 }
-
-.image-info {
-  overflow: hidden;
-  float: left;
-  width: 420px;
-}
-
-.image-info .meta {
-  margin: 30px 0;
-}
-
-.image-info .meta h3 {
-  color: #006d7e;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.image-info .meta p {
- color: #666;
-}
-
 
 /* Sign-in page */
 
 .content-sign-in {
-  background-color: #fff;
-  margin: 0 auto;
   margin-top: 20px;
-  width: 600px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
 }
 
 .tools-signin-logo {
@@ -136,13 +104,15 @@ on resize or other factors */
   margin-top: 0;
 }
 
-.sign-in-fun-form label {
-  width: 120px;
-}
+@media screen and (min-width: 768px) {
 
-.sign-in-fun-form .field {
-  padding-left: 20px;
-  width: 520px;
+  .sign-in-fun-form label {
+    flex-basis: 120px;
+  }
+
+  .sign-in-fun-form .field-submit {
+    padding-left: 130px;
+  }
 }
 
 .content-sign-in h1 {
@@ -150,13 +120,4 @@ on resize or other factors */
   color: #006d7e;
   font-size: 26px;
   font-weight: bold;
-}
-
-/* General */
-.code {
-  font-family: Consolas,"Courier New",monospace;
-}
-
-.clear {
-  clear: both;
 }
