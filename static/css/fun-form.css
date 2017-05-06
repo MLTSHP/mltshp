@@ -91,6 +91,11 @@
     resize: none;
 }
 
+/* dropdowns */
+.fun-form select {
+    width: 100%;
+}
+
 /* checkboxes & radio buttons */
 .fun-form [type="checkbox"],
 .fun-form [type="radio"] {
