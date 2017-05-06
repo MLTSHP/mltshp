@@ -9,14 +9,14 @@
 <div class="content">
 
     <div class="feature feature--flipped feature--primary home-body">
-        <div class="feature--image"><img alt="" class="feature--image-media" src="static/images/home-screenshot.jpg"></div>
+        <div class="feature--image"><img alt="" class="feature--image-media" src="{{ static_url("images/home-screenshot.jpg") }}"></div>
         <div class="feature--content">
             <h1 class="feature--title home-title">Save, Share &amp;&nbsp;Discover</h1>
             <div class="feature--body">
                 <p>Easily save images from everywhere on the web. The silly ones, the sweet ones. The cool ones. The gross ones. Then share them with your friends and family.</p>
                 {% if not site_is_readonly and not disable_signups %}
                     <p class="feature--cta send-invitation">
-                        <a href="/create-account"><img alt="Sign me up!" width="178" height="56" src="static/images/signmeup_button.svg"></a>
+                        <a href="/create-account"><img alt="Sign me up!" width="178" height="56" src="{{ static_url("images/signmeup_button.svg") }}"></a>
                     </p>
                 {% end %}
             </div>
@@ -26,33 +26,33 @@
     <div class="feature-list bottom-home">
 
         <div class="feature click-save-done">
-            <div class="feature--image"><img alt="" class="feature--image-media" src="static/images/home-screenshot-dropdown.gif"></div>
+            <div class="feature--image"><img alt="" class="feature--image-media" src="{{ static_url("images/home-screenshot-dropdown.gif") }}"></div>
             <div class="feature--content">
-                <h2 class="feature--title"><img alt="" src="static/images/home-pointer.svg" width="15" height="21"> Click. Save. Done.</h2>
+                <h2 class="feature--title"><img alt="" src="{{ static_url("images/home-pointer.svg") }}" width="15" height="21"> Click. Save. Done.</h2>
                 <p class="feature--body">Use browser extensions to save with a simple right-click, or use our bookmarklet to highlight and save.</p>
             </div>
         </div>
 
         <div class="feature save-heart-comment">
-            <div class="feature--image"><img alt="" class="feature--image-media" src="static/images/home-screenshot-dashboard.jpg"></div>
+            <div class="feature--image"><img alt="" class="feature--image-media" src="{{ static_url("images/home-screenshot-dashboard.jpg") }}"></div>
             <div class="feature--content">
-                <h2 class="feature--title"><img alt="" src="static/images/home-piggy.svg" width="25" height="15">, <img src="static/images/home-heart.svg" width="20" height="15"> &amp; <img src="static/images/home-comment.svg" width="19" height="15"></h2>
+                <h2 class="feature--title"><img alt="" src="{{ static_url("images/home-piggy.svg") }}" width="25" height="15">, <img src="{{ static_url("images/home-heart.svg") }}" width="20" height="15"> &amp; <img src="{{ static_url("images/home-comment.svg") }}" width="19" height="15"></h2>
                 <p class="feature--body">Save, like &amp; comment on your friends&rsquo; files. Then see all the saves, likes &amp; comments on your own files right when you sign in.</p>
             </div>
         </div>
 
         <div class="feature follow-shakes">
-            <div class="feature--image"><img alt="" class="feature--image-media" src="static/images/home-screenshot-friendshake.gif"></div>
+            <div class="feature--image"><img alt="" class="feature--image-media" src="{{ static_url("images/home-screenshot-friendshake.gif") }}"></div>
             <div class="feature--content">
-                <h2 class="feature--title">Follow Shakes <img alt="" src="static/images/home-following.svg" width="55" height="22"></h2>
+                <h2 class="feature--title">Follow Shakes <img alt="" src="{{ static_url("images/home-following.svg") }}" width="55" height="22"></h2>
                 <p class="feature--body">Easily find interesting people and topical group shakes. Follow them. Get all their images in one super smooth, easy to navigate stream.</p>
             </div>
         </div>
 
         <div class="feature create-shakes">
-            <div class="feature--image"><img alt="" class="feature--image-media" src="static/images/home-screenshot-createshake.gif"></div>
+            <div class="feature--image"><img alt="" class="feature--image-media" src="{{ static_url("images/home-screenshot-createshake.gif") }}"></div>
             <div class="feature--content">
-                <h2 class="feature--title">Create Shakes <img alt="" src="static/images/home-pro.svg" width="34" height="18"></h2>
+                <h2 class="feature--title">Create Shakes <img alt="" src="{{ static_url("images/home-pro.svg") }}" width="34" height="18"></h2>
                 <p class="feature--body">Pick a topic, any topic! Invite other MLTSHPers in to post and curate their submissions with one click.</p>
             </div>
         </div>
