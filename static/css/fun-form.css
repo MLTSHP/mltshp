@@ -69,6 +69,9 @@
 /* text-y inputs */
 .fun-form .input-text,
 .fun-form textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     background: #f2fdff;
     border: 1px solid #e4eff1;
     border-radius: 10px;

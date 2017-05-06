@@ -90,7 +90,9 @@
       <div class="image-content-list">
         {% if show_notice_where_you_were %}
             <div class="bookmark">
+              <span class="bookmark-flag">
                 <span>Here is where you were</span>
+              </span>
             </div>
         {% end %}
 
@@ -99,12 +101,14 @@
             {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
           {% else %}
             <div class="bookmark">
-              <span>You started reading here {{sharedfile.pretty_created_at() }}</span>
-            </div>
-            <div class="jump-back">
-            {% if sharedfile.previous_sharedfile_id > 0 %}
-                <a href="/before/{{sharedfile.previous_sharedfile_key()}}/returning">jump to previous</a>
-            {% end %}
+              <span class="bookmark-flag">
+                <span>You started reading here {{sharedfile.pretty_created_at() }}</span>
+              </span>
+              {% if sharedfile.previous_sharedfile_id > 0 %}
+                <span class="jump-back">
+                  <a href="/before/{{sharedfile.previous_sharedfile_key()}}/returning">jump to previous</a>
+                </span>
+              {% end %}
             </div>
           {% end %}
         {% end %}
