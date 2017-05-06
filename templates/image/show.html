@@ -95,41 +95,17 @@
         </div>
       {% end %}
 
-      <div>
-        <!-- Place this tag where you want the su badge to render -->
-        <su:badge layout="4"></su:badge>
-
-        <!-- Place this snippet wherever appropriate -->
-        <script type="text/javascript">
-          (function() {
-            var li = document.createElement('script'); li.type = 'text/javascript'; li.async = true;
-            li.src = ('https:' == document.location.protocol ? 'https:' : 'http:') + '//platform.stumbleupon.com/1/widgets.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(li, s);
-          })();
-        </script>
-
-      </div>
-      <p>
-        <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
-        <img id="fb_share_button" src="{{ static_url("images/fb_icon.png") }}" alt="Post to Facebook" height="21" width="21" alt="">
-      </p>
-      <div id="fb-root">&nbsp;</div>
-      <script type="text/javascript">
-        window.fbAsyncInit = function() {
-          FB.init({
-            appId  : '133612633386253',
-            status : false, // check login status
-            cookie : false, // enable cookies to allow the server to access the session
-            xfbml  : false  // parse XFBML
-          });
-        };
-        (function() {
-          var e = document.createElement('script');
-          e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
-          e.async = true;
-          document.getElementById('fb-root').appendChild(e);
-        }());
-      </script>
+      <ul class="permalink-social">
+        <li class="stumbleupon">
+          <a target="_blank" href="http://www.stumbleupon.com/badge?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}" onclick="window.open('http://www.stumbleupon.com/badge?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/stumbleupon.png") }}" width="21" height="21" alt="StumbleUpon"></a>
+        </li>
+        <li class="twitter">
+          <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
+        </li>
+        <li class="facebook">
+          <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/fb_icon.png") }}" width="21" height="21" alt="Post to Facebook"></a>
+        </li>
+      </ul>
 
       {% if current_user_obj and not site_is_readonly %}
       <form class="flag-image-form" method="post" action="/p/{{sharedfile.share_key}}/nsfw">
