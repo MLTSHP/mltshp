@@ -77,7 +77,7 @@ COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
-RUN crontab -u ubuntu setup/production/mltshp-web--crontab
+RUN crontab -u ubuntu setup/production/mltshp-worker--crontab
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]
