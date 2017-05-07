@@ -1374,8 +1374,9 @@ iframe {
   clear: both;
   padding: 15px;
   position: relative;
-  width: 100%;
   box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 @media screen and (min-width: 768px) {
@@ -1689,6 +1690,7 @@ iframe {
   word-break: break-word;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  overflow: hidden;
 }
 
 .permalink-sidebar .in-these-shakes li .input-checkbox {
@@ -2918,6 +2920,7 @@ iframe {
 .image-title {
   padding: 15px 15px 0;
   position: relative;
+  max-width: 100%;
 }
 
 .image-title h1,
@@ -3334,6 +3337,8 @@ textarea {
 
 .image-comments {
   padding-left: 40px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .image-comments .comments {
