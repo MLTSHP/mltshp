@@ -381,20 +381,21 @@ class SignInHandler(BaseHandler):
         else:
             unmigrated_user = User.find_unmigrated_user(name, password)
             if unmigrated_user:
-                if not MigrationState.has_migrated(unmigrated_user.id):
-                    # undelete the user account and log them in...
-                    unmigrated_user.deleted = 0
-                    unmigrated_user.save()
-                    # also, find their personal shake and restore that
-                    # specifically. does not restore any images within it--
-                    # the user will need to invoke a migration for that.
-                    shake = Shake.get('user_id=%s and type=%s and deleted=2', unmigrated_user.id, 'user')
-                    if shake is not None:
-                        shake.deleted = 0
-                        shake.save()
+                # undelete the user account and log them in...
+                unmigrated_user.deleted = 0
+                unmigrated_user.save()
 
-                    self.log_user_in(unmigrated_user)
-                    return self.redirect("/account/welcome-to-mltshp")
+                # also, find their personal shake and restore that
+                # specifically. does not restore any images within it--
+                # the user will need to invoke a migration for that.
+                shake = Shake.get(
+                    'user_id=%s and type=%s and deleted=2', unmigrated_user.id, 'user')
+                if shake is not None:
+                    shake.deleted = 0
+                    shake.save()
+
+                self.log_user_in(unmigrated_user)
+                return self.redirect("/account/welcome-to-mltshp")
 
             self.add_error('name', "I could not find that user name and password combination.")
             return self.render(self.use_template, name=name, next=self.next)
@@ -404,14 +405,12 @@ class WelcomeToMltshp(BaseHandler):
     def prepare(self):
         self.use_template = "account/welcome-to-mltshp.html"
 
+    @tornado.web.authenticated
     def get(self):
         """
-        If user is already logged in, redirect to home. Otherwise, render the sign-in page.
+        If user is not logged in, redirect to the sign-in page.
         """
         user = self.get_current_user_object()
-        if not user:
-            return self.redirect("/sign-in")
-
         return self.render(self.use_template, name=user.name)
 
 
