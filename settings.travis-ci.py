@@ -1,3 +1,6 @@
+# dummy dict so main module loads okay
+settings = {}
+
 # Default settings for running tests; app host/cdn host are wired for
 # expected values in tests.
 test_settings = {

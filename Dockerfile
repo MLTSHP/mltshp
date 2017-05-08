@@ -4,14 +4,12 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get -y update && apt-get install -y \
     supervisor \
-    cron \
     libmysqlclient-dev \
     mysql-client \
     python-dev \
     libjpeg-dev \
     libcurl4-openssl-dev \
     curl \
-    run-one \
     wget \
     vim \
     libpcre3 \
