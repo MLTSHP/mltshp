@@ -13,11 +13,9 @@ services:
     depends_on:
       - mysql
       - fakes3
-      - rabbitmq
     links:
       - mysql
       - fakes3
-      - rabbitmq
     networks:
       app_net:
         aliases:
@@ -31,14 +29,6 @@ services:
         aliases:
           - mltshp-testing.fakes3
           - mltshp-dev.fakes3
-  rabbitmq:
-    image: rabbitmq:alpine
-    environment:
-      RABBITMQ_DEFAULT_VHOST: "kablam.local"
-      RABBITMQ_DEFAULT_USER: "mltshp_user"
-      RABBITMQ_DEFAULT_PASS: "password"
-    networks:
-      - app_net
   mysql:
     image: mysql:latest
     ports:
