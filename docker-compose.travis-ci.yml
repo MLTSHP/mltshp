@@ -4,8 +4,6 @@ services:
     image: mltshp/mltshp-web
     volumes:
       - .:/srv/mltshp.com/mltshp
-      - ./mounts/logs:/srv/mltshp.com/logs
-      - ./mounts/uploaded:/srv/mltshp.com/uploaded
       - ./setup/dev/nginx.conf:/etc/nginx/nginx.conf
       - ./setup/dev/supervisord.conf:/etc/supervisor/conf.d/mltshp.conf
     ports:
