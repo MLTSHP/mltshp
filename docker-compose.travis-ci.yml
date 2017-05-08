@@ -1,6 +1,4 @@
 version: "2"
-extra_hosts:
-  - "dockerhost:${HOSTIP}"
 services:
   mltshp:
     image: mltshp/mltshp-web
@@ -16,6 +14,8 @@ services:
       - fakes3
     links:
       - fakes3
+    extra_hosts:
+      - "dockerhost:${HOSTIP}"
     networks:
       app_net:
         aliases:
