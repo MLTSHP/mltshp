@@ -24,7 +24,7 @@ test_settings = {
     "aws_secret": "dummy-secret",
     "max_mb_per_month" : 300,
     "api_hits_per_hour" : 150,
-    "use_workers": True,
+    "use_workers": False,
     "debug_workers": True,
     # these must be set for testing test/unit/externalservice_tests.py
     # "twitter_consumer_key" : "twitter_consumer_key_here",
