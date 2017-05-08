@@ -51,10 +51,8 @@ class AccountImagesHandler(BaseHandler):
             raise tornado.web.HTTPError(404)
 
         can_follow = False
-        current_user = self.get_current_user()
-        if current_user:
-            current_user = User.get("id=%s", current_user['id'])
-            can_follow = not current_user.has_subscription(user)
+        current_user = self.get_current_user_object()
+        can_follow = not current_user.has_subscription(user)
 
         # we get None for page argument when non specified,
         # otherwise we get a string.
@@ -72,7 +70,13 @@ class AccountImagesHandler(BaseHandler):
         follower_count = len(followers)
         count = user_shake.sharedfiles_count()
         images = user_shake.sharedfiles(page=page)
-        has_data_to_migrate = not MigrationState.has_migrated(user.id)
+
+        has_data_to_migrate = False
+        if current_user.id == user.id:
+            # if the user is looking at their own shake, then
+            # check to see if they haven't migrated yet; remind
+            # them at the top of their shake if they do...
+            has_data_to_migrate = not MigrationState.has_migrated(current_user.id)
 
         other_shakes = user.shakes(include_managed=False, include_only_group_shakes=True)
 

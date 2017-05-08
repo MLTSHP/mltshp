@@ -1,5 +1,0 @@
-# Crontab jobs for MLTSHP web server
-
-# Run calculate web views; stagger runs between our web servers for redundancy
-0,10,20,30,40,50 * * * * cd /srv/mltshp.com/mltshp; run-one timeout 290s python runner.py --server_id mltshp-web-1 scripts/calculate-views.py
-5,15,25,35,45,55 * * * * cd /srv/mltshp.com/mltshp; run-one timeout 290s python runner.py --server_id mltshp-web-2 scripts/calculate-views.py
