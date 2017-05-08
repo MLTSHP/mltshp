@@ -9,7 +9,7 @@ test_settings = {
     "xsrf_cookies": True,
     "uploaded_files" : "/srv/mltshp.com/uploaded",
     "debug": True,
-    "database_user": "travis",
+    "database_user": "root",
     "database_name": "mltshp_testing",
     "database_password" : "",
     # docker container's host ip address
