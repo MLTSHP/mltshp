@@ -8,5 +8,5 @@ services:
   - mysql
 
 script:
-  - cp ./settings.example.py ./settings.py
+  - cp ./settings.travis-ci.py ./settings.py
   - docker-compose --file docker-compose.travis-ci.yml run mltshp ./test.py

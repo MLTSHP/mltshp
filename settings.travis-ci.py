@@ -12,7 +12,8 @@ test_settings = {
     "database_user": "root",
     "database_name": "mltshp_testing",
     "database_password" : "",
-    "database_host": "localhost",
+    # docker container's host ip address
+    "database_host": "172.17.0.1",
     "aws_bucket": "mltshp-testing",
     "aws_host": "fakes3",
     "aws_port": 8000,
