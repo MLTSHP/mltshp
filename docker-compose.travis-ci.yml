@@ -6,14 +6,13 @@ services:
       - .:/srv/mltshp.com/mltshp
       - ./setup/dev/nginx.conf:/etc/nginx/nginx.conf
       - ./setup/dev/supervisord.conf:/etc/supervisor/conf.d/mltshp.conf
+      - "${MYSQL_UNIX_PORT}:/var/run/mysqld/mysqld.sock"
     ports:
       - "8000:80"
     depends_on:
       - fakes3
     links:
       - fakes3
-    extra_hosts:
-      - "dockerhost:${HOSTIP}"
     networks:
       app_net:
         aliases:

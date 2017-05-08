@@ -10,6 +10,4 @@ services:
 script:
   - cp ./settings.travis-ci.py ./settings.py
   - export HOSTIP=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
-  - env
-  - cat ~travis/.my.cnf
   - docker-compose --file docker-compose.travis-ci.yml run mltshp ./test.py
