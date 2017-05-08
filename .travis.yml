@@ -1,8 +1,6 @@
 env:
   DOCKER_COMPOSE_VERSION: 1.12.0
 
-language: shell
-
 sudo: required
 
 services:
