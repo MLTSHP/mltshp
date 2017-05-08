@@ -1,4 +1,6 @@
 version: "2"
+extra_hosts:
+  - "dockerhost:${HOSTIP}"
 services:
   mltshp:
     image: mltshp/mltshp-web

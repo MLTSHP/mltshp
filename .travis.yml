@@ -9,4 +9,5 @@ services:
 
 script:
   - cp ./settings.travis-ci.py ./settings.py
-  - docker-compose --file docker-compose.travis-ci.yml run -p 127.0.0.1:3306:3306 mltshp ./test.py
+  - HOSTIP=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
+  - docker-compose --file docker-compose.travis-ci.yml run mltshp ./test.py
