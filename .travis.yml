@@ -5,6 +5,7 @@ sudo: required
 
 services:
   - docker
+  - mysql
 
 script:
   - cp ./settings.example.py ./settings.py
