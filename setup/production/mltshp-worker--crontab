@@ -1,0 +1,4 @@
+# Crontab jobs for MLTSHP worker server
+
+# Run calculate web views every 5 minutes...
+0,5,10,15,20,25,30,35,40,45,50,55 * * * * cd /srv/mltshp.com/mltshp; run-one timeout 290s python runner.py scripts/calculate-views.py
