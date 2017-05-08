@@ -103,6 +103,22 @@ function rebuild_node() {
     echo
 }
 
+function rebuild_worker {
+    NODE_NAME=$1
+
+    echo "Rebuilding $NODE_NAME..."
+
+    linode --action rebuild \
+        $LINODE_USER_ARG \
+        --label "$NODE_NAME" \
+        --plan "linode1024" \
+        --distribution "Ubuntu 16.04 LTS" \
+        --pubkey-file $PUBLIC_KEY \
+        --stackscript "MLTSHP Worker Node" \
+        --stackscriptjson "{\"docker_image_name\": \"$DOCKER_IMAGE_NAME\"}" \
+        --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)" > /dev/null
+}
+
 function slackpost {
     # Usage: slackpost <channel> <message>
     # Requires SLACK_WEBOOK_URL environment variable to be set
@@ -125,6 +141,9 @@ for node in $nodes;
 do
     rebuild_node $node
 done
+
+# Also rebuild the worker node with latest docker image...
+rebuild_node "mltshp-worker-1"
 
 slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production."
 
