@@ -9,6 +9,11 @@ if [ -n "$LINODE_USER" ]; then
     LINODE_USER_ARG="-u $LINODE_USER"
 fi
 
+# Get latest commit to master
+GITHUB_COMMIT_SHA=$( curl -s https://api.github.com/repos/MLTSHP/mltshp/commits/master | jq '.sha' | sed 's/"//g' );
+#DOCKER_WEB_SHA=$( )
+#DOCKER_WORKER_SHA=$( )
+
 # Our NodeBalancer label
 NODEBALANCER_NAME="mltshp-web-cluster"
 
@@ -29,6 +34,7 @@ node_list=$( echo $nodes | xargs -- printf "%s, " | sed "s/, $//" )
 echo "This script will rebuild all active MLTSHP web nodes"
 echo "using a Docker Cloud image."
 echo
+echo "GitHub master commit: $GITHUB_COMMIT_SHA"
 echo "Web Docker image to deploy: $DOCKER_IMAGE_NAME"
 echo "Web Nodes to rebuild: ${node_list}"
 echo "Worker Docker image to deploy: $WORKER_IMAGE_NAME"
@@ -137,7 +143,7 @@ do
 done
 
 # Also rebuild the worker node with latest docker image...
-rebuild_node "mltshp-worker-1"
+rebuild_worker "mltshp-worker-1"
 
 slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production."
 
