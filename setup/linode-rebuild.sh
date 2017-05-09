@@ -9,17 +9,12 @@ if [ -n "$LINODE_USER" ]; then
     LINODE_USER_ARG="-u $LINODE_USER"
 fi
 
-# StackScript for "MLTSHP Web Node" - 77953
-STACKSCRIPT="MLTSHP Web Node"
-
 # Our NodeBalancer label
 NODEBALANCER_NAME="mltshp-web-cluster"
 
 # Docker image to deploy
 DOCKER_IMAGE_NAME=${1:-mltshp/mltshp-web:latest}
-
-# Prefix for all nodes attached to the NodeBalancer
-NODE_PREFIX="mltshp-web"
+WORKER_IMAGE_NAME=$( echo $DOCKER_IMAGE_NAME | sed "s/-web/-worker/" )
 
 # The Linode instance size for our web nodes
 NODE_PLAN="linode1024"
@@ -28,17 +23,16 @@ NODE_PLAN="linode1024"
 PUBLIC_KEY="setup/production/mltshp-web-key.pub"
 
 # Get a list of nodes from the cluster
-nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE $NODE_PREFIX-\\d+ | tail -r )
+nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-\\d+ | tail -r )
 node_list=$( echo $nodes | xargs -- printf "%s, " | sed "s/, $//" )
 
 echo "This script will rebuild all active MLTSHP web nodes"
 echo "using a Docker Cloud image."
 echo
-echo "Docker image to deploy: $DOCKER_IMAGE_NAME"
-echo "Linode NodeBalancer: $NODEBALANCER_NAME"
+echo "Web Docker image to deploy: $DOCKER_IMAGE_NAME"
 echo "Web Nodes to rebuild: ${node_list}"
-echo "StackScript to deploy: $STACKSCRIPT"
-echo "Public key to assign: $PUBLIC_KEY"
+echo "Worker Docker image to deploy: $WORKER_IMAGE_NAME"
+echo "Worker Node to rebuild: mltshp-worker-1"
 echo
 echo "Press Enter to continue or ^C to abort..."
 read
@@ -73,7 +67,7 @@ function rebuild_node() {
         --plan "$NODE_PLAN" \
         --distribution "Ubuntu 16.04 LTS" \
         --pubkey-file $PUBLIC_KEY \
-        --stackscript "$STACKSCRIPT" \
+        --stackscript "MLTSHP Web Node" \
         --stackscriptjson "{\"docker_image_name\": \"$DOCKER_IMAGE_NAME\"}" \
         --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)" > /dev/null
 
@@ -115,7 +109,7 @@ function rebuild_worker {
         --distribution "Ubuntu 16.04 LTS" \
         --pubkey-file $PUBLIC_KEY \
         --stackscript "MLTSHP Worker Node" \
-        --stackscriptjson "{\"docker_image_name\": \"$DOCKER_IMAGE_NAME\"}" \
+        --stackscriptjson "{\"docker_image_name\": \"$WORKER_IMAGE_NAME\"}" \
         --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)" > /dev/null
 }
 
