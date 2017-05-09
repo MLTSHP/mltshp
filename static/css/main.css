@@ -1310,6 +1310,7 @@ iframe {
   margin-bottom: 20px;
 }
 
+/* TODO: replace with reusable button styles */
 .content-migrate .button,
 .content-membership .subscription-button {
   color: #fff;
@@ -1777,6 +1778,7 @@ iframe {
   margin-right: 8px;
 }
 
+/* TODO replace with reusable button styles */
 .permalink-sidebar .in-these-shakes .add-to-shakes-button {
   background-color: #0CAF8B;
   color: #fff;
@@ -2468,6 +2470,7 @@ iframe {
   flex: 1;
 }
 
+/* TODO replace with reusable button styles */
 .shake-invite-member-block .invite-button {
   border: 1px solid #00d517;
   -webkit-border-radius: 5px;
@@ -2554,6 +2557,7 @@ iframe {
 
 }
 
+/* TODO replace with reusable button styles */
 .content-shake .shake-members .remove-from-shake-button a {
   display: block;
   float: right;
@@ -3047,6 +3051,7 @@ iframe {
   box-sizing: border-box;
 }
 
+/* TODO replace with reusable button styles */
 .image-edit-title-form .buttons {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -3129,6 +3134,7 @@ textarea {
   padding: 10px 0;
 }
 
+/* TODO replace with reusable button styles */
 .image-content .description .buttons .save {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -3305,6 +3311,7 @@ textarea {
   display: block;
 }
 
+/* TODO replace with reusable button styles */
 .image-content .inline-details .post-comment-inline .button input {
   background-color: #ff0099;
   color: #fff;
@@ -4133,6 +4140,7 @@ span.previous-link {
   padding-bottom: 30px;
 }
 
+/* TODO replace with reusable button styles */
 .api-accept-button {
   background-color: #FF0080;
   text-shadow: 1px 1px 1px #B5005A;
@@ -4406,6 +4414,7 @@ span.previous-link {
   float: left;
 }
 
+/* TODO replace with reusable button styles */
 .shake-details .save {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -4733,6 +4742,7 @@ span.previous-link {
   float: left;
 }
 
+/* TODO replace with reusable button styles */
 .action-button a {
   display: block;
   float: left;
