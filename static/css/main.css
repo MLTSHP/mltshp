@@ -446,10 +446,16 @@ h6 {
 }
 
 h1 {
-  font-size: 60px;
+  font-size: 48px;
   font-weight: bold;
   color: #333;
   letter-spacing: -1px;
+}
+
+@media screen and (min-width: 768px) {
+  h1 {
+    font-size: 60px;
+  }
 }
 
 .content-narrow p {
@@ -1198,44 +1204,86 @@ iframe {
   text-shadow: 2px 4px 1px #e0e0e0;
 }
 
-.content-membership .membership-plan-option {
-  width: 42%;
-  margin: 10px 20px;
-  float: left;
-  padding: 10px;
+.membership-options {
 }
-.content-membership .membership-plan-option.current-plan {
-  border: 3px solid #00c;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
+
+.membership-options--plan {
+  padding: 15px;
+  margin-bottom: 20px;
 }
-.content-membership li {
+
+.membership-options--plan :last-child {
+  margin-bottom: 0;
+}
+
+.membership-options--plan h2 {
+  text-transform: uppercase;
+}
+
+.membership-options--plan li {
   list-style: disc;
-  margin-left: 2em;
+  margin-left: 1em;
   font-size: 20px;
 }
 
-.content-membership .subscribe-plan-quantity-wrapper {
-  margin-left: 20px;
+.membership-options--plan.is-active {
+  border: 3px solid #ff0080;
+  border-radius: 8px;
 }
+
+@media screen and (min-width: 768px) {
+
+  .membership-options {
+    display: flex;
+  }
+
+  .membership-options--plan {
+    flex: 1;
+  }
+}
+
+.membership-form {
+  font-size: 23px;
+}
+
+.membership-form > * {
+  display: block;
+  margin: .5em 0;
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+
+  .membership-form {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .membership-form--or {
+    padding: 20px 0;
+  }
+
+}
+
+.content-membership .subscribe-plan-quantity-wrapper {
+  margin-top: .5em;
+  display: block;
+}
+
 .content-membership .input-plan-quantity {
-  border: 1px solid rgba(1,1,1,0);
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  border: none;
   color: #333;
   width: auto;
   font-size: 23px;
-  padding: 20px 0;
   font-weight: bold;
+  box-sizing: border-box;
+  max-width: 150px;
 }
-.content-membership .input-plan-quantity:focus {
-  outline: none;
-}
+
 .content-membership .input-plan-quantity:invalid {
   color: #c00;
 }
+
 .content-membership .subscribe-plan-quantity-wrapper i {
   font-style: normal;
   font-size: 23px;
@@ -1284,6 +1332,12 @@ iframe {
   -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.25);
   box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+}
+
+.content-membership .subscription-button {
+  display: inline-block;
+  float: none;
+  text-transform: uppercase;
 }
 
 .content-migrate .button:hover,
