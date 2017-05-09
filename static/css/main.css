@@ -1379,10 +1379,6 @@ iframe {
   }
 }
 
-.content-permalink::after {
-  content: none;
-}
-
 .content-permalink > * {
   margin: 0 !important;
   padding: 0 !important;
@@ -1398,6 +1394,20 @@ iframe {
   }
 }
 
+@media screen and (min-width: 768px) {
+
+  .content-permalink > .permalink-sidebar {
+    float: right;
+    width: 330px;
+  }
+
+  .content-permalink > .image-content,
+  .content-permalink > .image-comments,
+  .content-permalink > .image-comment-form {
+    float: left;
+    width: calc(100% - 360px);
+  }
+}
 
 @supports (display:grid) {
   @media screen and (min-width: 768px) {
@@ -1410,6 +1420,17 @@ iframe {
 
     .content-permalink > * {
       margin: 0 !important;
+    }
+
+    .content-permalink::after {
+      content: none;
+    }
+
+    .content-permalink > .permalink-sidebar,
+    .content-permalink > .image-content,
+    .content-permalink > .image-comments,
+    .content-permalink > .image-comment-form {
+      width: auto;
     }
 
     .content-permalink > .image-title        { grid-area: title; }
@@ -1654,7 +1675,6 @@ iframe {
 }
 
 .sidebar-stats-content .user-action {
-  width: 250px;
   clear: both;
   margin-bottom: 5px;
   float: left;
@@ -2690,6 +2710,7 @@ iframe {
   font-size: 14px;
   color: #333;
   margin-bottom: 5px;
+  word-break: break-word;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
@@ -3609,28 +3630,24 @@ span.previous-link {
 /* ---------------------------------------------------------------------
   Feature List (used on logged-out homepage)
 --------------------------------------------------------------------- */
-@supports (display:grid) {
+@media screen and (min-width: 480px) {
   .feature-list {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-wrap: wrap;
   }
 
-  @media screen and (min-width: 480px) {
-    .feature-list {
-      grid-template-columns: 1fr 1fr;
-    }
+  .feature-list .feature {
+    flex: 1 1 50%;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 959px) {
+  .feature-list {
+    flex-wrap: nowrap;
   }
 
-  @media screen and (min-width: 768px) {
-    .feature-list {
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-    }
-  }
-
-  @media screen and (min-width: 960px) {
-    .feature-list {
-      grid-template-columns: 1fr 1fr;
-    }
+  .feature-list .feature {
+    flex-basis: 25%;
   }
 }
 
@@ -3643,6 +3660,7 @@ span.previous-link {
   margin: 0;
   padding: 15px;
   position: relative;
+  box-sizing: border-box;
 }
 
 @media screen and (max-width: 479px) {
