@@ -2,3 +2,6 @@
 
 # Run calculate web views every 5 minutes...
 0,5,10,15,20,25,30,35,40,45,50,55 * * * * cd /srv/mltshp.com/mltshp; run-one timeout 290s python runner.py scripts/calculate-views.py
+
+# Post the popular stuff to the "best_of_mltshp" configured user's shake every hour
+3 * * * * cd /srv/mltshp.com/mltshp; run-one timeout 30s python runner.py scripts/repost-best-of.py
