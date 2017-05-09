@@ -1779,10 +1779,7 @@ iframe {
 
 
 .incoming-header {
-  align-items: center;
   background: linear-gradient(to bottom, rgba(255,255,255,0), #fff calc(100% - 6px), #eee);
-  display: flex;
-  flex-direction: column;
   padding: 16px 20px;
   cursor: pointer;
 }
@@ -1804,6 +1801,8 @@ iframe {
 @media screen and (min-width: 768px) {
 
   .incoming-header {
+    align-items: center;
+    display: flex;
     flex-direction: row;
   }
 
