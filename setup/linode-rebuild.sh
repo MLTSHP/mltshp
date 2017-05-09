@@ -99,6 +99,8 @@ function rebuild_node() {
         --name "$NODE_NAME" \
         --mode "accept" > /dev/null
 
+    slackpost "#operations" "✅️ $NODE_NAME rebuilt and live"
+
     echo "Node $NODE_NAME rebuilt!"
     echo
 }
@@ -117,6 +119,8 @@ function rebuild_worker {
         --stackscript "MLTSHP Worker Node" \
         --stackscriptjson "{\"docker_image_name\": \"$WORKER_IMAGE_NAME\"}" \
         --password "$(dd bs=32 count=1 if="/dev/urandom" 2>/dev/null | base64 | tr +/ _.)" > /dev/null
+
+    slackpost "#operations" "✅️ $NODE_NAME rebuilding..."
 }
 
 function slackpost {
@@ -137,13 +141,13 @@ function slackpost {
 
 slackpost "#operations" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME..."
 
+# Also rebuild the worker node with latest docker image...
+rebuild_worker "mltshp-worker-1"
+
 for node in $nodes;
 do
     rebuild_node $node
 done
-
-# Also rebuild the worker node with latest docker image...
-rebuild_worker "mltshp-worker-1"
 
 slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production."
 
