@@ -109,7 +109,7 @@
 
 .sidebar .following ul {
   margin: 0;
-  padding: 15px 15px 0;
+  padding: 15px 0 15px 15px;
   list-style: none;
   display: flex;
   flex-wrap: wrap;
