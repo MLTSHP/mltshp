@@ -1276,6 +1276,8 @@ iframe {
   width: auto;
   font-size: 23px;
   font-weight: bold;
+  box-sizing: border-box;
+  max-width: 150px;
 }
 
 .content-membership .input-plan-quantity:invalid {
