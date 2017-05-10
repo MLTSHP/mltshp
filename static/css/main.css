@@ -196,25 +196,24 @@ a:active {
 /* TODO: Make this a reusable button style */
 .choose-a-shake--toggle {
   background-color: #b9ff8d;
-  background-image: url('/static/images/choose-a-shake-arrow-down.svg');
-  background-size: 19px 12px;
-  background-position: right 13px center;
-  background-repeat: no-repeat;
   border-radius: 10px;
   border: none;
   color: #0caf8b;
   font-size: 16px;
   font-weight: bold;
-  padding: 13px 40px 13px 19px;
+  padding: 13px 19px;
   white-space: nowrap;
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--toggle {
-  background-image: url('/static/images/choose-a-shake-arrow-up.svg');
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   box-shadow: 5px 5px 0 #e5e5e5;
   outline: none;
+}
+
+.choose-a-shake.is-expanded .choose-a-shake--toggle .caret {
+  transform: rotate(180deg);
 }
 
 .choose-a-shake--dropdown {
@@ -1468,7 +1467,6 @@ iframe {
   position: relative;
   box-sizing: border-box;
   max-width: 100%;
-  overflow: hidden;
 }
 
 @media screen and (min-width: 768px) {
@@ -1593,10 +1591,26 @@ iframe {
 
 .image-content .image-interactions .save-this-shake-selector .close {
   display: block;
-  height: 10px;
-  margin-right: 10px;
   cursor: pointer;
-  background: url('/static/images/close-save-this.gif') right top no-repeat;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  transform: rotate(180deg);
+}
+
+.image-content .image-interactions .save-this-shake-selector .close:hover,
+.image-content .image-interactions .save-this-shake-selector .close:focus {
+  opacity: .66;
+}
+
+.image-content .image-interactions .save-this-shake-selector .close::before {
+  content: '';
+  position: absolute;
+  top: -19px;
+  right: -15px;
+  bottom: -11px;
+  left: -15px;
 }
 
 .permalink-sidebar {
@@ -2754,11 +2768,13 @@ iframe {
 }
 
 .user-follow .follow-button {
-  background: url('/static/images/follow-button.gif') 0 0 no-repeat;
+  background: url('/static/images/follow-button.svg') 0 0 no-repeat;
+  background-size: 72px 54px;
 }
 
 .user-follow .unfollow-button {
-  background: url('/static/images/unfollow-button.gif') 0 0 no-repeat;
+  background: url('/static/images/unfollow-button.svg') 0 0 no-repeat;
+  background-size: 72px 54px;
 }
 
 .user-follow .follow-button:hover {
@@ -3350,13 +3366,9 @@ textarea {
 }
 
 .image-medium-thumb {
-  max-width: 263px;
-  background: url('/static/images/image-medium-back.gif') 0 0 no-repeat;
-  text-align: center;
 }
 
 .image-medium-thumb a {
-  padding: 10px;
   display: block;
 }
 
@@ -3377,8 +3389,6 @@ textarea {
 }
 
 .image-medium .user-and-title .title {
-  float: left;
-  width: 235px;
   font-size: 20px;
   font-weight: bold;
   overflow: hidden;
@@ -3390,7 +3400,7 @@ textarea {
   list-style: none;
   color: #4b4b4b;
   clear: both;
-  float: left;
+  display: flex;
 }
 
 .image-medium .stats li {
@@ -3887,22 +3897,54 @@ span.previous-link {
 .bookmark-flag {
   flex: none;
   margin-top: -3px;
-  margin-left: -3px;
+  background: #ff0180;
   color: #fff;
   font-weight: bold;
   font-size: 12px;
-  background: transparent url('/static/images/bookmark-back.gif') 0 0 no-repeat;
   position: relative;
   z-index: 2;
 }
 
+.bookmark-flag::before,
+.bookmark-flag::after,
+.bookmark-flag span::before,
+.bookmark-flag span::after {
+  position: absolute;
+  content: '';
+  display: block;
+}
+
+.bookmark-flag::before {
+  width: 5px;
+  height: 100%;
+  padding-bottom: 5px;
+  top: 0;
+  left: -5px;
+  background: inherit;
+  border-radius: 5px 0 0 5px;
+}
+
+.bookmark-flag::after {
+  width: 3px;
+  height: 4px;
+  background: rgba(0,0,0,0.35);
+  bottom: -4px;
+  left: -3px;
+  border-radius: 3px 0 0 3px;
+}
+
 .bookmark-flag span {
   display: block;
-  padding-right: 20px;
-  padding-left: 20px;
-  padding-top: 5px;
-  height: 23px;
-  background: transparent url('/static/images/bookmark-back-tip.gif') right top no-repeat;
+  padding: .5em 1em;
+  line-height: 1;
+}
+
+.bookmark-flag span::after {
+  top: 0;
+  right: -10px;
+  border: 10px solid #ff0180;
+  border-width: 1em .866em 1em 0;
+  border-right-color: transparent;
 }
 
 .jump-back {
@@ -4311,8 +4353,11 @@ span.previous-link {
   overflow: hidden;
 }
 
+.shake-image img {
+  display: block;
+}
+
 .shake-image input {
-  z-index: 100;
   top: 0;
   left: 0;
   position: absolute;
@@ -4321,6 +4366,8 @@ span.previous-link {
   -moz-opacity: 0;
   filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
   cursor: pointer;
+  width: 100%;
+  height: 100%;
 }
 
 .shake-image .border {
@@ -4336,6 +4383,25 @@ span.previous-link {
   top: 0;
   left: 0;
   z-index: 0;
+}
+
+.shake-image-placeholder {
+  background: #eee;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 284px;
+  height: 284px;
+  text-align: center;
+  padding: 30px;
+  box-sizing: border-box;
+  border: 1px dashed #ccc;
+}
+
+.shake-image-placeholder strong {
+  display: block;
+  color: #ff0080;
 }
 
 .shake-sidebar-subscribe {
@@ -4370,7 +4436,7 @@ span.previous-link {
 }
 
 .shake-details .title {
-  margin: 10px 0 10px 0;
+  margin: 15px 0 10px 0;
   font-size: 36px;
   font-weight: bold;
   word-wrap: break-word;
@@ -4658,14 +4724,12 @@ span.previous-link {
 
 .new-post-panel .shake-selector h3 a span.green {
   color: #0caf8b;
-  padding-right: 25px;
-  background: #fff url('/static/images/shake-selector-carrot.svg') 100% 3px no-repeat;
-  background-size: 15px 10px;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
-.new-post-panel .shake-selector h3 a:hover span.green {
+.new-post-panel .shake-selector h3 a:hover span.green,
+.new-post-panel .shake-selector h3 a:focus span.green {
   color: #128169;
 }
 
@@ -4890,4 +4954,22 @@ ul.promotions .promotion-name {
 }
 ul.promotions li:hover .promotion-name {
     display: inherit;
+}
+
+/*----------------------------------------------------------------------
+  Carets
+--------------------------------------------------------------------- */
+.caret {
+  display: inline-block;
+  border: .5em solid transparent;
+  border-width: .5em .433em 0;
+  border-top-color: currentColor;
+  transition: transform .25s ease;
+  transform-origin: center 40%;
+  position: relative;
+  top: -.1em;
+}
+
+.is-active .caret {
+  transform: rotate(180deg);
 }

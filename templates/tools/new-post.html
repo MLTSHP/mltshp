@@ -9,13 +9,19 @@
   {% if can_upload_this_month %}
   <div class="upload-an-image">
     <form id="upload-image-form" method="POST" action="/upload" enctype="multipart/form-data">
-    {{ xsrf_form_html() }}  
+    {{ xsrf_form_html() }}
     <h2>Upload an <a href="">image</a><input name="file" type="file" id="upload-image-input" class="upload-image-input"></h2>
     {% if shakes and len(shakes) > 1 %}
       <div class="shake-selector">
         <input type="hidden" name="shake_id" value="">
         <h3>
-          <a href="" class="selected-shake"><span>In </span><span class="green">Your Shake</span></a>
+          <a href="" class="selected-shake">
+            In
+            <span class="green">
+              Your Shake
+              <span class="caret"></span>
+            </span>
+          </a>
         </h3>
         <ul>
         {% for shake in shakes %}
@@ -44,7 +50,15 @@
     {% if shakes and len(shakes) > 1%}
       <div class="shake-selector">
         <input type="hidden" id="video-shake-id" name="shake_id" value="">
-        <h3><a href="" class="selected-shake"><span>In </span><span class="green">Your Shake</span></a></h3>
+        <h3>
+          <a href="" class="selected-shake">
+            In
+            <span class="green">
+              Your Shake
+              <span class="caret"></span>
+            </span>
+          </a>
+        </h3>
         <ul>
         {% for shake in shakes %}
         <li><a id="shake-selector-b-{{shake.id}}" href="">
@@ -55,7 +69,7 @@
           {% end %}
         </a></li>
         {% end %}
-        </ul>  
+        </ul>
       </div>
     {% end %}
   </div>
