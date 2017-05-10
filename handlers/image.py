@@ -275,7 +275,7 @@ class ShowRawHandler(BaseHandler):
 
         return
 
-    def head(self, share_key):
+    def head(self, share_key, format=None):
         if not share_key:
             raise tornado.web.HTTPError(404)
 
