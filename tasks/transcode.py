@@ -8,7 +8,6 @@ from celery import chain
 from celery.utils.log import get_task_logger
 
 from tasks import mltshp_task
-from models import Sourcefile
 
 from ffmpy import FFmpeg
 from lib.s3 import S3Bucket
