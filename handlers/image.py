@@ -247,6 +247,8 @@ class ShowRawHandler(BaseHandler):
                 cdn_url = "http://%s" % options.cdn_host
 
             cdn_url += "/r/%s" % share_key
+            if format:
+                cdn_url += ".%s" % format
 
             self.redirect(cdn_url)
         else:
