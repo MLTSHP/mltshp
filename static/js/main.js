@@ -80,7 +80,7 @@ $(document).ready(function() {
 
       return {
         toggle_shake_selector: function(ev) {
-          $(this).find('ul').toggle();
+          $(this).toggleClass('is-active').find('ul').toggle();
           ev.stopPropagation();
           ev.preventDefault();
         },
@@ -244,7 +244,7 @@ $(document).ready(function() {
 
       fetch_available_shakes: function(response) {
         ShakesCache.store(response);
-        var html = '<span class="close"></span><ul>';
+        var html = '<span class="close caret"></span><ul>';
         for (var i = 0; i < response['result'].length; i++) {
           html += '<li><a class="shake-link" href="" id="save-this-shake-selector-' +
                   response['result'][i]['id'] + '">'+
@@ -1305,14 +1305,6 @@ $(document).ready(function() {
       $(this).addClass('shake-image-hover');
     }, function() {
       $(this).removeClass('shake-image-hover');
-    });
-
-    $shake_image_input = $("#shake-image-edit .shake-image-input");
-    var shake_image_position = $shake_image_input.offset();
-    $("#shake-image-edit").mousemove(function(ev) {
-      var left = ev.pageX - shake_image_position.left - 10;
-      var top = ev.pageY - shake_image_position.top - 10;
-      $shake_image_input.css('left', left + 'px').css('top', top + 'px');
     });
 
     // Shake Page: choosing file to upload.

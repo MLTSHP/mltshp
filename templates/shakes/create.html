@@ -12,15 +12,15 @@
     <div class="fun-form fun-form-stacked fun-form-border fun-form-create-shake">
       <form id="create-shake-form" method="POST" action="/shake/create">
         {{ xsrf_form_html() }}
-        
+
         {{ modules.FunFormField(field_type='text', label='Title', name='title', value=escape(shake.title), css_class='large-input') }}
-        
+
         {{ modules.FunFormField(field_type='textarea', label='Description', name='description', value=escape(shake.description), css_class='large-textarea-input') }}
-        
+
         <div id="create-shake-name-field" class="field">
           <label>URL</label>
           <span class="name-prefix">http://new.mltshp.com/</span>
-          <div class="field-input"> 
+          <div class="field-input">
             <input class="input-text" type="text" name="name" value="{{shake.name}}">
             {% if errors.name %}
             <div class="error">
@@ -28,17 +28,16 @@
                 {{errors.name }}
               </span>
             </div>
-            <span class="bottoms"></span>
             {% end %}
           </div>
         </div>
-      
+
         <div class="field field-submit">
           <div class="action-button"><a href=""><span>Make It!</span></a></div>
         </div>
       </form>
     </div>
-    <div class="clear"><!-- --></div> 
+    <div class="clear"><!-- --></div>
   </div>
   {% else %}
   <p class="fun-form-errors"><strong>Sorry, the site is in read-only mode for now.</strong> Try again later.</p>

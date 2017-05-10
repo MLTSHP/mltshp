@@ -10,7 +10,7 @@
     <div class="fun-form fun-form-white">
 
     <form method="post" action="/developers/new-api-application">
-            {{ xsrf_form_html() }}  
+            {{ xsrf_form_html() }}
 
     <div class="field">
       <label>Title:</label>
@@ -22,7 +22,6 @@
             {{errors.title }}
           </span>
         </div>
-        <span class="bottoms"></span>
         {% end %}
       </div>
     </div>
@@ -39,7 +38,6 @@
               {{errors.description }}
             </span>
           </div>
-          <span class="bottoms"></span>
           {% end %}
         </div>
       </div>
@@ -56,9 +54,8 @@
             {{errors.redirect_url }}
           </span>
         </div>
-        <span class="bottoms"></span>
         {% end %}
-        
+
       </div>
     </div>
 

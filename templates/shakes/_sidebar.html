@@ -4,7 +4,14 @@
       {% if shake.page_image() %}
         <img src="{{shake.page_image()}}" width="284" height="284">
       {% else %}
-        <img src="{{ static_url("images/shake-default-image.gif") }}" width="284" height="284">
+        <div class="shake-image-placeholder">
+          <p>
+            <strong>Upload an image</strong> to represent your shake.
+          </p>
+          <p>
+            284px &times;  284px
+          </p>
+        </div>
       {% end %}
       <form method="post" action="/shake/{{shake.name}}/update"  enctype="multipart/form-data">
         {{ xsrf_form_html() }}
@@ -15,8 +22,6 @@
   {% else %}
     {% if shake.page_image() %}
       <img src="{{shake.page_image()}}" width="284" height="284">
-    {% else %}
-      <img src="{{ static_url("images/shake-default-image-not-owner.gif") }}" width="284" height="284">
     {% end %}
   {% end %}
 
