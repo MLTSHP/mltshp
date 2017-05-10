@@ -7,14 +7,14 @@
         <a href="/user/{{notification['sender'].name}}">{{notification['sender'].display_name()}}</a> has requested to join {{notification['related_object'].display_name()}}.
         <div class="notification-actions">
           <form class="approve-invitation" method="post" action="/shake/{{notification['related_object'].name}}/approve_invitation?json=1">
-            {{ xsrf_form_html() }}          
+            {{ xsrf_form_html() }}
             <input type="hidden" name="user_id" value="{{notification['sender'].id}}">
-            <input type="image" src="{{ static_url("images/approve-button.gif") }}">
+            <input type="submit" class="btn btn-secondary btn-pastel btn-small" value="Approve">
           </form>
           <form class="decline-invitation" method="post" action="/shake/{{notification['related_object'].name}}/decline_invitation?json=1">
-            {{ xsrf_form_html() }}          
+            {{ xsrf_form_html() }}
             <input type="hidden" name="user_id" value="{{notification['sender'].id}}">
-            <input type="image" src="{{ static_url("images/decline-button.gif") }}">
+            <input type="submit" class="btn btn-warning btn-pastel btn-small" value="Decline">
           </form>
         </div>
       </div>

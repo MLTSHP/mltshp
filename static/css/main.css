@@ -35,6 +35,8 @@ html, input, textarea, keygen, select, button {
 a {
   color: #42b4ff;
   transition: background-color .15s ease, color .15s ease;
+  -webkit-text-decoration-skip: ink;
+  text-decoration-skip: ink;
 }
 
 a:hover,
@@ -47,6 +49,16 @@ a:active {
   color: #ff0080;
   font-weight:bold;
   text-decoration:none;
+}
+
+.link--danger {
+  color: #f30;
+}
+
+.link--danger:hover,
+.link--danger:focus,
+.link--danger:active {
+  color: #e62e00;
 }
 
 /* ---------------------------------------------------------------------
@@ -388,16 +400,22 @@ a:active {
 }
 
 /* Single Column Layout */
-.content-narrow {
+.content-narrow,
+.content-styleguide {
   border-radius: 1.25em;
   margin: 45px auto 0 auto;
   max-width: 615px;
   padding: 1em;
 }
 
+.content-styleguide {
+  max-width: none;
+}
+
 @media screen and (min-width: 768px) {
 
-  .content-narrow {
+  .content-narrow,
+  .content-styleguide {
     padding: 3em;
   }
 }
@@ -672,10 +690,6 @@ iframe {
 .content-find-shakes .user-follow-extended .details {
 }
 
-.content-find-shakes .user-follow-extended .follow-button,
-.content-find-shakes .user-follow-extended .unfollow-button {
-}
-
 .content-find-shakes .user-follow-extended .website a {
   color: #00AEFF;
 }
@@ -823,12 +837,6 @@ iframe {
   float: left;
 }
 
-.content-relationships  .body .user-follow-extended .follow-button,
-.content-relationships .body .user-follow-extended .unfollow-button {
-  clear: none;
-  float: right;
-}
-
 .content-relationships .body .user-follow-extended .website a {
   color: #00AEFF;
 }
@@ -960,8 +968,12 @@ iframe {
   }
 }
 
-.content-settings .settings-body .fun-form-settings {
+.content-settings .settings-body form {
   margin-top: 0;
+}
+
+.content-settings .settings-body form + form {
+  margin-top: 20px;
 }
 
 .migration-block,
@@ -2024,7 +2036,7 @@ iframe {
 
 .notification-block-bd .notification .notification-close {
   position: absolute;
-  top: 10px;
+  top: 5px;
   right: 5px;
   outline: none;
 }
@@ -2132,15 +2144,12 @@ iframe {
 .notification-block-shakeinvitation .shake-thumb {
   width: 48px;
   float: left;
+  margin-right: 10px;
 }
 
 .notification-block-shakeinvitation h4 {
   padding-top: 10px;
-  float: left;
-  width:185px;
-  font-size: 30px;
   font-weight: bold;
-  margin-left: 10px;
 }
 
 .notification-block-shakeinvitation h4 a {
@@ -2150,8 +2159,6 @@ iframe {
 
 .notification-block-shakeinvitation .shake-context {
   clear: both;
-  width: 245px;
-  float: left;
   margin-top: 10px;
   font-size: 14px;
   line-height: 1.3;
@@ -2164,18 +2171,9 @@ iframe {
 }
 
 .notification-block-shakeinvitation .buttons {
-  clear: both;
-  float: left;
   margin-top: 10px;
-  width: 245px;
-}
-
-.notification-block-shakeinvitation .buttons form {
-  float: left;
-}
-
-.notification-block-shakeinvitation .shake-accept-invitation {
-  margin-right: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
 /* Notification block for Shake Invitation Request */
@@ -2193,12 +2191,12 @@ iframe {
 .notification-block-invitation-request .notification-actions {
   clear: both;
   padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .notification-block-invitation-request .approve-invitation,
 .notification-block-invitation-request .decline-invitation {
-  display: inline;
-  margin-right: 10px;
 }
 
 
@@ -2762,38 +2760,6 @@ iframe {
   padding-bottom: 5px;
 }
 
-.user-follow .follow-button,
-.user-follow .unfollow-button {
-  width: 72px;
-  height: 27px;
-  display: block;
-  clear: both;
-  outline: none;
-}
-
-.user-follow .follow-button {
-  background: url('/static/images/follow-button.svg') 0 0 no-repeat;
-  background-size: 72px 54px;
-}
-
-.user-follow .unfollow-button {
-  background: url('/static/images/unfollow-button.svg') 0 0 no-repeat;
-  background-size: 72px 54px;
-}
-
-.user-follow .follow-button:hover {
-  background-position: 0 -27px;
-}
-
-.user-follow .unfollow-button:hover {
-  background-position: 0 -27px;
-}
-
-.user-follow .follow-button,
-.user-follow .unfollow-button {
-  text-indent: -9000px;
-}
-
 .user-follow .follow {
   flex: 1;
 }
@@ -2814,12 +2780,6 @@ iframe {
 .user-follow-extended .details {
   padding-bottom: 10px;
 }
-
-.user-follow-extended .follow-button,
-.user-follow-extended .unfollow-button {
-  clear: both;
-}
-
 
 .user-follow-extended h4 {
 }
@@ -2983,6 +2943,12 @@ iframe {
   color: #ff0099;
 }
 
+.image-content .image-content-footer a:hover,
+.image-content .image-content-footer a:focus,
+.image-content .image-content-footer a:active {
+  color: #0088f1;
+}
+
 /* list overrides */
 .image-content-list .image-content {
   float: none;
@@ -3010,24 +2976,9 @@ iframe {
 
 @media screen and (min-width: 768px) {
   .image-content-list .remove-from-shake {
-    top: 40px;
+    top: 45px;
     right: 10px;
   }
-}
-
-.image-content-list .remove-from-shake a {
-  background: transparent url('/static/images/delete-from-shake.gif') 0 0 no-repeat;
-  width: 21px;
-  height: 21px;
-  display: block;
-}
-
-.image-content-list .remove-from-shake a:hover {
-  background: transparent url('/static/images/delete-from-shake.gif') 0 -26px no-repeat;
-}
-
-.image-content-list .remove-from-shake a span {
-  display: none;
 }
 
 /* Inline editing title */
@@ -3049,12 +3000,11 @@ iframe {
   }
 }
 
-.image-title  h3 {
+.image-title h3 {
   font-size: 30px;
   font-weight: bold;
   color: #333;
   margin-bottom: 20px;
-  overflow: hidden;
 }
 
 .image-edit-title-hover {
@@ -3264,6 +3214,12 @@ textarea {
 
 .image-content .inline-details .comment .meta {
   display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.image-content .inline-details .comment .meta > * + * {
+  margin-left: .8em;
 }
 
 .image-content .inline-details .comment .delete-form {
@@ -3271,9 +3227,11 @@ textarea {
 }
 
 .image-content .inline-details .comment .meta .username {
-  margin-right: 5px;
   font-weight: bold;
-  text-decoration: none;
+}
+
+.image-content .inline-details .comment .meta .pro-badge {
+  margin-left: .25em;
 }
 
 .image-content .inline-details .comment .created-at {
@@ -3282,34 +3240,38 @@ textarea {
 }
 
 .image-content .inline-details .comment .reply-to {
-  margin-left: 10px;
-  color: #00aeff;
-  font-size: 12px;
   padding-left: 15px;
-  text-decoration: none;
   background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
   background-size: 12px 11px;
   display: none;
+  color: #42b4ff;
+}
+
+.image-content .inline-details .comment .reply-to:hover,
+.image-content .inline-details .comment .reply-to:focus,
+.image-content .inline-details .comment .reply-to:active {
+  color: #0088f1;
 }
 
 .image-content .inline-details .comment .delete {
-  color: #666666;
-  font-weight: bold;
-  margin-left: 15px;
-  font-size: 12px;
   background: url('/static/images/icon-delete-comment.svg') 0 0 no-repeat;
   background-size: 13px 13px;
   padding-left: 20px;
-  text-decoration: none;
   display: none;
-  cursor: pointer;
+  color: #f30;
 }
 
-.image-content .inline-details .comment-hover .reply-to {
+.image-content .inline-details .comment .delete:hover,
+.image-content .inline-details .comment .delete:focus,
+.image-content .inline-details .comment .delete:active {
+  color: #e62e00;
+}
+
+.image-content .inline-details .comment:hover .reply-to {
   display: block;
 }
 
-.image-content .inline-details .comment-hover .delete {
+.image-content .inline-details .comment:hover .delete {
   display: block;
 }
 
@@ -3476,58 +3438,53 @@ textarea {
 .image-comments .comment  .meta {
   font-size: 12px;
   padding-bottom: 10px;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
-.image-comments .comment .meta a {
+.image-comments .comment .meta > * + * {
+  margin-left: .8em;
+}
+
+.image-comments .comment .meta .username {
   font-weight: bold;
   font-size: 14px;
-  color: #FF0080;
+}
+
+.image-comments .comment .meta .pro-badge {
+  margin-left: .25em;
 }
 
 .image-comments .comment .meta .reply-to {
-  color: #00aeff;
-  margin-left: 10px;
-  font-size: 12px;
   background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
   background-size: 12px 11px;
   padding-left: 15px;
-  text-decoration: none;
   display: none;
 }
 
-.image-comments .comment-hover .meta .reply-to {
+.image-comments .comment:hover .meta .reply-to {
   display: inline;
 }
 
-.image-comments .comment-hover .meta form {
+.image-comments .comment:hover .meta form {
   display: none;
 }
 
 .image-comments .comment .meta .delete {
-  color: #666666;
-  font-weight: bold;
-  margin-left: 10px;
-  font-size: 12px;
   background: url('/static/images/icon-delete-comment.svg') 0 0 no-repeat;
   background-size: 13px 13px;
-  padding-left: 20px;
-  text-decoration: none;
+  padding-left: 16px;
   display: none;
 }
 
-.image-comments .comment .meta .delete {
-  display: none;
-  cursor: pointer;
-}
-
-.image-comments .comment-hover .meta .delete {
+.image-comments .comment:hover .meta .delete {
   display: inline;
 }
 
 
 .image-comments .comment .meta .created-at {
   color: #7f7f7f;
-  margin-left:10px;
 }
 
 
@@ -3635,8 +3592,8 @@ span.previous-link {
 
 /* Sign-in */
 
-#sign-in-form .action-button {
-  float: right;
+#sign-in-form .field-submit {
+  text-align: right;
 }
 
 .forgot-password-field {
@@ -3768,6 +3725,19 @@ span.previous-link {
   font-size: 22px;
   margin: 0;
   text-align: center;
+}
+
+/* override btn styles so these don't look interactive */
+.feature--title .btn {
+  cursor: default;
+}
+.feature--title .btn-warning.btn-pastel:hover {
+  background-color: #ffe466;
+  color: #ff9600;
+}
+.feature--title .btn-success.btn-pastel:hover {
+  background-color: #b9ff8d;
+  color: #0caf8b;
 }
 
 @media screen and (min-width: 768px) {
@@ -4796,7 +4766,7 @@ span.previous-link {
   flex: 1;
 }
 
-.new-post-panel .save-video-form .action-button {
+.new-post-panel .save-video-form .btn {
   flex: none;
   margin-left: 10px;
 }
@@ -4816,77 +4786,6 @@ span.previous-link {
 
 .code {
   font-family: Consolas,"Courier New",monospace;
-}
-
-.action-button {
-  float: left;
-}
-
-/* TODO replace with reusable button styles */
-.action-button a {
-  display: block;
-  float: left;
-  text-decoration: none;
-  color: #fff;
-  background: transparent url('/static/images/action-button.gif') 0 0 no-repeat;
-  white-space: nowrap;
-}
-
-.action-button a.blue {
-  background: transparent url('/static/images/action-button-blue.gif') 0 0 no-repeat;
-}
-
-.action-button a.sky {
-  background: transparent url('/static/images/action-button-sky.gif') 0 0 no-repeat;
-}
-
-.action-button a span {
-  text-shadow: 1px 1px 1px #666;
-  line-height: 1;
-  font-size: 18px;
-  line-height: 18px;
-  padding-top: 11px;
-  height: 18px;
-  padding-bottom: 14px;
-  padding-left: 15px;
-  padding-right: 15px;
-  float: left;
-  display: block;
-  cursor: pointer;
-  font-weight: bold;
-  background: transparent url('/static/images/action-button-corner.gif') right top no-repeat;
-}
-
-.action-button a.blue span {
-  background: transparent url('/static/images/action-button-blue-corner.gif') right top no-repeat;
-}
-
-.action-button a.sky span {
-  background: transparent url('/static/images/action-button-sky-corner.gif') right top no-repeat;
-}
-
-.action-button-hover a {
-  background: transparent url('/static/images/action-button.gif') 0 -43px no-repeat;
-}
-
-.action-button-hover a span {
-  background: transparent url('/static/images/action-button-corner.gif') right -43px no-repeat;
-}
-
-.action-button-hover a.blue {
-  background: transparent url('/static/images/action-button-blue.gif') 0 -43px no-repeat;
-}
-
-.action-button-hover a.blue span {
-  background: transparent url('/static/images/action-button-blue-corner.gif') right -43px no-repeat;
-}
-
-.action-button-hover a.sky {
-  background: transparent url('/static/images/action-button-sky.gif') 0 -43px no-repeat;
-}
-
-.action-button-hover a.sky span {
-  background: transparent url('/static/images/action-button-sky-corner.gif') right -43px no-repeat;
 }
 
 /* advertisements */
@@ -4961,6 +4860,218 @@ ul.promotions li:hover .promotion-name {
 }
 
 /*----------------------------------------------------------------------
+  Buttons
+--------------------------------------------------------------------- */
+.btn {
+  border: none;
+  border-radius: .5em;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+  height: 2.2em;
+  letter-spacing: .033em;
+  line-height: 2.2em;
+  padding: 0 .88em;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: .05em .05em .05em rgba(0,0,0,.5);
+  transition-duration: .2s;
+  transition-property: background-color, color;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.btn:hover,
+.btn:focus {
+  color: #fff;
+}
+
+/* buttons with muted colors */
+.btn-pastel {
+  font-weight: 600;
+  letter-spacing: 0.015em;
+  text-shadow: none;
+}
+
+/* buttons with shadows */
+.btn-shadow {
+  box-shadow: .22em .22em 0 rgba(0,0,0,.125);
+  margin-right: .22em;
+}
+
+/* buttons with extra padding */
+.btn-padded {
+  height: 2.6em;
+  line-height: 2.6em;
+  padding: 0 1.25em;
+}
+
+/* button size variations */
+.btn-large {
+  font-size: 24px;
+  letter-spacing: .066em;
+}
+
+.btn-large.btn-pastel {
+  letter-spacing: 0.033em;
+}
+
+.btn-small,
+.btn-tiny {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.btn-tiny {
+  font-size: 10px;
+  padding: 0 .66em;
+}
+
+.btn-small.btn-pastel,
+.btn-tiny.btn-pastel {
+  font-weight: 500;
+}
+
+/* buttons that only contain an icon */
+.btn-icon {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  padding: 0;
+  width: 2.2em;
+}
+
+.btn-icon.btn-padded {
+  padding: 0;
+  width: 2.6em;
+}
+
+/* Primary: Provides extra visual weight and identifies the primary action in a set of buttons */
+.btn-primary {
+  background-color: #FF028B;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #DF0196;
+}
+
+.btn-primary.btn-pastel {
+  background-color: #ffcce8;
+  color: #FF028B;
+}
+
+.btn-primary.btn-pastel:hover,
+.btn-primary.btn-pastel:focus {
+  background-color: #FF028B;
+  color: #fff;
+}
+
+/* Secondary: De-emphasizes and identifies secondary actions in a set of buttons */
+.btn-secondary {
+  background-color: #12BBFC;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: #0493F3;
+}
+
+.btn-secondary.btn-pastel {
+  background-color: #daf3ff;
+  color: #00adff;
+}
+
+.btn-secondary.btn-pastel:hover,
+.btn-secondary.btn-pastel:focus {
+  background-color: #12BBFC;
+  color: #fff;
+}
+
+/* Success: Indicates a successful or positive action */
+.btn-success {
+  background-color: #09B896;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: #08a687;
+}
+
+.btn-success.btn-pastel {
+  background-color: #b9ff8d;
+  color: #0caf8b;
+}
+
+.btn-success.btn-pastel:hover,
+.btn-success.btn-pastel:focus {
+  background-color: #09B896;
+  color: #fff;
+}
+
+/* Warning: Indicates caution should be taken with this action */
+.btn-warning {
+  background-color: #ff9600;
+}
+
+.btn-warning:hover,
+.btn-warning:focus {
+  background-color: #eb8a00;
+}
+
+.btn-warning.btn-pastel {
+  background-color: #ffe466;
+  color: #ff9600;
+}
+
+.btn-warning.btn-pastel:hover,
+.btn-warning.btn-pastel:focus {
+  background-color: #ff9600;
+  color: #fff;
+}
+
+/* Danger: Indicates a dangerous or potentially negative action */
+.btn-danger {
+  background-color: #f30;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+  background-color: #e62e00;
+}
+
+.btn-danger.btn-pastel {
+  background-color: #ffd4d4;
+  color: #ff1c1c;
+}
+
+.btn-danger.btn-pastel:hover,
+.btn-danger.btn-pastel:focus {
+  background-color: #f30;
+  color: #fff;
+}
+
+/* Secondary: De-emphasizes and identifies secondary actions in a set of buttons */
+.btn:disabled {
+  background-color: #A1A1A1 !important;
+  color: rgba(255,255,255,.8) !important;
+  text-shadow: none;
+  cursor: default;
+}
+
+.btn.btn-pastel:disabled {
+  background-color: #cecec6 !important;
+  color: #8d8d87 !important;
+}
+
+.btn.btn-shadow:disabled {
+  box-shadow: none !important;
+}
+
+/*----------------------------------------------------------------------
   Carets
 --------------------------------------------------------------------- */
 .caret {
@@ -4976,4 +5087,11 @@ ul.promotions li:hover .promotion-name {
 
 .is-active .caret {
   transform: rotate(180deg);
+}
+
+/* ---------------------------------------------------------------------
+  Styleguide
+--------------------------------------------------------------------- */
+.panel--example {
+  margin: .25em 0 1em;
 }

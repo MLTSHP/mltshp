@@ -14,15 +14,13 @@
   <div class="notification-block-bd">
     {% for follower in notifications['follow'] %}
       <div class="notification">
-        {{modules.ShakeFollow(follow_user=follower['sender'], current_user=current_user_obj, avatar_size=48, post_name_text=follower['post_name_text'])}}          
-        <a href="" class="notification-close" id="notification-close-{{follower['id']}}">
-          <img src="{{ static_url("images/notification-close.gif") }}" width="22" height="21" alt="x">
-        </a>
+        {{modules.ShakeFollow(follow_user=follower['sender'], current_user=current_user_obj, avatar_size=48, post_name_text=follower['post_name_text'])}}
+        <a href="" title="Clear notification" class="notification-close btn btn-warning btn-pastel btn-icon btn-tiny" id="notification-close-{{follower['id']}}">✕</a>
       </div>
     {% end %}
     {% if len(notifications['follow']) > 0 %}
       <div class="clear-all">
-        <a href="/account/clear-notification?type=subscriber"><img src="{{ static_url("images/clear-all-followers.gif") }}" width="60" height="21" alt="clear all"></a>
+        <a class="btn btn-warning btn-pastel btn-small" href="/account/clear-notification?type=subscriber">clear all</a>
       </div>
     {% end %}
   </div>
@@ -40,9 +38,9 @@
       <div class="notification">
         <div class="thumb">
           <a href="/p/{{notification[0]['related_object'].share_key}}"><img src="{{notification[0]['related_object'].thumbnail_url()}}"></a>
-        </div>  
+        </div>
         <div class="context">
-           <a href="/p/{{notification[0]['related_object'].share_key}}">{{escape(notification[0]['related_object'].get_title())}}</a> has been saved by 
+           <a href="/p/{{notification[0]['related_object'].share_key}}">{{escape(notification[0]['related_object'].get_title())}}</a> has been saved by
            {{", ".join(["""<a href="/user/%s">%s</a>""" % (n['sender'].name, n['sender'].name) for n in notification])}}
         </div>
       </div>
@@ -50,7 +48,7 @@
     {% end %}
     {% if notifications['save']['count'] > 0 %}
       <div class="clear-all">
-        <a href="/account/clear-notification?type=save"><img src="{{ static_url("images/clear-all-saves.gif") }}" width="59" height="21" alt="clear all"></a>
+        <a class="btn btn-warning btn-pastel btn-small" href="/account/clear-notification?type=save">clear all</a>
       </div>
     {% end %}
   </div>
@@ -68,9 +66,9 @@
       <div class="notification">
         <div class="thumb">
           <a href="/p/{{notification[0]['related_object'].share_key}}"><img src="{{notification[0]['related_object'].thumbnail_url()}}"></a>
-        </div>  
+        </div>
         <div class="context">
-           <a href="/p/{{notification[0]['related_object'].share_key}}">{{escape(notification[0]['related_object'].get_title())}}</a> has been liked by 
+           <a href="/p/{{notification[0]['related_object'].share_key}}">{{escape(notification[0]['related_object'].get_title())}}</a> has been liked by
            {{", ".join(["""<a href="/user/%s">%s</a>""" % (n['sender'].name, n['sender'].name) for n in notification])}}
         </div>
       </div>
@@ -78,7 +76,7 @@
     {% end %}
     {% if notifications['like']['count'] > 0 %}
       <div class="clear-all">
-        <a href="/account/clear-notification?type=favorite"><img src="{{ static_url("images/clear-all-likes.gif") }}" width="60" height="21" alt="clear all"></a>
+        <a class="btn btn-warning btn-pastel btn-small" href="/account/clear-notification?type=favorite">clear all</a>
       </div>
     {% end %}
   </div>
@@ -96,7 +94,7 @@
       <div class="notification">
         <div class="thumb">
           <a href="/p/{{notification['related_object'].sharedfile().share_key}}"><img src="{{notification['related_object'].sharedfile().thumbnail_url()}}"></a>
-        </div>  
+        </div>
         <div class="context">
            <a href="/user/{{notification['sender'].name}}">{{notification['sender'].name}}</a> commented on <a href="/p/{{notification['related_object'].sharedfile().share_key}}">{{escape(notification['related_object'].sharedfile().get_title())}}</a><br>
            {{notification['related_object'].chopped_body()}}
@@ -106,7 +104,7 @@
     {% end %}
     {% if len(notifications['comment']) > 0 %}
       <div class="clear-all">
-        <a href="/account/clear-notification?type=comment"><img src="{{ static_url("images/clear-all-comments.gif") }}" width="59" height="21" alt="clear all"></a>
+        <a class="btn btn-warning btn-pastel btn-small" href="/account/clear-notification?type=comment">clear all</a>
       </div>
     {% end %}
   </div>

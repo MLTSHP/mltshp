@@ -105,26 +105,6 @@
     margin-right: 0.5em;
 }
 
-/* submit button */
-/* TODO: replace with reusable button styles */
-.fun-form .input-submit {
-    background-color: #ff0080;
-    border-radius: 20px;
-    border: none;
-    color: #fff;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 18px;
-    text-shadow: #bf0060 0 1px 0px;
-}
-
-/* TODO: remove clearfix once action buttons aren't floated */
-.fun-form .field-submit::after {
-    clear: both;
-    content: "";
-    display: table;
-}
-
 /* help text */
 .fun-form .field-help {
     color: #666;
