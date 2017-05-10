@@ -883,6 +883,13 @@ $(document).ready(function() {
       var nsfw_cover = new NSFWCover($nsfw_cover);
     });
 
+    $('.image-content video.autoplay').hover(function toggleControls() {
+      if (this.hasAttribute("controls")) {
+        this.removeAttribute("controls")
+      } else {
+        this.setAttribute("controls", "controls")
+      }
+    });
 
     /* Open / close notification boxes */
     $(".notification-block-hd").live('click', function() {

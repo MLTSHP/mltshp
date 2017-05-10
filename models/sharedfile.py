@@ -27,6 +27,8 @@ import models.tagged_file
 
 from tasks.timeline import add_posts, delete_posts
 from tasks.counts import calculate_saves
+from tasks.transcode import transcode_sharedfile
+
 
 class Sharedfile(ModelQueryCache, Model):
     source_id = Property()
@@ -734,6 +736,9 @@ class Sharedfile(ModelQueryCache, Model):
                 shared_file.share_key = base36encode(shared_file.id)
                 shared_file.save()
                 shared_file.add_to_shake(destination_shake)
+
+                if options.use_workers and content_type == "image/gif":
+                    transcode_sharedfile(shared_file.id)
                 return shared_file
             else:
                 return None

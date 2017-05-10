@@ -59,6 +59,15 @@
           <div class="field">
             <div class="field-input field-input-checkbox">
               <label>
+                <input type="checkbox" name="disable_autoplay" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.disable_autoplay %} checked="checked"{% end %}>
+                Disable Video Autoplay?
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-input field-input-checkbox">
+              <label>
                 <input type="checkbox" name="show_naked_people" value="1"{% if site_is_readonly %} disabled="disabled"{% end %}{% if user.show_naked_people %} checked="checked"{% end %}>
                 Remove NSFW Filter?
               </label>

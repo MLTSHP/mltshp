@@ -16,13 +16,15 @@ from lib.flyingcow.cache import ModelQueryCache
 
 
 class Sourcefile(ModelQueryCache, Model):
-    width = Property()
-    height = Property()
-    data = Property()
-    type = Property()
-    file_key = Property()
-    thumb_key = Property()
-    small_key = Property()
+    width = Property()          # original width dimension of source file
+    height = Property()         # original height dimension of source file
+    data = Property()           # JSON representation of a non-binary "source file"
+    type = Property()           # MIME type of file
+    file_key = Property()       # S3 handle for original image
+    thumb_key = Property()      # S3 handle for 100x100 thumbnail JPEG
+    small_key = Property()      # S3 handle for 200x184 rectangle JPEG
+    mp4_flag = Property()       # indicator when a H.264 MPEG video exists (specific to GIFs)
+    webm_flag = Property()      # indicator when a WEBM video exists (specific to GIFs; VP9 codec)
     nsfw = Property(default=0)
     created_at = Property()
     updated_at = Property()
@@ -85,16 +87,21 @@ class Sourcefile(ModelQueryCache, Model):
 
     @staticmethod
     def get_sha1_file_key(file_path=None, file_data=None):
+        h = hashlib.sha1()
         if not file_data:
             try:
-                fh = open(file_path, 'r')
-                file_data = fh.read()
-                fh.close()
+                BUF_SIZE = 65536
+
+                with open(file_path, 'rb') as f:
+                    while True:
+                        data = f.read(BUF_SIZE)
+                        if not data:
+                            break
+                        h.update(data)
             except Exception as e:
                 return None
-
-        h = hashlib.sha1()
-        h.update(file_data)
+        else:
+            h.update(file_data)
         return h.hexdigest()
 
     @staticmethod

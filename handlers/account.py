@@ -193,6 +193,7 @@ class SettingsHandler(BaseHandler):
         disable_notifications = self.get_argument('disable_notifications', 0)
         show_naked_people = self.get_argument('show_naked_people', 0)
         show_stats = self.get_argument('show_stats', 0)
+        disable_autoplay = self.get_argument('disable_autoplay', 0)
 
         if email != user.email and email != None:
             user.update_email(email)
@@ -212,6 +213,11 @@ class SettingsHandler(BaseHandler):
             user.show_stats = 1
         else:
             user.show_stats = 0
+
+        if disable_autoplay:
+            user.disable_autoplay = 1
+        else:
+            user.disable_autoplay = 0
 
         if user.save():
             return self.redirect("/account/settings")

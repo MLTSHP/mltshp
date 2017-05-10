@@ -12,6 +12,7 @@ RUN apt-get -y update && apt-get install -y \
     libcurl4-openssl-dev \
     curl \
     run-one \
+    ffmpeg \
     wget \
     vim \
     libpcre3 \

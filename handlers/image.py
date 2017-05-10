@@ -208,7 +208,7 @@ class ShowRawHandler(BaseHandler):
     set_header("Content-Disposition", "attachment: filename=\"%s\"" % (sharedfile.name))
     """
 
-    def get(self, share_key):
+    def get(self, share_key, format=None):
         if not share_key:
             raise tornado.web.HTTPError(404)
 
@@ -253,18 +253,33 @@ class ShowRawHandler(BaseHandler):
             # piece together headers to be picked up by nginx to proxy file from S3
             sourcefile = sharedfile.sourcefile()
 
-            file_path =  "originals/%s" % (sourcefile.file_key)
+            content_type = None
+
+            if format == "webm" and sourcefile.webm_flag == 1:
+                if sourcefile.webm_flag != 1:
+                    raise tornado.web.HTTPError(404)
+                file_path =  "webm/%s" % sourcefile.file_key
+                content_type = "video/webm"
+            elif format == "mp4":
+                if sourcefile.mp4_flag != 1:
+                    raise tornado.web.HTTPError(404)
+                file_path =  "mp4/%s" % sourcefile.file_key
+                content_type = "video/mp4"
+            else:
+                file_path =  "originals/%s" % sourcefile.file_key
+                content_type = sharedfile.content_type
+
             authenticated_url = s3_authenticated_url(options.aws_key, options.aws_secret,
                 options.aws_bucket, file_path=file_path, seconds=3600)
             (uri, query) = authenticated_url.split('?')
 
-            self.set_header("Content-Type", sharedfile.content_type)
+            self.set_header("Content-Type", content_type)
             self.set_header("Surrogate-Control", "max-age=86400")
-            self.set_header("X-Accel-Redirect", "/s3/%s?%s" % (sourcefile.file_key, query))
+            self.set_header("X-Accel-Redirect", "/s3/%s?%s" % (file_path, query))
 
         return
 
-    def head(self, share_key):
+    def head(self, share_key, format=None):
         if not share_key:
             raise tornado.web.HTTPError(404)
 
