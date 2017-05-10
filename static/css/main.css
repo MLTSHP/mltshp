@@ -1,8 +1,24 @@
 html, body {
   background-color: #dbfaff;
   color: #333;
-  font-family: Helvetica,Arial,sans-serif;
   margin: 0;
+}
+
+/*
+  New and improved system font stack:
+
+  1. target Mac system fonts
+  2. list of known system fonts
+  3. fallback fonts
+
+  see: https://www.smashingmagazine.com/?p=229756
+
+  Need to apply to form fields because iOS tries to force Helvetica
+ */
+html, input, textarea, keygen, select, button {
+  font-family: /* 1 */ -apple-system, BlinkMacSystemFont,
+               /* 2 */ "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+               /* 3 */ "Helvetica Neue", sans-serif;
 }
 
 .page {
@@ -3027,10 +3043,6 @@ iframe {
   .image-title {
     padding: 40px 40px 0;
   }
-}
-
-.image-title h1 {
-  overflow: hidden;
 }
 
 .image-title  h3 {
