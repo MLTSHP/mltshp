@@ -82,9 +82,7 @@
                         {% if not site_is_readonly %}
                             {% if current_user and current_user_object.can_post() %}
                                 <li class="site-nav--item site-nav--upload">
-                                    <div class="action-button">
-                                        <a id="new-post-button" class="blue" href=""><span>New Post</span></a>
-                                    </div>
+                                    <a id="new-post-button" class="btn btn-primary btn-shadow" href="">New Post</a>
                                 </li>
                             {% else %}
                                 {% if not current_user %}
@@ -93,9 +91,7 @@
                                     {% if not current_user and handler_class != 'HomeHandler' and handler_class != 'CreateAccountHandler' %}
                                         <div class="call-out">Join us! Sign up to post images and create your own shake.</div>
                                     {% end %}
-                                    <div class="action-button">
-                                        <a class="blue" href="/create-account"><span>Sign Up!</span></a>
-                                    </div>
+                                    <a class="btn btn-primary btn-shadow" href="/create-account">Sign Up!</a>
                                 </li>
                                 {% end %}
                             {% end %}

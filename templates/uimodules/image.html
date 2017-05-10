@@ -33,7 +33,7 @@
     <form method="post" action="/p/{{sharedfile.share_key}}/shakes/{{shake.id}}/delete">
       <input type="hidden" name="redirect_to" value="{{ request.path }}">
       {{ xsrf_form_html() }}
-      <a href=""><span>Delete from shake</span></a>
+      <button title="Delete from shake" class="btn btn-warning btn-pastel btn-icon btn-tiny">✕</button>
     </form>
   </div>
   {% end %}

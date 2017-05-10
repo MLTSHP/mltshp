@@ -70,7 +70,7 @@
       <div id="request-invitation" class="request-invitation">
         <form method="post" action="/shake/{{shake.name}}/request_invitation">
           {{ xsrf_form_html() }}
-          <input type="image" src="{{ static_url("images/join-this-shake-button.gif") }}" value="+ join this shake">
+          <input class="btn btn-success btn-shadow btn-small" type="submit" value="+ Join this shake">
         </form>
       </div>
     {% end %}

@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="settings-body">
-      <div class="fun-form fun-form-stacked fun-form-settings">
+      <div class="fun-form fun-form-stacked fun-form-settings" >
         {% if not current_user_object.email_confirmed and not site_is_readonly %}
         <form method="POST" action="/account/settings/resend-verification-email">
           {{ xsrf_form_html() }}
@@ -26,7 +26,7 @@
           Please check your inbox for verification instructions or:
         </div>
         <div class="field field-submit">
-          <div class="action-button"><a href=""><span>Resend Verification</span></a></div>
+          <a class="btn btn-primary btn-shadow" href="">Resend Verification</a>
         </div>
         </form>
         {% end %}
@@ -85,7 +85,7 @@
 
           {% if not site_is_readonly %}
           <div class="field field-submit">
-            <div class="action-button"><a href=""><span>Save This</span></a></div>
+            <a class="btn btn-primary btn-shadow" href="">Save This</a>
           </div>
           {% end %}
         </form>
@@ -105,7 +105,7 @@
                   Your MLKSHK posts are safe and sound and ready to be restored. Click the button below
                   to start restoring your content.
                 </p>
-                <div class="action-button"><a href="/account/mlkshk-migrate"><span>Let's Go!</span></a></div>
+                <a class="btn btn-primary btn-shadow" href="/account/mlkshk-migrate">Let's Go!</a>
                 {% end %}
             </div>
         </div>
@@ -140,7 +140,7 @@
                   We have an active promotion running now. To learn more about them and
                   to redeem a code, click this button:
                 </p>
-                <div class="action-button"><a href="/account/redeem"><span>Redeem Code</span></a></div>
+                <a class="btn btn-primary btn-shadow" href="/account/redeem">Redeem Code</a>
                 <!-- END THINKUP Promotion -->
               {% end %}
             {% end %}
@@ -161,7 +161,7 @@
                 <form method="POST" action="/account/image-request">
                   {{ xsrf_form_html() }}
                   <div class="field field-submit">
-                    <div class="action-button"><a href=""><span>Request All Images</span></a></div>
+                    <a class="btn btn-primary btn-shadow" href="">Request All Images</a>
                   </div>
                 </form>
               {% end %}

@@ -25,9 +25,9 @@ $(document).ready(function() {
         $video_shake_id = $("#video-shake-id");
         // video preview screen
         $save_video_form = $("#new-post-panel .save-video-form");
-        $save_video_form_button = $("#new-post-panel .save-video-form .action-button a");
+        $save_video_form_button = $("#new-post-panel .save-video-form .btn");
         $post_video_form = $("#new-post-panel .post-video-form");
-        $post_video_form_button = $("#new-post-panel .post-video-form .action-button a");
+        $post_video_form_button = $("#new-post-panel .post-video-form .btn");
         // shake selector
         $shake_selector = $(".shake-selector");
       };
@@ -294,7 +294,7 @@ $(document).ready(function() {
       }
     });
 
-    $(".action-button", $sign_in_form).click(function() {
+    $(".btn", $sign_in_form).click(function() {
       $sign_in_form.submit();
       return false;
     });
@@ -662,7 +662,6 @@ $(document).ready(function() {
       init_comment_events: function () {
         this.$comment_textarea.click($.proxy(this.click_comment_textarea, this));
         this.$show_more_comments.click($.proxy(this.click_more_comments, this));
-        this.$comment.hover(function () { $(this).toggleClass('comment-hover'); });
         this.$reply_to.click($.proxy(this.click_reply_to, this));
         this.$delete.click($.proxy(this.click_delete, this));
         // Fix for Webkit bug where textarea looses focus incorrectly on mouseup.
@@ -909,10 +908,10 @@ $(document).ready(function() {
         } else {
           if (response['subscription_status'] == true) {
             $form.attr('action', url.replace('subscribe', 'unsubscribe'));
-            $(that).addClass('unfollow-button').removeClass('follow-button');
+            $(that).text('- Unfollow').addClass('btn-warning').removeClass('btn-secondary');
           } else {
             $form.attr('action', url.replace('unsubscribe', 'subscribe'));
-            $(that).addClass('follow-button').removeClass('unfollow-button');
+            $(that).text('+ Follow').addClass('btn-secondary').removeClass('btn-warning');
           }
         }
 
@@ -1096,15 +1095,8 @@ $(document).ready(function() {
       });
     });
 
-    /* Action button */
-    $('.action-button').hover(function() {
-      $(this).addClass('action-button-hover');
-    }, function(){
-      $(this).removeClass('action-button-hover');
-    });
-
     /* Action Button in a Fun Form, should submit the form */
-    $(".field-submit .action-button a").click(function() {
+    $(".field-submit .btn").click(function() {
       $(this).closest("form").submit();
       return false;
     })
@@ -1199,9 +1191,6 @@ $(document).ready(function() {
       },
 
       init_events: function() {
-        this.$root.delegate('.comment', 'hover', function() {
-          $(this).toggleClass('comment-hover');
-        });
         this.$root.delegate('.reply-to', 'click', $.proxy(this.click_reply_to, this));
         this.$root.delegate('.delete', 'click', $.proxy(this.click_delete, this));
       },

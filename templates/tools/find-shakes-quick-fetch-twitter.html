@@ -10,7 +10,7 @@
   {% end %}
   {% if errors.twitter_rate_limit %}
     <h3 class="message">It looks like your account is over the Twitter rate limit.</h3>
-    
+
     <h3 class="message">Try again in a little bit.</h3>
   {% end %}
 {% else %}
@@ -21,7 +21,6 @@
     </div>
   {% end %}
   <div class="refresh-friends" id="refresh-friends">
-    <div class="action-button"><a href="/find-shakes/twitter" class="sky"><span>Refresh Friend List</span></a></div>
-    <div class="clear"><!-- --></div>
+    <a href="/find-shakes/twitter" class="btn btn-secondary btn-shadow">Refresh Friend List</a>
   </div>
 {% end %}

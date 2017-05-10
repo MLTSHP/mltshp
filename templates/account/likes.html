@@ -20,7 +20,7 @@
               <li><a href="{{follow['path']}}" title="{{follow['name']}}"><img src="{{follow['image']}}" width="48" height="48"></a></li>
             {% end %}
           </ul>
-          <br style="clear:both;">          
+          <br style="clear:both;">
           {% if following_shakes %}
             <a class="view-all-following" href="/user/{{user.name}}/following">view all</a>
           {% end %}
@@ -51,20 +51,20 @@
         {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
       {% end %}
     </div>
-    
+
     <div class="linear-navigation">
       <div class="older">
         {% if older_link %}
-          <div class="action-button"><a class="sky" href="{{ older_link }}"><span>&laquo; Older</span></a></div>
+          <a class="btn btn-secondary btn-shadow" href="{{ older_link }}">&laquo; Older</a>
         {% end %}
       </div>
       <div class="newer">
         {% if newer_link %}
-          <div class="action-button"><a class="sky" href="{{ newer_link }}"><span>Newer &raquo;</span></a></div>
+          <a class="btn btn-secondary btn-shadow" href="{{ newer_link }}">Newer &raquo;</a>
         {% end %}
       </div>
     </div>
-    
+
   </div>
 </div>
 {% end %}

@@ -22,11 +22,11 @@
           <form method="post" action="/shake/{{notification['related_object'].name}}/accept-invitation?json=1">
             {{ xsrf_form_html() }}
             <input type="hidden" name="id" value="{{notification['id']}}">
-            <input class="shake-accept-invitation" type="image" src="{{ static_url("images/woo-hoo-sign-me-up.gif") }}" value="accept">
+            <button class="shake-accept-invitation btn btn-secondary btn-pastel btn-small" type="submit" value="accept">Woo Hoo! Sign me up!</button>
           </form>
           <form method="post" action="/account/clear-notification?type=single&amp;id={{notification['id']}}&amp;json=1">
             {{ xsrf_form_html() }}
-            <input class="shake-ignore-invitation" type="image" src="{{ static_url("images/nah.gif") }}" value="ignore">
+            <button class="shake-ignore-invitation btn btn-warning btn-pastel btn-small" type="submit" value="ignore">Nah.</button>
           </form>
         </div>
       </div>

@@ -7,9 +7,9 @@ Files Tagged With “{{tag.name}}”
 {% block main %}
 
 <div class="content content-with-sidebar content-shake">
-  
+
   {% include "tags/_sidebar.html" %}
-  
+
   <div class="body">
     <div class="image-content-list">
       {% for sharedfile in shared_files %}
@@ -19,12 +19,12 @@ Files Tagged With “{{tag.name}}”
     <div class="linear-navigation">
       <div class="older">
         {% if older_link %}
-          <div class="action-button"><a class="sky" href="{{ older_link }}"><span>&laquo; Older</span></a></div>
+          <a class="btn btn-secondary btn-shadow" href="{{ older_link }}">&laquo; Older</a>
         {% end %}
       </div>
       <div class="newer">
         {% if newer_link %}
-          <div class="action-button"><a class="sky" href="{{ newer_link }}"><span>Newer &raquo;</span></a></div>
+          <a class="btn btn-secondary btn-shadow" href="{{ newer_link }}">Newer &raquo;</a>
         {% end %}
       </div>
     </div>
