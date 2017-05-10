@@ -136,8 +136,6 @@ def transcode_sharedfile(sharedfile_id):
         tasks.append(remove_temp_file.s(input_file))
         chain(*tasks).apply_async(expires=timedelta(days=1))
     else:
-        from pprint import pprint
-        pprint(sourcefile)
         if sourcefile["webm_flag"] != 1:
             gif_to_video.delay_or_run(sourcefile["id"], sourcefile["file_key"], input_file, "webm")
         if sourcefile["mp4_flag"] != 1:
