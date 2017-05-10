@@ -1,6 +1,5 @@
 import tempfile
 import os
-from datetime import timedelta
 
 from torndb import Connection
 from tornado.options import options
@@ -130,11 +129,11 @@ def transcode_sharedfile(sharedfile_id):
     if options.use_workers:
         tasks = []
         if sourcefile["webm_flag"] != 1:
-            tasks.append(gif_to_video.s(sourcefile["id"], sourcefile["file_key"], input_file, "webm"))
+            tasks.append(gif_to_video.si(sourcefile["id"], sourcefile["file_key"], input_file, "webm"))
         if sourcefile["mp4_flag"] != 1:
-            tasks.append(gif_to_video.s(sourcefile["id"], sourcefile["file_key"], input_file, "mp4"))
-        tasks.append(remove_temp_file.s(input_file))
-        chain(*tasks).apply_async(expires=timedelta(days=1))
+            tasks.append(gif_to_video.si(sourcefile["id"], sourcefile["file_key"], input_file, "mp4"))
+        tasks.append(remove_temp_file.si(input_file))
+        chain(*tasks).apply_async(expires=86400)  # expire in 1 day
     else:
         if sourcefile["webm_flag"] != 1:
             gif_to_video.delay_or_run(sourcefile["id"], sourcefile["file_key"], input_file, "webm")
