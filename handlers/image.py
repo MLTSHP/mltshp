@@ -208,7 +208,7 @@ class ShowRawHandler(BaseHandler):
     set_header("Content-Disposition", "attachment: filename=\"%s\"" % (sharedfile.name))
     """
 
-    def get(self, share_key, format=None):
+    def get(self, share_key, format=""):
         if not share_key:
             raise tornado.web.HTTPError(404)
 
@@ -247,7 +247,7 @@ class ShowRawHandler(BaseHandler):
                 cdn_url = "http://%s" % options.cdn_host
 
             cdn_url += "/r/%s" % share_key
-            if format:
+            if format != "":
                 cdn_url += ".%s" % format
 
             self.redirect(cdn_url)
