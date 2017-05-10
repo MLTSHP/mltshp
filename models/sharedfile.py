@@ -738,7 +738,7 @@ class Sharedfile(ModelQueryCache, Model):
                 shared_file.add_to_shake(destination_shake)
 
                 if options.use_workers and content_type == "image/gif":
-                    transcode_sharedfile(shared_file.id)
+                    transcode_sharedfile.delay_or_run(shared_file.id)
                 return shared_file
             else:
                 return None
