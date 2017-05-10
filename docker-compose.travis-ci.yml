@@ -1,7 +1,7 @@
 version: "2"
 services:
   mltshp:
-    image: mltshp/mltshp-web
+    build: .
     volumes:
       - .:/srv/mltshp.com/mltshp
       - "${MYSQL_UNIX_PORT}:/var/run/mysqld/mysqld.sock"
