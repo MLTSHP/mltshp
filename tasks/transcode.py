@@ -52,7 +52,7 @@ def gif_to_video(sourcefile_id, file_key, input_file, format):
                 options += " -vf scale=iw:-2"
 
     elif format == "webm":
-        options = "-vcodec libvpx-vp9 -lossless 1"
+        options = "-vcodec libvpx-vp9"
 
     output_file = input_file.replace(".gif", ".%s" % format)
 
