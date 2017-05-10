@@ -71,7 +71,7 @@ class Image(UIModule):
         can_unfavor = sharedfile.can_unfavor(current_user)
         # prevent unconfirmed users from being able to create shake content
         can_save = sharedfile.can_save(current_user) and current_user.email_confirmed == 1
-        
+
         sharedfile_user = sharedfile.user()
         sourcefile = sharedfile.sourcefile()
         attribution = {
@@ -87,7 +87,7 @@ class Image(UIModule):
                     'thumbnail_url' : shake.thumbnail_url(),
                     'path' : shake.path()
                 }
-        
+
         # Check if image is NSFW.  We do the check here because we have ready
         # access to sharedfile's user.  A micro-optimization, that shouldn't
         # matter once there is a request-level query cache in place.
@@ -96,13 +96,13 @@ class Image(UIModule):
             is_nsfw = True
         if sourcefile.nsfw == 1:
             is_nsfw = True
-        
+
         # minimum height is used for the NSFW cover.
         min_height = 90
         width, height = sourcefile.width_constrained_dimensions(555)
         if height > 170:
             min_height = height - 80
-            
+
         #is this user's content filter on
         hide_nsfw = True
         if current_user:
@@ -116,17 +116,17 @@ class Image(UIModule):
                 hide_nsfw = False
             else:
                 hide_nsfw = True
-        
+
         # Used for determining the type of "save this" button
         has_multiple_shakes = False
         if current_user:
             has_multiple_shakes = current_user.has_multiple_shakes()
-        
+
         if can_save:
             has_saved = current_user.saved_sharedfile(sharedfile)
         else:
             has_saved = False
-        
+
         # Can only remove from shake if user is shake owner.
         # Currently option only applies to list view.
         can_remove_from_shake = False
@@ -142,6 +142,12 @@ class Image(UIModule):
         if current_user and current_user.email_confirmed == 1 and not options.readonly:
             can_comment = True
 
+        can_autoplay = False
+        if current_user and not current_user.disable_autoplay == 1:
+            # TODO: check to see if user is on a mobile device. if so, prevent
+            # autoplay in any case.
+            can_autoplay = True
+
         return self.render_string("uimodules/image.html", current_user=current_user,
             list_view=list_view, sharedfile=sharedfile, can_edit=can_edit,
             can_favor=can_favor, can_unfavor=can_unfavor, can_delete=can_delete, can_comment=can_comment,
@@ -149,7 +155,8 @@ class Image(UIModule):
             sharedfile_user=sharedfile.user(), shake=shake, can_remove_from_shake=can_remove_from_shake,
             comments=comments, expanded=False, has_multiple_shakes=has_multiple_shakes,
             attribution=attribution, is_nsfw=is_nsfw, min_height=min_height, hide_nsfw=hide_nsfw,
-            sized_width=width, sized_height=height)
+            sized_width=width, sized_height=height, sourcefile=sourcefile,
+            can_autoplay=can_autoplay)
 
 
 class ImageMedium(UIModule):

@@ -476,7 +476,7 @@ class FileUploadTests(BaseAsyncTestCase):
         response = self.upload_test_file()
         self.http_client.fetch(self.get_url('/r/1'), self.stop)
         response = self.wait()
-        self.assertTrue(response.headers['X-Accel-Redirect'].startswith("/s3/ac7180f6b038d5ae4f2297989e39a900995bb8fc?"))
+        self.assertTrue(response.headers['X-Accel-Redirect'].startswith("/s3/originals/ac7180f6b038d5ae4f2297989e39a900995bb8fc?"))
 
     def test_uploading_file_creates_shared_shake_file(self):
         response = self.upload_test_file()

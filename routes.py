@@ -78,7 +78,7 @@ routes = [
     (r"/p/([a-zA-Z0-9]+)/like", handlers.image.LikeHandler),
     (r"/p/([a-zA-Z0-9]+)/unlike", handlers.image.UnlikeHandler),
     (r"/p/([a-zA-Z0-9]+)", handlers.image.ShowHandler),
-    (r"/r/([a-zA-Z0-9]+)\.?.*", handlers.image.ShowRawHandler),
+    (r"/r/([a-zA-Z0-9]+)\.?(.*)", handlers.image.ShowRawHandler),
     (r"/services/oembed", handlers.image.OEmbedHandler),
 
     (r"/shake/create", handlers.shake.CreateShakeHandler),

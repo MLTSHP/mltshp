@@ -54,6 +54,7 @@ class User(ModelQueryCache, Model):
     tou_agreed = Property(default=0)
     show_naked_people = Property(default=0)
     show_stats = Property(default=0)
+    disable_autoplay = Property(default=0)
     verify_email_token = Property()
     reset_password_token = Property()
     profile_image = Property()
