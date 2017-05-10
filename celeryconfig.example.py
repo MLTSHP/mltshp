@@ -1,5 +1,5 @@
 # List of modules to import when celery starts.
-CELERY_IMPORTS = ("tasks.timeline", "tasks.counts", "tasks.migration")
+CELERY_IMPORTS = ("tasks.timeline", "tasks.counts", "tasks.migration", "tasks.transcode")
 
 ## Result store settings.
 CELERY_RESULT_BACKEND = "rpc://"
