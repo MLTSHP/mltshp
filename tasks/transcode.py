@@ -65,26 +65,25 @@ def gif_to_video(sourcefile_id, file_key, input_file, format):
         logger.info("invoking transcode operation: %s" % ff.cmd)
         result = ff.run()
         logger.info("-- transcode completed")
+
+        # upload transcoded file to S3, then flag the sourcefile
+        bucket = S3Bucket()
+        key = Key(bucket)
+        key.key = "%s/%s" % (format, file_key)
+
+        logger.info("uploading transcoded video: %s" % file_key)
+        key.set_contents_from_filename(output_file)
+        logger.info("-- upload complete")
+        db = db_connect()
+        db.execute(
+            "UPDATE sourcefile SET %s_flag=1 WHERE id=%%s" % format,
+            sourcefile_id)
+        db.close()
     except Exception as ex:
         logger.exception("error transcoding %s - %s" % (sourcefile_id, input_file))
+        raise ex
     finally:
-        if result:
-            # check for output file
-            # upload transcoded file to S3, then save the key
-            bucket = S3Bucket()
-            key = Key(bucket)
-            key.key = "%s/%s" % (format, file_key)
-
-            logger.info("uploading transcoded video: %s" % file_key)
-            key.set_contents_from_filename(output_file)
-            logger.info("-- upload complete")
-            db = db_connect()
-            db.execute(
-                "UPDATE sourcefile SET %s_flag=1 WHERE id=%%s" % format,
-                sourcefile_id)
-            db.close()
-
-            os.unlink(output_file)
+        os.unlink(output_file)
 
 
 @mltshp_task()
