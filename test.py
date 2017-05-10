@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-#import figleaf
-#figleaf.start()
+
 import unittest
 from torndb import Connection
 from tornado.options import options
@@ -10,6 +9,10 @@ import MySQLdb
 
 import mltshpoptions
 from settings import test_settings
+
+# If test.AccountTests fails to import, it should fail loudly...
+import test.AccountTests
+
 
 AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
@@ -81,6 +84,3 @@ if __name__ == '__main__':
         db.execute("USE %s" % options.database_name)
         db.execute(load_query)
     tornado.testing.main()
-
-#figleaf.stop()
-#figleaf.write_coverage('.figleaf')

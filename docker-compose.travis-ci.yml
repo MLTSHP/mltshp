@@ -4,8 +4,6 @@ services:
     image: mltshp/mltshp-web
     volumes:
       - .:/srv/mltshp.com/mltshp
-      - ./setup/dev/nginx.conf:/etc/nginx/nginx.conf
-      - ./setup/dev/supervisord.conf:/etc/supervisor/conf.d/mltshp.conf
       - "${MYSQL_UNIX_PORT}:/var/run/mysqld/mysqld.sock"
     ports:
       - "8000:80"
