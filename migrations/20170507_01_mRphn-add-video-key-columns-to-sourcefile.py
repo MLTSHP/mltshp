@@ -8,11 +8,11 @@ __depends__ = {'20170429_01_0ad8s-add-deleted-column-to-shake-table'}
 
 steps = [
     step(
-        "ALTER TABLE sourcefile ADD COLUMN `webm_key` varchar(40) DEFAULT NULL AFTER `small_key`",
-        "ALTER TABLE sourcefile DROP COLUMN `webm_key`",
+        "ALTER TABLE sourcefile ADD COLUMN `webm_flag` tinyint(1) DEFAULT 0 AFTER `thumb_key`",
+        "ALTER TABLE sourcefile DROP COLUMN `webm_flag`",
     ),
     step(
-        "ALTER TABLE sourcefile ADD COLUMN `mp4_key` varchar(40) DEFAULT NULL AFTER `small_key`",
-        "ALTER TABLE sourcefile DROP COLUMN `mp4_key`",
+        "ALTER TABLE sourcefile ADD COLUMN `mp4_flag` tinyint(1) DEFAULT 0 AFTER `thumb_key`",
+        "ALTER TABLE sourcefile DROP COLUMN `mp4_flag`",
     ),
 ]

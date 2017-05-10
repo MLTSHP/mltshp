@@ -23,8 +23,8 @@ class Sourcefile(ModelQueryCache, Model):
     file_key = Property()       # S3 handle for original image
     thumb_key = Property()      # S3 handle for 100x100 thumbnail JPEG
     small_key = Property()      # S3 handle for 200x184 rectangle JPEG
-    mp4_key = Property()        # S3 handle for H.264 encoded MPEG video (specific to GIFs)
-    webm_key = Property()       # S3 handle for WEBM encoded video (specific to GIFs; VP9 codec)
+    mp4_flag = Property()       # indicator when a H.264 MPEG video exists (specific to GIFs)
+    webm_flag = Property()      # indicator when a WEBM video exists (specific to GIFs; VP9 codec)
     nsfw = Property(default=0)
     created_at = Property()
     updated_at = Property()

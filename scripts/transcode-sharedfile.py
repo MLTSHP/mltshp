@@ -16,7 +16,7 @@ def main():
                     WHERE sharedfile.deleted = 0
                     AND sharedfile.content_type = 'image/gif'
                     AND sharedfile.parent_id = 0
-                    AND (sourcefile.webm_key IS NULL OR sourcefile.mp4_key IS NULL)
+                    AND (sourcefile.webm_flag != 1 OR sourcefile.mp4_flag != 1)
                     ORDER BY sharedfile.created_at DESC"""
         results = Sharedfile.query(select)
         for result in results:

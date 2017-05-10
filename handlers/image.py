@@ -255,11 +255,15 @@ class ShowRawHandler(BaseHandler):
 
             content_type = None
 
-            if format == "webm":
-                file_path =  "webm/%s" % sourcefile.webm_key
+            if format == "webm" and sourcefile.webm_flag == 1:
+                if sourcefile.webm_flag != 1:
+                    raise tornado.web.HTTPError(404)
+                file_path =  "webm/%s" % sourcefile.file_key
                 content_type = "video/webm"
             elif format == "mp4":
-                file_path =  "mp4/%s" % sourcefile.mp4_key
+                if sourcefile.mp4_flag != 1:
+                    raise tornado.web.HTTPError(404)
+                file_path =  "mp4/%s" % sourcefile.file_key
                 content_type = "video/mp4"
             else:
                 file_path =  "originals/%s" % sourcefile.file_key

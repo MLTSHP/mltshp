@@ -24,7 +24,7 @@ def db_connect():
 
 
 @mltshp_task()
-def gif_to_video(sourcefile_id, input_file, format):
+def gif_to_video(sourcefile_id, file_key, input_file, format):
     from models import Sourcefile
 
     result = None
@@ -72,20 +72,18 @@ def gif_to_video(sourcefile_id, input_file, format):
         if result:
             # check for output file
             # upload transcoded file to S3, then save the key
-            upload_key = Sourcefile.get_sha1_file_key(output_file)
-            if upload_key:
-                bucket = S3Bucket()
-                key = Key(bucket)
-                key.key = "%s/%s" % (format, upload_key)
+            bucket = S3Bucket()
+            key = Key(bucket)
+            key.key = "%s/%s" % (format, file_key)
 
-                logger.info("uploading transcoded video: %s" % upload_key)
-                key.set_contents_from_filename(output_file)
-                logger.info("-- upload complete")
-                db = db_connect()
-                db.execute(
-                    "UPDATE sourcefile SET %s_key=%%s WHERE id=%%s" % format,
-                    upload_key, sourcefile_id)
-                db.close()
+            logger.info("uploading transcoded video: %s" % file_key)
+            key.set_contents_from_filename(output_file)
+            logger.info("-- upload complete")
+            db = db_connect()
+            db.execute(
+                "UPDATE sourcefile SET %s_flag=1 WHERE id=%%s" % format,
+                sourcefile_id)
+            db.close()
 
             os.unlink(output_file)
 
@@ -107,13 +105,13 @@ def transcode_sharedfile(sharedfile_id):
         return
 
     # download sharedfile from S3
-    sourcefile = db.get("SELECT id, file_key, webm_key, mp4_key FROM sourcefile WHERE id=%s", sharedfile["source_id"])
+    sourcefile = db.get("SELECT id, file_key, webm_flag, mp4_flag FROM sourcefile WHERE id=%s", sharedfile["source_id"])
     db.close()
 
     if not sourcefile:
         return
 
-    if sourcefile["webm_key"] and sourcefile["mp4_key"]:
+    if sourcefile["webm_flag"] == 1 and sourcefile["mp4_flag"] == 1:
         return
 
     input_temp = tempfile.NamedTemporaryFile(
@@ -131,15 +129,17 @@ def transcode_sharedfile(sharedfile_id):
 
     if options.use_workers:
         tasks = []
-        if not sourcefile["webm_key"]:
-            tasks.append(gif_to_video.s(sourcefile["id"], input_file, "webm"))
-        if not sourcefile["mp4_key"]:
-            tasks.append(gif_to_video.s(sourcefile["id"], input_file, "mp4"))
+        if sourcefile["webm_flag"] != 1:
+            tasks.append(gif_to_video.s(sourcefile["id"], sourcefile["file_key"], input_file, "webm"))
+        if sourcefile["mp4_flag"] != 1:
+            tasks.append(gif_to_video.s(sourcefile["id"], sourcefile["file_key"], input_file, "mp4"))
         tasks.append(remove_temp_file.s(input_file))
         chain(*tasks).apply_async(expires=timedelta(days=1))
     else:
-        if not sourcefile["webm_key"]:
-            gif_to_video.delay_or_run(sourcefile["id"], input_file, "webm")
-        if not sourcefile["mp4_key"]:
-            gif_to_video.delay_or_run(sourcefile["id"], input_file, "mp4"),
+        from pprint import pprint
+        pprint(sourcefile)
+        if sourcefile["webm_flag"] != 1:
+            gif_to_video.delay_or_run(sourcefile["id"], sourcefile["file_key"], input_file, "webm")
+        if sourcefile["mp4_flag"] != 1:
+            gif_to_video.delay_or_run(sourcefile["id"], sourcefile["file_key"], input_file, "mp4")
         remove_temp_file.delay_or_run(input_file)

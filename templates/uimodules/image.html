@@ -53,20 +53,20 @@
       </div>
       {% else %}
         {% if list_view %}
-          {% if sourcefile.mp4_key or sourcefile.webm_key %}
+          {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
       <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}">
-        {% if sourcefile.mp4_key %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" />{% end %}
-        {% if sourcefile.webm_key %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" />{% end %}
+        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" />{% end %}
+        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" />{% end %}
         <a href="/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}" width="{{sized_width}}" height="{{sized_height}}"></a>
       </video>
           {% else %}
       <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
           {% end %}
         {% else %}
-          {% if sourcefile.mp4_key or sourcefile.webm_key %}
+          {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
       <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}">
-        {% if sourcefile.mp4_key %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" />{% end %}
-        {% if sourcefile.webm_key %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" />{% end %}
+        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" />{% end %}
+        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" />{% end %}
         <a href="/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}" width="{{sized_width}}" height="{{sized_height}}"></a>
       </video>
           {% else %}
