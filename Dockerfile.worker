@@ -41,7 +41,6 @@ COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
 RUN pip install -r requirements.txt
-RUN pip install -r requirements-worker.txt
 RUN crontab -u ubuntu setup/production/mltshp-worker--crontab
 
 CMD ["/usr/bin/supervisord"]
