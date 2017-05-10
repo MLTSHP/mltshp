@@ -36,7 +36,8 @@
     {% elif notifications_count > 0 %}
     <div class="notification-block notification-block-aggregate" id="notification-block-aggregate">
       <div class="notification-block-hd">
-        Show {{notifications_count}} notification{% if notifications_count != 1 %}s{% end %} <img src="{{ static_url("images/notifications-aggregate-carrot.svg") }}" width="10" height="8" alt="">
+        Show {{notifications_count}} notification{% if notifications_count != 1 %}s{% end %}
+        <span class="caret"></span>
       </div>
     </div>
     {% end %}

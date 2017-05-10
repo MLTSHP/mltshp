@@ -1,6 +1,6 @@
 <div class="field field-{{field_type}} {{css_class}}">
   <label>{{label}}</label>
-  <div class="field-input"> 
+  <div class="field-input">
     <div class="field-input-inner">
       {% if field_type == 'text' %}
         <input class="input-text" type="text" name="{{name}}" value="{{value}}">
@@ -12,8 +12,7 @@
         <span class="error-text">
           {{errors[name] }}
         </span>
-      </div>      
-      <span class="bottoms"></span>
+      </div>
       {% end %}
     </div>
   </div>

@@ -35,8 +35,6 @@
 .admin-new-users .body #new-members-list > li h4 {
   font-size: 18px;
   font-weight: bold;
-  float: left;
-  width: 350px;
   padding-bottom: 5px;
 }
 
@@ -46,13 +44,9 @@
 }
 
 .admin-new-users .details {
-  float: left;
-  width: 350px;
 }
 
 .admin-new-users .body #new-members-list > li p {
-  clear: left;
-  width: 350px;
   color: #333;
   font-size: 14px;
   line-height: 1.3;

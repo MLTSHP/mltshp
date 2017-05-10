@@ -144,44 +144,33 @@
 
 /* error balloon */
 .fun-form .field .error {
-    background: url('/static/images/error-hat.gif') 0 0 no-repeat;
-    bottom: 30px;
+    background: #aaf3ff;
+    top: 25%;
+    transform: translateY(-50%);
     display: block;
     font-size: 12px;
-    padding-left: 65px;
-    padding-right: 10px;
-    padding-top: 25px;
+    padding: 1em 1.25em;
+    border-radius: 33% 25px;
     position: absolute;
     right: -15px;
-    width: 109px;
+    width: 115px;
+    z-index: 1;
+    text-align: center;
 }
 
-/* error balloon text */
-.fun-form .field .error-text {
+.fun-form .field .error::before {
+    content: '';
     display: block;
-    min-height: 36px;
-    position: relative;
-    z-index: 10;
-}
-
-/* error balloon bottom */
-.fun-form .field .bottoms {
-    background: url('/static/images/error-bottoms-white.gif') 0 0 no-repeat;
-    bottom: 10px;
-    display: block;
-    height: 44px;
+    width: 52px;
+    height: 22px;
+    background: url('/static/images/error-tail.svg') no-repeat;
     position: absolute;
-    right: -15px;
-    width: 184px;
+    bottom: calc(50% - 15px);
+    left: -48px;
 }
 
 @media screen and (min-width: 960px) {
-
     .fun-form .field .error {
-        right: -160px;
-    }
-    .fun-form .field .bottoms {
-        background-image: url('/static/images/error-bottoms.gif');
         right: -160px;
     }
 }
@@ -204,15 +193,4 @@
 .fun-form-stacked .field-help,
 .fun-form-stacked .field-submit {
     padding-left: 0;
-}
-
-.fun-form-stacked .field .bottoms,
-.fun-form-white .field .bottoms {
-    background-image: url('/static/images/error-bottoms-white.gif');
-}
-
-@media screen and (min-width: 960px) {
-    .fun-form-stacked.fun-form-border .field .bottoms {
-        background-image: url('/static/images/error-bottoms.gif');
-    }
 }
