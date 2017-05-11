@@ -78,6 +78,10 @@ class TermsOfUseHandler(BaseHandler):
     def get(self):
         return self.render("misc/terms-of-use.html")
 
+class CodeOfConductHandler(BaseHandler):
+    def get(self):
+        return self.render("misc/code-of-conduct.html")
+
 class AdBannerHandler(BaseHandler):
     def get(self):
         ads = [

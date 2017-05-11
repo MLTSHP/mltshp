@@ -217,6 +217,7 @@ routes = [
     #(r"/googlead81c5d028a3e443.html", handlers.misc.WebmasterToolsHandler),
     (r"/styleguide", handlers.misc.StyleguideHandler),
     (r"/terms-of-use", handlers.misc.TermsOfUseHandler),
+    (r"/code-of-conduct", handlers.misc.CodeOfConductHandler),
     (r"/healthy/is_healthy.php", handlers.misc.HAProxyHandler),
 
     (r"/popular", handlers.popular.IndexHandler),

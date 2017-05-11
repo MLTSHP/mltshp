@@ -54,8 +54,8 @@
       {% else %}
         {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
       <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}">
-        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this.parentNode)" />{% end %}
-        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this.parentNode)" />{% end %}
+        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
+        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
       </video>
         {% else %}
       <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
