@@ -26,20 +26,29 @@
     <meta name="theme-color" content="#ffffff">
 
     <script type="text/javascript">
-    function fallbackImage(video) {
-      var src = video.getAttribute('data-src');
-      var altText = video.getAttribute('data-alt');
-      var height = video.getAttribute('height');
-      var width = video.getAttribute('width');
+    function fallbackImage(source) {
+      // remove the bad video source
+      var video = source.parentNode;
+      video.removeChild(source);
 
-      var img = document.createElement('img');
-      img.setAttribute('src', src);
-      img.setAttribute('width', width);
-      img.setAttribute('height', height);
-      img.setAttribute('alt', altText);
+      var sources = video.querySelectorAll('source');
+      if (sources.length === 0) {
+        // no sources remain, so replace the video
+        // tag with the GIF fallback.
+        var src = video.getAttribute('data-src');
+        var altText = video.getAttribute('data-alt');
+        var height = video.getAttribute('height');
+        var width = video.getAttribute('width');
 
-      if (video.parentNode) {
-        video.parentNode.replaceChild(img, video);
+        var img = document.createElement('img');
+        img.setAttribute('src', src);
+        img.setAttribute('width', width);
+        img.setAttribute('height', height);
+        img.setAttribute('alt', altText);
+
+        if (video.parentNode) {
+          video.parentNode.replaceChild(img, video);
+        }
       }
     }
     </script>
