@@ -212,20 +212,9 @@ class ShowRawHandler(BaseHandler):
         if not share_key:
             raise tornado.web.HTTPError(404)
 
-        sharedfile = Sharedfile.get_by_share_key(share_key)
-        if not sharedfile:
+        self._sharedfile = Sharedfile.get_by_share_key(share_key)
+        if not self._sharedfile:
             raise tornado.web.HTTPError(404)
-
-        # check if we have logged in user.
-        user = self.get_current_user()
-        if user:
-            user_id = user['id']
-        else:
-            user_id = None
-
-        # count views, but not for the owner of the file
-        if sharedfile.user_id != user_id:
-            sharedfile.add_view(user_id)
 
         # determine if we are to serve via CDN or direct from S3:
         if self.request.host == ("s.%s" % options.app_host) and options.use_cdn:
@@ -253,7 +242,7 @@ class ShowRawHandler(BaseHandler):
             self.redirect(cdn_url)
         else:
             # piece together headers to be picked up by nginx to proxy file from S3
-            sourcefile = sharedfile.sourcefile()
+            sourcefile = self._sharedfile.sourcefile()
 
             content_type = None
 
@@ -269,7 +258,7 @@ class ShowRawHandler(BaseHandler):
                 content_type = "video/mp4"
             else:
                 file_path =  "originals/%s" % sourcefile.file_key
-                content_type = sharedfile.content_type
+                content_type = self._sharedfile.content_type
 
             authenticated_url = s3_authenticated_url(options.aws_key, options.aws_secret,
                 options.aws_bucket, file_path=file_path, seconds=3600)
@@ -279,9 +268,27 @@ class ShowRawHandler(BaseHandler):
             self.set_header("Surrogate-Control", "max-age=86400")
             self.set_header("X-Accel-Redirect", "/s3/%s?%s" % (file_path, query))
 
-        return
+    def on_finish(self):
+        """
+        We quickly return the redirect to the image, and using on_finish(),
+        log the view to the fileview table.
 
-    def head(self, share_key, format=None):
+        """
+        if not hasattr(self, "_sharedfile"):
+            return
+
+        # check if we have logged in user.
+        user = self.get_current_user()
+        if user:
+            user_id = user['id']
+        else:
+            user_id = None
+
+        # count views, but not for the owner of the file
+        if self._sharedfile.user_id != user_id:
+            self._sharedfile.add_view(user_id)
+
+    def head(self, share_key, format=""):
         if not share_key:
             raise tornado.web.HTTPError(404)
 
