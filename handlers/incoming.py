@@ -2,7 +2,7 @@ from lib.utilities import base36decode
 
 import tornado.web
 from base import BaseHandler, require_membership
-from models import User, Sharedfile
+from models import User, Sharedfile, notification
 
 
 class IncomingHandler(BaseHandler):
@@ -12,6 +12,9 @@ class IncomingHandler(BaseHandler):
         """
         path: /incoming
         """
+        current_user_obj = self.get_current_user_object()
+        notifications_count = notification.Notification.for_user_count(current_user_obj)
+
         older_link, newer_link = None, None
         sharedfile_id = None
         if base36_id:
@@ -23,16 +26,9 @@ class IncomingHandler(BaseHandler):
         elif sharedfile_id and before_or_after == 'after':
             after_id = sharedfile_id
 
-        #is this user's content filter on
-        nsfw_mode = self.get_secure_cookie('nsfw')
-        if nsfw_mode == '1':
-            filtering = False
-        else:
-            filtering = True
-
         # We're going to older, so ony use before_id.
         if before_id:
-            sharedfiles = Sharedfile.incoming(before_id=before_id,per_page=11, filter=filtering)
+            sharedfiles = Sharedfile.incoming(before_id=before_id,per_page=11)
             # we have nothing on this page, redirect to base incoming page.
             if len(sharedfiles) == 0:
                 return self.redirect('/incoming')
@@ -45,7 +41,7 @@ class IncomingHandler(BaseHandler):
 
         # We're going to newer
         elif after_id:
-            sharedfiles = Sharedfile.incoming(after_id=after_id, per_page=11, filter=filtering)
+            sharedfiles = Sharedfile.incoming(after_id=after_id, per_page=11)
             if len(sharedfiles) <= 10:
                 return self.redirect('/incoming')
             else:
@@ -54,11 +50,11 @@ class IncomingHandler(BaseHandler):
                 newer_link = "/incoming/after/%s" % sharedfiles[0].share_key
         else:
             # clean home page, only has older link
-            sharedfiles = Sharedfile.incoming(per_page=11, filter=filtering)
+            sharedfiles = Sharedfile.incoming(per_page=11)
             if len(sharedfiles) > 10:
                 older_link = "/incoming/before/%s" % sharedfiles[9].share_key
 
-        current_user_obj = self.get_current_user_object()
         return self.render("incoming/index.html", sharedfiles=sharedfiles[0:10],
             current_user_obj=current_user_obj,
-            older_link=older_link, newer_link=newer_link, filtering=filtering)
+            older_link=older_link, newer_link=newer_link,
+            notifications_count=notifications_count)
