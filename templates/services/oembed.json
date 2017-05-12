@@ -5,8 +5,13 @@
   "type": "link",
   "url": "{{sharedfile.source_url}}",
   {% else %}
+  {% if sourcefile.mp4_flag %}
+  "type": "video",
+  "html": "<video controls muted playsinline width=\"{{sourcefile.width}}\" height=\"{{sourcefile.height}}\"><source src=\"https://{{cdn_host}}/r/{{sharedfile.share_key}}.mp4\" type=\"video/mp4\"></video>",
+  {% else %}
   "type": "photo",
-  "url": "http://{{cdn_host}}/r/{{sharedfile.share_key}}",
+  "url": "https://{{cdn_host}}/r/{{sharedfile.share_key}}",
+  {% end %}
   {% end %}
   "width": {{sourcefile.width}},
   "height": {{sourcefile.height}},

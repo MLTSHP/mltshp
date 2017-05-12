@@ -208,7 +208,7 @@ class SharedFileTests(BaseAsyncTestCase):
             self.assertEqual(j['title'], '1.png')
             # pattern from oembed.json is...
             #    http://{{ cdn_host }}/r/{{sharedfile.share_key}}
-            self.assertEqual(j['url'], 'http://cdn-service.com/r/1')
+            self.assertEqual(j['url'], 'https://cdn-service.com/r/1')
 
         #test jsonp callback works
         sharedfile = Sharedfile.get('id = %s', 1)
