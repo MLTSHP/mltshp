@@ -64,7 +64,7 @@ class Pagination(UIModule):
 
 
 class Image(UIModule):
-    def render(self, sharedfile, current_user=None, list_view=False, show_attribution_in_title=True, shake=None):
+    def render(self, sharedfile, current_user=None, list_view=False, show_attribution_in_title=True, shake=None, filtering=None):
         can_delete = sharedfile.can_delete(current_user)
         can_edit = sharedfile.can_edit(current_user)
         can_favor = sharedfile.can_favor(current_user)
@@ -105,17 +105,20 @@ class Image(UIModule):
 
         #is this user's content filter on
         hide_nsfw = True
-        if current_user:
-            if current_user.show_naked_people == 1:
-                hide_nsfw = False
-            else:
-                hide_nsfw = True
+        if filtering is not None:
+            hide_nsfw = filtering
         else:
-            nsfw_mode = self.handler.get_secure_cookie('nsfw')
-            if nsfw_mode == '1':
-                hide_nsfw = False
+            if current_user:
+                if current_user.show_naked_people == 1:
+                    hide_nsfw = False
+                else:
+                    hide_nsfw = True
             else:
-                hide_nsfw = True
+                nsfw_mode = self.handler.get_secure_cookie('nsfw')
+                if nsfw_mode == '1':
+                    hide_nsfw = False
+                else:
+                    hide_nsfw = True
 
         # Used for determining the type of "save this" button
         has_multiple_shakes = False

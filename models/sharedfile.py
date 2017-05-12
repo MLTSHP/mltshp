@@ -659,14 +659,13 @@ class Sharedfile(ModelQueryCache, Model):
         return self.get("id = %s and deleted = 0", sharedfile_id)
 
     @classmethod
-    def incoming(self, before_id=None, after_id=None, per_page=10, filter=True):
+    def incoming(self, before_id=None, after_id=None, per_page=10):
         """
         Fetches the per_page amount of incoming files.  Filters out any files where
         the user is marked as nsfw.
         """
         constraint_sql = ""
         order = "desc"
-        nsfw_sql = ""
 
         if before_id:
             constraint_sql = "AND sharedfile.id < %s" % (int(before_id))
@@ -674,16 +673,14 @@ class Sharedfile(ModelQueryCache, Model):
             order = "asc"
             constraint_sql = "AND sharedfile.id > %s" % (int(after_id))
 
-        nsfw_sql = "AND user.nsfw = 0"
-
         select = """SELECT sharedfile.* FROM sharedfile, user
                     WHERE sharedfile.deleted = 0
                     AND sharedfile.parent_id = 0
                     AND sharedfile.original_id = 0
                     AND sharedfile.user_id = user.id
+                    AND user.nsfw = 0
                     %s
-                    %s
-                    ORDER BY id %s LIMIT %s""" % (nsfw_sql, constraint_sql, order, per_page)
+                    ORDER BY id %s LIMIT %s""" % (constraint_sql, order, per_page)
         files = self.object_query(select)
         if order == "asc":
             files.reverse()

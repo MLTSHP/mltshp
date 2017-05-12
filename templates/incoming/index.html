@@ -7,32 +7,29 @@
     </div>
 
     <div class="sidebar">
-      <h4>NSFW Filter</h4>
-      <p>
-        The incoming shake is open for all members to see. It&#146;s a public area of the site that you
-        might want to check out in a public place. Because of this, if you're posting super-NSFW stuff
-        to MLTSHP, we may set your images to not appear in Incoming.
-        <strong><em>The setting below doesn&#146;t affect your account in any other shake.</em></strong>
-      </p>
-      <p>
-        {% if filtering %}
-        <strong>The filter is ON.</strong>
-          <form method="post" id="nsfw-filter-button" action="/account/set-content-filter/off">
-            <a class="btn btn-secondary btn-shadow" href="">Turn it off</a>
-        {% else %}
-        <strong>The filter is OFF.</strong>
-          <form method="post" id="nsfw-filter-button" action="/account/set-content-filter/on">
-            <a class="btn btn-secondary btn-shadow" href="">Turn it on</a>
-        {% end %}
-        {{ xsrf_form_html() }}
-        </form>
-        <div class="clear"><!-- --></div>
-      </p>
-      <p>
-        While we don&#146;t think we can be 100% accurate on this, it&#146;s a small step to try to keep
-        the Incoming shake useful for the most people.
-      </p>
+    {% if notifications_count > 0 %}
+      <div class="notification-block notification-block-aggregate" id="notification-block-aggregate">
+        <div class="notification-block-hd">
+          Show {{notifications_count}} notification{% if notifications_count != 1 %}s{% end %}
+          <span class="caret"></span>
+        </div>
+      </div>
+    {% end %}
+
+      <div class="tip-block">
+        <h3>Did You Know?</h3>
+        <p>For shake views like this, you can use
+          your keyboard to view the next post (<tt>J</tt>),
+          previous post (<tt>K</tt>),
+          jump to the bottom of page (<tt>H</tt>)
+          (and another <tt>H</tt> at the bottom to go
+          to the "Older" page of posts),
+          jump to the top (<tt>L</tt>) (and another <tt>L</tt>
+          to go to the "Newer" page of posts).
+          <em>It's been that way for years.</em></p>
+      </div>
     </div>
+
     <div class="body">
       <div class="image-content-list meta hentry">
         {% for sharedfile in sharedfiles %}
@@ -42,12 +39,12 @@
       <div class="linear-navigation">
         <div class="older">
           {% if older_link %}
-            <a class="btn btn-secondary btn-shadow" href="{{ older_link }}">&laquo; Older</a>
+          <a class="btn btn-secondary btn-shadow" href="{{ older_link }}">&laquo; Older</a>
           {% end %}
         </div>
         <div class="newer">
           {% if newer_link %}
-            <a class="btn btn-secondary btn-shadow" href="{{ newer_link }}">Newer &raquo;</a>
+          <a class="btn btn-secondary btn-shadow" href="{{ newer_link }}">Newer &raquo;</a>
           {% end %}
         </div>
       </div>

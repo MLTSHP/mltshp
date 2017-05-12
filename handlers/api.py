@@ -556,14 +556,13 @@ class IncomingHandler(BaseHandler):
     @oauth2authenticated
     def get(self, before_or_after=None, pivot_id=None):
         user = User.get('id = %s', int(self.oauth2_user_id))
-        filtering = self.get_argument('filter_nsfw', True)
 
         if before_or_after == 'before':
-            sharedfiles = Sharedfile.incoming(before_id=pivot_id, filter=filtering)
+            sharedfiles = Sharedfile.incoming(before_id=pivot_id)
         elif before_or_after == 'after':
-            sharedfiles = Sharedfile.incoming(after_id=pivot_id, filter=filtering)
+            sharedfiles = Sharedfile.incoming(after_id=pivot_id)
         else:
-            sharedfiles = Sharedfile.incoming(filter=filtering)
+            sharedfiles = Sharedfile.incoming()
 
         incoming = []
         for sf in sharedfiles:

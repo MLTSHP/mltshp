@@ -23,19 +23,25 @@
 
     {{modules.ShakeFollow(follow_user=best_of_user, follow_shake=best_of_shake, current_user=current_user_obj, avatar_size=100, extended=True)}}
 
-    {% if current_user_obj and not current_user_obj.is_member() %}
+    {% if current_user_obj %}
+      {% if not current_user_obj.is_plus() %}
     <div class="upgrade-account-block">
       <div class="upgrade-account-block-content">
-        <h3><a href="/account/membership">Become a Member &raquo;</a></h3>
-        <p>Get <strong>100</strong> group shakes for just $2 per month and support MLTSHP!</p>
+        <h3><a href="/account/membership">Upgrade to Double Scoop Membership &raquo;</a></h3>
+        <p>Get <strong>100</strong> group shakes for just $2 per month!!</p>
+      </div>
+    </div>
+      {% end %}
+    {% else %}
+    <div class="upgrade-account-block">
+      <div class="upgrade-account-block-content">
+        <h3><a href="/create-account">Join MLTSHP! &raquo;</a></h3>
+        <p>Join MLTSHP, support the site and post something yourself!</p>
       </div>
     </div>
     {% end %}
-
-      <p>
-
-      </p>
   </div>
+
   <div class="body">
     <div class="image-content-list">
       {% for sharedfile in sharedfiles %}

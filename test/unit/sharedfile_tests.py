@@ -326,7 +326,7 @@ class SharedfileModelTests(BaseTestCase):
         self.user.save()
 
         # should return 10
-        incoming = Sharedfile.incoming(filter=False)
+        incoming = Sharedfile.incoming()
         self.assertEqual(len(incoming), 0)
 
 
