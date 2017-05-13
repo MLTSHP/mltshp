@@ -66,6 +66,21 @@
       <div class="meta-data">
         <h4>Post URL</h4>
         <p>https://mltshp.com/p/{{sharedfile.share_key}}</p>
+
+        {% if user_is_owner %}
+        <h4>Image URL</h4>
+        <p>https://mltshp-cdn.com/r/{{sharedfile.share_key}}</p>
+
+        {% if sourcefile.mp4_flag %}
+        <h4>MP4 Video</h4>
+        <p>https://mltshp-cdn.com/r/{{sharedfile.share_key}}.mp4</p>
+        {% end %}
+
+        {% if sourcefile.webm_flag %}
+        <h4>WebM Video</h4>
+        <p>https://mltshp-cdn.com/r/{{sharedfile.share_key}}.webm</p>
+        {% end %}
+        {% end %}
       </div>
       {% end %}
       <div class="clear"><!-- --></div>
@@ -129,7 +144,7 @@
       </form>
       {% end %}
 
-      {% if can_delete %}
+      {% if can_delete and not site_is_readonly %}
       <form method="post" action="/p/{{sharedfile.share_key}}/delete">
         {{ xsrf_form_html() }}
         <input type="submit" class="delete-post-text" id="delete-post-text" value="Delete This Post">
