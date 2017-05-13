@@ -137,9 +137,9 @@ def transcode_sharedfile(sharedfile_id):
 
     if not animated:
         os.unlink(input_file)
-        sourcefile.mp4_flag = 0
-        sourcefile.webm_flag = 0
-        sourcefile.save()
+        db = db_connect()
+        db.execute("UPDATE sourcefile SET mp4_flag=0, webm_flag=0 WHERE id=%s", sharedfile["source_id"])
+        db.close()
         return
 
     if options.use_workers:
