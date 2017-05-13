@@ -19,7 +19,7 @@ settings = {
     "debug_workers": False,
     "max_mb_per_month" : 300,
     "uploaded_files" : "/srv/mltshp.com/uploaded",
-    "use_workers": True,
+    "use_workers": False,
     "xsrf_cookies": True,
     "server_id": "mltshp-web-1",
 }
