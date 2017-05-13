@@ -136,6 +136,7 @@ def transcode_sharedfile(sharedfile_id):
         pass
 
     if not animated:
+        os.unlink(input_file)
         sourcefile.mp4_flag = 0
         sourcefile.webm_flag = 0
         sourcefile.save()
