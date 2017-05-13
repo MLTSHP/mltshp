@@ -1,4 +1,4 @@
-oop{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Your Account Settings{% end %}
 
@@ -131,9 +131,9 @@ oop{% extends "base.html" %}
               <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
             {% else %}
               <p>
-                You are currently using a Single Scoop account. If you'd like
+                You are currently using a free account. If you'd like
                 to support MLTSHP and get some nifty new benefits you can
-                <a href="/account/membership">upgrade to a Double Scoop account</a>.
+                <a href="/account/membership">upgrade to a paid account</a>.
               </p>
 
               {% if promotions and not site_is_readonly %}
