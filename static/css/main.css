@@ -1204,6 +1204,13 @@ iframe {
    - also used for payment thank you page.
 ---------------------------------------------- */
 
+.membership-friend {
+  width: 140px;
+  height: auto;
+  float: left;
+  margin-right: 20px;
+}
+
 .content-migrate,
 .content-membership {
   padding: 15px;
@@ -1249,17 +1256,13 @@ iframe {
 
 .membership-options--plan h2 {
   text-transform: uppercase;
+  color: #ff0081;
 }
 
 .membership-options--plan li {
   list-style: disc;
   margin-left: 1em;
   font-size: 20px;
-}
-
-.membership-options--plan.is-active {
-  border: 3px solid #ff0080;
-  border-radius: 8px;
 }
 
 @media screen and (min-width: 768px) {
@@ -1271,13 +1274,17 @@ iframe {
   .membership-options--plan {
     flex: 1;
   }
+
+  .membership-options--plan:first-child {
+    border-right: 3px solid #ff0081;
+  }
 }
 
-.membership-form {
+.membership-buttons {
   font-size: 23px;
 }
 
-.membership-form > * {
+.membership-buttons > * {
   display: block;
   margin: .5em 0;
   text-align: center;
@@ -1291,9 +1298,22 @@ iframe {
   }
 
   .membership-form--or {
-    padding: 20px 0;
+    margin-top: 20px;
+    margin-left: -40px;
+    background-color: #ff0081;
+    -webkit-border-radius: 1000px;
+    -moz-border-radius: 1000px;
+    border-radius: 1000px;
+    display: block;
+    color: #fff;
+    font-size: 32px;
+    text-align: center;
+    width: 80px;
+    height: 80px;
   }
-
+  .membership-form--or em {
+    font-style: normal;
+  }
 }
 
 .content-membership .subscribe-plan-quantity-wrapper {
