@@ -13,6 +13,7 @@ from models import Favorite, User, Sharedfile, Sourcefile, Comment, Shake, Exter
 import models
 from lib.utilities import s3_authenticated_url, uses_a_banned_phrase
 
+from tasks.transcode import transcode_sharedfile
 
 class SaveHandler(BaseHandler):
     """
@@ -244,7 +245,14 @@ class ShowRawHandler(BaseHandler):
             # piece together headers to be picked up by nginx to proxy file from S3
             sourcefile = self._sharedfile.sourcefile()
 
-            content_type = None
+            content_type = self._sharedfile.content_type
+
+            # create a task to transcode a sourcefile that has not been processed yet
+            # this will allow us to lazily transcode GIFs that have yet to be
+            # processed
+            if content_type == "image/gif" and options.use_workers:
+                if sourcefile.webm_flag is None or sourcefile.mp4_flag is None:
+                    transcode_sharedfile.delay_or_run(self._sharedfile.id)
 
             if format == "webm" and sourcefile.webm_flag == 1:
                 if sourcefile.webm_flag != 1:
@@ -258,7 +266,6 @@ class ShowRawHandler(BaseHandler):
                 content_type = "video/mp4"
             else:
                 file_path =  "originals/%s" % sourcefile.file_key
-                content_type = self._sharedfile.content_type
 
             authenticated_url = s3_authenticated_url(options.aws_key, options.aws_secret,
                 options.aws_bucket, file_path=file_path, seconds=3600)
