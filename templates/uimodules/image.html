@@ -42,23 +42,27 @@
 <div class="image-content">
   <div class="the-image">
     {% if is_nsfw and hide_nsfw %}
-      <div class="nsfw-cover" style="min-height: {{min_height}}px;">
-        <p>This may not be safe for viewing at work.</p>
-        <p><a href="/p/{{sharedfile.share_key}}">Click here to view</a></p>
-      </div>
+    <div class="nsfw-cover" style="min-height: {{min_height}}px;">
+      <p>This may not be safe for viewing at work.</p>
+      <p><a href="/p/{{sharedfile.share_key}}">Click here to view</a></p>
+    </div>
     {% else %}
       {% if sharedfile.type() == 'link' %}
-      <div class="data-wrapper">
-        {{sharedfile.render_data(user=current_user).replace('autoplay=0', '')}}
-      </div>
+    <div class="data-wrapper">
+      {{sharedfile.render_data(user=current_user).replace('autoplay=0', '')}}
+    </div>
       {% else %}
         {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
-      <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}">
-        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
-        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
-      </video>
+    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}">
+      {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
+      {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
+    </video>
         {% else %}
-      <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
+          {% if list_view %}
+    <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
+          {% else %}
+    <img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}">
+          {% end %}
         {% end %}
       {% end %}
     {% end %}

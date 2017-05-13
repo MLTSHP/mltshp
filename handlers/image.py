@@ -92,6 +92,7 @@ class ShowHandler(BaseHandler):
         heart_count = sharedfile.like_count
         can_delete = sharedfile.can_delete(current_user)
         can_comment = current_user and current_user.email_confirmed == 1 and not options.readonly
+        user_is_owner = current_user and current_user.id == sharedfile_owner.id
         in_these_shakes = sharedfile.shakes()
         if current_user:
             user_shakes = current_user.shakes(include_managed=True)
@@ -126,7 +127,8 @@ class ShowHandler(BaseHandler):
             sourcefile=sourcefile, in_these_shakes=in_these_shakes, user_shakes=user_shakes,
             add_to_shakes=add_to_shakes, can_add_to_shakes=can_add_to_shakes,
             can_comment=can_comment,
-            owner_twitter_account=owner_twitter_account)
+            owner_twitter_account=owner_twitter_account,
+            user_is_owner=user_is_owner)
 
 
 class ShowLikesHandler(BaseHandler):
