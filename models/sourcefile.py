@@ -170,7 +170,7 @@ class Sourcefile(ModelQueryCache, Model):
         except:
             return None
 
-        if url_parsed.hostname.lower() not in ['youtube.com', 'www.youtube.com', 'vimeo.com', 'www.vimeo.com', 'youtu.be', 'flickr.com', 'www.flickr.com', 'vine.co', 'www.vine.co']:
+        if url_parsed.hostname.lower() not in ['youtube.com', 'www.youtube.com', 'vimeo.com', 'www.vimeo.com', 'youtu.be', 'flic.kr', 'flickr.com', 'www.flickr.com', 'vine.co', 'www.vine.co']:
             return None
 
         oembed_url = None
@@ -180,9 +180,9 @@ class Sourcefile(ModelQueryCache, Model):
         elif url_parsed.hostname.lower() in ['vimeo.com', 'www.vimeo.com']:
             to_url = 'http://%s%s' % (url_parsed.hostname, url_parsed.path)
             oembed_url = 'http://vimeo.com/api/oembed.json?url=%s&maxwidth=550' % (url_escape(to_url))
-        elif url_parsed.hostname.lower() in ['flickr.com', 'www.flickr.com']:
+        elif url_parsed.hostname.lower() in ['flic.kr', 'flickr.com', 'www.flickr.com']:
             to_url = 'http://%s%s' % (url_parsed.hostname, url_parsed.path)
-            oembed_url = 'http://www.flickr.com/services/oembed/?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
+            oembed_url = 'https://www.flickr.com/services/oembed/?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['vine.co', 'www.vine.co']:
             clean_path = re.search('^(/v/[a-zA-Z0-9]+)', url_parsed.path)
             if clean_path and clean_path.group(1):

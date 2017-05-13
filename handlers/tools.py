@@ -311,7 +311,7 @@ class SaveVideoHandler(BaseHandler):
                 self.render("tools/save-video-error.html", message="We could not load the embed code for this file. Please contact support.")
                 return
         elif j_oembed['provider_name'] == "Flickr":
-            j_oembed['thumbnail_url'] = url
+            pass  # trust the thumbnail_url in the oembed
         elif j_oembed['provider_name'] == "Vine":
             clean_path = re.search('^(https?://vine.co/v/[a-zA-Z0-9]+)', url)
             if clean_path and clean_path.group(1):
@@ -331,21 +331,7 @@ class SaveVideoHandler(BaseHandler):
             self.render("tools/save-video-error.html", message="We could not load the thumbnail for this file and therefore could not save this video. Please contact support.")
             return
 
-        #if the thumbnail url needs to be extracted (Flickr) let's see if
-        # we got back HTML that points to the thumbnail
-        if self.oembed_doc['provider_name'] == "Flickr" and response.headers['Content-Type']=='text/html; charset=utf-8':
-            #if we're here, that means we need to extract the thumbnail and make a call to the actual jpg
-            s = re.search('<link rel="image_src" href="http://farm(\d).static.flickr.com/(\d+)/(\d+)_([a-zA-Z0-9]+)_m.jpg">', response.body)
-            try:
-                if s and s.group(0) and s.group(1) and s.group(2) and s.group(3) and s.group(4):
-                    self.oembed_doc['thumbnail_url'] = "http://farm%s.static.flickr.com/%s/%s_%s_b.jpg" % (s.group(1), s.group(2), s.group(3), s.group(4))
-                    request = HTTPRequest(self.oembed_doc['thumbnail_url'], 'GET')
-                    http = tornado.httpclient.AsyncHTTPClient()
-                    http.fetch(request,self.on_thumbnail_response)
-            except:
-                self.render("tools/save-video-error.html", message="We could not load the thumbnail for this file and therefore could not save this video. Please contact support.")
-                return
-        elif self.oembed_doc['provider_name'] == "Vine" and response.headers['Content-Type']=='text/html; charset=utf-8':
+        if self.oembed_doc['provider_name'] == "Vine" and response.headers['Content-Type']=='text/html; charset=utf-8':
             # if we're here, that means we need to extract the thumbnail and make a call to the actual jpg
             # use BeautfilSoup to parse for the title and meta tag. We'll do this bit of danger in a
             # try block and shrug if something bad happens
