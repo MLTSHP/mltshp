@@ -9,6 +9,7 @@ from celery.utils.log import get_task_logger
 from tasks import mltshp_task
 
 from ffmpy import FFmpeg
+from PIL import Image
 from lib.s3 import S3Bucket
 from boto.s3.key import Key
 
@@ -124,6 +125,22 @@ def transcode_sharedfile(sharedfile_id):
     key.key = "originals/%s" % sourcefile["file_key"]
     logger.info("Downloading original GIF from S3 for sourcefile %s..." % sharedfile["source_id"])
     key.get_contents_to_filename(input_file)
+
+    # Test to see if GIF is animated or not
+    animated = False
+    im = Image.open(input_file)
+    try:
+        im.seek(1) # skip to the second frame
+        animated = True
+    except EOFError:
+        pass
+
+    if not animated:
+        os.unlink(input_file)
+        db = db_connect()
+        db.execute("UPDATE sourcefile SET mp4_flag=0, webm_flag=0 WHERE id=%s", sharedfile["source_id"])
+        db.close()
+        return
 
     if options.use_workers:
         tasks = []
