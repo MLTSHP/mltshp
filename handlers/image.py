@@ -250,7 +250,7 @@ class ShowRawHandler(BaseHandler):
             # create a task to transcode a sourcefile that has not been processed yet
             # this will allow us to lazily transcode GIFs that have yet to be
             # processed
-            if content_type == "image/gif":
+            if content_type == "image/gif" and options.use_workers:
                 if sourcefile.webm_flag is None or source.mp4_flag is None:
                     transcode_sharedfile.delay_or_run(self._sharedfile.id)
 
