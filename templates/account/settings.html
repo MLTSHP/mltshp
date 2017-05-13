@@ -127,6 +127,7 @@
                   </li>
                 {% end %}
               </ol>
+
               <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
             {% else %}
               <p>
@@ -134,40 +135,17 @@
                 to support MLTSHP and get some nifty new benefits you can
                 <a href="/account/membership">upgrade to a paid account</a>.
               </p>
+
               {% if promotions and not site_is_readonly %}
-                <!-- THINKUP Web Bundle Promotion -->
                 <p>
                   We have an active promotion running now. To learn more about them and
                   to redeem a code, click this button:
                 </p>
                 <a class="btn btn-primary btn-shadow" href="/account/redeem">Redeem Code</a>
-                <!-- END THINKUP Promotion -->
               {% end %}
             {% end %}
           </div>
         </div>
-
-        {% if not site_is_readonly %}
-          <div class="archive-block">
-            <h3>Request Archive</h3>
-            <div class="archive-block-content">
-              {% if already_requested %}
-                <p>
-                  You have requested a zip file. It should take less than 24 hours
-                  to process. You will receive an email with a link.
-                </p>
-              {% else %}
-                <p>Press this button to request a zip file of all the images you have ever uploaded:</p>
-                <form method="POST" action="/account/image-request">
-                  {{ xsrf_form_html() }}
-                  <div class="field field-submit">
-                    <a class="btn btn-primary btn-shadow" href="">Request All Images</a>
-                  </div>
-                </form>
-              {% end %}
-            </div>
-          </div>
-        {% end %}
       </div>
     </div>
   </div>
