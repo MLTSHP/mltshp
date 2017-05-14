@@ -145,7 +145,7 @@ $(document).ready(function() {
               <span class="subscribe-plan-quantity-wrapper">
                 <i>$</i>
                 <input title="Enter a custom subscription amount, if you want" id="subscribe-plan-quantity" class="input-plan-quantity"
-                  type="number" min="24" max="500" step="1" name="quantity" value="24" pattern="[0-9]*">
+                  type="number" min="24" max="500" step="1" name="quantity" value="{{ current_plan_rate or "24" }}" pattern="[0-9]*">
               </span>
               <button id="subscribe-button-double-scoop"
                 class="subscription-button">Double Scoop</button>
