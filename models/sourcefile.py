@@ -170,7 +170,7 @@ class Sourcefile(ModelQueryCache, Model):
         except:
             return None
 
-        if url_parsed.hostname.lower() not in ['youtube.com', 'www.youtube.com', 'vimeo.com', 'www.vimeo.com', 'youtu.be', 'flic.kr', 'flickr.com', 'www.flickr.com', 'vine.co', 'www.vine.co']:
+        if url_parsed.hostname.lower() not in ['youtube.com', 'www.youtube.com', 'vimeo.com', 'www.vimeo.com', 'youtu.be', 'flic.kr', 'flickr.com', 'www.flickr.com']:
             return None
 
         oembed_url = None
@@ -183,15 +183,6 @@ class Sourcefile(ModelQueryCache, Model):
         elif url_parsed.hostname.lower() in ['flic.kr', 'flickr.com', 'www.flickr.com']:
             to_url = 'http://%s%s' % (url_parsed.hostname, url_parsed.path)
             oembed_url = 'https://www.flickr.com/services/oembed/?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
-        elif url_parsed.hostname.lower() in ['vine.co', 'www.vine.co']:
-            clean_path = re.search('^(/v/[a-zA-Z0-9]+)', url_parsed.path)
-            if clean_path and clean_path.group(1):
-                to_url = 'https://vine.co%s' % (clean_path.group(1))
-                iframe = """<iframe class="vine-embed" src="%s/embed/simple" """ \
-                    """width="480" height="480" frameborder="0">""" \
-                    """</iframe><script async src="//platform.vine.co/static/scripts/embed.js" """ \
-                    """charset="utf-8"></script>""" % to_url
-                oembed_url = 'data:text/json;charset=utf-8,{"provider_name":"Vine","title":"","html":"%s"}' % iframe.replace('"', '\\"')
         return oembed_url
 
     @staticmethod

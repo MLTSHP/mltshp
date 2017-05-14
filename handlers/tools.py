@@ -312,11 +312,6 @@ class SaveVideoHandler(BaseHandler):
                 return
         elif j_oembed['provider_name'] == "Flickr":
             pass  # trust the thumbnail_url in the oembed
-        elif j_oembed['provider_name'] == "Vine":
-            clean_path = re.search('^(https?://vine.co/v/[a-zA-Z0-9]+)', url)
-            if clean_path and clean_path.group(1):
-                url = clean_path.group(1)
-            j_oembed['thumbnail_url'] = url
 
         if self.request.method == "POST":
             self.oembed_doc = j_oembed
@@ -331,63 +326,42 @@ class SaveVideoHandler(BaseHandler):
             self.render("tools/save-video-error.html", message="We could not load the thumbnail for this file and therefore could not save this video. Please contact support.")
             return
 
-        if self.oembed_doc['provider_name'] == "Vine" and response.headers['Content-Type']=='text/html; charset=utf-8':
-            # if we're here, that means we need to extract the thumbnail and make a call to the actual jpg
-            # use BeautfilSoup to parse for the title and meta tag. We'll do this bit of danger in a
-            # try block and shrug if something bad happens
-            try:
-                soup = BeautifulSoup(response.body, convertEntities=BeautifulSoup.HTML_ENTITIES)
-                self.oembed_doc['title'] = soup.title.text
-                thumbnail = soup.find('meta', {"property": "og:image"})
-                if thumbnail:
-                    self.oembed_doc['thumbnail_url'] = thumbnail.attrMap['content']
+        # save the response
+        url = self.get_argument('url')
+        current_user = self.get_current_user_object()
 
-                    request = HTTPRequest(self.oembed_doc['thumbnail_url'], 'GET')
-                    http = tornado.httpclient.AsyncHTTPClient()
-                    http.fetch(request,self.on_thumbnail_response)
-                    return
+        sha1_key = Sourcefile.get_sha1_file_key(file_path=None, file_data=url)
+        thumbnail_path = "%s/%s" % (options.uploaded_files, sha1_key)
+        fh = open(thumbnail_path, 'wb')
+        fh.write(response.body)
+        fh.close()
+        source_file = Sourcefile.create_from_json_oembed(link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path)
+        #cleanup
+        if not options.debug:
+            try:
+                os.remove(thumbnail_path)
             except:
                 pass
-            # either we failed to find a thumbnail url, or an exception was raised
-            # while attempting to fetch.
-            self.render("tools/save-video-error.html", message="We could not load the thumbnail for this file and therefore could not save this video. Please contact support.")
-        else:
-            # save the response
-            url = self.get_argument('url')
-            current_user = self.get_current_user_object()
 
-            sha1_key = Sourcefile.get_sha1_file_key(file_path=None, file_data=url)
-            thumbnail_path = "%s/%s" % (options.uploaded_files, sha1_key)
-            fh = open(thumbnail_path, 'wb')
-            fh.write(response.body)
-            fh.close()
-            source_file = Sourcefile.create_from_json_oembed(link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path)
-            #cleanup
-            if not options.debug:
-                try:
-                    os.remove(thumbnail_path)
-                except:
-                    pass
+        title = ''
+        if self.oembed_doc.has_key('title'):
+            title = self.oembed_doc['title']
 
-            title = ''
-            if self.oembed_doc.has_key('title'):
-                title = self.oembed_doc['title']
+        shared_file = Sharedfile(user_id=current_user.id, name=url, content_type='text/html', source_id=source_file.id, title=title, source_url=url)
+        shared_file.save()
 
-            shared_file = Sharedfile(user_id=current_user.id, name=url, content_type='text/html', source_id=source_file.id, title=title, source_url=url)
-            shared_file.save()
+        share_key = base36encode(shared_file.id)
+        shared_file.share_key = share_key
+        shared_file.save()
 
-            share_key = base36encode(shared_file.id)
-            shared_file.share_key = share_key
-            shared_file.save()
+        user_shake = Shake.get('user_id = %s and type=%s', current_user.id, 'user')
+        shared_file.add_to_shake(self.destination_shake)
 
-            user_shake = Shake.get('user_id = %s and type=%s', current_user.id, 'user')
-            shared_file.add_to_shake(self.destination_shake)
+        if self.oembed_doc.has_key('description'):
+            shared_file.description = self.oembed_doc['description']
 
-            if self.oembed_doc.has_key('description'):
-                shared_file.description = self.oembed_doc['description']
-
-            self.write({'path' : "/p/%s" % (share_key)})
-            self.finish()
+        self.write({'path' : "/p/%s" % (share_key)})
+        self.finish()
 
     @tornado.web.asynchronous
     @tornado.web.authenticated
