@@ -3,5 +3,5 @@
 	<ShortName>mltshp</ShortName>
 	<Description>MLTSHP! Share and find interesting photos, images, animated gifs, icons, and memes from the web.</Description>
 	<InputEncoding>UTF-8</InputEncoding>
-	<Image height="16" width="16" type="image/x-icon">http://new.mltshp.com/favicon.ico</Image>
+	<Image height="16" width="16" type="image/x-icon">https://mltshp.com/favicon.ico</Image>
 </OpenSearchDescription>
