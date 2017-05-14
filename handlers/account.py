@@ -643,6 +643,9 @@ class CreateAccountHandler(BaseHandler):
 
         if not has_errors:
             try:
+                # create form asserts the user agress to terms of use
+                new_user.tou_agreed = 1
+
                 if new_user.save():
                     if options.postmark_api_key:
                         # i'd like to NOT invalidate_email in the
