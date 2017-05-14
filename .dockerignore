@@ -1,2 +1,13 @@
+.git
 env
 mounts
+*.pyc
+settings.py
+celeryconfig.py
+.eggs/
+build/
+html/
+pip-log.txt
+.DS_Store
+*.swp
+.deploy.env
