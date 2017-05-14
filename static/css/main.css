@@ -4375,7 +4375,7 @@ span.previous-link {
   display: block;
 }
 
-.shake-image input {
+.shake-image .shake-image-input {
   top: 0;
   left: 0;
   position: absolute;
@@ -4386,6 +4386,7 @@ span.previous-link {
   cursor: pointer;
   width: 100%;
   height: 100%;
+  z-index: 1;
 }
 
 .shake-image .border {
