@@ -68,10 +68,11 @@ RUN mkdir -p /mnt/tmpuploads/0 && \
     mkdir -p /srv/mltshp.com/logs && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
-COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf
-COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 COPY requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+
+COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf
+COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 
 # NOTE: /srv/mltshp.com/logs should be a mounted volume for this image
 ADD . /srv/mltshp.com/mltshp

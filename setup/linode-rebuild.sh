@@ -104,7 +104,7 @@ function rebuild_node() {
         if [ -n "$status" ]; then
             while true; do
                 echo -n '.'
-                status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 443 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
+                status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 443 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"443\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
                 if [ -n "$status" ]; then
                     echo 'UP'; break;
                 fi
