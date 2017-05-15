@@ -70,35 +70,40 @@ $(document).ready(function() {
 
 {% block main %}
   <div class="content content-membership">
-    <img class="membership-friend" src="{{ static_url("images/membership-friend.svg") }}">
 
-    <h1>MLTSHP Membership</h1>
+    <header class="membership-header">
+      <div class="membership-header--illustration">
+        <img class="membership-friend" src="{{ static_url("images/membership-friend.svg") }}">
+      </div>
+      <div class="membership-header--content">
+        <h1>MLTSHP Membership</h1>
+        <h2>MLTSHP is community-supported.</h2>
+        <p>
+          We offer two membership levels that unlock abilities on the site.
+          Questions? Please see our <a href="/faq">FAQ</a> page.
+        </p>
+      </div>
+    </header>
 
-    <h2>MLTSHP is community-supported.</h2>
-
-    <p>
-      We offer two membership levels that unlock abilities on the site.
-      Questions? Please see our <a href="/faq">FAQ</a> page.</p>
-
-    <div class="clear"><!-- --></div>
-
-    <form class="membership-form" id="membership-form" action="/account/membership" method="POST">
+    <form class="fun-form fun-form-stacked membership-form" id="membership-form" action="/account/membership" method="POST">
       {{ xsrf_form_html() }}
       <input id="subscribe-token" type="hidden" name="token" value="">
       <input id="subscribe-plan-id" type="hidden" name="plan_id" value="">
 
-      <div class="membership-options">
+      <div class="membership-options {% if current_plan %}is-active-member{% end %}">
 
-        <div class="membership-options--plan">
+        <div class="membership-options--plan {% if current_plan == 'mltshp-single' %}is-active-plan{% end %}">
           {% if current_plan == "mltshp-single" %}
-            <button type="button" class="btn btn-success btn-pastel">Your Current Plan</button>
+            <span class="label label-success label-pastel">Your Current Plan</span>
           {% end %}
 
-          <h2>Single Scoop</h2>
-
-          <p><small><em>Roughly equivalent to MLKSHK's free account.</em></small></p>
+          <h3 class="membership-options--plan-title">Single Scoop</h3>
+          <p>Roughly equivalent to MLKSHK's free account.</p>
 
           <h3>Only $3/year</h3>
+          <p class="membership-options--plan-tagline">
+            A nice way to help support MLTSHP and feel great about it.
+          </p>
 
           <ul>
             <li>Bask in the warm glow of supporting MLTSHP.</li>
@@ -107,59 +112,64 @@ $(document).ready(function() {
             <li>Follow interesting people &amp; group shakes.</li>
           </ul>
 
-          <div class="membership-buttons">
-            <span>
-              <button id="subscribe-button-single-scoop"
-                class="subscription-button">Single Scoop</button>
-            </span>
+          <div class="field field-submit">
+            <button id="subscribe-button-single-scoop"
+              class="btn btn-primary btn-shadow btn-large">Single Scoop</button>
           </div>
-
         </div>
 
-        <div class="membership-form--or">
-          <em>or</em>
+        <div class="membership-options--or">
+          <div class="membership-options--or-bullet">
+            <span>or</span>
+          </div>
         </div>
 
-        <div class="membership-options--plan">
+        <div class="membership-options--plan {% if current_plan == 'mltshp-double' %}is-active-plan{% end %}">
           {% if current_plan == "mltshp-double" %}
-            <button type="button" class="btn btn-success btn-pastel">Your Current Plan</button>
+            <span class="label label-success label-pastel">Your Current Plan</span>
           {% end %}
 
-          <h2>Double Scoop</h2>
-
-          <p><small><em>Roughly equivalent to MLKSHK's Pro account.</em></small></p>
+          <h3 class="membership-options--plan-title">Double Scoop</h3>
+          <p>Roughly equivalent to MLKSHK's Pro account.</p>
 
           <h3>Only $24/year</h3>
-          <p>Or enter a custom amount below if you'd like to give more support.</p>
+          <p class="membership-options--plan-tagline">
+            Or enter a custom amount below if you'd like to give more support.
+          </p>
 
           <ul>
             <li>All the benefits of a Single Scoop membership.</li>
             <li>Create up to 100 group shakes!</li>
-            <li>RSS feeds for your shakes.</li>
             <li>Invite your friends to post to your group shakes.</li>
-            <li>Appear more attractive to other MLTSHP users!&nbsp;<img alt="" src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center"></li>
+            <li>RSS feeds for your shakes.</li>
+            <li>
+              Appear more attractive to other MLTSHP users with a fancy
+              <img alt="" src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12">
+              on your profile.
+            </li>
           </ul>
 
-          <div class="membership-buttons">
-            <span>
-              <span class="subscribe-plan-quantity-wrapper">
-                <i>$</i>
-                <input title="Enter a custom subscription amount, if you want" id="subscribe-plan-quantity" class="input-plan-quantity"
-                  type="number" min="24" max="500" step="1" name="quantity" value="{{ current_plan_rate or "24" }}" pattern="[0-9]*">
-              </span>
-              <button id="subscribe-button-double-scoop"
-                class="subscription-button">Double Scoop</button>
-            </span>
+          <div class="field subscribe-plan-quantity-wrapper">
+            <span class="field--currency-label">$</span>
+            <input title="Enter a custom subscription amount, if you want"
+              id="subscribe-plan-quantity" class="input-text input-plan-quantity"
+              type="number" min="24" max="500" step="1" name="quantity"
+              value="{{ current_plan_rate or "24" }}" pattern="[0-9]*">
+          </div>
+
+          <div class="field field-submit">
+            <button id="subscribe-button-double-scoop"
+              class="btn btn-primary btn-shadow btn-large">Double Scoop</button>
           </div>
         </div>
+      </div>
+    </form>
 
-      </form>
-
-    </div>
-
-    <p class="fine-print">
-      We use Stripe to process subscriptions. After payment, you'll be brought
-      back to your freshly made MLTSHP Paid Account.
-    </p>
+    <footer class="membership-footer">
+      <p class="fine-print">
+        We use Stripe to process subscriptions. After payment, you'll be brought
+        back to your freshly made MLTSHP Paid Account.
+      </p>
+    </footer>
   </div>
 {% end %}
