@@ -35,9 +35,9 @@ RUN groupadd ubuntu --gid=1010 && \
 RUN mkdir -p /srv/mltshp.com/logs && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
-COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 COPY requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 
 # NOTE: /srv/mltshp.com/logs should be a mounted volume for this image
 ADD . /srv/mltshp.com/mltshp
