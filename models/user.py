@@ -62,6 +62,7 @@ class User(ModelQueryCache, Model):
     disable_notifications = Property(default=0)
     stripe_customer_id = Property()
     stripe_plan_id = Property()
+    stripe_plan_rate = Property()
     created_at = Property()
     updated_at = Property()
 
@@ -92,7 +93,6 @@ class User(ModelQueryCache, Model):
         if len(self.errors) > 0:
             return False
         self._set_dates()
-        self.tou_agreed = True
         return super(User, self).save(*args, **kwargs)
 
     def on_create(self):

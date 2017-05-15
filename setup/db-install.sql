@@ -67,6 +67,7 @@ CREATE TABLE `user` (
   `reset_password_token` varchar(40) DEFAULT NULL,
   `stripe_customer_id` varchar(40) DEFAULT NULL,
   `stripe_plan_id` varchar(40) DEFAULT NULL,
+  `stripe_plan_rate` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -434,3 +435,9 @@ CREATE TABLE `migration_state` (
     `user_id` int(11) NOT NULL PRIMARY KEY,
     `is_migrated` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `_yoyo_migration` (
+    `id` varchar(255) NOT NULL,
+    `ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

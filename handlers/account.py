@@ -171,8 +171,7 @@ class SettingsHandler(BaseHandler):
             payments = PaymentLog.last_payments(count=3, user_id = user.id)
 
         already_requested = self.get_secure_cookie("image_request")
-        cancel_flag = self.get_argument('cancel', 0)
-        cancel_flag = self.get_argument('cancel', 0)
+        cancel_flag = "canceled" in (user.stripe_plan_id or "")
         migrated_flag = self.get_argument('migrated', 0)
 
         promotions = Promotion.active()
@@ -644,6 +643,9 @@ class CreateAccountHandler(BaseHandler):
 
         if not has_errors:
             try:
+                # create form asserts the user agress to terms of use
+                new_user.tou_agreed = 1
+
                 if new_user.save():
                     if options.postmark_api_key:
                         # i'd like to NOT invalidate_email in the
@@ -948,6 +950,10 @@ class MembershipHandler(BaseHandler):
         payment_log.save()
         current_user.is_paid = 1
         current_user.stripe_plan_id = plan_id
+        if plan_id == "mltshp-double":
+            current_user.stripe_plan_rate = quantity
+        else:
+            current_user.stripe_plan_rate = None
 
         if current_user.stripe_customer_id != customer.id:
             current_user.stripe_customer_id = customer.id
@@ -973,6 +979,7 @@ class MembershipHandler(BaseHandler):
         current_user = self.get_current_user_object()
         return self.render('account/membership.html',
             current_plan=current_user.stripe_plan_id,
+            current_plan_rate=current_user.stripe_plan_rate,
             stripe_customer_id=current_user.stripe_customer_id,
             stripe_public_key=options.stripe_public_key)
 
@@ -1014,6 +1021,9 @@ class PaymentCancelHandler(BaseHandler):
                     subscription = customer.subscriptions.data[0]
                     if subscription:
                         subscription.delete(at_period_end=True)
+                        user.stripe_plan_id = user.stripe_plan_id + "-canceled"
+                        user.stripe_plan_rate = None
+                        user.save()
 
                         if options.postmark_api_key:
                             pm = postmark.PMMail(api_key=options.postmark_api_key,

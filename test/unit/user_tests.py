@@ -535,7 +535,6 @@ class UserModelTests(BaseTestCase):
         self.user.delete()
         user = User.get('name=%s', 'example')
         self.assertEqual(user.email, 'deleted-%s@mltshp.com' % (user.id))
-        self.assertEqual(user.tou_agreed, 1)
         self.assertEqual(user.hashed_password, 'deleteduseracct')
         self.assertEqual(user.about, '')
         self.assertEqual(user.website, '')
