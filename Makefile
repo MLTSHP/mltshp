@@ -1,4 +1,4 @@
-.PHONY: init-dev run shell test destroy migrate
+.PHONY: init-dev run shell test destroy migrate mysql
 
 init-dev:
 	cp settings.example.py settings.py
@@ -23,3 +23,6 @@ destroy:
 
 migrate:
 	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"
+
+mysql:
+	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"

@@ -115,7 +115,18 @@
           <h3>Membership Status</h3>
           <div class="member-status-block-content">
             {% if user.is_paid %}
+              {% if cancel_flag %}
+              <h4>You have canceled your subscription, but it will remain active
+                until the end of your subscription term.</h4>
+              <p>View the <a href="/account/membership">Membership</a> page if you would
+                like to resubscribe.</p>
+              {% else %}
               <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
+                {% if user.stripe_plan_id == "mltshp-double" and user.stripe_plan_rate > 24 %}
+              <p>You subscribe at a custom rate of ${{ user.stripe_plan_rate }}/year.
+                <em>Thank you for your added support.</em></p>
+                {% end %}
+              {% end %}
 
               <p>Your last 3 payments or credits:</p>
               <ol class="transaction-list">
@@ -128,7 +139,9 @@
                 {% end %}
               </ol>
 
+              {% if not cancel_flag %}
               <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
+              {% end %}
             {% else %}
               <p>
                 You are currently using a free account. If you'd like
