@@ -3,15 +3,15 @@
 {% block included_headers %}
 <link rel="alternate"
       type="application/json+oembed"
-      href="http://new.mltshp.com/services/oembed?url=http%3A//new.mltshp.com/p/{{sharedfile.share_key}}"
+      href="https://mltshp.com/services/oembed?url=https%3A//mltshp.com/p/{{sharedfile.share_key}}"
       title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
 <link rel="alternate"
       type="application/javascript+oembed"
-      href="http://new.mltshp.com/services/oembed?url=http%3A//new.mltshp.com/p/{{sharedfile.share_key}}&amp;jsoncallback={{jsonp}}"
+      href="https://mltshp.com/services/oembed?url=https%3A//mltshp.com/p/{{sharedfile.share_key}}&amp;jsoncallback={{jsonp}}"
       title="{{escape(sharedfile.get_title())}} shared by {{escape(sharedfile_owner.name)}}">
 
 <meta name="thumbnail" content="{{thumb_url}}">
-<meta name="twitter:url" content="http://new.mltshp.com/p/{{sharedfile.share_key}}">
+<meta name="twitter:url" content="https://mltshp.com/p/{{sharedfile.share_key}}">
 <meta property="og:site_name" content="MLTSHP">
 <meta property="og:title" content="{{escape(sharedfile.get_title())}}">
 <meta property="og:description" content="{{escape(sharedfile.get_description())}}">
@@ -21,7 +21,7 @@
 {% end %}
 {% if sourcefile.type == 'image' %}
 <meta property="twitter:card" content="photo">
-<meta property="og:image" content="http://s.new.mltshp.com/r/{{sharedfile.share_key}}">
+<meta property="og:image" content="https://s.mltshp.com/r/{{sharedfile.share_key}}">
 <meta property="og:image:type" content="image/{{sharedfile.content_type}}">
 <meta property="og:image:width" content="{{sourcefile.width}}">
 <meta property="og:image:height" content="{{sourcefile.height}}">
@@ -127,13 +127,13 @@
 
       <ul class="permalink-social">
         <li class="stumbleupon">
-          <a target="_blank" href="http://www.stumbleupon.com/badge?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}" onclick="window.open('http://www.stumbleupon.com/badge?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/stumbleupon.png") }}" width="21" height="21" alt="StumbleUpon"></a>
+          <a target="_blank" href="http://www.stumbleupon.com/badge?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key))}}" onclick="window.open('http://www.stumbleupon.com/badge?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/stumbleupon.png") }}" width="21" height="21" alt="StumbleUpon"></a>
         </li>
         <li class="twitter">
-          <a target="_blank" href="http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
+          <a target="_blank" href="http://twitter.com/share?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('http://twitter.com/share?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
         </li>
         <li class="facebook">
-          <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key))}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{url_escape('http://new.mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/fb_icon.png") }}" width="21" height="21" alt="Post to Facebook"></a>
+          <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key))}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/fb_icon.png") }}" width="21" height="21" alt="Post to Facebook"></a>
         </li>
       </ul>
 
@@ -218,9 +218,9 @@
         {
           method: "feed",
           name: {{json_encode(sharedfile.get_title())}},
-          link: "http://new.mltshp.com/p/{{sharedfile.share_key}}",
+          link: "https://mltshp.com/p/{{sharedfile.share_key}}",
           {% if sourcefile.type == 'image' %}
-          picture: "http://s.new.mltshp.com/r/{{sharedfile.share_key}}",
+          picture: "https://s.mltshp.com/r/{{sharedfile.share_key}}",
           {% else %}
           picture: "{{thumb_url}}",
           {% end %}

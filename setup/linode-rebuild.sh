@@ -56,6 +56,14 @@ function rebuild_node() {
         --name "$NODE_NAME" \
         --mode "reject" > /dev/null
 
+    linode nodebalancer \
+        $LINODE_USER_ARG \
+        --action node-update \
+        --label "$NODEBALANCER_NAME" \
+        --port 443 \
+        --name "$NODE_NAME" \
+        --mode "reject" > /dev/null
+
     echo "Rebuilding $NODE_NAME..."
 
     # Switch status of node to 'drain' to re-enable availability checks...
@@ -64,6 +72,15 @@ function rebuild_node() {
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
+        --name "$NODE_NAME" \
+        --mode "drain" > /dev/null
+
+    # Switch status of node to 'drain' to re-enable availability checks...
+    linode nodebalancer \
+        $LINODE_USER_ARG \
+        --action node-update \
+        --label "$NODEBALANCER_NAME" \
+        --port 443 \
         --name "$NODE_NAME" \
         --mode "drain" > /dev/null
 
@@ -80,11 +97,20 @@ function rebuild_node() {
     echo -n "Waiting for node availability..."
     sleep 60
 
+    # Wait for availability of node on both port 80 and 443
     while true; do
         echo -n '.'
         status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
         if [ -n "$status" ]; then
-            echo 'UP'; break;
+            while true; do
+                echo -n '.'
+                status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 443 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
+                if [ -n "$status" ]; then
+                    echo 'UP'; break;
+                fi
+                sleep 10
+            done
+            break
         fi
         sleep 10
     done
@@ -96,6 +122,14 @@ function rebuild_node() {
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
+        --name "$NODE_NAME" \
+        --mode "accept" > /dev/null
+
+    linode nodebalancer \
+        $LINODE_USER_ARG \
+        --action node-update \
+        --label "$NODEBALANCER_NAME" \
+        --port 443 \
         --name "$NODE_NAME" \
         --mode "accept" > /dev/null
 
@@ -139,7 +173,7 @@ function slackpost {
     fi
 }
 
-slackpost "#operations" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME..."
+slackpost "#operations" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME (Git master is: $GITHUB_COMMIT_SHA)..."
 
 # Also rebuild the worker node with latest docker image...
 rebuild_worker "mltshp-worker-1"
@@ -149,6 +183,6 @@ do
     rebuild_node $node
 done
 
-slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production."
+slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production (Git master is: $GITHUB_COMMIT_SHA)."
 
 echo "All nodes rebuilt!"
