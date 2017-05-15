@@ -11,6 +11,9 @@ import torndb
 import postmark
 from recaptcha.client import captcha
 
+from lib.s3 import S3Bucket
+from boto.s3.key import Key
+from boto.exception import StorageResponseError
 from base import BaseHandler, require_membership
 from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
     App, PaymentLog, Voucher, Promotion, MigrationState
@@ -383,6 +386,17 @@ class SignInHandler(BaseHandler):
                 # undelete the user account and log them in...
                 unmigrated_user.deleted = 0
                 unmigrated_user.save()
+
+                try:
+                    # make userpic public
+                    bucket = S3Bucket()
+                    k = Key(bucket)
+                    k.key = "account/%s/profile.jpg" % (unmigrated_user.id)
+                    k.set_acl('public-read')
+                except StorageResponseError as e:
+                    # possible the user hasn't uploaded a profile image;
+                    # just ignore any missing key kind of errors
+                    pass
 
                 # also, find their personal shake and restore that
                 # specifically. does not restore any images within it--
@@ -862,14 +876,11 @@ class MembershipHandler(BaseHandler):
             token_id = self.get_argument("token")
             if token_id is None:
                 # invalid request
-                raise "Invalid request"
+                raise Exception("Invalid request")
 
         plan_id = self.get_argument("plan_id")
-        if plan_id is None:
-            # invalid request
-            raise "Invalid request"
         if plan_id not in ("mltshp-single", "mltshp-double"):
-            raise "Invalid request"
+            raise Exception("Invalid request")
 
         quantity = 1
         if plan_id == "mltshp-double":

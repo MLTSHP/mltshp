@@ -16,7 +16,7 @@ $(document).ready(function() {
     }
   });
 
-  $('#subscribe-button-single-scoop').bind('click', function(e) {
+  $('#subscribe-button-single-scoop').click(function(e) {
     e.preventDefault();
     $('#subscribe-plan-id').val('mltshp-single');
     {% if stripe_customer_id == None %}
@@ -29,20 +29,21 @@ $(document).ready(function() {
     {% else %}
     $('#membership-form').submit();
     {% end %}
+    return false;
   });
 
-  $('#subscribe-button-double-scoop').bind('click', function(e) {
+  $('#subscribe-button-double-scoop').click(function(e) {
     e.preventDefault();
 
     $('#subscribe-plan-id').val('mltshp-double');
-    var quantity = Math.floor(parseInt($('#subscribe-plan-quantity').val(), 10));
+    var quantity = Math.floor(parseInt($('#input-plan-quantity').val(), 10));
     if (quantity < 24) {
       alert("Minimum amount for a Double Scoop membership is $24/year.");
-      return;
+      return false;
     }
     if (quantity >= 100) {
       if (!confirm('Are you sure? That\'s a lot of money!')) {
-        return;
+        return false;
       }
     }
     $('#subscribe-plan-quantity').val(quantity.toString());
@@ -57,6 +58,7 @@ $(document).ready(function() {
     {% else %}
     $('#membership-form').submit();
     {% end %}
+    return false;
   });
 
   // Close Checkout on page navigation
@@ -85,10 +87,14 @@ $(document).ready(function() {
       </div>
     </header>
 
-    <form class="fun-form fun-form-stacked membership-form" id="membership-form" action="/account/membership" method="POST">
+    <form id="membership-form" action="/account/membership" method="POST">
       {{ xsrf_form_html() }}
       <input id="subscribe-token" type="hidden" name="token" value="">
       <input id="subscribe-plan-id" type="hidden" name="plan_id" value="">
+      <input id="subscribe-plan-quantity" type="hidden" name="quantity" value="">
+    </form>
+
+    <div class="fun-form fun-form-stacked membership-form">
 
       <div class="membership-options {% if current_plan %}is-active-member{% end %}">
 
@@ -113,7 +119,7 @@ $(document).ready(function() {
           </ul>
 
           <div class="field field-submit">
-            <button id="subscribe-button-single-scoop"
+            <button id="subscribe-button-single-scoop" type="button"
               class="btn btn-primary btn-shadow btn-large">Single Scoop</button>
           </div>
         </div>
@@ -152,18 +158,18 @@ $(document).ready(function() {
           <div class="field subscribe-plan-quantity-wrapper">
             <span class="field--currency-label">$</span>
             <input title="Enter a custom subscription amount, if you want"
-              id="subscribe-plan-quantity" class="input-text input-plan-quantity"
+              id="input-plan-quantity" class="input-text input-plan-quantity"
               type="number" min="24" max="500" step="1" name="quantity"
               value="{{ current_plan_rate or "24" }}" pattern="[0-9]*">
           </div>
 
           <div class="field field-submit">
-            <button id="subscribe-button-double-scoop"
+            <button id="subscribe-button-double-scoop" type="button"
               class="btn btn-primary btn-shadow btn-large">Double Scoop</button>
           </div>
         </div>
       </div>
-    </form>
+    </div>
 
     <footer class="membership-footer">
       <p class="fine-print">
