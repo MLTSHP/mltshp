@@ -3,9 +3,6 @@ from torndb import Connection
 from tornado.options import options
 
 from tasks import mltshp_task
-from lib.s3 import S3Bucket
-from boto.s3.key import Key
-from boto.exception import StorageResponseError
 
 
 @mltshp_task()
@@ -37,24 +34,5 @@ def migrate_for_user(user_id=0, **kwargs):
     # via a script
     db.execute("""UPDATE user SET deleted=0 WHERE deleted=2 and id=%s""", user_id)
     db.execute("""UPDATE migration_state SET is_migrated=1 WHERE user_id=%s""", user_id)
-
-    shake_names = db.query("""SELECT name FROM shake WHERE user_id=%s AND deleted=0""", user_id)
-
-    # Mark all the shake images a public-read on S3
-    bucket = S3Bucket()
-    for shake in shake_names:
-        try:
-            k = Key(bucket)
-            k.key = "account/%s/shake_%s_small.jpg" % (user_id, shake["name"])
-            k.set_acl('public-read')
-        except StorageResponseError as e:
-            pass
-
-        try:
-            k = Key(bucket)
-            k.key = "account/%s/shake_%s.jpg" % (user_id, shake["name"])
-            k.set_acl('public-read')
-        except StorageResponseError as e:
-            pass
 
     db.close()
