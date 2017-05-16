@@ -285,6 +285,8 @@ class ShowRawHandler(BaseHandler):
         """
         if not hasattr(self, "_sharedfile"):
             return
+        if self._sharedfile is None:
+            return
 
         # check if we have logged in user.
         user = self.get_current_user()
@@ -296,6 +298,8 @@ class ShowRawHandler(BaseHandler):
         # count views, but not for the owner of the file
         if self._sharedfile.user_id != user_id:
             self._sharedfile.add_view(user_id)
+
+        self._sharedfile = None
 
     def head(self, share_key, format=""):
         if not share_key:

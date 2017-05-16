@@ -862,14 +862,11 @@ class MembershipHandler(BaseHandler):
             token_id = self.get_argument("token")
             if token_id is None:
                 # invalid request
-                raise "Invalid request"
+                raise Exception("Invalid request")
 
         plan_id = self.get_argument("plan_id")
-        if plan_id is None:
-            # invalid request
-            raise "Invalid request"
         if plan_id not in ("mltshp-single", "mltshp-double"):
-            raise "Invalid request"
+            raise Exception("Invalid request")
 
         quantity = 1
         if plan_id == "mltshp-double":

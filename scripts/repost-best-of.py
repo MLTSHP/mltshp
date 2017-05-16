@@ -22,7 +22,9 @@ def main():
     for magicfile in magicfiles:
         if magicfile.sharedfile_id in sharedfile_ids:
             break
-        to_add.insert(0, magicfile.sharedfile())
+        sf = magicfile.sharedfile()
+        if sf and sf.deleted == 0:
+            to_add.insert(0, magicfile.sharedfile())
 
     for sharedfile in to_add:
         sharedfile.save_to_shake(user)
