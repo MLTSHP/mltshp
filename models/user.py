@@ -927,7 +927,7 @@ hello@mltshp.com
         """
         Return a randomized list of users that have recommended flag set.
         """
-        return self.where("recommended = 1 order by rand() limit %s", limit)
+        return self.where("recommended = 1 and deleted = 0 order by rand() limit %s", limit)
 
     @classmethod
     def recommended_for_user(self, user):
@@ -941,7 +941,7 @@ hello@mltshp.com
                 on shake.user_id = user.id and shake.deleted=0
                 left join subscription
                 on subscription.shake_id = shake.id
-                where subscription.user_id  = %s and subscription.deleted=0
+                where user.deleted = 0 and subscription.user_id  = %s and subscription.deleted=0
         """
         following = self.query(following_sql, user.id)
         following = [somebody['id'] for somebody in following]
