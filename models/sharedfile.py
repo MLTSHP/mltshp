@@ -246,7 +246,7 @@ class Sharedfile(ModelQueryCache, Model):
         oembed = escape.json_decode(source.data)
         if store_view:
             self.add_view(user_id)
-        return oembed['html']
+        return (oembed['html'] or "").replace('http://', 'https://')
 
     def as_json(self, user_context=None):
         """
