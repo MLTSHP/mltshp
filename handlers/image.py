@@ -256,7 +256,7 @@ class ShowRawHandler(BaseHandler):
                 if sourcefile.webm_flag is None or sourcefile.mp4_flag is None:
                     transcode_sharedfile.delay_or_run(self._sharedfile.id)
 
-            if format == "webm" and sourcefile.webm_flag == 1:
+            if format == "webm":
                 if sourcefile.webm_flag != 1:
                     raise tornado.web.HTTPError(404)
                 file_path =  "webm/%s" % sourcefile.file_key
