@@ -189,8 +189,9 @@ class User(ModelQueryCache, Model):
         self.save()
         body = """
 Hi there,
+
 We just received a password reset request for this email address (user: %s). If you want to change your password just click this link:
-http://%s/account/reset-password/%s
+https://%s/account/reset-password/%s
 
 Thanks for using the site!
 hello@mltshp.com
