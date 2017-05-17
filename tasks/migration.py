@@ -17,6 +17,12 @@ def migrate_for_user(user_id=0, **kwargs):
     """
     db = Connection(options.database_host, options.database_name, options.database_user, options.database_password)
 
+    state = db.get("SELECT is_migrated FROM migration_state WHERE user_id=%s", user_id)
+    if not state or state["is_migrated"] == 1:
+        logger.info("User %s already migrated" % str(user_id))
+        db.close()
+        return
+
     logger.info("Migrating user_id %s..." % str(user_id))
 
     logger.info("- app records")
@@ -44,8 +50,7 @@ def migrate_for_user(user_id=0, **kwargs):
 
     # shake
     logger.info("- shake records")
-    db.execute("""UPDATE shake SET deleted=0 WHERE type='user' AND user_id=%s""", user_id)
-    db.execute("""INSERT IGNORE INTO shake (id, user_id, type, image, name, title, description, recommended, featured, shake_category_id, deleted, created_at, updated_at) SELECT ms.id, ms.user_id, ms.type, ms.image, ms.name, ms.title, ms.description, ms.recommended, ms.featured, ms.shake_category_id, ms.deleted, ms.created_at, ms.updated_at FROM mlkshk_shake ms WHERE ms.user_id=%s AND ms.deleted=0""", user_id)
+    db.execute("""UPDATE shake SET deleted=0 WHERE user_id=%s""", user_id)
 
     # shake_manager
     logger.info("- shake_manager records")
