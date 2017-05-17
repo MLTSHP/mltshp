@@ -29,8 +29,8 @@ class SourcefileModelTests(BaseTestCase):
         self.assertEqual("ac7180f6b038d5ae4f2297989e39a900995bb8fc", sha1_key)
     
     def test_make_oembed_url(self):
-        v_urls = ['http://vimeo.com/7100569', 'http://www.youtube.com/watch?v=bDOYN-6gdRE']
-        o_encoded = ['http://vimeo.com/api/oembed.json?url=http%3A%2F%2Fvimeo.com%2F7100569&maxwidth=550', 'http://www.youtube.com/oembed?url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json']
+        v_urls = ['https://vimeo.com/7100569', 'https://www.youtube.com/watch?v=bDOYN-6gdRE']
+        o_encoded = ['https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569&maxwidth=550', 'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json']
         
         oembed_url = Sourcefile.make_oembed_url(v_urls[0])
         self.assertEqual(oembed_url, o_encoded[0])
@@ -43,13 +43,13 @@ class SourcefileModelTests(BaseTestCase):
             self.assertEqual(Sourcefile.make_oembed_url(url), None)
 
     def test_create_from_json_oembed(self):
-        o_encoded = ['http://vimeo.com/api/oembed.json?url=http%3A%2F%2Fvimeo.com%2F7100569', 'http://www.youtube.com/oembed?url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&format=json&maxwidth=550']
+        o_encoded = ['https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569', 'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&format=json&maxwidth=550']
         #get each url
         #and 
         #
         test_responses = [
-        r'{"provider_url": "http:\/\/www.youtube.com\/", "title": "Auto-Tune the News #8: dragons. geese. Michael Vick. (ft. T-Pain)", "html": "<object width=\"425\" height=\"344\"><param name=\"movie\" value=\"http:\/\/www.youtube.com\/e\/bDOYN-6gdRE\"><\/param><param name=\"allowFullScreen\" value=\"true\"><\/param><param name=\"allowscriptaccess\" value=\"always\"><\/param><embed src=\"http:\/\/www.youtube.com\/e\/bDOYN-6gdRE\" type=\"application\/x-shockwave-flash\" width=\"425\" height=\"344\" allowscriptaccess=\"always\" allowfullscreen=\"true\"><\/embed><\/object>", "author_name": "schmoyoho", "height": 344, "thumbnail_width": 480, "width": 425, "version": "1.0", "author_url": "http:\/\/www.youtube.com\/user\/schmoyoho", "provider_name": "YouTube", "thumbnail_url": "http:\/\/i3.ytimg.com\/vi\/bDOYN-6gdRE\/hqdefault.jpg", "type": "video", "thumbnail_height": 360}',
-        r'{"type":"video","version":"1.0","provider_name":"Vimeo","provider_url":"http:\/\/vimeo.com\/","title":"Brad!","author_name":"Casey Donahue","author_url":"http:\/\/vimeo.com\/caseydonahue","is_plus":"1","html":"<iframe src=\"http:\/\/player.vimeo.com\/video\/7100569\" width=\"1280\" height=\"720\" frameborder=\"0\"><\/iframe>","width":"1280","height":"720","duration":"118","description":"Brad finally gets the attention he deserves.","thumbnail_url":"http:\/\/b.vimeocdn.com\/ts\/294\/128\/29412830_1280.jpg","thumbnail_width":1280,"thumbnail_height":720,"video_id":"7100569"}',
+        r'{"provider_url": "https:\/\/www.youtube.com\/", "title": "Auto-Tune the News #8: dragons. geese. Michael Vick. (ft. T-Pain)", "html": "<object width=\"425\" height=\"344\"><param name=\"movie\" value=\"https:\/\/www.youtube.com\/e\/bDOYN-6gdRE\"><\/param><param name=\"allowFullScreen\" value=\"true\"><\/param><param name=\"allowscriptaccess\" value=\"always\"><\/param><embed src=\"https:\/\/www.youtube.com\/e\/bDOYN-6gdRE\" type=\"application\/x-shockwave-flash\" width=\"425\" height=\"344\" allowscriptaccess=\"always\" allowfullscreen=\"true\"><\/embed><\/object>", "author_name": "schmoyoho", "height": 344, "thumbnail_width": 480, "width": 425, "version": "1.0", "author_url": "https:\/\/www.youtube.com\/user\/schmoyoho", "provider_name": "YouTube", "thumbnail_url": "http:\/\/i3.ytimg.com\/vi\/bDOYN-6gdRE\/hqdefault.jpg", "type": "video", "thumbnail_height": 360}',
+        r'{"type":"video","version":"1.0","provider_name":"Vimeo","provider_url":"https:\/\/vimeo.com\/","title":"Brad!","author_name":"Casey Donahue","author_url":"https:\/\/vimeo.com\/caseydonahue","is_plus":"1","html":"<iframe src=\"https:\/\/player.vimeo.com\/video\/7100569\" width=\"1280\" height=\"720\" frameborder=\"0\"><\/iframe>","width":"1280","height":"720","duration":"118","description":"Brad finally gets the attention he deserves.","thumbnail_url":"http:\/\/b.vimeocdn.com\/ts\/294\/128\/29412830_1280.jpg","thumbnail_width":1280,"thumbnail_height":720,"video_id":"7100569"}',
         ]
         for response in test_responses:
             Sourcefile.create_from_json_oembed(response)

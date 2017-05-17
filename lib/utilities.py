@@ -193,15 +193,15 @@ def send_slack_notification(message, channel=None, username=None, icon_emoji=Non
 def payment_notifications(user, action, amount=None):
     msg = None
     if action == "subscription":
-        msg = """<http://%s/user/%s|%s> just gave us some cold hard cash: %s! :smile:""" % (
+        msg = """<https://%s/user/%s|%s> just gave us some cold hard cash: %s! :smile:""" % (
             options.app_host, user.name, user.name, amount
         )
     elif action == "cancellation":
-        msg = """<http://%s/user/%s|%s> has canceled their subscription. :frowning:""" % (
+        msg = """<https://%s/user/%s|%s> has canceled their subscription. :frowning:""" % (
             options.app_host, user.name, user.name
         )
     elif action == "redeemed":
-        msg = """<http://%s/user/%s|%s> has redeemed a voucher for %s. :smile:""" % (
+        msg = """<https://%s/user/%s|%s> has redeemed a voucher for %s. :smile:""" % (
             options.app_host, user.name, user.name, amount
         )
 

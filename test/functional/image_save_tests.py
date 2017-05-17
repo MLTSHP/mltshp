@@ -39,7 +39,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=user.id, \
             content_type="image/png", title='the title', description="the description", \
-            source_url="http://www.mltshp.com/?hi")
+            source_url="https://www.mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()
@@ -157,7 +157,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         sid = self.sign_in("bob", "asdfasdf")
         self.post_url('/p/%s/save' % self.sharedfile.id)
         sharedfile = Sharedfile.get("share_key = %s and user_id = %s", 2, self.bob.id)
-        self.assertEqual(sharedfile.source_url, 'http://www.mltshp.com/?hi')
+        self.assertEqual(sharedfile.source_url, 'https://www.mltshp.com/?hi')
         self.assertEqual(sharedfile.title, 'the title')
         self.assertEqual(sharedfile.description, 'the description')
 

@@ -232,7 +232,7 @@ class ShowRawHandler(BaseHandler):
                     self.request.protocol) == "https"
 
             # construct a URL to the CDN-hosted image
-            # http://mltshp-cdn.com/r/share_key
+            # https://mltshp-cdn.com/r/share_key
             if using_https:
                 cdn_url = "https://%s" % options.cdn_ssl_host
             else:
@@ -487,8 +487,8 @@ class LikeHandler(BaseHandler):
         parent_sf = sharedfile.parent()
         if original_sf and not original_sf.deleted:
             user.add_favorite(original_sf)
-        if parent_sf and not parent_sf.deleted and parent_sf.user_id != original_sf.user_id:
-            user.add_favorite(parent_sf)
+            if parent_sf and not parent_sf.deleted and parent_sf.user_id != original_sf.user_id:
+                user.add_favorite(parent_sf)
 
         if not user.add_favorite(sharedfile):
             if is_json:
@@ -541,7 +541,7 @@ class UnlikeHandler(BaseHandler):
 class OEmbedHandler(BaseHandler):
     """
     <link rel="alternate" type="application/json+oembed"
-        href="http://mltshp.com/services/oembed?url=http%3A//mltshp.com/p/LMN0p&jsoncallback=jsonp123456789"
+        href="https://mltshp.com/services/oembed?url=http%3A//mltshp.com/p/LMN0p&jsoncallback=jsonp123456789"
         title="Image xyz by abc." />
 
         Leaving the jsoncallbackp123456789 method off the call will result in no callback being sent.

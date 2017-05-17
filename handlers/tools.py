@@ -35,7 +35,8 @@ class PickerPopupHandler(BaseHandler):
             source_url = ''
 
         #If this is a Google Image URL, extract the referer
-        if source_url.startswith("http://www.google.com/imgres?imgurl="):
+        if source_url.startswith("http://www.google.com/imgres?imgurl=") or \
+            source_url.startswith("https://www.google.com/imgres?imgurl="):
             parsed_google_url = urlparse(source_url)
             if parsed_google_url.query:
                 parsed_google_query = parse_qs(parsed_google_url.query)
@@ -306,7 +307,7 @@ class SaveVideoHandler(BaseHandler):
                 url = "%swatch?v=%s" % (m.group(1), m.group(2))
                 j_oembed['html'] = """<iframe class="youtube-player"
                 type="text/html" width="%s" height="%s"
-                src="http://www.youtube.com/embed/%s?fs=1&feature=oembed&rnd=%s" frameborder="0" id="ytframe"></iframe>""" % (550, 339, m.group(2), str(random.random()))
+                src="https://www.youtube.com/embed/%s?fs=1&feature=oembed&rnd=%s" frameborder="0" id="ytframe"></iframe>""" % (550, 339, m.group(2), str(random.random()))
             else:
                 self.render("tools/save-video-error.html", message="We could not load the embed code for this file. Please contact support.")
                 return

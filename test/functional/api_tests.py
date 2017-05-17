@@ -410,7 +410,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
                 email_confirmed=1,
                 is_paid=1,
                 about="admin",
-                website='http://mltshp.com')
+                website='https://mltshp.com')
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
@@ -584,7 +584,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         response = self.wait()
         j_response = json_decode(response.body)
         self.assertEqual(j_response['name'], 'admin')
-        self.assertEqual(j_response['profile_image_url'], 'http://mltshp.com/static/images/default-icon-venti.svg')
+        self.assertEqual(j_response['profile_image_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
         self.assertEqual(j_response['id'], 1)
         self.assertEqual(j_response['about'], self.user_a.about)
         self.assertEqual(j_response['website'], self.user_a.website)
@@ -617,9 +617,9 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(user_shake['id'], 2)
         self.assertEqual(user_shake['type'], 'user')
         self.assertEqual(user_shake['name'], 'user2')
-        self.assertEqual(user_shake['owner'], {'name': 'user2', 'id': 2, 'profile_image_url': "http://mltshp.com/static/images/default-icon-venti.svg"})
-        self.assertEqual(user_shake['thumbnail_url'], 'http://mltshp.com/static/images/default-icon-venti.svg')
-        self.assertEqual(user_shake['url'], 'http://mltshp.com/user/user2')
+        self.assertEqual(user_shake['owner'], {'name': 'user2', 'id': 2, 'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
+        self.assertEqual(user_shake['thumbnail_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
+        self.assertEqual(user_shake['url'], 'https://mltshp.com/user/user2')
         self.assertTrue('description' in user_shake)
         self.assertTrue('created_at' in user_shake)
         self.assertTrue('updated_at' in user_shake)
@@ -627,15 +627,15 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(group_shake['id'], 3)
         self.assertEqual(group_shake['type'], 'group')
         self.assertEqual(group_shake['name'], 'Group Shake')
-        self.assertEqual(group_shake['owner'], {'name': 'user2', 'id': 2,  'profile_image_url': "http://mltshp.com/static/images/default-icon-venti.svg"})
-        self.assertEqual(group_shake['thumbnail_url'], 'http://mltshp.com/static/images/default-icon-venti.svg')
-        self.assertEqual(group_shake['url'], 'http://mltshp.com/groupshake')
+        self.assertEqual(group_shake['owner'], {'name': 'user2', 'id': 2,  'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
+        self.assertEqual(group_shake['thumbnail_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
+        self.assertEqual(group_shake['url'], 'https://mltshp.com/groupshake')
         self.assertEqual(group_shake['description'], 'This is a group shake.')
         self.assertTrue('created_at' in group_shake)
         self.assertTrue('updated_at' in group_shake)
 
         self.assertEqual(group_shake_2['id'], 4)
-        self.assertEqual(group_shake_2['owner'], {'name': 'admin', 'id': 1, 'profile_image_url': "http://mltshp.com/static/images/default-icon-venti.svg"})
+        self.assertEqual(group_shake_2['owner'], {'name': 'admin', 'id': 1, 'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
 
     def test_query_friend_shake(self):
         request = signed_request(self.access_token, self.get_url('/api/friends'))
@@ -813,7 +813,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(response.code, 200)
 
         j_response = json_decode(response.body)
-        self.assertEqual(j_response['permalink_page'], 'http://mltshp.com/p/1')
+        self.assertEqual(j_response['permalink_page'], 'https://mltshp.com/p/1')
 
         testfile = Sharedfile.get("id = %s", 1)
         self.assertEqual(testfile.like_count, 1)
