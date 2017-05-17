@@ -5,6 +5,7 @@
 $(document).ready(function() {
   var subscribeHandler = StripeCheckout.configure({
     key: '{{ stripe_public_key }}',
+    name: 'MLTSHP, Inc.',
     image: '{{ static_url("images/apple-touch-icon.png") }}',
     email: '{{ current_user_object.email }}',
     panelLabel: 'Subscribe!',
@@ -22,7 +23,6 @@ $(document).ready(function() {
     {% if stripe_customer_id == None %}
     // Open Checkout with further options
     subscribeHandler.open({
-      name: 'Single Scoop Membership',
       description: '1 Year ($3.00)',
       amount: 300
     });
@@ -51,7 +51,6 @@ $(document).ready(function() {
     {% if stripe_customer_id == None %}
     // Open Checkout with further options
     subscribeHandler.open({
-      name: 'Double Scoop Membership',
       description: '1 Year ($' + quantity.toString() + '.00)',
       amount: quantity * 100
     });
