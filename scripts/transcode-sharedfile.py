@@ -4,10 +4,14 @@ from tornado.options import options
 from models import Sharedfile
 from tasks.transcode import transcode_sharedfile
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 
 def main():
     keys = sys.argv[2:]
 
+    options.use_workers = False
     if len(keys) == 0:
         print "Selecting untranscoded sharedfiles..."
         select = """SELECT share_key

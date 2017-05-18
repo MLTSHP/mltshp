@@ -82,7 +82,9 @@ def migrate_for_user(user_id=0, **kwargs):
 
     # special handling for post table migration since that thing is so large (300mm rows)
     logger.info("- post records")
-    db.execute("""INSERT IGNORE INTO post (id, user_id, sourcefile_id, sharedfile_id, seen, deleted, shake_id, created_at) SELECT mp.id, mp.user_id, mp.sourcefile_id, mp.sharedfile_id, mp.seen, 0, mp.shake_id, mp.created_at FROM mlkshk_post mp WHERE mp.user_id=%s AND mp.deleted=0""", user_id)
+    db.execute("""INSERT IGNORE INTO post (id, user_id, sourcefile_id, sharedfile_id, seen, deleted, shake_id, created_at) SELECT mp.id, mp.user_id, mp.sourcefile_id, mp.sharedfile_id, mp.seen, mp.deleted, mp.shake_id, mp.created_at FROM mlkshk_post mp WHERE mp.user_id=%s""", user_id)
+    # now delete any imported soft-deleted rows
+    db.execute("""DELETE FROM post WHERE user_id=%s AND deleted=1""", user_id)
 
     # this should already be done by the web app, but we may running this
     # via a script
