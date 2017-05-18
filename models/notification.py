@@ -262,17 +262,17 @@ class Notification(Model):
 
 If you want to let %s do this, simply visit your shake and approve the request:
 
-http://%s/%s
+https://%s/%s
 
 You can also ignore the request by deleting the notification.
 """ % (receiver.display_name(), sender.display_name(), the_shake.display_name(), the_shake.display_name(),
        sender.display_name(), options.app_host, the_shake.name)
         html_message = """<p>Hi, %s.</p>
-<p><a href="http://%s/user/%s">%s</a> has requested to join "<a href="http://%s/%s">%s</a>". This means they will be able to put files into the "%s" shake.</p>
+<p><a href="https://%s/user/%s">%s</a> has requested to join "<a href="https://%s/%s">%s</a>". This means they will be able to put files into the "%s" shake.</p>
 
 <p>If you want to let %s do this, simply visit your shake and approve the request:</p>
 
-<p><a href="http://%s/%s">http://%s/%s</a></p>
+<p><a href="https://%s/%s">https://%s/%s</a></p>
 
 You can also ignore the request by deleting the notification.
 """ % (receiver.display_name(), options.app_host, sender.name, sender.display_name(),
@@ -303,20 +303,20 @@ We wanted to let you know %s has invited you to join "%s". Being a member of "%s
 
 You can agree to join here:
 
-http://%s/%s
+https://%s/%s
 
 If you do join you'll notice a new shake name when you upload or save files.
 """ % (receiver.name, sender.display_name(), new_shake.display_name(), new_shake.display_name(),
        options.app_host, new_shake.name)
         html_message = """<p>Hi, %s.</p>
-<p>We wanted to let you know <a href="http://%s/user/%s">%s</a> has invited you to join "<a href="http://%s/%s">%s</a>".
-Being a member of "<a href="http://%s/%s">%s</a>" means you can upload files to the shake along with others who are members.</p>
+<p>We wanted to let you know <a href="https://%s/user/%s">%s</a> has invited you to join "<a href="https://%s/%s">%s</a>".
+Being a member of "<a href="https://%s/%s">%s</a>" means you can upload files to the shake along with others who are members.</p>
 
 <p>
 You can agree to join here:
 </p>
 <p>
-<a href="http://%s/%s">http://%s/%s</a>
+<a href="https://%s/%s">https://%s/%s</a>
 </p>
 <p>
 If you do join you'll notice a new shake name when you upload or save files.
@@ -354,22 +354,22 @@ If you do join you'll notice a new shake name when you upload or save files.
         text_message = """Hi, %s.
 We wanted to let you know %s is now following your shake%s. If you want to check out their shake you can do so here:
 
-http://%s/user/%s
+https://%s/user/%s
 
-You can change your preferences for receiving notifications on your settings page: http://%s/account/settings
+You can change your preferences for receiving notifications on your settings page: https://%s/account/settings
 
 Have a good day.
 - MLTSHP
 """ % (receiver.name, sender.name, subscription_line, options.app_host, sender.name, options.app_host)
         html_message = """<p>Hi, %s.</p>
 <p>                        
-We wanted to let you know <a href="http://%s/user/%s">%s</a> is now following your shake%s. If you want to check out their shake you can do so here:
+We wanted to let you know <a href="https://%s/user/%s">%s</a> is now following your shake%s. If you want to check out their shake you can do so here:
 </p>
 <p>
-<a href="http://%s/user/%s">http://%s/user/%s</a>
+<a href="https://%s/user/%s">https://%s/user/%s</a>
 </p>
 <p>
-You can change your preferences for receiving notifications on your settings page: <a href="http://%s/account/settings">http://%s/account/settings</a>.
+You can change your preferences for receiving notifications on your settings page: <a href="https://%s/account/settings">https://%s/account/settings</a>.
 </p>
 <p>
 Have a good day.<br>

@@ -1,16 +1,16 @@
 <rss version="2.0">
 <channel>
 <title>{{xhtml_escape(shake.display_name())}}</title>
-<link>http://{{ app_host }}/{{shake.name}}</link>
+<link>https://{{ app_host }}/{{shake.name}}</link>
 <description>
 {{xhtml_escape(shake.description)}}
 </description>
 <language>en-us</language>
 <lastBuildDate>{{build_date}}</lastBuildDate>
 <image>
-<url>http:{{shake.page_image()}}</url>
+<url>https:{{shake.page_image()}}</url>
 <title>{{xhtml_escape(shake.display_name())}}</title>
-<link>http://{{ app_host }}/{{shake.name}}</link>
+<link>https://{{ app_host }}/{{shake.name}}</link>
 </image>
 
 {% for sf in sharedfiles %}
@@ -18,14 +18,14 @@
 <title>
 {{xhtml_escape(sf.get_title())}}
 </title>
-<link>http://{{ app_host }}/p/{{sf.share_key}}</link>
+<link>https://{{ app_host }}/p/{{sf.share_key}}</link>
 <description>
 <![CDATA[
   <p>
     {% if sf.type() == "link" %}
       {{sf.render_data(store_view=False)}}
     {% else %}
-      <a href="http://{{ app_host }}/r/{{sf.share_key}}"><img border="0" src="http://{{ app_host }}/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}"></a>
+      <a href="https://{{ app_host }}/r/{{sf.share_key}}"><img border="0" src="https://{{ app_host }}/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}"></a>
     {% end %}
   </p>
   {% if sf.description %}

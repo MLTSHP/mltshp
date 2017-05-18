@@ -78,35 +78,35 @@ class Voucher(Model):
 
 You can claim it at this URL:
 
-http://%s/create-account?key=%s
+https://%s/create-account?key=%s
 
 Be sure to check out the incoming page for fresh files being uploaded, when you find someone you want to keep track of, click the "follow" button on their profile to see their files when you first sign in.
 
 We're adding features and making updates daily so please check back often.
 
 Once you have your account set up, check out:
-http://%s/tools/plugins (browser plugins for saving images)
-http://%s/tools/twitter (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)
-http://twitter.com/mltshphq (our twitter account)
-http://mltshp.tumblr.com/ (our blog)
+https://%s/tools/plugins (browser plugins for saving images)
+https://%s/tools/twitter (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)
+https://twitter.com/mltshphq (our twitter account)
+https://mltshp.tumblr.com/ (our blog)
 
 - MLTSHP""" % (sending_user.name, options.app_host, voucher_key, options.app_host, options.app_host)
-            html_body = """<p>Hi there. A user on MLTSHP named <a href="http://%s/user/%s">%s</a> has sent you this invitation to join the site.</p>
+            html_body = """<p>Hi there. A user on MLTSHP named <a href="https://%s/user/%s">%s</a> has sent you this invitation to join the site.</p>
 
 <p>You can claim it at this URL:</p>
 
-<p><a href="http://%s/create-account?key=%s">http://%s/create-account?key=%s</a></p>
+<p><a href="https://%s/create-account?key=%s">https://%s/create-account?key=%s</a></p>
 
-<p>Be sure to check out the <a href="http://%s/incoming">incoming</a> page for fresh files being uploaded, when you find someone you want to keep track of, click the "follow" button on their profile to see their files when you first sign in.</p>
+<p>Be sure to check out the <a href="https://%s/incoming">incoming</a> page for fresh files being uploaded, when you find someone you want to keep track of, click the "follow" button on their profile to see their files when you first sign in.</p>
 
 <p>We&#39;re adding features and making updates daily so please check back often.</p>
 
 <p>Once you have your account set up, check out:</p>
 <p>
-<a href="http://%s/tools/plugins">http://%s/tools/plugins</a> (browser plugins for saving images)<br>
-<a href="http://%s/tools/twitter">http://%s/tools/twitter</a> (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)<br>
-<a href="http://twitter.com/mltshphq">http://twitter.com/mltshphq</a> (our twitter account)<br>
-<a href="http://mltshp.tumblr.com/">http://mltshp.tumblr.com/</a> (our blog)
+<a href="https://%s/tools/plugins">https://%s/tools/plugins</a> (browser plugins for saving images)<br>
+<a href="https://%s/tools/twitter">https://%s/tools/twitter</a> (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)<br>
+<a href="https://twitter.com/mltshphq">https://twitter.com/mltshphq</a> (our twitter account)<br>
+<a href="https://mltshphq.tumblr.com/">https://mltshphq.tumblr.com/</a> (our blog)
 </p>
 <p>
 - MLTSHP

@@ -17,7 +17,7 @@ class BookmarkTests(BaseTestCase):
         self.sourcefile = models.Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         self.sourcefile.save()
         self.sharedfile = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         self.sharedfile.save()
 
     def test_start_reading_no_sharedfile(self):
@@ -43,7 +43,7 @@ class BookmarkTests(BaseTestCase):
         self.assertEqual(1, len(models.Bookmark.all()))
 
         new_sharedfile = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         # we need to make sure that sharedfile we pass in, is one second older than when original was set in setUp
         time.sleep(2)
         new_sharedfile.save()
@@ -66,7 +66,7 @@ class BookmarkTests(BaseTestCase):
         first_bookmark = models.Bookmark.start_reading(self.user, self.sharedfile)
 
         new_sharedfile = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         # we need to make sure that sharedfile we pass in, is one second older than when original was set in setUp
         time.sleep(2)
         new_sharedfile.save()
@@ -83,13 +83,13 @@ class BookmarkTests(BaseTestCase):
         that is equal to the oldest timestamp will return.
         """                
         latest_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         latest_file.save()
         latest_file.created_at = datetime.utcnow() + timedelta(seconds=5)
         latest_file.save()
 
         middle_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         middle_file.save()
 
         oldest_file = self.sharedfile
@@ -117,12 +117,12 @@ class BookmarkTests(BaseTestCase):
         by created_at.  Bookmarks come before sharedfiles when they have the same created_at.
         """
         latest_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         latest_file.save()
         latest_file.created_at = datetime.utcnow() + timedelta(seconds=5)
         latest_file.save()
         middle_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         middle_file.save()
         oldest_file = self.sharedfile
         oldest_file.created_at = datetime.utcnow() - timedelta(seconds=5)
