@@ -10,18 +10,20 @@
     </div>
 
     <div class="sidebar">
-      <h3>Some Good Folks</h3>
-      <div class="sidebar-content">
-        {% if len(users_sidebar) > 0 %}
-        <p>People who posted files you&rsquo;ve liked.</p>
-          {% for user in users_sidebar %}
-            {% if user.id != current_user_obj.id %}
-              {{modules.ShakeFollow(follow_user=user, current_user=current_user_obj, avatar_size=50)}}
+      <div class="good-folk-block">
+        <h3>Some Good Folks</h3>
+        <div class="good-folk-block-content">
+          {% if len(users_sidebar) > 0 %}
+          <p>People who posted files you&rsquo;ve liked.</p>
+            {% for user in users_sidebar %}
+              {% if user.id != current_user_obj.id %}
+                {{modules.ShakeFollow(follow_user=user, current_user=current_user_obj, avatar_size=50)}}
+              {% end %}
             {% end %}
+          {% else %}
+          Like some files to generate more recommendations.
           {% end %}
-        {% else %}
-        Like some files to generate more recommendations.
-        {% end %}
+        </div>
       </div>
     </div>
 
