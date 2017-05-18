@@ -175,13 +175,13 @@ class Sourcefile(ModelQueryCache, Model):
 
         oembed_url = None
         if url_parsed.hostname.lower() in ['youtube.com', 'www.youtube.com', 'youtu.be']:
-            to_url = 'http://%s%s?%s' % (url_parsed.hostname, url_parsed.path, url_parsed.query)
-            oembed_url = 'http://www.youtube.com/oembed?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
+            to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, url_parsed.query)
+            oembed_url = 'https://www.youtube.com/oembed?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['vimeo.com', 'www.vimeo.com']:
-            to_url = 'http://%s%s' % (url_parsed.hostname, url_parsed.path)
-            oembed_url = 'http://vimeo.com/api/oembed.json?url=%s&maxwidth=550' % (url_escape(to_url))
+            to_url = 'https://%s%s' % (url_parsed.hostname, url_parsed.path)
+            oembed_url = 'https://vimeo.com/api/oembed.json?url=%s&maxwidth=550' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['flic.kr', 'flickr.com', 'www.flickr.com']:
-            to_url = 'http://%s%s' % (url_parsed.hostname, url_parsed.path)
+            to_url = 'https://%s%s' % (url_parsed.hostname, url_parsed.path)
             oembed_url = 'https://www.flickr.com/services/oembed/?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         return oembed_url
 

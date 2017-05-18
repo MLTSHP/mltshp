@@ -65,8 +65,8 @@ class Shake(ModelQueryCache, Model):
         base_dict = {
             'id' : self.id,
             'name': self.display_name(),
-            'url': 'http://%s%s' % (options.app_host, self.path()),
-            'thumbnail_url': urljoin('http://%s/' % (options.app_host), self.thumbnail_url()),
+            'url': 'https://%s%s' % (options.app_host, self.path()),
+            'thumbnail_url': self.thumbnail_url(),
             'description': self.description,
             'type': self.type,
             'created_at': self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
@@ -96,18 +96,21 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url()
         else:
             if self.image:
-                return "//%s.s3.amazonaws.com/account/%s/shake_%s.jpg" % (options.aws_bucket, self.user_id, self.name)
+                return "https://%s.s3.amazonaws.com/account/%s/shake_%s.jpg" % (options.aws_bucket, self.user_id, self.name)
             else:
                 return None
 
     def thumbnail_url(self):
         if self.type == 'user':
-            return self.owner().profile_image_url()
+            return self.owner().profile_image_url(include_protocol=True)
         else:
             if self.image:
-                return "//%s.s3.amazonaws.com/account/%s/shake_%s_small.jpg" % (options.aws_bucket, self.user_id, self.name)
+                return "https://%s.s3.amazonaws.com/account/%s/shake_%s_small.jpg" % (options.aws_bucket, self.user_id, self.name)
             else:
-                return "/static/images/default-icon-venti.svg"
+                if options.app_host == "mltshp.com":
+                    return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
+                else:
+                    return "http://%s/static/images/default-icon-venti.svg" % options.app_host
 
     def path(self):
         """
@@ -329,12 +332,16 @@ class Shake(ModelQueryCache, Model):
             k.key = "account/%s/shake_%s_small.jpg" % (self.user_id, self.name)
             k.set_contents_from_string(thumb_cstr.getvalue())
             k.set_acl('public-read')
+            k.set_metadata('Content-Type', 'image/jpeg')
+            k.set_metadata('Cache-Control', 'max-age=86400')
 
             #save small
             k = Key(bucket)
             k.key = "account/%s/shake_%s.jpg" % (self.user_id, self.name)
             k.set_contents_from_string(image_cstr.getvalue())
             k.set_acl('public-read')
+            k.set_metadata('Content-Type', 'image/jpeg')
+            k.set_metadata('Cache-Control', 'max-age=86400')
 
             self.image = 1
             self.save()

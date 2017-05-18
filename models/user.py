@@ -171,7 +171,7 @@ class User(ModelQueryCache, Model):
             pm = postmark.PMMail(api_key=options.postmark_api_key,
                 sender="hello@mltshp.com", to=self.email,
                 subject="[mltshp] Please verify your email address",
-                text_body="Hi there, could you visit this URL to verify your email address for us? Thanks. \n\nhttp://%s/verify-email/%s" % (
+                text_body="Hi there, could you visit this URL to verify your email address for us? Thanks. \n\nhttps://%s/verify-email/%s" % (
                     options.app_host, self.verify_email_token))
             pm.send()
             return True
@@ -189,8 +189,9 @@ class User(ModelQueryCache, Model):
         self.save()
         body = """
 Hi there,
+
 We just received a password reset request for this email address (user: %s). If you want to change your password just click this link:
-http://%s/account/reset-password/%s
+https://%s/account/reset-password/%s
 
 Thanks for using the site!
 hello@mltshp.com
@@ -253,8 +254,12 @@ hello@mltshp.com
             return "%s//%s.s3.amazonaws.com/account/%s/profile.jpg" % (protocol, options.aws_bucket, self.id)
         else:
             if include_protocol:
-                protocol = 'http://%s' % (options.app_host)
-            return "%s/static/images/default-icon-venti.svg" % (protocol)
+                if options.app_host == 'mltshp.com':
+                    return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
+                else:
+                    return "http://%s/static/images/default-icon-venti.svg" % options.cdn_host
+            else:
+                return "/static/images/default-icon-venti.svg"
 
     def sharedfiles(self, page=1, per_page=10):
         """

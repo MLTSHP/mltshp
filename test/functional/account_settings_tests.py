@@ -150,13 +150,13 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         arguments = {
             'full_name' : 'Some User',
             'about' : 'About text.',
-            'website' : 'http://mltshp.com/'
+            'website' : 'https://mltshp.com/'
         }
         self.post_url('/account/settings/profile', arguments=arguments)
         user_reloaded = User.get('id = %s', self.user.id)
         self.assertEqual('Some User', user_reloaded.full_name)
         self.assertEqual('About text.', user_reloaded.about)
-        self.assertEqual('http://mltshp.com/', user_reloaded.website)
+        self.assertEqual('https://mltshp.com/', user_reloaded.website)
 
     def test_updating_user_profile_photo(self):
         """

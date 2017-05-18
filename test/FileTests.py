@@ -222,7 +222,7 @@ class SharedFileTests(BaseAsyncTestCase):
         self.assertTrue(response.body.startswith(callback))
 
     def test_oembed_response_json_for_link(self):
-        url = 'http://vimeo.com/20379529'
+        url = 'https://vimeo.com/20379529'
         sourcefile = Sourcefile(width=100, height=100, data="{'junk':'here'}", type='link', file_key="asdfasdfasdfasdfasdf")
         sourcefile.save()
 
@@ -289,38 +289,25 @@ class VideoPickerTests(BaseAsyncTestCase):
         return tornado.ioloop.IOLoop.instance()
 
     def test_save_video_allows_link_to_vimeo_youtube(self):
-        video_sites = {'vimeo':'http://vimeo.com/20379529', 'youtube':'http://www.youtube.com/watch?v=EmcMG4uxiHk', 'flickr':'http://www.flickr.com/photos/dahliablack/5497635343/'}
+        video_sites = {'vimeo':'https://vimeo.com/20379529', 'youtube':'https://www.youtube.com/watch?v=EmcMG4uxiHk', 'flickr':'https://www.flickr.com/photos/dahliablack/5497635343/'}
         for site in video_sites.keys():
             request = HTTPRequest(self.get_url('/tools/save-video?url=%s' % (url_escape(video_sites[site]))), 'GET', {"Cookie":"sid=%s" % (self.sid)})
             self.http_client.fetch(request, self.stop)
             response = self.wait()
             if site == 'vimeo':
-                self.assertTrue(response.body.find('value="http://vimeo.com/20379529">') > -1)
+                self.assertTrue(response.body.find('value="https://vimeo.com/20379529">') > -1)
             elif site == 'youtube':
                 self.assertTrue(response.body.find('value="https://www.youtube.com/watch?v=EmcMG4uxiHk">') > -1)
             elif site == 'flickr':
-                self.assertTrue(response.body.find('value="http://www.flickr.com/photos/dahliablack/5497635343/">') > -1)
+                self.assertTrue(response.body.find('value="https://www.flickr.com/photos/dahliablack/5497635343/">') > -1)
 
     def test_save_video_correctly_processes_various_youtube_urls(self):
-        urls = ['http://www.youtube.com/watch?v=EmcMG4uxiHk&recommended=0', 'http://youtu.be/EmcMG4uxiHk', 'http://www.youtube.com/watch?v=EmcMG4uxiHk&feature=rec-LGOUT-real_rev-rn-1r-11-HM']
+        urls = ['https://www.youtube.com/watch?v=EmcMG4uxiHk&recommended=0', 'https://youtu.be/EmcMG4uxiHk', 'https://www.youtube.com/watch?v=EmcMG4uxiHk&feature=rec-LGOUT-real_rev-rn-1r-11-HM']
         for url in urls:
             request = HTTPRequest(self.get_url('/tools/save-video?url=%s' % (url_escape(url))), 'GET', {"Cookie":"sid=%s" % (self.sid)})
             self.http_client.fetch(request, self.stop)
             response = self.wait()
             self.assertTrue(response.body.find('value="https://www.youtube.com/watch?v=EmcMG4uxiHk">') > -1)
-
-    #def test_post_video_with_good_url_and_save(self):
-    #    urls = ['http://vimeo.com/20379529','http://www.youtube.com/watch?v=EmcMG4uxiHk', 'http://www.flickr.com/photos/dahliablack/5497635343/']
-    #    for url in urls:
-    #        request = HTTPRequest(self.get_url('/tools/save-video'), 'POST', {"Cookie":"sid=%s;_xsrf=%s" % (self.sid, self.xsrf)}, "url=%s&_xsrf=%s" % (url_escape(url), self.xsrf))
-    #        self.http_client.fetch(request, self.stop)
-    #        response = self.wait()
-    #    sfs = Sharedfile.where('user_id = %s', self.user.id)
-    #    self.assertEqual(len(sfs), 3)
-    #    for sf in sfs:
-    #        source_file = sf.sourcefile()
-    #        self.assertEqual(source_file.type, 'link')
-    #        self.assertTrue(len(source_file.data) > 0)
 
     def test_adding_video_makes_it_show_up_in_friends_shake(self):
         user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
@@ -328,7 +315,7 @@ class VideoPickerTests(BaseAsyncTestCase):
         user2.save()
         user2.subscribe(self.user.shake())
 
-        url = 'http://vimeo.com/20379529'
+        url = 'https://vimeo.com/20379529'
         request = HTTPRequest(self.get_url('/tools/save-video'), 'POST', {"Cookie":"sid=%s;_xsrf=%s" % (self.sid, self.xsrf)}, "url=%s&_xsrf=%s" % (url_escape(url), self.xsrf))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
@@ -429,9 +416,9 @@ class FilePickerTests(BaseAsyncTestCase):
 
     def test_picker_strips_google_img_url(self):
         """
-        http://www.google.com/imgres?imgurl=http://cragganmorefarm.com/user/gimage/Baby-Ground-hogs_480_320.jpg&imgrefurl=http://cragganmorefarm.com/&usg=__kpRJbm_WBlbEnqDvfi3A2JuJ9Wg=&h=320&w=480&sz=33&hl=en&start=24&sig2=SyR_NSDovcsOYu5tJYtlig&zoom=1&tbnid=TT5jIOrb76kqbM:&tbnh=130&tbnw=173&ei=f5lJTdjbHoL6lweT2cU3&prev=/images%3Fq%3Dbaby%2Bgroundhogs%26um%3D1%26hl%3Den%26client%3Dfirefox-a%26sa%3DX%26rls%3Dorg.mozilla:en-US:official%26biw%3D1152%26bih%3D709%26tbs%3Disch:10%2C540&um=1&itbs=1&iact=rc&dur=326&oei=YZlJTYuYJsH78AaQh6msDg&esq=2&page=2&ndsp=24&ved=1t:429,r:8,s:24&tx=103&ty=85&biw=1152&bih=709
+        https://www.google.com/imgres?imgurl=http://cragganmorefarm.com/user/gimage/Baby-Ground-hogs_480_320.jpg&imgrefurl=http://cragganmorefarm.com/&usg=__kpRJbm_WBlbEnqDvfi3A2JuJ9Wg=&h=320&w=480&sz=33&hl=en&start=24&sig2=SyR_NSDovcsOYu5tJYtlig&zoom=1&tbnid=TT5jIOrb76kqbM:&tbnh=130&tbnw=173&ei=f5lJTdjbHoL6lweT2cU3&prev=/images%3Fq%3Dbaby%2Bgroundhogs%26um%3D1%26hl%3Den%26client%3Dfirefox-a%26sa%3DX%26rls%3Dorg.mozilla:en-US:official%26biw%3D1152%26bih%3D709%26tbs%3Disch:10%2C540&um=1&itbs=1&iact=rc&dur=326&oei=YZlJTYuYJsH78AaQh6msDg&esq=2&page=2&ndsp=24&ved=1t:429,r:8,s:24&tx=103&ty=85&biw=1152&bih=709
         """
-        request = HTTPRequest(self.get_url('/tools/p?url=%s&source_url=%s' % (self.url, url_escape("http://www.google.com/imgres?imgurl=http://cragganmorefarm.com/user/gimage/Baby-Ground-hogs_480_320.jpg&imgrefurl=http://cragganmorefarm.com/&usg=__kpRJbm_WBlbEnqDvfi3A2JuJ9Wg=&h=320&w=480&sz=33&hl=en&start=24&sig2=SyR_NSDovcsOYu5tJYtlig&zoom=1&tbnid=TT5jIOrb76kqbM:&tbnh=130&tbnw=173&ei=f5lJTdjbHoL6lweT2cU3&prev=/images%3Fq%3Dbaby%2Bgroundhogs%26um%3D1%26hl%3Den%26client%3Dfirefox-a%26sa%3DX%26rls%3Dorg.mozilla:en-US:official%26biw%3D1152%26bih%3D709%26tbs%3Disch:10%2C540&um=1&itbs=1&iact=rc&dur=326&oei=YZlJTYuYJsH78AaQh6msDg&esq=2&page=2&ndsp=24&ved=1t:429,r:8,s:24&tx=103&ty=85&biw=1152&bih=709"))), 'GET', {"Cookie":"sid=%s" % (self.sid)})
+        request = HTTPRequest(self.get_url('/tools/p?url=%s&source_url=%s' % (self.url, url_escape("https://www.google.com/imgres?imgurl=http://cragganmorefarm.com/user/gimage/Baby-Ground-hogs_480_320.jpg&imgrefurl=http://cragganmorefarm.com/&usg=__kpRJbm_WBlbEnqDvfi3A2JuJ9Wg=&h=320&w=480&sz=33&hl=en&start=24&sig2=SyR_NSDovcsOYu5tJYtlig&zoom=1&tbnid=TT5jIOrb76kqbM:&tbnh=130&tbnw=173&ei=f5lJTdjbHoL6lweT2cU3&prev=/images%3Fq%3Dbaby%2Bgroundhogs%26um%3D1%26hl%3Den%26client%3Dfirefox-a%26sa%3DX%26rls%3Dorg.mozilla:en-US:official%26biw%3D1152%26bih%3D709%26tbs%3Disch:10%2C540&um=1&itbs=1&iact=rc&dur=326&oei=YZlJTYuYJsH78AaQh6msDg&esq=2&page=2&ndsp=24&ved=1t:429,r:8,s:24&tx=103&ty=85&biw=1152&bih=709"))), 'GET', {"Cookie":"sid=%s" % (self.sid)})
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("source: http://cragganmorefarm.com/</textarea>") > 0)

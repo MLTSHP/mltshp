@@ -110,7 +110,7 @@ class UploadHandler(BaseHandler):
                 user_id = external_service.user_id,
                 title = title
                 )
-            self.write("<mediaurl>http://s.%s/r/%s.%s</mediaurl>" % (options.app_host, sf.share_key, self.get_argument("media_content_type").split('/')[1]))
+            self.write("<mediaurl>https://s.%s/r/%s.%s</mediaurl>" % (options.app_host, sf.share_key, self.get_argument("media_content_type").split('/')[1]))
             return self.finish()
         raise tornado.web.HTTPError(403)
 

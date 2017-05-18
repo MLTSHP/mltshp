@@ -37,7 +37,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=user.id, \
-            content_type="image/png", description="description", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", description="description", source_url="https://www.mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()

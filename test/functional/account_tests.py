@@ -20,7 +20,7 @@ class AccountTests(test.base.BaseAsyncTestCase):
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=self.user.id, \
-            content_type="image/png", description="description", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", description="description", source_url="https://www.mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()
@@ -30,7 +30,7 @@ class AccountTests(test.base.BaseAsyncTestCase):
         response = self.fetch_url('/user/admin/rss')
         self.assertEqual(response.headers['Content-Type'], 'application/xml')
         parsed_xml = lib.utilities.parse_xml(response.body)
-        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'http://mltshp.com/p/1')
+        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://mltshp.com/p/1')
 
     def test_user_unpaid_account_rss_404s(self):
         self.user.update_attribute("is_paid", 0)

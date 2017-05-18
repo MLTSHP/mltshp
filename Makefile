@@ -15,7 +15,7 @@ shell:
 	docker exec -it mltshp_mltshp_1 bash
 
 test:
-	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $*"
+	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $(TEST)"
 
 destroy:
 	docker-compose down

@@ -16,7 +16,7 @@ class SharedfileModelTests(BaseTestCase):
         self.sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         self.sourcefile.save()
         self.sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         self.sharedfile.save()
 
     def test_file_size_is_saved_in_newly_uploaded_file(self):
@@ -54,7 +54,7 @@ class SharedfileModelTests(BaseTestCase):
         """
         sf = Sharedfile.get('id=1')
         self.assertEqual(sf.description, "some\ndescription\nhere")
-        self.assertEqual(sf.source_url, "http://www.mltshp.com/?hi")
+        self.assertEqual(sf.source_url, "https://www.mltshp.com/?hi")
 
     def test_can_save(self):
         """
@@ -439,7 +439,7 @@ class SharedfileModelTests(BaseTestCase):
         new_user = User(name='new_user',email='new_user@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         new_user.save()
         another_sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
-            content_type="image/png", share_key="ok", description="some\ndescription\nhere", source_url="http://www.mltshp.com/?hi")
+            content_type="image/png", share_key="ok", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         another_sharedfile.save()
 
         #one favorite shared file
