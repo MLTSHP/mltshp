@@ -33,7 +33,7 @@ class VerifyEmailHandler(BaseHandler):
                     customer = stripe.Customer.retrieve(user.stripe_customer_id)
                 except stripe.error.InvalidRequestError:
                     pass
-                if customer and not hasattr(customer, 'deleted', False):
+                if customer and not hasattr(customer, 'deleted'):
                     customer.email = user.email
                     customer.save()
         return self.redirect("/")
