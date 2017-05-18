@@ -242,6 +242,8 @@ hello@mltshp.com
         k.key = "account/%s/profile.jpg" % (self.id)
         k.set_contents_from_string(destination.getvalue())
         k.set_acl('public-read')
+        k.set_metadata('Content-Type', 'image/jpeg')
+        k.set_metadata('Cache-Control', 'max-age=86400')
         self.profile_image = 1
         self.save()
         return True
