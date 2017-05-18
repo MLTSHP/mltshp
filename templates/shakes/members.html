@@ -8,13 +8,15 @@
 
 <div class="content content-with-sidebar content-shake">
   {% include "shakes/_sidebar.html" %}
-  
+
   <div class="body">
-    
+
     <ul id="shake-members-list" class="shake-members">
       {% for manager in managers %}
         <li>
-          <a href="/user/{{escape(manager.name)}}"><img src="{{manager.profile_image_url()}}" width="48" height="48"></a>
+          <a href="/user/{{escape(manager.name)}}">
+            <img class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48">
+          </a>
           <div class="details">
             <h4><a href="/user/{{escape(manager.name)}}">{{escape(manager.display_name())}}</a></h4>
             <p class="about">{{escape(manager.about)}}
@@ -36,8 +38,8 @@
         </li>
       {% end %}
     </ul>
-    
+
   </div>
-  
+
 </div>
 {% end %}

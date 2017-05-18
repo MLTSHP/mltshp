@@ -18,11 +18,11 @@
   <div class="sidebar">
     <div class="user-info">
       {{modules.ShakeFollow(follow_user=user, current_user=current_user_obj, avatar_size=100, extended=True)}}
-      
+
       {% if user.show_stats %}
         {{modules.UserCounts(user=user)}}
       {% end %}
-      
+
       {% if len(other_shakes) > 0 %}
         <div class="other-shakes-wrapper">
           <h3>{{escape(user.display_name())}}'s other shakes</h3>
@@ -35,28 +35,36 @@
           </div>
         </div>
       {% end %}
-      
+
       <div class="following-wrapper">
         <h3>Following <span class="count">({{following_shakes_count}})</span></h3>
         <div class="following">
           <ul id='following-list'>
             {% for follow in following_shakes %}
-              <li><a href="{{follow['path']}}" title="{{follow['name']}}"><img src="{{follow['image']}}" width="48" height="48"></a></li>
+              <li>
+                <a href="{{follow['path']}}" title="{{follow['name']}}">
+                  <img class="avatar--img" src="{{follow['image']}}" width="48" height="48">
+                </a>
+              </li>
             {% end %}
           </ul>
-          <br style="clear:both;">          
+          <br style="clear:both;">
           {% if following_shakes %}
             <a class="view-all-following" href="/user/{{user.name}}/following">view all</a>
           {% end %}
         </div>
       </div>
-      
+
       <div class="following-wrapper">
         <h3>Followed by <span class="count">({{follower_count}})</span></h3>
         <div class="following">
           <ul id='following-list'>
             {% for follower in followers %}
-              <li><a href="/user/{{follower.name}}" title="{{follower.display_name()}}"><img src="{{follower.profile_image_url()}}" width="48" height="48"></a></li>
+              <li>
+                <a href="/user/{{follower.name}}" title="{{follower.display_name()}}">
+                  <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48">
+                </a>
+              </li>
             {% end %}
           </ul>
           <br style="clear:both;">
@@ -66,19 +74,19 @@
         </div>
       </div>
     </div>
-    
+
     {% if current_user_obj and current_user_obj.is_admin() and not site_is_readonly %}
       <div class="sidebar-flag-nsfw">
         <form action="/admin/user/{{user.name}}/flag-nsfw" method="post">
           {{ xsrf_form_html() }}
           {% if bool(user.nsfw) == True %}
-            NSFW. 
+            NSFW.
             <input type="hidden" name="nsfw" value="0">
             <input class="flag-nsfw-button" type="submit" value="Remove NSFW Flag">
           {% else %}
-            SFW. 
+            SFW.
             <input type="hidden"  name="nsfw"  value="1">
-            <input class="unflag-nsfw-button" type="submit" value="Set NSFW Flag">  
+            <input class="unflag-nsfw-button" type="submit" value="Set NSFW Flag">
           {% end %}
         </form>
       </div>
