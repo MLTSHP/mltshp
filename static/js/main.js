@@ -611,7 +611,8 @@ $(document).ready(function() {
           var html = "";
           for (var i = 0, len = response['result'].length;  i < len; i++ ) {
             html += '<div class="user-action">';
-            html += '<a class="icon" href="/user/' + response['result'][i]['user_name'] + '"><img src="' + response['result'][i]['user_profile_image_url'] + '" height="20" width="20"></a>';
+            html += '<a class="icon" href="/user/' + response['result'][i]['user_name'] + '">';
+            html += '<img class="avatar--img" src="' + response['result'][i]['user_profile_image_url'] + '" height="20" width="20"></a>';
             html += '<a href="/user/'+ response['result'][i]['user_name'] + '" class="name">' + response['result'][i]['user_name'] + '</a>';
             html += '<span class="date">' + response['result'][i]['posted_at_friendly'] + '</span>';
             html += '</div>';
@@ -685,7 +686,8 @@ $(document).ready(function() {
       user_html: function(data) {
         var html = '';
         for (var i = 0; i < data.result.length; i++) {
-          html += '<a href="/user/' + data.result[i]['user_name'] + '"><img src="' +
+          html += '<a href="/user/' + data.result[i]['user_name'] + '">' +
+                  '<img class="avatar--img" src="' +
                   data.result[i]['user_profile_image_url'] + '" height="20" width="20">' +
                   '<span class="name">' +
                   data.result[i]['user_name'] + '</span></a>';

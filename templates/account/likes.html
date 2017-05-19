@@ -17,7 +17,11 @@
         <div class="following">
           <ul id='following-list'>
             {% for follow in following_shakes %}
-              <li><a href="{{follow['path']}}" title="{{follow['name']}}"><img src="{{follow['image']}}" width="48" height="48"></a></li>
+              <li>
+                <a href="{{follow['path']}}" title="{{follow['name']}}">
+                  <img class="avatar--img" src="{{follow['image']}}" width="48" height="48">
+                </a>
+              </li>
             {% end %}
           </ul>
           <br style="clear:both;">
@@ -31,7 +35,11 @@
         <div class="following">
           <ul id='following-list'>
             {% for follower in followers %}
-              <li><a href="/user/{{follower.name}}" title="{{follower.display_name()}}"><img src="{{follower.profile_image_url()}}" width="48" height="48"></a></li>
+              <li>
+                <a href="/user/{{follower.name}}" title="{{follower.display_name()}}">
+                  <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48">
+                </a>
+              </li>
             {% end %}
           </ul>
           <br style="clear:both;">

@@ -18,7 +18,9 @@
   {% else %}
     {% if show_attribution_in_title %}
   <div class="image-poster">
-    <a href="{{attribution['path']}}" title="{{escape(attribution['name'])}}"><img src="{{attribution['thumbnail_url']}}" width="48" height="48" alt=""></a>
+    <a href="{{attribution['path']}}" title="{{escape(attribution['name'])}}">
+      <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="">
+    </a>
   </div>
     {% end %}
     {% if list_view %}
@@ -129,7 +131,13 @@
 
     {% if sharedfile.original() %}
       {{ original_user = sharedfile.original_user()}}
-    <div class="originally-posted-by">originally <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by <a href="/user/{{original_user.name}}"><img border="0" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt=""></a> <a href="/user/{{original_user.name}}">{{ original_user.name }}</a></div>
+    <div class="originally-posted-by">
+      originally
+      <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by
+      <a href="/user/{{original_user.name}}">
+        <img class="avatar--img" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt="">
+      </a>
+      <a href="/user/{{original_user.name}}">{{ original_user.name }}</a></div>
     {% end %}
 
     {% if list_view %}

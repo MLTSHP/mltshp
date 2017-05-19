@@ -318,10 +318,10 @@ class Shake(ModelQueryCache, Model):
             return False
 
         #generate smaller versions
-        if not transform_to_square_thumbnail(file_path, 48, thumb_cstr):
+        if not transform_to_square_thumbnail(file_path, 48*2, thumb_cstr):
             return False
 
-        if not transform_to_square_thumbnail(file_path, 284, image_cstr):
+        if not transform_to_square_thumbnail(file_path, 284*2, image_cstr):
             return False
 
         bucket = S3Bucket()

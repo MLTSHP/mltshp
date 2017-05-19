@@ -234,7 +234,7 @@ hello@mltshp.com
             return False
 
         destination =  cStringIO.StringIO()
-        if not transform_to_square_thumbnail(file_path, 100, destination):
+        if not transform_to_square_thumbnail(file_path, 100*2, destination):
             return False
 
         bucket = S3Bucket()
