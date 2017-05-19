@@ -1,6 +1,10 @@
 env:
   DOCKER_COMPOSE_VERSION: 1.12.0
 
+cache:
+  directories:
+    - $HOME/.cache/docker
+
 sudo: required
 
 services:
@@ -8,7 +12,8 @@ services:
   - mysql
 
 script:
-  - cp ./settings.travis-ci.py ./settings.py
-  - export HOSTIP=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
+  - if [[ -e $HOME/.cache/docker/image.tar.gz ]]; then gunzip $HOME/.cache/docker/image.tar.gz; docker load -i $HOME/.cache/docker/image.tar; fi
   - docker pull mltshp/mltshp-web:latest
+  - mkdir -p $HOME/.cache/docker; docker save mltshp/mltshp-web > $HOME/.cache/docker/image.tar; gzip $HOME/.cache/docker/image.tar
+  - cp ./settings.travis-ci.py ./settings.py
   - docker-compose --file docker-compose.travis-ci.yml run mltshp ./test.py
