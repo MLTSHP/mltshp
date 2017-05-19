@@ -16,7 +16,11 @@ class IndexHandler(BaseHandler):
         notifications_count = 0
 
         if current_user_obj:
-	        notifications_count = notification.Notification.for_user_count(current_user_obj)
+            notifications_count = notification.Notification.for_user_count(current_user_obj)
+            self.set_header("Cache-Control", "private")
+        else:
+            self.set_header("Cache-Control", "s-maxage=600, max-age=60")
+
         last_sf = sharedfile.Sharedfile.get('1 ORDER BY id desc LIMIT 1')
         if last_sf is not None:
             last_sf_id = last_sf.id - 1000
