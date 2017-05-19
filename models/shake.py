@@ -330,18 +330,18 @@ class Shake(ModelQueryCache, Model):
             #save thumbnail
             k = Key(bucket)
             k.key = "account/%s/shake_%s_small.jpg" % (self.user_id, self.name)
-            k.set_contents_from_string(thumb_cstr.getvalue())
-            k.set_acl('public-read')
             k.set_metadata('Content-Type', 'image/jpeg')
             k.set_metadata('Cache-Control', 'max-age=86400')
+            k.set_contents_from_string(thumb_cstr.getvalue())
+            k.set_acl('public-read')
 
             #save small
             k = Key(bucket)
             k.key = "account/%s/shake_%s.jpg" % (self.user_id, self.name)
-            k.set_contents_from_string(image_cstr.getvalue())
-            k.set_acl('public-read')
             k.set_metadata('Content-Type', 'image/jpeg')
             k.set_metadata('Cache-Control', 'max-age=86400')
+            k.set_contents_from_string(image_cstr.getvalue())
+            k.set_acl('public-read')
 
             self.image = 1
             self.save()
