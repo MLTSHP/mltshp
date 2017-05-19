@@ -83,6 +83,9 @@ class ShowHandler(BaseHandler):
             raise tornado.web.HTTPError(404)
 
         current_user = self.get_current_user_object()
+        if not current_user:
+            self.set_header("Cache-Control", "s-maxage=600, max-age=60")
+
         sourcefile = sharedfile.sourcefile()
         sharedfile_owner = sharedfile.user()
         owner_twitter_account = Externalservice.by_user(sharedfile_owner, Externalservice.TWITTER)
