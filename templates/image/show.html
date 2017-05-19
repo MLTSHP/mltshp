@@ -156,7 +156,9 @@
       {% for comment in comments %}
         <div class="comment">
           <div class="avatar">
-            <a href="/user/{{comment.user().name}}"><img src="{{comment.user().profile_image_url()}}" height="48" width="48" alt=""></a>
+            <a href="/user/{{comment.user().name}}">
+              <img class="avatar--img" src="{{comment.user().profile_image_url()}}" height="48" width="48" alt="">
+            </a>
           </div>
           <div class="body">
             {% set commenting_user = comment.user() %}
@@ -194,7 +196,7 @@
       <div id="post-comment" class="image-comment-form">
         <form action="/p/{{sharedfile.share_key}}/comment" method="post">
           {{ xsrf_form_html() }}
-            <img class="avatar" src="{{current_user_obj.profile_image_url()}}" height="48" width="48" alt="">
+            <img class="avatar avatar--img" src="{{current_user_obj.profile_image_url()}}" height="48" width="48" alt="">
             <h3><span>I've got something to say!</span></h3>
             <div class="field">
               <textarea id="post-comment-body" name="body"></textarea>

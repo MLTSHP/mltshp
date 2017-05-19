@@ -23,7 +23,9 @@
             <div class="image-comments">
               <div class="comment">
                 <div class="avatar">
-                  <a href="/user/{{mention['comment'].user().name}}"><img src="{{mention['comment'].user().profile_image_url()}}" height="48" width="48"></a>
+                  <a href="/user/{{mention['comment'].user().name}}">
+                    <img class="avatar--img" src="{{mention['comment'].user().profile_image_url()}}" height="48" width="48">
+                  </a>
                 </div>
                 <div class="body">
                   <div class="meta"><a href="/user/{{mention['comment'].user().name}}">{{mention['comment'].user().name}}</a> <span class="created-at">{{mention['comment'].pretty_created_at()}}</span></div>

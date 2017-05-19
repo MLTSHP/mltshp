@@ -4,7 +4,9 @@
     <a href="/p/{{sharedfile.share_key}}"><img src="{{sharedfile.small_thumbnail_url()}}" height="{{sourcefile.height}}" width="{{sourcefile.width}}" alt="" style="max-height: 184px; max-width: 240px; height: auto;"></a>
   </div>
   <div class="user-and-title">
-    <a href="/user/{{sharedfile_user.name}}" title="{{sharedfile_user.name}}"><img src="{{sharedfile_user.profile_image_url()}}" width="20" height="20"></a>
+    <a href="/user/{{sharedfile_user.name}}" title="{{sharedfile_user.name}}">
+      <img class="avatar--img" src="{{sharedfile_user.profile_image_url()}}" width="20" height="20">
+    </a>
     <div class="title">{{escape(sharedfile.get_title())}}</div>
   </div>
   <ul class="stats">
@@ -13,5 +15,5 @@
     <li class="likes">{{sharedfile.like_count}}</li>
     <li class="comments"><a href="/p/{{sharedfile.share_key}}">{{sharedfile.comment_count()}}</a></li>
   </ul>
-  
+
 </div>
