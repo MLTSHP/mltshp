@@ -23,7 +23,7 @@
       <ul id="apps" class="apps">
       {% for app in apps %}
         <li>
-          <h4><span class="title">{{escape(app.get_title())}}</span> <span class="by">by <a href="/user/{{app.user().name}}">{{app.user().name}}</a></span></h4>
+          <h4><span class="title">{{escape(app.get_title())}}</span> <span class="by">by <a class="user-name" href="/user/{{app.user().name}}">{{app.user().name}}</a></span></h4>
           <p>{{escape(app.get_description())}}</p>
           <p>
             <a class="disconnect" href="">Disconnect.</a>

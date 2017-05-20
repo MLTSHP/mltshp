@@ -1832,31 +1832,32 @@ iframe {
 .sidebar-stats-content .user-action {
   clear: both;
   margin-bottom: 5px;
-  float: left;
+  display: flex;
 }
 
 .sidebar-stats-content .icon {
   width: 20px;
   height: 20px;
   display: block;
-  float: left;
   margin-right: 5px;
 }
 
 .sidebar-stats-content .name {
-  float: left;
   display: block;
   padding-top: 5px;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .sidebar-stats-content .date {
-  float: left;
   padding-top: 7px;
   color: #7f7f7f;
   font-weight: normal;
-  font-size: 12px;
+  font-size: smaller;
   margin-left: 10px;
   display: block;
+  white-space: nowrap;
 }
 
 
@@ -2759,6 +2760,8 @@ iframe {
   font-weight: bold;
   padding-bottom: 10px;
   padding-left: 15px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .other-shakes {
@@ -4198,26 +4201,33 @@ span.previous-link {
   border-bottom: 1px dotted #e0e0e0;
 }
 
+@media screen and (min-width: 768px) {
+    .conversation {
+        display: flex;
+    }
+}
+
 .conversation .thumb {
+  flex: none;
   width: 100px;
-  float: left;
   margin-left: 30px;
 }
 
 .conversation .details-wrapper {
-  width: 465px;
-  float: left;
+  flex: 1;
   margin-left: 10px;
+  margin-right: 10px;
+  min-width: 0;
 }
 
 .conversation .sharedfile-title {
   font-size: 30px;
   font-weight: bold;
   color: #333;
-  float: left;
-  width: 445px;
   overflow: hidden;
   margin-bottom: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .conversation .sharedfile-description {
@@ -4225,34 +4235,32 @@ span.previous-link {
   font-size: 14px;
   line-height: 1.3;
   overflow: hidden;
-  width: 445px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .conversation .image-comments {
   padding-left: 0;
-  width: 465px;
 }
 
 .conversation .image-comments .body {
-  width: 385px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .conversation .image-comments .comment {
-  width: 465px;
 }
 
 .conversation .image-comments .meta {
-  width: 385px;
 }
 
 .conversation .conversation-meta {
-  clear: both;
   margin-bottom: 35px;
-  float: left;
+  margin-top: 20px;
+  display: flex;
 }
 
 .conversation .post-a-comment {
-  float: left;
   display: block;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -4266,7 +4274,6 @@ span.previous-link {
 }
 
 .conversation .mute-this-conversation {
-  float: left;
   display: block;
   color: #00adff;
   text-decoration: none;
@@ -4278,6 +4285,11 @@ span.previous-link {
   display: none;
 }
 
+.user-name {
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
 
 /*----------------------------------------------
   Area: API

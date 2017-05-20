@@ -5,7 +5,7 @@
 {% block main %}
 
   <div class="content content-narrow">
-    <h1>Hello, {{current_user['name']}}!</h1>
+    <h1>Hello, <span class="user-name">{{current_user['name']}}</span>!</h1>
 
     {% if promotion %}
     <p>Thanks for joining MLTSHP through {{ escape(promotion.name) }}!</p>
