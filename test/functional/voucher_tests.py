@@ -87,7 +87,8 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         self.post_url("/create-account", arguments=arguments)
         self.sign_in(arguments["name"], arguments["password"])
         response = self.fetch_url("/confirm-account")
-        self.assertTrue(response.body.find("Hello, %s!" % arguments["name"]) > -1)
+        self.assertTrue(response.body.find(
+            "Hello, <span class=\"user-name\">%s</span>!" % arguments["name"]) > -1)
         response = self.fetch_url("/account/settings")
         self.assertTrue(response.body.find("5 Years") > -1)
 

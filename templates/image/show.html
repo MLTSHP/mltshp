@@ -163,7 +163,7 @@
           <div class="body">
             {% set commenting_user = comment.user() %}
             <div class="meta">
-              <a class="username link--primary" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a>
+              <a class="user-name username link--primary" href="/user/{{commenting_user.name}}">{{commenting_user.name}}</a>
               {% if commenting_user.is_plus() %}
                 <a class="pro-badge" href="/account/membership" title="upgrade your account!">
                   <img src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center" alt="pro">
