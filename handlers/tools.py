@@ -423,21 +423,6 @@ class FindShakesPeople(BaseHandler):
         return self.render('tools/find-shakes-people.html', current_user_obj=user, users=users, users_sidebar=users_sidebar)
 
 
-class FindShakesTwitter(BaseHandler):
-    """
-    path: /tools/find-shakes/twitter
-
-    A shell of a page that sets up the asynchronous request to fetch
-    twitter friends.
-    """
-    @tornado.web.authenticated
-    @require_membership
-    def get(self):
-        user = self.get_current_user_object()
-        users_sidebar = User.recommended_for_user(user)
-        return self.render('tools/find-shakes-twitter.html', current_user_obj=user, users_sidebar=users_sidebar)
-
-
 class FindShakesQuickFetchCategory(BaseHandler):
 
     @tornado.web.authenticated
@@ -451,67 +436,3 @@ class FindShakesQuickFetchCategory(BaseHandler):
         shakes = Shake.for_category(category)
         return self.render("tools/find-shakes-quick-fetch-category.html",
                             shakes=shakes, current_user_obj=user)
-
-
-class FindShakesQuickFetchTwitter(BaseHandler):
-    """
-    path: /tools/find-shakes/quick-fetch-twitter
-
-    This method gets called as an AJAX call from the /tools/find-shakes/twitter
-    page.  If the user has no twitter account associated, will render
-    page with link to connect twitter account.
-
-    If user has twitter account connected and his friend graph
-    populated (ExternalRelationship), it will list friends.
-
-    If twitter account connected, but no friend graph, will call twitter
-    asynchronously, populate friend graph and show friends.  Will also
-    call Twitter asynchronously if "refresh" arg is passed in.
-    """
-
-    @tornado.web.asynchronous
-    @tornado.web.authenticated
-    @require_membership
-    def get(self):
-        refresh = self.get_argument('refresh', None)
-        self.user = self.get_current_user_object()
-        feather_client = lib.feathers.Feathers(key=options.twitter_consumer_key, secret=options.twitter_consumer_secret)
-        self.external_service = Externalservice.by_user(self.user, Externalservice.TWITTER)
-        if not self.external_service:
-            self.add_error('no_service', 'No Service.')
-            return self.render('tools/find-shakes-quick-fetch-twitter.html')
-
-        friends = self.external_service.find_mltshp_users()
-        if friends and not refresh:
-            return self.render('tools/find-shakes-quick-fetch-twitter.html', current_user_obj=self.user,\
-                friends=friends, externalservice=self.external_service)
-
-        params = {
-            'user_id' : self.external_service.service_id,
-            'cursor' : -1
-        }
-        feather_client.friends.ids.get(params=params,callback=self._add_friends, \
-            token_key=self.external_service.service_key, token_secret=self.external_service.service_secret)
-
-    def _add_friends(self, response):
-        # 503 - overloaded, 502 - down, 500 - broken.
-        if response.code == 503 or response.code == 502 or response.code == 500:
-            self.add_error('twitter_down', "Twitter down.")
-            return self.render('tools/find-shakes-quick-fetch-twitter.html')
-
-        # 400 - rate limit
-        if response.code == 400:
-            self.add_error('twitter_rate_limit', "You are over the Twitter rate limit.")
-            return self.render('tools/find-shakes-quick-fetch-twitter.html')
-
-        json_response = json.loads(response.body)
-        for service_id in json_response['ids']:
-            ExternalRelationship.add_relationship(self.user, service_id, ExternalRelationship.TWITTER)
-
-        friends = self.external_service.find_mltshp_users()
-        if not friends:
-            self.add_error('no_friends', "No friends.")
-            return self.render('tools/find-shakes-quick-fetch-twitter.html')
-        return self.render('tools/find-shakes-quick-fetch-twitter.html', current_user_obj=self.user, \
-            friends=friends, externalservice=self.external_service)
-
