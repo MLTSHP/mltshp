@@ -250,7 +250,6 @@ routes = [
         handlers.tools.FindShakesQuickFetchTwitter),
     (r"/tools/find-shakes/quick-fetch-category/([a-zA-Z0-9_\-]+)",
         handlers.tools.FindShakesQuickFetchCategory),
-    (r"/tools/find-shakes/twitter", handlers.tools.FindShakesTwitter),
     (r"/tools/find-shakes/people", handlers.tools.FindShakesPeople),
     (r"/tools/find-shakes", handlers.tools.FindShakesGroups),
 
