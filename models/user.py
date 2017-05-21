@@ -719,7 +719,7 @@ hello@mltshp.com
         address and will assign errors if its already taken, which will
         prevent saving.
         """
-        email = email.trim().lower()
+        email = email.strip().lower()
         if email != self.email:
             self.email = email
             self._validate_email_uniqueness()
@@ -861,7 +861,7 @@ hello@mltshp.com
         Validation only run on creation, for now, also needs to
         run if value has changed
         """
-        email = self.email.trim().lower()
+        email = self.email.strip().lower()
         if self.get("email = %s", email):
             self.add_error('email', 'This email already has an account.')
             return False

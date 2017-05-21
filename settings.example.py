@@ -48,6 +48,7 @@ test_settings = {
     "api_hits_per_hour" : 150,
     "use_workers": False,
     "debug_workers": True,
+    "moderator_list": "admin",
     # these must be set for testing test/unit/externalservice_tests.py
     # "twitter_consumer_key" : "twitter_consumer_key_here",
     # "twitter_consumer_secret" : "twitter_consumer_secret_key_here",
