@@ -31,5 +31,3 @@ class ToolsFindPeopleTests(test.base.BaseAsyncTestCase):
         self.assertEqual(200, response.code)
         response = self.fetch('/tools/find-shakes/people')
         self.assertEqual(200, response.code)
-        response = self.fetch('/tools/find-shakes/twitter')
-        self.assertEqual(200, response.code)
