@@ -57,5 +57,5 @@ class PaymentLog(Model):
         if count <= 0:
             return []
             
-        return PaymentLog.where('user_id = %s AND status IN (%s, %s, %s, %s) ORDER BY id desc LIMIT %s',
-             user_id, 'PS', 'payment', 'captured', 'credit', count)
+        return PaymentLog.where('user_id = %s AND status IN (%s, %s) ORDER BY id desc LIMIT %s',
+             user_id, 'payment', 'credit', count)
