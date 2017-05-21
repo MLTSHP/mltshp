@@ -8,7 +8,7 @@ test_settings = {
     "cdn_host": "mltshp-cdn.com",
     "cdn_ssl_host": "mltshp-cdn.com",
     "cookie_secret": "secretz",
-    "auth_secret" : "ne4om9og3maw8orp2ot9quos5ed8aj3lam6up3ja",
+    "auth_secret" : "dummy-secret",
     "xsrf_cookies": True,
     "uploaded_files" : "/srv/mltshp.com/uploaded",
     "debug": True,
@@ -26,6 +26,7 @@ test_settings = {
     "api_hits_per_hour" : 150,
     "use_workers": False,
     "debug_workers": True,
+    "superuser_list": "admin",
     # these must be set for testing test/unit/externalservice_tests.py
     # "twitter_consumer_key" : "twitter_consumer_key_here",
     # "twitter_consumer_secret" : "twitter_consumer_secret_key_here",

@@ -698,13 +698,13 @@ hello@mltshp.com
         """
         Return True if user is a superuser administrator.
         """
-        return self.name in ('admin',)
+        return self.name in options.superuser_list.split(',')
 
     def is_moderator(self):
         """
         Return True if user is a moderator.
         """
-        return self.name in ('admin',)
+        return self.name in options.moderator_list.split(',')
 
     def is_admin(self):
         """
@@ -719,6 +719,7 @@ hello@mltshp.com
         address and will assign errors if its already taken, which will
         prevent saving.
         """
+        email = email.strip().lower()
         if email != self.email:
             self.email = email
             self._validate_email_uniqueness()
@@ -860,7 +861,8 @@ hello@mltshp.com
         Validation only run on creation, for now, also needs to
         run if value has changed
         """
-        if self.get("email = %s", self.email):
+        email = self.email.strip().lower()
+        if self.get("email = %s", email):
             self.add_error('email', 'This email already has an account.')
             return False
         return True

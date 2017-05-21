@@ -27,6 +27,8 @@ define('likes_to_tweet', type=int, default=20, metavar='LIKES', help='Number of 
 define('likes_to_magic', type=int, default=10, metavar='LIKES', help='Number of likes for a file to be saved as a "magic" file')
 define('use_query_cache', type=bool, default=True, help="Turn on flyingcow's QueryCache during request cycle.")
 define('best_of_user_name', default='__best__', help="User name where Best Of images are saved.")
+define('superuser_list', default='', help='Comma separated list of users who are superuser accounts')
+define('moderator_list', default='', help='Comma separated list of users who are moderator accounts')
 
 # infrastructure
 define('database_host', metavar="HOST", help="Hostname for database connection")
