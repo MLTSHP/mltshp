@@ -246,8 +246,6 @@ routes = [
     (r"/tools/new-post", handlers.tools.NewPostHandler),
     (r"/tools/save-video", handlers.tools.SaveVideoHandler),
     (r"/tools/bookmarklet", handlers.tools.BookmarkletPageHandler),
-    (r"/tools/find-shakes/quick-fetch-twitter",
-        handlers.tools.FindShakesQuickFetchTwitter),
     (r"/tools/find-shakes/quick-fetch-category/([a-zA-Z0-9_\-]+)",
         handlers.tools.FindShakesQuickFetchCategory),
     (r"/tools/find-shakes/people", handlers.tools.FindShakesPeople),
