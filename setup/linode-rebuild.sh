@@ -56,14 +56,6 @@ function rebuild_node() {
         --name "$NODE_NAME" \
         --mode "reject" > /dev/null
 
-    linode nodebalancer \
-        $LINODE_USER_ARG \
-        --action node-update \
-        --label "$NODEBALANCER_NAME" \
-        --port 443 \
-        --name "$NODE_NAME" \
-        --mode "reject" > /dev/null
-
     echo "Rebuilding $NODE_NAME..."
 
     # Switch status of node to 'drain' to re-enable availability checks...
@@ -72,15 +64,6 @@ function rebuild_node() {
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
-        --name "$NODE_NAME" \
-        --mode "drain" > /dev/null
-
-    # Switch status of node to 'drain' to re-enable availability checks...
-    linode nodebalancer \
-        $LINODE_USER_ARG \
-        --action node-update \
-        --label "$NODEBALANCER_NAME" \
-        --port 443 \
         --name "$NODE_NAME" \
         --mode "drain" > /dev/null
 
@@ -102,15 +85,7 @@ function rebuild_node() {
         echo -n '.'
         status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 80 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"80\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
         if [ -n "$status" ]; then
-            while true; do
-                echo -n '.'
-                status=$( linode nodebalancer $LINODE_USER_ARG --action node-list --port 443 --label "${NODEBALANCER_NAME}" --json | jq .\[\"${NODEBALANCER_NAME}\"\]\[\"443\"\]\[\"nodes\"\]\[\]\|select\(.name==\"$NODE_NAME\"\)\|select\(.status==\"UP\"\) )
-                if [ -n "$status" ]; then
-                    echo 'UP'; break;
-                fi
-                sleep 10
-            done
-            break
+            echo 'UP'; break;
         fi
         sleep 10
     done
@@ -122,14 +97,6 @@ function rebuild_node() {
         --action node-update \
         --label "$NODEBALANCER_NAME" \
         --port 80 \
-        --name "$NODE_NAME" \
-        --mode "accept" > /dev/null
-
-    linode nodebalancer \
-        $LINODE_USER_ARG \
-        --action node-update \
-        --label "$NODEBALANCER_NAME" \
-        --port 443 \
         --name "$NODE_NAME" \
         --mode "accept" > /dev/null
 
