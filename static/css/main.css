@@ -3106,8 +3106,8 @@ iframe {
   position: absolute;
   width: 21px;
   height: 21px;
-  top: 15px;
-  right: -5px;
+  top: 10px;
+  right: 10px;
 }
 
 @media screen and (min-width: 768px) {
