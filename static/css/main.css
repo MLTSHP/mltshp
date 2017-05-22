@@ -3984,12 +3984,12 @@ span.previous-link {
 .bookmark {
   display: flex;
   align-items: flex-start;
-  flex-direction: column;
+  flex-wrap: wrap;
 }
 
-@media screen and (min-width: 480px) {
-  .bookmark {
-    flex-direction: row;
+@media screen and (max-width: 480px) {
+  .hide-on-small {
+    display: none;
   }
 }
 
@@ -4006,8 +4006,8 @@ span.previous-link {
 
 .bookmark-flag::before,
 .bookmark-flag::after,
-.bookmark-flag span::before,
-.bookmark-flag span::after {
+.bookmark-flag--content::before,
+.bookmark-flag--content::after {
   position: absolute;
   content: '';
   display: block;
@@ -4032,27 +4032,27 @@ span.previous-link {
   border-radius: 3px 0 0 3px;
 }
 
-.bookmark-flag span {
+.bookmark-flag--content {
   display: block;
   padding: .5em 1em;
   line-height: 1;
 }
 
-.bookmark-flag span::after {
+.bookmark-flag--content::after {
   top: 0;
-  right: -10px;
-  border: 10px solid #ff0180;
+  right: -.866em;
+  border: 1em solid #ff0180;
   border-width: 1em .866em 1em 0;
   border-right-color: transparent;
 }
 
 .jump-back {
     flex: 1;
-    height:23px;
-    margin-left: 10px;
-    margin-top:4px;
-    font-size:12px;
+    margin-left: .75em;
+    padding: calc(.5em - 3px) 0 .5em .75em;
+    font-size:11px;
     width:100px;
+    white-space: nowrap;
 }
 .jump-back a {
     color:#ff0080;
