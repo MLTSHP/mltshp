@@ -811,38 +811,21 @@ iframe {
 ---------------------------------------------- */
 
 .content-relationships .body {
-  float: left;
-  margin-left: 40px;
-  padding-top: 20px;
-  width: 540px;
 }
 
-.content-relationships .body .friend {
-  float: left;
-  width: 540px;
-  border-bottom: 1px dashed #e0e0e0;
-}
-
+.content-relationships .body .friend,
 .content-relationships .body .shake {
-  float: left;
-  width: 540px;
   border-bottom: 1px dashed #e0e0e0;
+  padding: 0 40px;
 }
 
 .content-relationships  .body .user-follow-extended {
-  clear: left;
-  float: left;
-  width: 530px;
-  margin: 20px 5px;
 }
 
 .content-relationships .body .user-follow-extended .follow {
-  width: 470px;
 }
 
 .content-relationships .body .user-follow-extended .details {
-  width: 370px;
-  float: left;
 }
 
 .content-relationships .body .user-follow-extended .website a {
@@ -857,8 +840,6 @@ iframe {
 }
 
 .content-relationships .user-info .details {
-  width: 170px;
-  float: left;
 }
 
 .content-relationships .user-info .details h3 {
