@@ -105,11 +105,11 @@
           {% else %}
             <div class="bookmark">
               <span class="bookmark-flag">
-                <span>You started reading here {{sharedfile.pretty_created_at() }}</span>
+                <span class="bookmark-flag--content">You started <span class="hide-on-small">reading</span> here {{sharedfile.pretty_created_at() }}</span>
               </span>
               {% if sharedfile.previous_sharedfile_id > 0 %}
                 <span class="jump-back">
-                  <a href="/before/{{sharedfile.previous_sharedfile_key()}}/returning">jump to previous</a>
+                  <a href="/before/{{sharedfile.previous_sharedfile_key()}}/returning"><span class="hide-on-small">jump to</span> previous</a>
                 </span>
               {% end %}
             </div>
