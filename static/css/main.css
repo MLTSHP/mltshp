@@ -1537,6 +1537,7 @@ iframe {
       grid-gap: 30px;
       grid-template-columns: 1fr 330px;
       grid-template-areas: "title title" "image sidebar" "comments sidebar" "post-comment sidebar";
+      grid-template-rows: repeat(3, min-content) 1fr;
     }
 
     .content-permalink > * {
@@ -4566,9 +4567,17 @@ span.previous-link {
   color: #333;
   font-size: 14px;
   line-height: 18px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+}
+
+.shake-details .description .content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.shake-details .description .placeholder {
+    color: #999;
+    font-style: italic;
 }
 
 .shake-details .shake-edit-description-input {
