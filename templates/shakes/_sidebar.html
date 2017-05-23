@@ -41,9 +41,9 @@
     <div class="shake-details">
       <p class="description shake-edit-description">
         {% if shake.description %}
-          {{escape(shake.description)}}
+          <span class="content">{{escape(shake.description)}}</span>
         {% else %}
-          <span class="click-to-edit">Click to edit description</span>
+          <span class="placeholder">Click to edit description</span>
         {% end %}
       </p>
       <form action="/shake/{{shake.name}}/quick-details" class="shake-edit-description-form">
