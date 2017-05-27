@@ -17,9 +17,9 @@ services:
 
 script:
   - cp ./settings.travis-ci.py ./settings.py
-  - export HOSTIP=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
+  - cp ./docker-compose.travis-ci.yml docker-compose.yml
   - docker pull mltshp/mltshp-web:latest
-  - docker-compose up -d --file docker-compose.travis-ci.yml
+  - docker-compose up -d
   - docker exec -t mltshp_mltshp_1 ./run-tests.sh
 
 after_success:
