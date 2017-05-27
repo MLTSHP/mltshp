@@ -22,4 +22,5 @@ script:
   - docker-compose --file docker-compose.travis-ci.yml run mltshp ./run-tests.sh
 
 after_success:
+  - docker container ls -a
   - docker exec -e COVERALLS_REPO_TOKEN mltshp_mltshp_1 coveralls
