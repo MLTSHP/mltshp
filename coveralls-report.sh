@@ -1,3 +1,3 @@
 #!/bin/sh
-apt-get install -y git
+apt-get update && apt-get install -y git
 coveralls
