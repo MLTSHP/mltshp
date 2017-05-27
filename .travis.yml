@@ -23,4 +23,5 @@ script:
   - docker exec -t mltshp_mltshp_1 ./run-tests.sh
 
 after_success:
+  - docker exec -t -e 'apt-get install -y git'
   - docker exec -t -e COVERALLS_REPO_TOKEN mltshp_mltshp_1 coveralls
