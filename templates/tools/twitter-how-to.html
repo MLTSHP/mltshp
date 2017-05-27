@@ -2,11 +2,11 @@
 
 {% block included_scripts %}
 <script type="text/javascript" charset="utf-8">
-  slide_number=1;
+  var slide_number = 1;
   
   $(document).ready(function() {
     $('#previous_button').hide();
-    
+
     $('#next_button').click(function() {
       slide_number += 1;
 
@@ -15,11 +15,13 @@
       } else if (slide_number > 1){
           $('#previous_button').show();
       } else {
-        $('#previous_button').hide();
+          $('#previous_button').hide();
       }
       
       $('#step-' + (slide_number - 1)).hide();
       $('#step-' + (slide_number)).show();
+
+      return false;
     });
     
     $('#previous_button').click(function() {
@@ -31,12 +33,14 @@
           $('#previous_button').show();
           $('#next_button').show();
       } else {
-        $('#previous_button').hide();
+          $('#previous_button').hide();
       }
       
       
       $('#step-' + (slide_number + 1)).hide();
       $('#step-' + (slide_number)).show();
+
+      return false;
     });
   });
 </script>
@@ -51,7 +55,7 @@
 
     <div class="steps" id="step-1" style="display:inline;">
       <p>Note: Twitter app doesn't do this anymore but apps like Tweetbot do.</p>
-        <p>Tap your user avatar at the top left</p>
+      <p>Tap your user avatar at the top left</p>
       <p><img src="{{ static_url('images/twitter1.png') }}" width="320" height="568"></p>
     </div>
     
@@ -80,9 +84,9 @@
       <p><img src="{{ static_url('images/twitter6.png') }}" width="320" height="568"></p>
     </div>
 
-    <p style="text-align:center;">
-      <a href="#" id="previous_button">Previous</a>&nbsp;&nbsp;
-      <a href="#" id="next_button">Next</a>
+    <p style="text-align: center;">
+      <a href="#" role="button" class="btn btn-secondary" id="previous_button">Previous</a>&nbsp;&nbsp;
+      <a href="#" role="button" class="btn btn-secondary" id="next_button">Next</a>
     </p>
   </div>
 {% end %}
