@@ -15,4 +15,7 @@ script:
   - cp ./settings.travis-ci.py ./settings.py
   - export HOSTIP=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
   - docker pull mltshp/mltshp-web:latest
-  - docker-compose --file docker-compose.travis-ci.yml run mltshp ./test.py
+  - docker-compose --file docker-compose.travis-ci.yml run mltshp ./run-tests.sh
+
+after_success:
+  - docker exec -e COVERALLS_REPO_TOKEN mltshp_mltshp_1 coveralls

@@ -11,3 +11,5 @@ pip-log.txt
 env
 mounts
 .deploy.env
+.coverage
+coverage.xml
