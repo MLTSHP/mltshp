@@ -10,7 +10,7 @@
     $('#next_button').click(function() {
       slide_number += 1;
 
-      if (slide_number > 11) {
+      if (slide_number > 5) {
           $('#next_button').hide();
       } else if (slide_number > 1){
           $('#previous_button').show();
@@ -25,7 +25,7 @@
     $('#previous_button').click(function() {
       slide_number -= 1;
       
-      if (slide_number > 11) {
+      if (slide_number > 5) {
           $('#next_button').hide();
       } else if (slide_number > 1){
           $('#previous_button').show();
@@ -43,62 +43,42 @@
 {% end %}
 
 
-{% block title %}How To Setup Twitter{% end %}
+{% block title %}How To Use Twitter with MLTSHP{% end %}
 
 {% block main %}
   <div class="content content-narrow">
-    <h1>How To Setup Twitter</h1>
+    <h1>Using Twitter with MLTSHP</h1>
 
     <div class="steps" id="step-1" style="display:inline;">
-      <p>Open Twitter for iPhone</p>
-      <p><img src="{{ static_url("images/howto-1.png") }}" width="320" height="480"></p>
+      <p>Note: Twitter app doesn't do this anymore but apps like Tweetbot do.</p>
+        <p>Tap your user avatar at the top left</p>
+      <p><img src="{{ static_url('images/twitter1.PNG') }}" width="320" height="568"></p>
     </div>
-    <div class="steps" id="step-2">
-      <p>From The Far Right Tab Select &#8220;Accounts &amp; Settings&#8221;</p>
-      <p><img src="{{ static_url("images/howto-2.png") }}" width="320" height="480"></p>
+    
+      <div class="steps" id="step-2">
+      <p>Tap the gear icon at the bottom to open the settings</p>
+      <p><img src="{{ static_url('images/twitter2.PNG') }}" width="320" height="568"></p>
     </div>
-    <div class="steps"  id="step-3">
-      <p>Select &#8220;Settings&#8221;</p>
-      <p><img src="{{ static_url("images/howto-3.png") }}" width="320" height="480"></p>
+    
+      <div class="steps"  id="step-3">
+      <p>Tap on your user account settings (personal name)</p>
+      <p><img src="{{ static_url('images/twitter3.PNG') }}" width="320" height="568"></p>
     </div>
-    <div class="steps" id="step-4">
-      <p>Scroll To &#8220;Services&#8221; And Select It</p>
-      <p><img src="{{ static_url("images/howto-4.png") }}" width="320" height="480"></p>
+    
+      <div class="steps" id="step-4">
+      <p>Tap on Image Upload</p>
+      <p><img src="{{ static_url('images/twitter4.PNG') }}" width="320" height="568"></p>
     </div>
-    <div class="steps" id="step-5">
-      <p>Pick &#8220;Image Service&#8221;</p>
-      <p><img src="{{ static_url("images/howto-5.png") }}" width="320" height="480"></p>
+    
+      <div class="steps" id="step-5">
+      <p>Tap on Custom</p>
+      <p><img src="{{ static_url('images/twitter5.PNG') }}" width="320" height="568"></p>
     </div>
-    <div class="steps" id="step-6">
-      <p>Tap &#8220;Custom&hellip;&#8221;</p>
-      <p><img src="{{ static_url("images/howto-6.png") }}" width="320" height="480"></p>
+    
+      <div class="steps" id="step-6">
+      <p>Enter the MLTSHP upload URL and tap Done</p>
+      <p><img src="{{ static_url('images/twitter6.PNG') }}" width="320" height="568"></p>
     </div>
-    <div class="steps" id="step-7">
-      <p>Enter https://mltshp.com/upload</p>
-      <p><img src="{{ static_url("images/howto-7.png") }}" width="320" height="480"></p>
-    </div>
-    <div class="steps"id="step-8">
-      <p>Tap &#8220;Save&#8221;</p>
-      <p><img src="{{ static_url("images/howto-8.png") }}" width="320" height="480"></p>
-    </div>
-
-    <div class="steps"id="step-9">
-      <p>Start A New Tweet And Click The Character Count</p>
-      <p><img src="{{ static_url("images/howto-9.png") }}" width="320" height="480"></p>
-    </div>
-    <div class="steps"id="step-10">
-      <p>Take A Photo</p>
-      <p><img src="{{ static_url("images/howto-10.png") }}" width="320" height="480"></p>
-    </div>
-    <div class="steps"id="step-11">
-      <p>Post Your Tweet</p>
-      <p><img src="{{ static_url("images/howto-11.png") }}" width="320" height="480"></p>
-    </div>
-    <div class="steps"id="step-12">
-      <p>The URL To The Photo Will Be Appended</p>
-      <p><img src="{{ static_url("images/howto-12.png") }}" width="320" height="480"></p>
-    </div>
-
 
     <p style="text-align:center;">
       <a href="#" id="previous_button">Previous</a>&nbsp;&nbsp;
