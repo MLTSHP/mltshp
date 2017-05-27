@@ -24,4 +24,5 @@ stripe==1.51.0
 newrelic==2.82.0.62
 yoyo-migrations==5.0.5
 ffmpy==0.2.2
+coverage
 coveralls
