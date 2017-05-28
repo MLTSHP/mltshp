@@ -23,4 +23,4 @@ script:
   - docker exec -t mltshp_mltshp_1 ./run-tests.sh
 
 after_success:
-  - docker exec -t -e COVERALLS_REPO_TOKEN mltshp_mltshp_1 ./coveralls-report.sh
+  - docker exec -t -e TRAVIS -e TRAVIS_JOB_ID -e TRAVIS_BRANCH -e COVERALLS_REPO_TOKEN mltshp_mltshp_1 ./coveralls-report.sh
