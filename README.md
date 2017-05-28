@@ -2,7 +2,7 @@
 
 ## Status
 
-[![Build Status](https://travis-ci.org/MLTSHP/mltshp.svg?branch=master)](https://travis-ci.org/MLTSHP/mltshp) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=coveralls-support)](https://coveralls.io/github/MLTSHP/mltshp?branch=coveralls-support)
+[![Build Status](https://travis-ci.org/MLTSHP/mltshp.svg?branch=master)](https://travis-ci.org/MLTSHP/mltshp) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
 
 
 ## Development Environment
