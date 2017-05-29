@@ -85,6 +85,7 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         kwargs['errors'] = self._errors
         kwargs['settings'] = self.settings
         kwargs['host'] = self.request.host
+        kwargs['cdn_host'] = options.cdn_host or self.request.host
         kwargs['current_user_object'] = current_user_object
         kwargs['site_is_readonly'] = options.readonly == 1
         kwargs['disable_signups'] = options.disable_signups == 1

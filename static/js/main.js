@@ -843,6 +843,18 @@ $(document).ready(function() {
       }
     }
 
+    function apply_hover_for_video(sel) {
+      console.log('sel',sel);
+      sel.hover(function () {
+        if (this.hasAttribute("controls")) {
+          this.removeAttribute("controls")
+        } else {
+          this.setAttribute("controls", "controls")
+        }
+      });
+    }
+    apply_hover_for_video($('.image-content video.autoplay'));
+
     var NSFWCover = function($root) {
       this.$root = $root;
       this.init();
@@ -867,10 +879,13 @@ $(document).ready(function() {
         var parent = this.$root.parent(),
             parent_height = parent.height();
 
-        if (response['type'] == 'photo') {
-          this.$root.parent().css('min-height', parent_height + 'px').html('<img class="unsized" src="' + response['url'] + '">');
+        if (response['type'] === 'photo') {
+          parent.css('min-height', parent_height + 'px').html('<img class="unsized" src="' + response['url'] + '">');
         } else if (response['embed_html']) {
-          this.$root.parent().css('min-height', parent_height + 'px').html('<div class="data-wrapper">' + response['embed_html'] + '</div>');
+          parent.css('min-height', parent_height + 'px').html('<div class="data-wrapper">' + response['embed_html'] + '</div>');
+        } else if (response['type'] === 'video') {
+          var content = parent.css('min-height', parent_height + 'px').html(response['html'].replace(/<source /g, '<source onerror="fallbackImage(this)" '));
+          apply_hover_for_video(content.find('video.autoplay'));
         }
       }
     });

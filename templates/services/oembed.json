@@ -2,9 +2,9 @@
   "callback": "{{jsonp}}",{% end %}
   "version": "1.0",{% if sourcefile.type=="link" %}
   "type": "link",
-  "url": "{{sharedfile.source_url}}",{% else %}{% if sourcefile.mp4_flag %}
+  "url": "{{sharedfile.source_url}}",{% else %}{% if sourcefile.mp4_flag or sourcefile.webm_flag %}
   "type": "video",
-  "html": "<video controls muted playsinline width=\"{{sourcefile.width}}\" height=\"{{sourcefile.height}}\"><source src=\"https://{{cdn_host}}/r/{{sharedfile.share_key}}.mp4\" type=\"video/mp4\"></video>",{% else %}
+  "html": "<video class=\"autoplay\" autoplay muted playsinline webkit-playsinline loop=\"loop\" width=\"{{sourcefile.width}}\" height=\"{{sourcefile.height}}\"  data-alt=\"{{escape(sharedfile.get_title())}}\" data-src=\"https://s.{{host}}/r/{{sharedfile.share_key}}\">{% if sourcefile.webm_flag %}<source src=\"http{% if cdn_host == "mltshp-cdn.com" %}s{% end %}://{{cdn_host}}/r/{{sharedfile.share_key}}.webm\" type=\"video/webm\">{% end %}{% if sourcefile.mp4_flag %}<source src=\"http{% if cdn_host == "mltshp-cdn.com" %}s{% end %}://{{cdn_host}}/r/{{sharedfile.share_key}}.mp4\" type=\"video/mp4\">{% end %}</video>",{% else %}
   "type": "photo",
   "url": "https://{{cdn_host}}/r/{{sharedfile.share_key}}",{% end %}{% end %}
   "width": {{sourcefile.width}},
