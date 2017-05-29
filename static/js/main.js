@@ -844,7 +844,6 @@ $(document).ready(function() {
     }
 
     function apply_hover_for_video(sel) {
-      console.log('sel',sel);
       sel.hover(function () {
         if (this.hasAttribute("controls")) {
           this.removeAttribute("controls")
@@ -853,7 +852,6 @@ $(document).ready(function() {
         }
       });
     }
-    apply_hover_for_video($('.image-content video.autoplay'));
 
     var NSFWCover = function($root) {
       this.$root = $root;
@@ -899,13 +897,7 @@ $(document).ready(function() {
       var nsfw_cover = new NSFWCover($nsfw_cover);
     });
 
-    $('.image-content video.autoplay').hover(function toggleControls() {
-      if (this.hasAttribute("controls")) {
-        this.removeAttribute("controls")
-      } else {
-        this.setAttribute("controls", "controls")
-      }
-    });
+    apply_hover_for_video($('.image-content video.autoplay'));
 
     /* Open / close notification boxes */
     $(".notification-block-hd").live('click', function() {
