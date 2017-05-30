@@ -12,6 +12,7 @@ RUN apt-get -y update && apt-get install -y \
     curl \
     wget \
     vim \
+    htop \
     libpcre3 \
     libpcre3-dev \
     libssl-dev \
