@@ -1193,7 +1193,6 @@ iframe {
    - also used for payment thank you page.
 ---------------------------------------------- */
 
-.content-migrate,
 .content-membership {
   padding: 15px;
   background-color: #fff;
@@ -1201,13 +1200,19 @@ iframe {
 
 .content-migrate {
   background: #fff url('/static/images/burger-upgrade.svg') no-repeat;
-  background-size: 366px 481px;
   background-position: bottom 15px center;
+  background-size: 366px 481px;
   padding-bottom: 530px;
 }
 
+.content-membership-thanks {
+  background: #fff url('/static/images/thankyou-dude.svg') no-repeat;
+  background-position: bottom 15px center;
+  background-size: 312px 410px;
+  padding-bottom: 450px;
+}
+
 @media screen and (min-width: 768px) {
-  .content-migrate,
   .content-membership {
     padding: 40px;
   }
@@ -1217,25 +1222,23 @@ iframe {
     padding-left: 430px;
     min-height: 481px;
   }
+
+  .content-membership-thanks {
+    background-position: 40px 40px;
+    padding-left: 380px;
+    min-height: 410px;
+  }
 }
 
-.content-migrate h1,
 .content-membership h1 {
   text-shadow: 2px 4px 1px #e0e0e0;
   line-height: 1;
-}
-
-.content-migrate h1.thank-you,
-.content-membership h1.thank-you {
-  margin-top: 100px;
-  font-size: 80px;
 }
 
 .content-membership ul {
   padding-left: 1em;
 }
 
-.content-migrate li + li,
 .content-membership li + li {
   margin-top: 1em;
 }
@@ -1279,12 +1282,10 @@ iframe {
   line-height: 1.4;
 }
 
-.content-migrate p a,
 .content-membership p a {
   color: #ff0080;
 }
 
-.content-migrate .fine-print,
 .content-membership .fine-print {
   margin-top: 30px;
   font-size: 12px;
