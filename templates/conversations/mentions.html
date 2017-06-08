@@ -20,25 +20,26 @@
       <div class="mentions">
         {% for mention in mentions %}
           <div class="conversation">
-            <div class="image-comments">
-              <div class="comment">
-                <div class="avatar">
-                  <a href="/user/{{mention['comment'].user().name}}">
-                    <img class="avatar--img" src="{{mention['comment'].user().profile_image_url()}}" height="48" width="48">
-                  </a>
+            <div class="details-wrapper">
+                <div class="image-comments">
+                  <div class="comment">
+                    <div class="avatar">
+                      <a href="/user/{{mention['comment'].user().name}}">
+                        <img class="avatar--img" src="{{mention['comment'].user().profile_image_url()}}" height="48" width="48">
+                      </a>
+                    </div>
+                    <div class="body">
+                      <div class="meta"><a class="user-name" href="/user/{{mention['comment'].user().name}}">{{mention['comment'].user().name}}</a> <span class="created-at">{{mention['comment'].pretty_created_at()}}</span></div>
+                      {{mention['comment'].body_formatted()}}
+                      <div class="where-from">Posted on "<a href="/p/{{mention['sharedfile'].share_key}}">{{mention['sharedfile'].get_title()}}</a>"</div>
+                    </div>
+                    <div class="clear"><!-- --></div>
+                  </div>
                 </div>
-                <div class="body">
-                  <div class="meta"><a class="user-name" href="/user/{{mention['comment'].user().name}}">{{mention['comment'].user().name}}</a> <span class="created-at">{{mention['comment'].pretty_created_at()}}</span></div>
-                  {{mention['comment'].body_formatted()}}
-                  <div class="where-from">Posted on "<a href="/p/{{mention['sharedfile'].share_key}}">{{mention['sharedfile'].get_title()}}</a>"</div>
+                <div class="conversation-meta">
+                  <a class="btn btn-small btn-pastel btn-secondary post-a-comment" href="/p/{{mention['sharedfile'].share_key}}#post-comment">reply to this comment &raquo;</a>
                 </div>
-                <div class="clear"><!-- --></div>
-              </div>
             </div>
-            <div class="conversation-meta">
-              <a class="post-a-comment" href="/p/{{mention['sharedfile'].share_key}}#post-comment">reply &raquo;</a>
-            </div>
-            <div class="clear"><!-- --></div>
           </div>
         {% end %}
       </div>
