@@ -3838,6 +3838,8 @@ span.previous-link {
 .feature--image-media {
   display: block;
   margin: 0 auto;
+  border: 1px solid #eee;
+  box-shadow: 3px 3px 0 #eee;
 }
 
 /* feature title */
@@ -3889,6 +3891,12 @@ span.previous-link {
   }
 }
 
+.feature--primary .feature--image-media,
+.feature--finale .feature--image-media {
+    border: none;
+    box-shadow: none;
+}
+
 .feature--primary .feature--title {
   font-size: 42px;
   letter-spacing: -3px;
@@ -3928,6 +3936,23 @@ span.previous-link {
     margin-left: 70px;
   }
 }
+
+/* Final Feature Modifier */
+.feature--finale {
+    align-items: center;
+}
+
+@media screen and (min-width: 960px) {
+  .feature--finale {
+    padding-left: 150px;
+    padding-right: 150px;
+  }
+}
+
+.feature--finale .feature--image {
+    flex: none;
+}
+
 
 
 /* Friends Page */
