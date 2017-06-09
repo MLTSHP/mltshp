@@ -38,21 +38,19 @@
                     <div class="meta"><a href="/user/{{comment.user().name}}" class="user-name">{{comment.user().name}}</a> <span class="created-at">{{comment.pretty_created_at()}}</span></div>
                     {{comment.body_formatted()}}
                   </div>
-                  <div class="clear"><!-- --></div>
                 </div>
               {% end %}
             </div>
             {% if not site_is_readonly %}
             <div class="conversation-meta">
-              <a class="post-a-comment" href="/p/{{conversation['sharedfile'].share_key}}#post-comment">post a comment &raquo;</a>
-              <a class="mute-this-conversation" href="">mute this conversation &raquo;</a>
+              <a class="btn btn-small btn-pastel btn-secondary post-a-comment" href="/p/{{conversation['sharedfile'].share_key}}#post-comment">post a comment &raquo;</a>
+              <a class="btn btn-small btn-pastel btn-warning mute-this-conversation" href="">mute this conversation &raquo;</a>
               <form class="mute-this-conversation-form" method="POST" action="/conversations/{{conversation['conversation'].id}}/mute">
                 {{ xsrf_form_html() }}
               </form>
             </div>
             {% end %}
           </div>
-          <div class="clear"><!-- --></div>
         </div>
       {% end %}
       {{modules.Pagination(object_count=count, current_page=page, url_format=url_format)}}

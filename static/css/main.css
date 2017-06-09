@@ -3610,7 +3610,7 @@ textarea {
 
 
 .image-comments .comment .body .where-from {
-  padding-top: 20px;
+  padding-top: 10px;
   color: #7f7f7f;
   font-size: 12px;
 }
@@ -4175,13 +4175,14 @@ span.previous-link {
   margin: 30px;
 }
 
-.mentions .conversation {
-  padding: 0 30px;
-}
-
 .conversation {
   margin-top: 30px;
   border-bottom: 1px dotted #e0e0e0;
+}
+
+.mentions .conversation {
+    padding-left: 30px;
+    padding-right: 10px;
 }
 
 @media screen and (min-width: 768px) {
@@ -4239,29 +4240,14 @@ span.previous-link {
 
 .conversation .conversation-meta {
   margin-bottom: 35px;
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
+  flex-wrap: wrap;
 }
 
-.conversation .post-a-comment {
-  display: block;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  background-color: #daf3ff;
-  color: #00adff;
-  text-decoration: none;
-  padding: 15px;
-  font-weight: bold;
-  font-size: 14px;
-}
-
+.conversation .post-a-comment,
 .conversation .mute-this-conversation {
-  display: block;
-  color: #00adff;
-  text-decoration: none;
-  padding: 15px;
-  font-size: 12px;
+    margin: 5px 1em 0 0;
 }
 
 .conversation .mute-this-conversation-form {
