@@ -145,6 +145,10 @@ a:active {
   justify-content: flex-end;
 }
 
+.site-nav--item > * {
+    flex: 1;
+}
+
 .site-nav--item + .site-nav--item {
   margin-top: .25em;
 }
@@ -159,6 +163,10 @@ a:active {
     display: flex;
     flex-direction: row;
     position: static;
+  }
+
+  .site-nav--item > * {
+      flex: none;
   }
 
   .site-nav--item + .site-nav--item {
@@ -222,6 +230,7 @@ a:active {
   font-weight: bold;
   padding: 13px 19px;
   white-space: nowrap;
+  width: 100%;
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--toggle {
