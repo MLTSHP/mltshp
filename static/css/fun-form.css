@@ -37,7 +37,6 @@
 }
 
 @media screen and (min-width: 768px) {
-
     .fun-form .field {
         align-items: center;
         flex-direction: row;
@@ -154,7 +153,6 @@
         right: -160px;
     }
 }
-
 
 /* ---------------------------------------------------------------------
   Stacked Fun Form Modifier
