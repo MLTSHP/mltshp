@@ -34,11 +34,11 @@
           {% if bool(user.nsfw) == True %}
             NSFW.
             <input type="hidden" name="nsfw" value="0">
-            <input class="flag-nsfw-button" type="submit" value="Remove NSFW Flag">
+            <input class="btn btn-small btn-pastel btn-primary flag-nsfw-button" type="submit" value="Remove NSFW Flag">
           {% else %}
             SFW.
             <input type="hidden"  name="nsfw"  value="1">
-            <input class="unflag-nsfw-button" type="submit" value="Set NSFW Flag">
+            <input class="btn btn-small btn-pastel btn-primary unflag-nsfw-button" type="submit" value="Set NSFW Flag">
           {% end %}
         </form>
 
