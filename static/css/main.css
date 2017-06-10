@@ -146,6 +146,10 @@ a:active {
     justify-content: flex-end;
 }
 
+.site-nav--item > * {
+    flex: 1;
+}
+
 .site-nav--item + .site-nav--item {
     margin-top: .25em;
 }
@@ -159,6 +163,10 @@ a:active {
         display: flex;
         flex-direction: row;
         position: static;
+    }
+
+    .site-nav--item > * {
+        flex: none;
     }
 
     .site-nav--item + .site-nav--item {
@@ -222,6 +230,7 @@ a:active {
     font-weight: bold;
     padding: 13px 19px;
     white-space: nowrap;
+    width: 100%;
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--toggle {
@@ -3637,7 +3646,7 @@ textarea {
 }
 
 .image-comments .comment .body .where-from {
-    padding-top: 20px;
+    padding-top: 10px;
     color: #7f7f7f;
     font-size: 12px;
 }
@@ -3868,6 +3877,8 @@ span.previous-link {
 .feature--image-media {
     display: block;
     margin: 0 auto;
+    border: 1px solid #eee;
+    box-shadow: 3px 3px 0 #eee;
 }
 
 /* feature title */
@@ -3919,6 +3930,12 @@ span.previous-link {
     }
 }
 
+.feature--primary .feature--image-media,
+.feature--finale .feature--image-media {
+    border: none;
+    box-shadow: none;
+}
+
 .feature--primary .feature--title {
     font-size: 42px;
     letter-spacing: -3px;
@@ -3959,8 +3976,23 @@ span.previous-link {
     }
 }
 
-/* Friends Page */
+/* Final Feature Modifier */
+.feature--finale {
+    align-items: center;
+}
 
+@media screen and (min-width: 960px) {
+  .feature--finale {
+    padding-left: 150px;
+    padding-right: 150px;
+  }
+}
+
+.feature--finale .feature--image {
+    flex: none;
+}
+
+/* Friends Page */
 .account-header {
     padding: 24px 30px 16px;
     background: linear-gradient(
@@ -4207,13 +4239,14 @@ span.previous-link {
     margin: 30px;
 }
 
-.mentions .conversation {
-    padding: 0 30px;
-}
-
 .conversation {
     margin-top: 30px;
     border-bottom: 1px dotted #e0e0e0;
+}
+
+.mentions .conversation {
+    padding-left: 30px;
+    padding-right: 10px;
 }
 
 @media screen and (min-width: 768px) {
@@ -4271,29 +4304,14 @@ span.previous-link {
 
 .conversation .conversation-meta {
     margin-bottom: 35px;
-    margin-top: 20px;
+    margin-top: 15px;
     display: flex;
+    flex-wrap: wrap;
 }
 
-.conversation .post-a-comment {
-    display: block;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    background-color: #daf3ff;
-    color: #00adff;
-    text-decoration: none;
-    padding: 15px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
+.conversation .post-a-comment,
 .conversation .mute-this-conversation {
-    display: block;
-    color: #00adff;
-    text-decoration: none;
-    padding: 15px;
-    font-size: 12px;
+    margin: 5px 1em 0 0;
 }
 
 .conversation .mute-this-conversation-form {
@@ -4729,8 +4747,8 @@ span.previous-link {
 .new-post-panel {
     display: none;
     background-color: #fff;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: -10px; /* to avoid the shadow being cut off */
     left: 30px;
     right: 30px;
     max-width: 560px;
@@ -5124,9 +5142,6 @@ ul.promotions li:hover .promotion-name {
 
 /* buttons that only contain an icon */
 .btn-icon {
-    align-items: center;
-    display: inline-flex;
-    justify-content: center;
     padding: 0;
     width: 2.2em;
 }
