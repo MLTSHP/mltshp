@@ -23,15 +23,23 @@
     <p>
       Save A New Category
     </p>
-    <form method="POST" action="/admin/shake-categories">
-      {{ xsrf_form_html() }}
+    <form class="fun-form fun-form-stacked" method="POST" action="/admin/shake-categories">
+        {{ xsrf_form_html() }}
 
-      Name: <input type="text" name="name"><br>
-      Short name: <input type="text" name="short_name" ><br>
-      <input type="submit" value="save it">
+        <div class="field">
+            <label>Name:</label>
+            <div class="field-input"><input class="input-text" type="text" name="name"></div>
+        </div>
+        <div class="field">
+            <label>Short name:</label>
+            <div class="field-input"><input class="input-text" type="text" name="short_name" ></div>
+        </div>
+        <div class="field field-submit">
+            <input class="btn btn-primary btn-shadow" type="submit" value="save it">
+        </div>
     </form>
     <p>
-      <a href="/admin/">&lt; Back to the Admin</a>
+      <a class="btn btn-pastel btn-secondary" href="/admin/">&lt; Back to the Admin</a>
     </p>
   </div>
 </div>
