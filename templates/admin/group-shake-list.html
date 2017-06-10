@@ -14,17 +14,18 @@
     <h1>All Shakes</h1>
     <ol class="shake-list">
     {% for group_shake in group_shakes %}
-      <li>
-          <table border="0">
-            <tr>
-              <td width="80"><img src="{{group_shake.thumbnail_url()}}" width="48" height="48"></td>
-              <td width="200"><a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a><br>
-                  {{group_shake.description}}</td>
-              <td><a href="/admin/group-shake/{{group_shake.id}}">Edit Shake</a></td>
-            </tr>
-          </table>
-          <hr>
-      </li>
+        <li class="shake-list--shake">
+            <div class="shake-list--thumb">
+                <img src="{{group_shake.thumbnail_url()}}" width="48" height="48">
+            </div>
+            <div class="shake-list--description">
+                <a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a>
+                <p>{{group_shake.description}}</p>
+            </div>
+            <div class="shake-list--recommend">
+                <a class="btn btn-small btn-pastel btn-primary" href="/admin/group-shake/{{group_shake.id}}">edit</a>
+            </div>
+        </li>
     {% end %}
     </ol>
   </div>

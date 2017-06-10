@@ -15,9 +15,10 @@
 }
 
 .admin-new-users .body #new-members-list {
-  margin: 0;
-  padding: 0;
+  margin: 30px 0 0;
+  padding: 30px 0 0;
   list-style: none;
+  border-top: 1px dashed #e0e0e0;
 }
 
 .admin-new-users .body #new-members-list > li {
@@ -36,6 +37,9 @@
   font-size: 18px;
   font-weight: bold;
   padding-bottom: 5px;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .admin-new-users .body #new-members-list > li h4 a {
@@ -50,6 +54,9 @@
   color: #333;
   font-size: 14px;
   line-height: 1.3;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .admin-new-users .body #new-members-list > li p a {
@@ -83,14 +90,12 @@
 }
 
 .admin-new-users .image-medium {
-    width: 100%;
     margin-left: 60px;
     padding-top: 10px;
     padding-bottom: 0;
 }
 
 .admin-new-users .image-medium .user-and-title .title {
-    width: 500px;
 }
 
 .admin-new-users .image-medium .user-and-title > a {
@@ -98,9 +103,31 @@
 }
 
 .shake-list {
-  margin: 0;
-  padding: 0;
+  margin: 30px 0 0;
+  padding: 30px 0 0;
   list-style: none;
+  border-top: 1px dashed #e0e0e0;
+}
+
+.shake-list--shake {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    clear: both;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.shake-list--thumb {
+    float: left;
+    margin-right: 1em;
+}
+
+.shake-view-title,
+.shake-view-description,
+.shake-view-featured,
+.shake-list--description {
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .admin-nav {
