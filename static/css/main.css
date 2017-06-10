@@ -4709,8 +4709,8 @@ span.previous-link {
 .new-post-panel {
   display: none;
   background-color: #fff;
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: -10px; /* to avoid the shadow being cut off */
   left: 30px;
   right: 30px;
   max-width: 560px;
