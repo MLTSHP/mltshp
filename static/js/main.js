@@ -805,7 +805,7 @@ $(document).ready(function() {
           this.$comment_textarea.val('');
         }
         this.click_more_comments();
-        this.$comment_textarea.css('height', '60px');
+        this.$comment_textarea.css('min-height', '60px');
       },
 
       refresh_likes: function() {
