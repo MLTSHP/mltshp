@@ -14,16 +14,21 @@
     <h1>Recommend Shakes</h1>
     <ol class="shake-list">
     {% for group_shake in group_shakes %}
-      <li>
-          <table border="0">
-            <tr>
-              <td width="80"><img src="{{group_shake.thumbnail_url()}}" width="48" height="48"></td>
-              <td width="200"><a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a><br>
-                  {{group_shake.description}}</td>
-              <td><form style='display:inline;' method="post" action='/admin/recommend-group-shake/{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>{{ xsrf_form_html() }}<input type='submit' value='{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'><input type='hidden' name='shake_id' value='{{group_shake.id}}'></form></td>
-            </tr>
-          </table>
-          <hr>
+      <li class="shake-list--shake">
+          <div class="shake-list--thumb">
+              <img src="{{group_shake.thumbnail_url()}}" width="48" height="48">
+          </div>
+          <div class="shake-list--description">
+              <a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a>
+              <p>{{group_shake.description}}</p>
+          </div>
+          <div class="shake-list--recommend">
+              <form style='display:inline;' method="post" action='/admin/recommend-group-shake/{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>
+                  {{ xsrf_form_html() }}
+                  <input class="btn btn-small btn-pastel btn-primary" type='submit' value='{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>
+                  <input type='hidden' name='shake_id' value='{{group_shake.id}}'>
+              </form>
+          </div>
       </li>
     {% end %}
     </ol>

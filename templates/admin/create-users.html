@@ -8,19 +8,25 @@
 
 {% block main %}
 <div class="content content-with-sidebar admin-new-users">
-  {% include "admin/_sidebar.html" %}
+    {% include "admin/_sidebar.html" %}
 
-  <div class="body">
-    <p>
-    email address, one per line
-    </p>
-    <form method="POST" action="/admin/create-users">
-      {{ xsrf_form_html() }}
-
-      <textarea cols="80" rows="15" name="emails"></textarea><br>
-      <input type="submit" value="save">
-
-    </form>
-  </div>
+    <div class="body">
+        <h1>Create Users</h1>
+        <form class="fun-form fun-form-stacked" method="POST" action="/admin/create-users">
+            {{ xsrf_form_html() }}
+            <div class="field">
+                <label>Email Addresses:</label>
+                <div class="field-input">
+                    <textarea cols="80" rows="15" name="emails"></textarea>
+                </div>
+                <div class="field-help">
+                    one per line
+                </div>
+            </div>
+            <div class="field field-submit">
+                <button class="btn btn-primary btn-shadow" type="submit">Create Users</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% end %}
