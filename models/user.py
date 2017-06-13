@@ -252,16 +252,20 @@ hello@mltshp.com
         protocol = ''
         if self.profile_image:
             if include_protocol:
-                protocol = 'http:'
-            return "%s//%s.s3.amazonaws.com/account/%s/profile.jpg" % (protocol, options.aws_bucket, self.id)
+                if options.app_host == 'mltshp.com':
+                    protocol = 'https:'
+                else:
+                    protocol = 'http:'
+            aws_url = "%s//%s.%s%s" % (protocol, options.aws_bucket, options.aws_host,
+                options.aws_port == 80 and "" or (":%d" % options.aws_port))
+            return "%s/account/%s/profile.jpg" % (aws_url, self.id)
         else:
             if include_protocol:
                 if options.app_host == 'mltshp.com':
                     return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
-                else:
+                elif options.use_cdn and options.cdn_host:
                     return "http://%s/static/images/default-icon-venti.svg" % options.cdn_host
-            else:
-                return "/static/images/default-icon-venti.svg"
+            return "/static/images/default-icon-venti.svg"
 
     def sharedfiles(self, page=1, per_page=10):
         """
