@@ -17,6 +17,7 @@ RUN apt-get -y update && apt-get install -y \
     libpcre3-dev \
     libssl-dev \
     libffi-dev \
+    ruby-sass \
     python-pip \
     && rm -rf /var/lib/apt/lists/*
 
@@ -54,16 +55,10 @@ RUN rm -rf /tmp/install
 RUN groupadd ubuntu --gid=1010 && \
     useradd ubuntu --create-home --home-dir=/home/ubuntu \
         --uid=1010 --gid=1010
-RUN mkdir -p /mnt/tmpuploads/0 && \
-    mkdir -p /mnt/tmpuploads/1 && \
-    mkdir -p /mnt/tmpuploads/2 && \
-    mkdir -p /mnt/tmpuploads/3 && \
-    mkdir -p /mnt/tmpuploads/4 && \
-    mkdir -p /mnt/tmpuploads/5 && \
-    mkdir -p /mnt/tmpuploads/6 && \
-    mkdir -p /mnt/tmpuploads/7 && \
-    mkdir -p /mnt/tmpuploads/8 && \
-    mkdir -p /mnt/tmpuploads/9 && \
+RUN mkdir -p /mnt/tmpuploads/0 /mnt/tmpuploads/1 /mnt/tmpuploads/2  \
+    /mnt/tmpuploads/3 /mnt/tmpuploads/4 /mnt/tmpuploads/5 \
+    /mnt/tmpuploads/6 /mnt/tmpuploads/7 /mnt/tmpuploads/8 \
+    /mnt/tmpuploads/9 && \
     chmod 777 /mnt/tmpuploads/* && \
     mkdir -p /srv/mltshp.com/uploaded && \
     mkdir -p /srv/mltshp.com/logs && \
@@ -78,6 +73,9 @@ COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 # NOTE: /srv/mltshp.com/logs should be a mounted volume for this image
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
+
+# Compile sass files
+RUN sass --update --stop-on-error --style compressed static/sass:static/css
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]

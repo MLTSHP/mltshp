@@ -16,11 +16,26 @@ With Docker and a git client installed on your computer, clone the MLTSHP
 code from Github. If you intend to develop features for MLTSHP, you should
 clone from your own fork of the code. Once you have a copy checked out
 locally, use this command to create a `settings.py` and `celeryconfig.py`
-file suitable for local development:
+file suitable for local development (edit these as needed, but the defaults
+should be okay):
 
     $ make init-dev
 
-The defaults there should be okay for a local instance. Then, just run:
+Our stylesheets are SASS-based, so you'll also need to install the
+Ruby gem for SASS. If you don't have the `sass` command already,
+you can get it by running:
+
+    $ bundle install
+
+If that gives you an error, maybe you need to first install the
+Ruby bundler package:
+
+    $ gem install bundler
+
+Then, try the `bundle install` command.
+
+So, with those pre-requisites in place, you should be able to start the
+app itself using:
 
     $ make run
 

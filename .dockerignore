@@ -1,4 +1,6 @@
 .git
+.sass-cache
+.vscode
 env
 mounts
 *.pyc

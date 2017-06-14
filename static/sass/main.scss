@@ -1,3 +1,5 @@
+@import "variables";
+
 html, body {
     background-color: #dbfaff;
     color: #333;
@@ -38,7 +40,7 @@ input, textarea, select, button {
 
 /* Links */
 a {
-    color: #42b4ff;
+    color: $link-color;
     transition: background-color .15s ease, color .15s ease;
     -webkit-text-decoration-skip: ink;
     text-decoration-skip: ink;
@@ -47,23 +49,29 @@ a {
 a:hover,
 a:focus,
 a:active {
-    color: #0088f1;
+    color: $link-color-hover;
 }
 
 .link--primary {
-    color: #ff0080;
+    color: $link-color-primary;
     font-weight: bold;
     text-decoration: none;
 }
 
+.link--primary:hover,
+.link--primary:focus,
+.link--primary:active {
+    color: $link-color-primary-hover;
+}
+
 .link--danger {
-    color: #f30;
+    color: $color-danger;
 }
 
 .link--danger:hover,
 .link--danger:focus,
 .link--danger:active {
-    color: #e62e00;
+    color: $color-danger-hover;
 }
 
 /* ---------------------------------------------------------------------
@@ -72,8 +80,8 @@ a:active {
      and .wrapper can be removed entirely.
 --------------------------------------------------------------------- */
 .alert {
-    background: #ffd4d4;
-    color: #ff1c1c;
+    background: $color-danger-pastel-bg;
+    color: $color-danger-pastel-fg;
     font-size: .9em;
     font-weight: 300;
     line-height: 1.25;
@@ -81,7 +89,7 @@ a:active {
 
 .alert a,
 .alert strong {
-    color: #ff1c1c;
+    color: $color-danger-pastel-fg;
     font-weight: bold;
 }
 
@@ -222,10 +230,10 @@ a:active {
 
 /* TODO: Make this a reusable button style */
 .choose-a-shake--toggle {
-    background-color: #b9ff8d;
+    background-color: $color-success-pastel-bg;
     border-radius: 10px;
     border: none;
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     font-size: 16px;
     font-weight: bold;
     padding: 13px 19px;
@@ -245,7 +253,7 @@ a:active {
 }
 
 .choose-a-shake--dropdown {
-    background-color: #b9ff8d;
+    background-color: $color-success-pastel-bg;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     box-shadow: 5px 5px 0 #e5e5e5;
@@ -273,7 +281,7 @@ a:active {
     padding: 10px 0 10px 15px;
     margin: 10px 0;
     font-size: 14px;
-    color: #ff0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
     font-weight: bold;
     -webkit-border-radius: 10px;
@@ -298,7 +306,7 @@ a:active {
     border-radius: 10px;
     display: block;
     font-size: 14px;
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-weight: bold;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -311,7 +319,7 @@ a:active {
 .choose-a-shake--dropdown .add-a-shake {
     display: block;
     float: right;
-    background-color: #0caf8b;
+    background-color: $color-success-pastel-fg;
     margin-top: 10px;
     font-size: 12px;
     font-weight: bold;
@@ -335,10 +343,10 @@ a:active {
 
 /* site nav toggle */
 .site-nav--toggle {
-    background-color: #ffe466;
+    background-color: $color-warning-pastel-bg;
     border-radius: 10px;
     border: none;
-    color: #ff9600;
+    color: $color-warning;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
@@ -352,16 +360,16 @@ a:active {
 
 .site-nav--toggle:hover,
 .site-nav--toggle:focus {
-    color: #FF0080;
+    color: $color-mltshp-pink;
     background-color: #fcff00;
     outline: none;
 }
 
 /* your conversations button */
 .site-nav--conversations a {
-    background-color: #b9ff8d;
+    background-color: $color-success-pastel-bg;
     border-radius: 10px;
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     display: block;
     font-size: 16px;
     font-weight: bold;
@@ -372,9 +380,9 @@ a:active {
 
 /* popular button */
 .site-nav--popular a {
-    background-color: #ffe466;
+    background-color: $color-warning-pastel-bg;
     border-radius: 10px;
-    color: #ff9600;
+    color: $color-warning;
     display: block;
     font-size: 16px;
     font-weight: bold;
@@ -383,7 +391,7 @@ a:active {
 }
 
 .site-nav--popular a:hover {
-    color: #FF0080;
+    color: $color-mltshp-pink;
     background-color: #fcff00;
 }
 
@@ -625,7 +633,7 @@ iframe {
 .content-find-shakes .find-shakes-navigation li a {
     display: block;
     text-align: center;
-    color: #00aeff;
+    color: $color-mltshp-blue;
     font-weight: bold;
     text-decoration: none;
     padding: 20px 8px;
@@ -659,7 +667,7 @@ iframe {
 .content-find-shakes .sidebar h3 {
     font-weight: bold;
     font-size: 18px;
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     padding-left: 20px;
 }
 
@@ -726,7 +734,7 @@ iframe {
 }
 
 .content-find-shakes .user-follow-extended .website a {
-    color: #00AEFF;
+    color: $color-mltshp-blue;
 }
 
 .content-find-shakes .featured-shakes {
@@ -769,7 +777,7 @@ iframe {
 }
 
 .content-find-shakes .featured-shakes li h4 a {
-    color: #FF0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
 }
 
@@ -852,7 +860,7 @@ iframe {
 }
 
 .content-relationships .body .user-follow-extended .website a {
-    color: #00AEFF;
+    color: $color-mltshp-blue;
 }
 
 .content-relationships .user-info .avatar {
@@ -942,7 +950,7 @@ iframe {
 }
 
 .content-settings .settings-navigation li a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     display: block;
     padding: 10px 10px 15px 10px;
     font-size: 14px;
@@ -1005,7 +1013,7 @@ iframe {
 }
 
 .migration-block h3 {
-    color: #00aeff;
+    color: $color-mltshp-blue;
 }
 
 .archive-block {
@@ -1014,11 +1022,11 @@ iframe {
 }
 
 .member-status-block h3 {
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
 }
 
 .archive-block h3 {
-    color: #00aeff;
+    color: $color-mltshp-blue;
 }
 
 .migration-block-content,
@@ -1189,7 +1197,7 @@ iframe {
 }
 
 .settings-body-connections .apps h4 .title {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-weight: bold;
 }
 
@@ -1278,14 +1286,14 @@ iframe {
     float: left;
     display: block;
     text-shadow: 1px 1px 1px #bf0060;
-    background-color: #ff0080;
+    background-color: $color-mltshp-pink;
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    border: 1px solid #ff0080;
+    border: 1px solid $color-mltshp-pink;
     -moz-box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
     -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.25);
     box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
@@ -1308,7 +1316,7 @@ iframe {
 }
 
 .content-membership p a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
 }
 
 .content-membership .fine-print {
@@ -1762,7 +1770,7 @@ iframe {
 }
 
 .permalink-sidebar a {
-    color: #FF0080;
+    color: $color-mltshp-pink;
     font-weight: bold;
     text-decoration: none;
 }
@@ -1950,9 +1958,9 @@ iframe {
 
 /* TODO replace with reusable button styles */
 .permalink-sidebar .in-these-shakes .add-to-shakes-button {
-    background-color: #0CAF8B;
+    background-color: $color-success-pastel-fg;
     color: #fff;
-    border: 1px solid #0CAF8B;
+    border: 1px solid $color-success-pastel-fg;
     padding: 4px 8px;
     font-size: 14px;
     margin-top: 10px;
@@ -1992,7 +2000,7 @@ iframe {
     margin-top: 40px;
     border: none;
     background-color: #fff;
-    color: #00aeff;
+    color: $color-mltshp-blue;
     text-decoration: underline;
     padding: 5px 10px;
     font-size: 11px;
@@ -2030,7 +2038,7 @@ iframe {
 }
 
 .content-incoming .tip-block h3 {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     margin: 10px 0;
     padding: 0;
     font-size: 21px;
@@ -2110,7 +2118,7 @@ iframe {
 
 .notification-block-follow {
     background-color: #e5fcff;
-    color: #ff0080;
+    color: $color-mltshp-pink;
 }
 
 .notification-block-save {
@@ -2119,37 +2127,37 @@ iframe {
 }
 
 .notification-block-like {
-    color: #ff1c1c;
-    background-color: #ffd4d4;
+    color: $color-danger-pastel-fg;
+    background-color: $color-danger-pastel-bg;
 }
 
 .notification-block-comment {
-    color: #00AEFF;
-    background-color: #DAF3FF;
+    color: $color-mltshp-blue;
+    background-color: $color-secondary-pastel-bg;
 }
 
 .notification-block-invitations {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     background-color: #ffcfe7;
 }
 
 .notification-block-shakeinvitation {
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     background-color: #dfffcb;
 }
 
 .notification-block-invitation-request {
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     background-color: #dfffcb;
 }
 
 .notification-block-invitation-approved {
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     background-color: #dfffcb;
 }
 
 .notification-block-aggregate {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     background-color: #e5fdff;
 }
 
@@ -2307,7 +2315,7 @@ iframe {
 
 .notification-block-shakeinvitation h4 a {
     text-decoration: none;
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
 }
 
 .notification-block-shakeinvitation .shake-context {
@@ -2320,7 +2328,7 @@ iframe {
 
 .notification-block-shakeinvitation .shake-context a {
     font-weight: bold;
-    color: #ff0080;
+    color: $color-mltshp-pink;
 }
 
 .notification-block-shakeinvitation .buttons {
@@ -2332,7 +2340,7 @@ iframe {
 /* Notification block for Shake Invitation Request */
 
 .notification-block-invitation-request .notification a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
 }
 
 .notification-block-invitation-request .notification {
@@ -2355,7 +2363,7 @@ iframe {
 /* Notification block for mentions */
 
 .notification-block-mention .notification-block-link a {
-    color: #00aeff;
+    color: $color-mltshp-blue;
     background-color: #ededed;
     display: block;
     padding: 15px;
@@ -2390,7 +2398,7 @@ iframe {
 
 .find-shakes-block h3 {
     margin-top: 5px;
-    color: #00aeff;
+    color: $color-mltshp-blue;
     font-size: 20px;
     font-weight: bold;
     background: url('/static/images/find-shakes-block-back.png') 0 0 no-repeat;
@@ -2445,7 +2453,7 @@ iframe {
 }
 
 .upgrade-account-block .upgrade-account-block-content h3 a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-size: 18px;
     font-weight: bold;
     text-decoration: none;
@@ -2466,7 +2474,7 @@ iframe {
 }
 
 .cool-tools-block h3 {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-size: 21px;
     font-weight: bold;
 }
@@ -2496,7 +2504,7 @@ iframe {
 .cool-tools-block .browser-tools li  a {
     font-weight: bold;
     text-decoration: none;
-    color: #ff0080;
+    color: $color-mltshp-pink;
     display: block;
     background-color: #fff;
     padding: 10px;
@@ -2555,7 +2563,7 @@ iframe {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-size: 12px;
     text-decoration: none;
     font-weight: bold;
@@ -2585,7 +2593,7 @@ iframe {
     position: relative;
     top: -5px;
     left: -5px;
-    background-color: #ff0080;
+    background-color: $color-mltshp-pink;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -2727,7 +2735,7 @@ iframe {
 }
 
 .content-shake .shake-members li h4 a {
-    color: #FF0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
 }
 
@@ -2760,7 +2768,7 @@ iframe {
     font-size: 12px;
     font-weight: bold;
     padding: 7px 10px;
-    background-color: #cecec6;
+    background-color: $color-disabled-pastel-bg;
     color: #333;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -2808,7 +2816,7 @@ iframe {
 .other-shakes a {
     display: block;
     padding: 3px 0;
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-size: 14px;
     text-decoration: none;
     font-weight: bold;
@@ -2912,7 +2920,7 @@ iframe {
 }
 
 .user-follow h4 a {
-    color: #FF0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
     font-size: 14px;
     font-weight: bold;
@@ -2968,7 +2976,7 @@ iframe {
 .user-follow-extended .website a {
     font-size: 13px;
     text-decoration: none;
-    color: #ff0080;
+    color: $color-mltshp-pink;
     word-wrap: break-word;
 }
 
@@ -2999,7 +3007,7 @@ iframe {
 }
 
 .image-content .the-image .nsfw-cover a {
-    color: #00aeff;
+    color: $color-mltshp-blue;
 }
 
 .image-content .image-content-footer {
@@ -3083,7 +3091,7 @@ iframe {
     background: url('/static/images/comment-tiny.svg') 5px 8px no-repeat;
     background-size: 12px 9px;
     padding-left: 20px;
-    color: #00aeff;
+    color: $color-mltshp-blue;
 }
 
 .image-content-footer .stats li.selected a {
@@ -3105,7 +3113,7 @@ iframe {
 .image-content .image-content-footer a:hover,
 .image-content .image-content-footer a:focus,
 .image-content .image-content-footer a:active {
-    color: #0088f1;
+    color: $link-color-hover;
 }
 
 /* list overrides */
@@ -3203,8 +3211,8 @@ iframe {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    border: 1px solid #FF0080;
-    background-color: #FF0080;
+    border: 1px solid $color-mltshp-pink;
+    background-color: $color-mltshp-pink;
     color: #fff;
     font-size: 18px;
     font-weight: bold;
@@ -3282,8 +3290,8 @@ textarea {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    border: 1px solid #FF0080;
-    background-color: #FF0080;
+    border: 1px solid $color-mltshp-pink;
+    background-color: $color-mltshp-pink;
     color: #fff;
     font-size: 12px;
     text-decoration: none;
@@ -3405,13 +3413,13 @@ textarea {
     background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
     background-size: 12px 11px;
     display: none;
-    color: #42b4ff;
+    color: $link-color;
 }
 
 .image-content .inline-details .comment .reply-to:hover,
 .image-content .inline-details .comment .reply-to:focus,
 .image-content .inline-details .comment .reply-to:active {
-    color: #0088f1;
+    color: $link-color-hover;
 }
 
 .image-content .inline-details .comment .delete {
@@ -3419,13 +3427,13 @@ textarea {
     background-size: 13px 13px;
     padding-left: 20px;
     display: none;
-    color: #f30;
+    color: $color-danger;
 }
 
 .image-content .inline-details .comment .delete:hover,
 .image-content .inline-details .comment .delete:focus,
 .image-content .inline-details .comment .delete:active {
-    color: #e62e00;
+    color: $color-danger-hover;
 }
 
 .image-content .inline-details .comment:hover .reply-to {
@@ -3553,7 +3561,7 @@ textarea {
     background: url('/static/images/comment-tiny.svg') 0 2px no-repeat;
     background-size: 12px 9px;
     padding-left: 15px;
-    color: #00aeff;
+    color: $color-mltshp-blue;
     text-decoration: none;
 }
 
@@ -4104,7 +4112,7 @@ span.previous-link {
     white-space: nowrap;
 }
 .jump-back a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
     font-weight: bold;
 }
@@ -4151,7 +4159,7 @@ span.previous-link {
 }
 
 .dashboard-new-user a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
     font-weight: bold;
 }
@@ -4196,7 +4204,7 @@ span.previous-link {
 }
 
 .faq-page p a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
     font-weight: bold;
 }
@@ -4226,7 +4234,7 @@ span.previous-link {
 }
 
 .content-conversations .conversations-nav a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-weight: bold;
     font-size: 14px;
     text-decoration: none;
@@ -4337,7 +4345,7 @@ span.previous-link {
 
 /* TODO replace with reusable button styles */
 .api-accept-button {
-    background-color: #FF0080;
+    background-color: $color-mltshp-pink;
     text-shadow: 1px 1px 1px #B5005A;
     color: #fff;
     font-weight: bold;
@@ -4565,7 +4573,7 @@ span.previous-link {
 
 .shake-image-placeholder strong {
     display: block;
-    color: #ff0080;
+    color: $color-mltshp-pink;
 }
 
 .shake-sidebar-subscribe {
@@ -4668,8 +4676,8 @@ span.previous-link {
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    border: 1px solid #FF0080;
-    background-color: #FF0080;
+    border: 1px solid $color-mltshp-pink;
+    background-color: $color-mltshp-pink;
     color: #fff;
     font-size: 14px;
     font-weight: normal;
@@ -4783,7 +4791,7 @@ span.previous-link {
 }
 
 .new-post-panel .email-unverified h2 {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     font-size: 24px;
     text-align: center;
 }
@@ -4862,7 +4870,7 @@ span.previous-link {
 
 .new-post-panel .upload-an-image h2 a,
 .new-post-panel .link-to-video h2 a {
-    color: #ff0080;
+    color: $color-mltshp-pink;
     text-decoration: none;
 }
 
@@ -4890,7 +4898,7 @@ span.previous-link {
 }
 
 .new-post-panel .shake-selector h3 a span.green {
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -4924,7 +4932,7 @@ span.previous-link {
 
 .new-post-panel .shake-selector ul li a {
     font-weight: bold;
-    color: #0caf8b;
+    color: $color-success-pastel-fg;
     text-decoration: none;
     font-size: 14px;
     display: block;
@@ -5022,7 +5030,7 @@ ul.promotions li .promotion-avatar {
     transition: all 0.75s ease 0s;
 }
 ul.promotions li:hover .promotion-avatar {
-    border: 4px solid #ff0080;
+    border: 4px solid $color-mltshp-pink;
 }
 ul.promotions .promotion-name {
     display: none;
@@ -5036,11 +5044,11 @@ ul.promotions .promotion-name {
     text-decoration: none;
     font-weight: bold;
     text-shadow: 1px 1px 1px #bf0060;
-    background-color: #ff0080;
+    background-color: $color-mltshp-pink;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    border: 1px solid #ff0080;
+    border: 1px solid $color-mltshp-pink;
     -moz-box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
     -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.25);
     box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
@@ -5154,129 +5162,129 @@ ul.promotions li:hover .promotion-name {
 /* Primary: Provides extra visual weight and identifies the primary action in a set of buttons */
 .btn-primary,
 .label-primary {
-    background-color: #FF028B;
+    background-color: $color-primary;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background-color: #DF0196;
+    background-color: $color-primary-hover;
 }
 
 .btn-primary.btn-pastel,
 .label-primary.label-pastel {
-    background-color: #ffcce8;
-    color: #FF028B;
+    background-color: $color-primary-pastel-bg;
+    color: $color-primary-pastel-fg;
 }
 
 .btn-primary.btn-pastel:hover,
 .btn-primary.btn-pastel:focus {
-    background-color: #FF028B;
+    background-color: $color-primary;
     color: #fff;
 }
 
 /* Secondary: De-emphasizes and identifies secondary actions in a set of buttons */
 .btn-secondary,
 .label-secondary {
-    background-color: #12BBFC;
+    background-color: $color-secondary;
 }
 
 .btn-secondary:hover,
 .btn-secondary:focus {
-    background-color: #0493F3;
+    background-color: $color-secondary-hover;
 }
 
 .btn-secondary.btn-pastel,
 .label-secondary.label-pastel {
-    background-color: #daf3ff;
-    color: #00adff;
+    background-color: $color-secondary-pastel-bg;
+    color: $color-secondary-pastel-fg;
 }
 
 .btn-secondary.btn-pastel:hover,
 .btn-secondary.btn-pastel:focus {
-    background-color: #12BBFC;
+    background-color: $color-secondary;
     color: #fff;
 }
 
 /* Success: Indicates a successful or positive action */
 .btn-success,
 .label-success {
-    background-color: #09B896;
+    background-color: $color-success;
 }
 
 .btn-success:hover,
 .btn-success:focus {
-    background-color: #08a687;
+    background-color: $color-success-hover;
 }
 
 .btn-success.btn-pastel,
 .label-success.label-pastel {
-    background-color: #b9ff8d;
-    color: #0caf8b;
+    background-color: $color-success-pastel-bg;
+    color: $color-success-pastel-fg;
 }
 
 .btn-success.btn-pastel:hover,
 .btn-success.btn-pastel:focus {
-    background-color: #09B896;
+    background-color: $color-success;
     color: #fff;
 }
 
 /* Warning: Indicates caution should be taken with this action */
 .btn-warning,
 .label-warning {
-    background-color: #ff9600;
+    background-color: $color-warning;
 }
 
 .btn-warning:hover,
 .btn-warning:focus {
-    background-color: #eb8a00;
+    background-color: $color-warning-hover;
 }
 
 .btn-warning.btn-pastel,
 .label-warning.label-pastel {
-    background-color: #ffe466;
-    color: #ff9600;
+    background-color: $color-warning-pastel-bg;
+    color: $color-warning-pastel-fg;
 }
 
 .btn-warning.btn-pastel:hover,
 .btn-warning.btn-pastel:focus {
-    background-color: #ff9600;
+    background-color: $color-warning;
     color: #fff;
 }
 
 /* Danger: Indicates a dangerous or potentially negative action */
 .btn-danger,
 .label-danger {
-    background-color: #f30;
+    background-color: $color-danger;
 }
 
 .btn-danger:hover,
 .btn-danger:focus {
-    background-color: #e62e00;
+    background-color: $color-danger-hover;
 }
 
 .btn-danger.btn-pastel,
 .label-danger.label-pastel {
-    background-color: #ffd4d4;
-    color: #ff1c1c;
+    background-color: $color-danger-pastel-bg;
+    color: $color-danger-pastel-fg;
 }
 
 .btn-danger.btn-pastel:hover,
 .btn-danger.btn-pastel:focus {
-    background-color: #f30;
+    background-color: $color-danger;
     color: #fff;
 }
 
 /* Disabled: buttons that cannot be used */
 .btn:disabled {
-    background-color: #A1A1A1 !important;
+    background-color: $color-disabled !important;
     color: rgba(255, 255, 255, .8) !important;
     text-shadow: none;
     cursor: default;
 }
 
 .btn.btn-pastel:disabled {
-    background-color: #cecec6 !important;
-    color: #8d8d87 !important;
+    background-color: $color-disabled-pastel-bg !important;
+    color: $color-disabled-pastel-fg !important;
 }
 
 .btn.btn-shadow:disabled {

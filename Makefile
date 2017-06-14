@@ -1,15 +1,21 @@
-.PHONY: init-dev run shell test destroy migrate mysql
+.PHONY: init-dev run shell test destroy migrate mysql sass-watch sass-compile build
 
 init-dev:
 	cp settings.example.py settings.py
 	cp celeryconfig.example.py celeryconfig.py
-	mkdir -p mounts/mysql
-	mkdir -p mounts/logs
-	mkdir -p mounts/fakes3
-	mkdir -p mounts/uploaded
+	mkdir -p mounts/mysql mounts/logs mounts/fakes3 mounts/uploaded
 
-run:
+sass-compile:
+	sass --update --stop-on-error --style compressed static/sass:static/css
+
+sass-watch:
+	sass --watch --stop-on-error --style compressed static/sass:static/css
+
+run: sass-compile
 	docker-compose up -d
+
+build:
+	docker build -t mltshp/mltshp-web:latest .
 
 shell:
 	docker exec -it mltshp_mltshp_1 bash
