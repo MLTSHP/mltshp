@@ -173,7 +173,7 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         response = self.post_url('/account/settings/profile', arguments=arguments)
         user_reloaded = User.get('id = %s', self.user.id)
         self.assertTrue(user_reloaded.profile_image)
-        self.assertTrue(user_reloaded.profile_image_url().find('s3.amazonaws.com/account') > -1)
+        self.assertTrue(user_reloaded.profile_image_url().find('/account') > -1)
 
     def test_disconnecting_connection(self):
         """
