@@ -193,7 +193,7 @@ class UserModelTests(BaseTestCase):
 
         self.user.profile_image = True
         self.user.save()
-        self.assertEqual(1, self.user.profile_image_url().count('amazonaws.com/account/1/profile.jpg'))
+        self.assertEqual(1, self.user.profile_image_url().count('/account/1/profile.jpg'))
 
 
     def test_add_favorite(self):
