@@ -15,7 +15,7 @@
       {% if redirect_url %}
         <input type="hidden" name="redirect_uri" value="{{redirect_url}}">
       {% end %}
-      <input class="api-accept-button" type="submit" value="Agree">
+      <input class="api-accept-button btn btn-primary btn-shadow" type="submit" value="Agree">
     </form>
     <form class="api-decline" method="POST" action="/api/authorize?response_type=code&amp;client_id={{client_id}}">
       {{ xsrf_form_html() }}
@@ -23,7 +23,7 @@
       {% if redirect_url %}
         <input type="hidden" name="redirect_uri" value="{{redirect_url}}">
       {% end %}
-      <input class="api-decline-button" type="submit" value="Decline">
+      <input class="api-decline-button btn btn-secondary btn-shadow" type="submit" value="Decline">
     </form>
     <div class="clear"><!-- --></div>
   </div>

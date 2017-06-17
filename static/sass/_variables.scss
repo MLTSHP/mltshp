@@ -1,24 +1,31 @@
+@function tint($color, $percent) {
+  @return mix(#fff, $color, $percent);
+}
+@function shade($color, $percent) {
+  @return mix(#000, $color, $percent);
+}
+
 $color-mltshp-pink: #ff0080;
 $color-mltshp-blue: #00aeff;
 
-$color-primary: #ff028b;
-$color-primary-hover: #df0196;
+$color-primary: $color-mltshp-pink;
+$color-primary-hover: shade($color-primary, 20%);
 $color-primary-pastel-bg: #ffcce8;
 $color-primary-pastel-fg: $color-primary;
-$color-secondary: #12bbfc;
-$color-secondary-hover: #0493F3;
+$color-secondary: $color-mltshp-blue;
+$color-secondary-hover: shade($color-secondary, 20%);
 $color-secondary-pastel-bg: #daf3ff;
-$color-secondary-pastel-fg: #00adff;
+$color-secondary-pastel-fg: $color-secondary;
 $color-success: #09B896;
-$color-success-hover: #08a687;
+$color-success-hover: shade($color-success, 20%);
 $color-success-pastel-bg: #b9ff8d;
 $color-success-pastel-fg: #0caf8b;
 $color-warning: #ff9600;
-$color-warning-hover: #eb8a00;
+$color-warning-hover: shade($color-warning, 20%);
 $color-warning-pastel-bg: #ffe466;
 $color-warning-pastel-fg: $color-warning;
 $color-danger: #f30;
-$color-danger-hover: #e62e00;
+$color-danger-hover: shade($color-danger, 20%);
 $color-danger-pastel-bg: #ffd4d4;
 $color-danger-pastel-fg: #ff1c1c;
 $color-disabled: #A1A1A1;
@@ -27,8 +34,8 @@ $color-disabled-pastel-fg: #8d8d87;
 
 $color-edit: rgba(#fcff00, 0.66);
 
-$link-color: #42b4ff; // this should probably be mltshp blue
-$link-color-hover: #0088f1;
+$link-color: $color-secondary;
+$link-color-hover: $color-secondary-hover;
 
-$link-color-primary: $color-mltshp-pink;
+$link-color-primary: $color-primary;
 $link-color-primary-hover: $color-primary-hover;

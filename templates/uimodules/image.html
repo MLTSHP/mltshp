@@ -10,9 +10,9 @@
     {{ xsrf_form_html() }}
     <input type="text" class="title-input" name="title"  autocomplete="off" value="">
     <div class="buttons">
-      <input type="submit" class="save" value="Save">
+      <input type="submit" class="save btn btn-primary" value="Save">
       <span class="or">or</span>
-      <a href="" class="cancel">Cancel</a>
+      <a href="" class="cancel btn btn-secondary">Cancel</a>
     </div>
   </form>
   {% else %}
@@ -81,9 +81,9 @@
           {{ xsrf_form_html() }}
         <textarea name="description" class="description-edit-textarea"></textarea>
         <div class="buttons">
-          <input type="submit" class="save" value="Save">
+          <input type="submit" class="save btn btn-primary btn-small" value="Save">
           <span class="or">or</span>
-          <a href="" class="cancel">Cancel</a>
+          <a href="" class="cancel btn btn-secondary btn-small">Cancel</a>
         </div>
       </form>
       {% else %}

@@ -11,7 +11,7 @@
 
     <form id="migration-form" action="/" method="GET">
     <input type="submit"
-      class="button" value="Take me home!" border="0">
+      class="btn btn-primary btn-shadow btn-large" value="Take me home!">
     </form>
     {% else %}
     <h2>Restore Your MLKSHK Content?</h2>
@@ -39,18 +39,17 @@
         <form id="migration-form" action="/account/mlkshk-migrate" method="POST">
         {{ xsrf_form_html() }}
         <input type="submit"
-          class="button" value="Restore It!" border="0">
+          class="btn btn-primary btn-shadow btn-large" value="Restore It!">
       </form>
     </div>
     <div style="float:left; margin-left: 20px">
       <form id="migration-form" action="/account/settings" method="GET">
       <input type="submit"
-        class="button" value="I&#x27;ll Decide Later!" border="0">
+        class="btn btn-primary btn-shadow btn-large" value="I&#x27;ll Decide Later!">
       </form>
     </div>
 
     {% end %}
 
-    <div class="clear"><!-- --></div>
   </div>
 {% end %}
