@@ -23,7 +23,7 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: "mltshp"
+      MYSQL_DATABASE: "mltshp_testing"
       MYSQL_USER: "mltshp"
     volumes:
       - /tmp/buildkite-mltshp-mysql:/var/lib/mysql
