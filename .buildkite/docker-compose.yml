@@ -3,8 +3,7 @@ services:
   mltshp:
     image: mltshp/mltshp-web:latest
     volumes:
-      - ./settings.py:/srv/mltshp.com/mltshp/settings.py
-      - ../.git:/srv/mltshp.com/mltshp/.git
+      - ..:/srv/mltshp.com/mltshp
     ports:
       - "8000:80"
     depends_on:

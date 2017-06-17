@@ -5,6 +5,8 @@ set -euo pipefail
 docker pull mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
 docker tag mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER} mltshp/mltshp-web:latest
 
+cp .buildkite/settings.py .
+
 mkdir -p /tmp/buildkite-mltshp-mysql
 docker-compose -f .buildkite/docker-compose.yml up -d
 docker exec -t buildkite_mltshp_1 ./run-tests.sh
