@@ -1,0 +1,27 @@
+steps:
+  - command: .buildkite/steps/build-web.sh
+    label: ":hammer: Build Web"
+    agents:
+      - "queue=default"
+    branches: "master"
+
+  - command: .buildkite/steps/build-worker.sh
+    label: ":hammer: Build Worker"
+    agents:
+      - "queue=default"
+    branches: "master"
+
+  - wait
+
+  - command: .buildkite/steps/test.sh
+    label: "Test"
+    agents:
+      - "queue=default"
+    branches: "master"
+
+  - block: "Release to Production?"
+    branches: "master"
+
+  - command: .buildkite/steps/deploy.sh
+    label: ":truck: :linode: Deploy"
+    branches: "master"
