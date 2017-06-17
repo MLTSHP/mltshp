@@ -1,5 +1,9 @@
 @import "variables";
 
+* {
+    box-sizing: border-box;
+}
+
 html, body {
     background-color: #dbfaff;
     color: #333;
@@ -361,7 +365,7 @@ a:active {
 .site-nav--toggle:hover,
 .site-nav--toggle:focus {
     color: $color-mltshp-pink;
-    background-color: #fcff00;
+    background-color: $color-edit;
     outline: none;
 }
 
@@ -392,7 +396,7 @@ a:active {
 
 .site-nav--popular a:hover {
     color: $color-mltshp-pink;
-    background-color: #fcff00;
+    background-color: $color-edit;
 }
 
 /* sign up button call-out text */
@@ -428,7 +432,7 @@ a:active {
 .content-styleguide {
     border-radius: 1.25em;
     margin: 45px auto 0 auto;
-    max-width: 615px;
+    max-width: 700px;
     padding: 1em;
 }
 
@@ -488,7 +492,7 @@ a:active {
             #fff calc(100% - 6px),
             #eee
         );
-        flex-basis: 285px;
+        flex-basis: 325px;
         order: 0;
     }
 
@@ -1489,7 +1493,6 @@ iframe {
     width: auto;
     font-size: inherit;
     font-weight: bold;
-    box-sizing: border-box;
     max-width: 150px;
     display: inline-block;
 }
@@ -1616,7 +1619,6 @@ iframe {
     clear: both;
     padding: 15px;
     position: relative;
-    box-sizing: border-box;
     max-width: 100%;
 }
 
@@ -1682,7 +1684,6 @@ iframe {
     border-radius: 50%;
     border: 5px solid rgba(255, 255, 255, 0.2);
     border-left-color: #ffffff;
-    box-sizing: border-box;
     content: '';
     display: block;
     height: 50px;
@@ -2367,7 +2368,6 @@ iframe {
     background-color: #ededed;
     display: block;
     padding: 15px;
-    width: 255px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -2497,8 +2497,8 @@ iframe {
     border-radius: 10px;
 }
 
-.cool-tools-block .browser-tools li {
-    margin-bottom: 5px;
+.cool-tools-block .browser-tools li + li {
+    margin-top: 5px;
 }
 
 .cool-tools-block .browser-tools li  a {
@@ -2558,8 +2558,8 @@ iframe {
         5px
         no-repeat;
     background-size: 40px 45px;
-    padding: 20px;
-    padding-left: 55px;
+    padding: 20px 15px;
+    padding-left: 50px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -2681,11 +2681,10 @@ iframe {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
-    padding: 7px 10px 3px 10px;
+    padding: 7px 10px;
     background-color: #00d517;
     font-size: 12px;
     color: #fff;
-    height: 16px;
     font-weight: bold;
     display: block;
     float: left;
@@ -2715,13 +2714,10 @@ iframe {
 .content-shake .shake-members li {
     margin-bottom: 30px;
     padding-bottom: 30px;
-    clear: both;
-    float: left;
     border-bottom: 1px dashed #e0e0e0;
-    width: 575px;
 }
 
-.content-shake .shake-members li img {
+.content-shake .shake-members li .member--img {
     float: left;
     margin-right: 10px;
 }
@@ -2729,8 +2725,6 @@ iframe {
 .content-shake .shake-members li h4 {
     font-size: 18px;
     font-weight: bold;
-    float: left;
-    width: 350px;
     padding-bottom: 5px;
 }
 
@@ -2740,47 +2734,17 @@ iframe {
 }
 
 .content-shake .shake-members .details {
-    float: left;
-    width: 350px;
 }
 
 .content-shake .shake-members li p {
-    clear: left;
-    width: 350px;
     color: #333;
     font-size: 14px;
     line-height: 1.3;
+    margin-top: 0;
 }
 
 .content-shake .shake-members li p a {
     text-decoration: none;
-}
-
-.content-shake .shake-members .remove-from-shake-button {
-    float: right;
-}
-
-/* TODO replace with reusable button styles */
-.content-shake .shake-members .remove-from-shake-button a {
-    display: block;
-    float: right;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 7px 10px;
-    background-color: $color-disabled-pastel-bg;
-    color: #333;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -moz-box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 3px 3px rgba(0, 0, 0, 0.1);
-    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
-}
-
-.content-shake .shake-members .remove-from-shake-button a:hover {
-    background-color: #666;
-    color: #fff;
 }
 
 /*----------------------------------------------
@@ -2845,7 +2809,8 @@ iframe {
 }
 
 .user-counts li {
-    flex: 1;
+    flex-grow: 1;
+    flex-shrink: 1;
     text-align: center;
     background-color: #fff;
     padding: 10px 0;
@@ -3175,7 +3140,7 @@ iframe {
 }
 
 .image-edit-title-hover {
-    background-color: #fcff00;
+    background-color: $color-edit;
 }
 
 .image-edit-title-form {
@@ -3197,7 +3162,6 @@ iframe {
     font-size: 48px;
     font-weight: bold;
     max-width: 100%;
-    box-sizing: border-box;
 }
 
 /* TODO replace with reusable button styles */
@@ -3259,7 +3223,7 @@ iframe {
 }
 
 .image-content .the-description-hover {
-    background-color: #fcff00;
+    background-color: $color-edit;
 }
 
 .image-content .the-description-blank {
@@ -3277,7 +3241,6 @@ iframe {
 textarea {
     width: 100%;
     min-height: 2.15em;
-    box-sizing: border-box;
     resize: vertical;
 }
 
@@ -3699,7 +3662,6 @@ textarea {
     padding-right: 20px;
     font-weight: bold;
     font-size: 18px;
-    box-sizing: border-box;
 }
 
 .image-comment-form .field {
@@ -3818,7 +3780,6 @@ span.previous-link {
     margin: 0;
     padding: 15px;
     position: relative;
-    box-sizing: border-box;
 }
 
 @media screen and (max-width: 479px) {
@@ -4108,20 +4069,12 @@ span.previous-link {
     margin-left: .75em;
     padding: calc(.5em - 3px) 0 .5em .75em;
     font-size: 11px;
-    width: 100px;
     white-space: nowrap;
 }
 .jump-back a {
     color: $color-mltshp-pink;
     text-decoration: none;
     font-weight: bold;
-}
-
-.content-body .image-title-with-poster  h3 {
-    float: left;
-    padding-bottom: 20px;
-    width: 496px;
-    margin-bottom: 0;
 }
 
 /* Dashboard New User */
@@ -4522,6 +4475,8 @@ span.previous-link {
     position: relative;
     cursor: pointer;
     overflow: hidden;
+    max-width: 284px;
+    height: 284px;
 }
 
 .shake-image img {
@@ -4548,9 +4503,9 @@ span.previous-link {
 
 .shake-image-hover .border {
     display: block;
-    width: 276px;
-    height: 276px;
-    border: 4px solid #fcff00;
+    width: 100%;
+    height: 100%;
+    border: 10px solid $color-edit;
     position: absolute;
     top: 0;
     left: 0;
@@ -4563,11 +4518,10 @@ span.previous-link {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    max-width: 284px;
-    height: 284px;
+    max-width: 100%;
+    height: 100%;
     text-align: center;
     padding: 30px;
-    box-sizing: border-box;
     border: 1px dashed #ccc;
 }
 
@@ -4619,7 +4573,7 @@ span.previous-link {
     margin: 10px 0 0 0;
     font-size: 36px;
     border: 1px solid #e0e0e0;
-    width: 285px;
+    width: 100%;
     font-weight: bold;
 }
 
@@ -4646,15 +4600,15 @@ span.previous-link {
     font-size: 14px;
     line-height: 18px;
     border: 1px solid #e0e0e0;
-    width: 283px;
+    width: 100%;
 }
 
 .shake-details .shake-edit-title-hover {
-    background-color: #fcff00;
+    background-color: $color-edit;
 }
 
 .shake-details .shake-edit-description-hover {
-    background-color: #fcff00;
+    background-color: $color-edit;
 }
 
 .shake-details .shake-edit-title-form {
@@ -4729,7 +4683,6 @@ span.previous-link {
 .shake-sidebar-editor-block .editor-details {
     padding-top: 15px;
     float: left;
-    width: 195px;
     margin-left: 10px;
 }
 
@@ -5006,7 +4959,6 @@ ul.promotions {
     list-style: none;
 }
 ul.promotions li {
-    box-sizing: border-box;
     list-style: none;
     float: left;
     margin-right: 10px;

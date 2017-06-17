@@ -14,7 +14,7 @@
     <ul id="shake-members-list" class="shake-members">
       {% for manager in managers %}
         <li>
-          <a href="/user/{{escape(manager.name)}}">
+          <a class="member--img" href="/user/{{escape(manager.name)}}">
             <img class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48">
           </a>
           <div class="details">
@@ -28,7 +28,7 @@
           </div>
           {% if shake.is_owner(current_user_object) %}
             <div  class="remove-from-shake-button">
-              <a class="remove-from-shake-button-link" href="">Remove From Shake</a>
+              <a class="btn btn-small btn-danger btn-pastel" href="">Remove From Shake</a>
               <form  style="display: none;" action="/shake/{{escape(shake.name)}}/members/remove?user_id={{manager.id}}">
                 <input type="hidden" name="user_id" value="{{manager.id}}">
                 {{ xsrf_form_html() }}
@@ -37,6 +37,36 @@
           {% end %}
         </li>
       {% end %}
+      <li>
+        <a class="member--img" href="/user/beta">
+          <img class="avatar--img" src="/static/images/default-icon-venti.svg" width="48" height="48">
+        </a>
+        <div class="details">
+          <h4><a href="/user/beta">Beta</a></h4>
+          <p class="about">All About Beta
+          <br />
+          <a class="website" href="http://example.com">example.com</a>
+          </p>
+        </div>
+        <div  class="remove-from-shake-button">
+          <a class="btn btn-small btn-danger btn-pastel" href="">Remove From Shake</a>
+        </div>
+      </li>
+      <li>
+        <a class="member--img" href="/user/gamma">
+          <img class="avatar--img" src="/static/images/default-icon-venti.svg" width="48" height="48">
+        </a>
+        <div class="details">
+          <h4><a href="/user/gamma">Gamma</a></h4>
+          <p class="about">All About Gamma
+          <br />
+          <a class="website" href="http://example.com">example.com</a>
+          </p>
+        </div>
+        <div  class="remove-from-shake-button">
+          <a class="btn btn-small btn-danger btn-pastel" href="">Remove From Shake</a>
+        </div>
+      </li>
     </ul>
 
   </div>
