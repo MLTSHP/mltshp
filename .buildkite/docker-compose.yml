@@ -25,8 +25,6 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: "mltshp_testing"
       MYSQL_USER: "mltshp"
-    volumes:
-      - /tmp/buildkite-mltshp-mysql:/var/lib/mysql
     networks:
       - app_net
   fakes3:

@@ -5,9 +5,6 @@ set -euo pipefail
 docker pull mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
 docker tag mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER} mltshp/mltshp-web:latest
 
-# create a place to hold the mysql data
-mkdir -p /tmp/buildkite-mltshp-mysql
-
 # launch fakes3/mysql/web app
 docker-compose -f .buildkite/docker-compose.yml up -d
 
@@ -19,6 +16,3 @@ docker exec -t -e BUILDKITE -e BUILDKITE_JOB_ID -e BUILDKITE_BRANCH -e COVERALLS
 
 # tear down containers
 docker-compose -f .buildkite/docker-compose.yml down
-
-# remove mysql data
-sudo rm -rf /tmp/buildkite-mltshp-mysql
