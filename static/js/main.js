@@ -409,10 +409,10 @@ $(document).ready(function() {
       }
 
       var $form = $(this).parents('form');
+      var $buttons = $form.children('button');
       var url = $form.attr('action');
       var data = $form.serialize() + '&json=1';
 
-      var button = this;
       $.post(url, data, function(response) {
         if (response['error']) {
           return false;
@@ -423,11 +423,10 @@ $(document).ready(function() {
           $("#like-count-amount-" + share_key).html(count_string);
           if (response['like'] === true) {
             $form.attr('action', '/p/' + share_key + '/unlike');
-            $(button).attr('src', '/static/images/liked-this.svg');
           } else {
             $form.attr('action', '/p/' + share_key + '/like');
-            $(button).attr('src', '/static/images/like-this.svg');
           }
+          $buttons.toggleClass('is-active');
           SidebarStatsView.refresh_likes();
           StreamStatsViewRegistry.refresh_likes(share_key);
         }

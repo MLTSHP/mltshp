@@ -1,163 +1,165 @@
 <div class="image-title {% if show_attribution_in_title %}image-title-with-poster{% end %}">
-
-  {% if can_edit and not site_is_readonly %}
-    {% if list_view %}
-  <h3 class="image-edit-title">{{escape(sharedfile.get_title())}}</h3>
-    {% else %}
-  <h1 class="image-edit-title">{{escape(sharedfile.get_title())}}</h1>
-    {% end %}
-  <form method="post" class="image-edit-title-form" action="/p/{{sharedfile.share_key}}/quick-edit-title">
-    {{ xsrf_form_html() }}
-    <input type="text" class="title-input" name="title"  autocomplete="off" value="">
-    <div class="buttons">
-      <input type="submit" class="save btn btn-primary" value="Save">
-      <span class="or">or</span>
-      <a href="" class="cancel btn btn-secondary">Cancel</a>
-    </div>
-  </form>
-  {% else %}
-    {% if show_attribution_in_title %}
-  <div class="image-poster">
-    <a href="{{attribution['path']}}" title="{{escape(attribution['name'])}}">
-      <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="">
-    </a>
-  </div>
-    {% end %}
-    {% if list_view %}
-  <h3>{{escape(sharedfile.get_title())}}</h3>
-    {% else %}
-  <h1>{{escape(sharedfile.get_title())}}</h1>
-    {% end %}
-  <div class="clear"><!-- --></div>
-  {% end %}
-  {% if list_view and can_remove_from_shake and not site_is_readonly %}
-  <div class="remove-from-shake">
-    <form method="post" action="/p/{{sharedfile.share_key}}/shakes/{{shake.id}}/delete">
-      <input type="hidden" name="redirect_to" value="{{ request.path }}">
-      {{ xsrf_form_html() }}
-      <button title="Delete from shake" class="btn btn-warning btn-pastel btn-icon btn-tiny">✕</button>
-    </form>
-  </div>
-  {% end %}
-</div>
-
-<div class="image-content">
-  <div class="the-image">
-    {% if is_nsfw and hide_nsfw %}
-    <div class="nsfw-cover" style="min-height: {{min_height}}px;">
-      <p>This may not be safe for viewing at work.</p>
-      <p><a href="/p/{{sharedfile.share_key}}">Click here to view</a></p>
-    </div>
-    {% else %}
-      {% if sharedfile.type() == 'link' %}
-    <div class="data-wrapper">
-      {{sharedfile.render_data(user=current_user).replace('autoplay=0', '')}}
-    </div>
-      {% else %}
-        {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
-    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}">
-      {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
-      {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
-    </video>
+    {% if can_edit and not site_is_readonly %}
+        {% if list_view %}
+            <h3 class="image-edit-title">{{escape(sharedfile.get_title())}}</h3>
         {% else %}
-          {% if list_view %}
-    <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
-          {% else %}
-    <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
-          {% end %}
+            <h1 class="image-edit-title">{{escape(sharedfile.get_title())}}</h1>
         {% end %}
-      {% end %}
-    {% end %}
-  </div>
-  <div id="image-content-footer-{{sharedfile.share_key}}" class="image-content-footer">
-    <div class="description {% if can_edit %}description-edit{%end%}">
-      {% if can_edit and not site_is_readonly %}
-        {% if not sharedfile.get_description() %}
-      <div class="the-description the-description-blank">click here to edit description</div>
-        {% else %}
-      <div class="the-description">{{sharedfile.get_description()}}</div>
-        {% end %}
-      <form method="post" class="description-edit-form" action="/p/{{sharedfile.share_key}}/quick-edit-description">
-          {{ xsrf_form_html() }}
-        <textarea name="description" class="description-edit-textarea"></textarea>
-        <div class="buttons">
-          <input type="submit" class="save btn btn-primary btn-small" value="Save">
-          <span class="or">or</span>
-          <a href="" class="cancel btn btn-secondary btn-small">Cancel</a>
-        </div>
-      </form>
-      {% else %}
-        {% if sharedfile.get_description() %}
-      <div class="the-description">{{sharedfile.get_description()}}</div>
-        {% end %}
-      {% end %}
-    </div>
-    <div class="image-interactions">
-      {% if can_favor and not site_is_readonly %}
-      <div class="like-this">
-        <form id="like-form-{{sharedfile.share_key}}" method="POST" action="/p/{{sharedfile.share_key}}/like">
-          {{ xsrf_form_html() }}
-          <input type="image" class="like-button" src="{{ static_url("images/like-this.svg") }}" height="22" value="Like This">
-        </form>
-      </div>
-      {% end %}
-      {% if can_unfavor and not site_is_readonly %}
-      <div class="like-this">
-        <form id="like-form-{{sharedfile.share_key}}"  method="POST" action="/p/{{sharedfile.share_key}}/unlike">
-          {{ xsrf_form_html() }}
-          <input type="image" class="like-button" src="{{ static_url("images/liked-this.svg") }}" height="22" value="Unlike This">
-        </form>
-      </div>
-      {% end %}
-      {% if can_save and not site_is_readonly %}
-      <div class="save-this">
-        {% if has_saved %}
-          <a href="/p/{{has_saved.share_key}}" title="Already saved!"><img height="22" width="29" src="{{ static_url("images/saved-this.svg") }}" alt="Saved"></a>
-        {% else %}
-          <form method="post" action="/p/{{sharedfile.share_key}}/save">
-            <input type="hidden" name="shake_id" class="shake-id-input" value="">
-            <input type="hidden" name="json" value="1">
+        <form method="post" class="image-edit-title-form" action="/p/{{sharedfile.share_key}}/quick-edit-title">
             {{ xsrf_form_html() }}
-          </form>
-            {% if has_multiple_shakes %}
-          <a class="save-this-link save-this-link-multiple" href=""><img src="{{ static_url("images/save-this-multiple.svg") }}" height="22" width="87" alt="Save This"></a>
+            <input type="text" class="title-input" name="title"  autocomplete="off" value="">
+            <div class="buttons">
+                <input type="submit" class="save btn btn-primary" value="Save">
+                <span class="or">or</span>
+                <a href="" class="cancel btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    {% else %}
+        {% if show_attribution_in_title %}
+            <div class="image-poster">
+                <a href="{{attribution['path']}}" title="{{escape(attribution['name'])}}">
+                    <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="">
+                </a>
+            </div>
+        {% end %}
+        {% if list_view %}
+            <h3>{{escape(sharedfile.get_title())}}</h3>
+        {% else %}
+            <h1>{{escape(sharedfile.get_title())}}</h1>
+        {% end %}
+        <div class="clear"><!-- --></div>
+    {% end %}
+    {% if list_view and can_remove_from_shake and not site_is_readonly %}
+        <div class="remove-from-shake">
+            <form method="post" action="/p/{{sharedfile.share_key}}/shakes/{{shake.id}}/delete">
+                <input type="hidden" name="redirect_to" value="{{ request.path }}">
+                {{ xsrf_form_html() }}
+                <button title="Delete from shake" class="btn btn-warning btn-pastel btn-icon btn-tiny">✕</button>
+            </form>
+        </div>
+    {% end %}
+</div>
+<div class="image-content">
+    <div class="the-image">
+        {% if is_nsfw and hide_nsfw %}
+            <div class="nsfw-cover" style="min-height: {{min_height}}px;">
+            <p>This may not be safe for viewing at work.</p>
+            <p><a href="/p/{{sharedfile.share_key}}">Click here to view</a></p>
+            </div>
+        {% else %}
+            {% if sharedfile.type() == 'link' %}
+                <div class="data-wrapper">
+                {{sharedfile.render_data(user=current_user).replace('autoplay=0', '')}}
+                </div>
             {% else %}
-          <a class="save-this-link" href=""><img src="{{ static_url("images/save-this.svg") }}" height="22" width="69" alt="Save This"></a>
+                {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
+                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}">
+                        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
+                        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
+                    </video>
+                {% else %}
+                    {% if list_view %}
+                        <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
+                    {% else %}
+                        <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}" alt="{{escape(sharedfile.get_title())}}"></a>
+                    {% end %}
+                {% end %}
             {% end %}
-          {% end %}
-      </div>
-      {% end %}
+        {% end %}
     </div>
-
-    {% if sharedfile.original() %}
-      {{ original_user = sharedfile.original_user()}}
-    <div class="originally-posted-by">
-      originally
-      <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by
-      <a class="avatar--link" href="/user/{{original_user.name}}">
-        <img class="avatar--img" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt="">
-      </a>
-      <a class="user-name" href="/user/{{original_user.name}}">{{ original_user.name }}</a></div>
-    {% end %}
-
-    {% if list_view %}
-    <span class="created-at"><a href="/p/{{sharedfile.share_key}}">{{sharedfile.pretty_created_at()}}</a></span>
-    <ul class="stats">
-      {% set view_count = sharedfile.livish_view_count() %}
-      <li class="views">{{view_count }} View{% if view_count != 1 %}s{% end %}</li>
-      <li class="saves"><a href="/p/{{sharedfile.share_key}}" id="save-count-amount-{{sharedfile.share_key}}">{{sharedfile.save_count }}</a></li>
-      <li class="likes"><a href="/p/{{sharedfile.share_key}}" id="like-count-amount-{{sharedfile.share_key}}">{{sharedfile.like_count }}</a></li>
-      <li class="comments {% if len(comments) > 0 %}selected{% end %}"><a href="/p/{{sharedfile.share_key}}#comments">{{sharedfile.comment_count() }}</a></li>
-    </ul>
-      {% if len(comments) > 0 %}
-    <div class="inline-details">
-      {% include '../image/quick-comments.html' %}
+    <div id="image-content-footer-{{sharedfile.share_key}}" class="image-content-footer">
+        <div class="description {% if can_edit %}description-edit{%end%}">
+            {% if can_edit and not site_is_readonly %}
+                {% if not sharedfile.get_description() %}
+                    <div class="the-description the-description-blank">click here to edit description</div>
+                {% else %}
+                    <div class="the-description">{{sharedfile.get_description()}}</div>
+                {% end %}
+                <form method="post" class="description-edit-form" action="/p/{{sharedfile.share_key}}/quick-edit-description">
+                    {{ xsrf_form_html() }}
+                    <textarea name="description" class="description-edit-textarea"></textarea>
+                    <div class="buttons">
+                        <input type="submit" class="save btn btn-primary btn-small" value="Save">
+                        <span class="or">or</span>
+                        <a href="" class="cancel btn btn-secondary btn-small">Cancel</a>
+                    </div>
+                </form>
+            {% else %}
+                {% if sharedfile.get_description() %}
+                    <div class="the-description">{{sharedfile.get_description()}}</div>
+                {% end %}
+            {% end %}
+        </div>
+        <div class="image-interactions">
+            {% if (can_favor or can_unfavor) and not site_is_readonly %}
+                <div class="like-this">
+                    <form id="like-form-{{sharedfile.share_key}}"  method="POST" action="/p/{{sharedfile.share_key}}/{% if can_unfavor %}un{% end %}like">
+                        {{ xsrf_form_html() }}
+                        <button type="button" class="like-button btn btn-danger btn-small {% if can_favor %}is-active{% end %}">
+                            <div class="btn--content">
+                                <img class="btn--icon" src="{{ static_url("images/like-this.svg") }}" alt="">
+                                <span class="btn--text">Like</span>
+                            </div>
+                        </button>
+                        <button type="button" class="unlike-button {% if can_unfavor %}is-active{% end %}" title="Unlike This" aria-label="Unlike This">
+                            <img src="{{ static_url("images/liked-this.svg") }}" height="22" width="25" alt="Unlike This">
+                        </button>
+                    </form>
+                </div>
+            {% end %}
+            {% if can_save and not site_is_readonly %}
+                <div class="save-this">
+                    {% if has_saved %}
+                        <a href="/p/{{has_saved.share_key}}" title="Already saved!"><img height="22" width="29" src="{{ static_url("images/saved-this.svg") }}" alt="Saved"></a>
+                    {% else %}
+                        <form method="post" action="/p/{{sharedfile.share_key}}/save">
+                            <input type="hidden" name="shake_id" class="shake-id-input" value="">
+                            <input type="hidden" name="json" value="1">
+                            {{ xsrf_form_html() }}
+                            <button type="button" class="save-this-link {% if has_multiple_shakes %}save-this-link-multiple{% end %} btn btn-warning btn-small">
+                                <div class="btn--content">
+                                    <img class="btn--icon" src="{{ static_url("images/save-this.svg") }}" alt="">
+                                    <span class="btn--text">Save</span>
+                                    {% if has_multiple_shakes %}
+                                        <span class="btn--caret">▼</span>
+                                    {% end %}
+                                </div>
+                            </button>
+                        </form>
+                    {% end %}
+                </div>
+            {% end %}
+        </div>
+        {% if sharedfile.original() %}
+            <div class="originally-posted-by">
+                {{ original_user = sharedfile.original_user()}}
+                originally
+                <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by
+                <a href="/user/{{original_user.name}}">
+                    <img class="avatar--img" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt="">
+                </a>
+                <a class="user-name" href="/user/{{original_user.name}}">{{ original_user.name }}</a>
+            </div>
+        {% end %}
+        {% if list_view %}
+            <div class="inline-meta">
+                <span class="created-at"><a href="/p/{{sharedfile.share_key}}">{{sharedfile.pretty_created_at()}}</a></span>
+                <ul class="stats">
+                    {% set view_count = sharedfile.livish_view_count() %}
+                    <li class="views">{{view_count }} View{% if view_count != 1 %}s{% end %}</li>
+                    <li class="saves"><a href="/p/{{sharedfile.share_key}}" id="save-count-amount-{{sharedfile.share_key}}">{{sharedfile.save_count }}</a></li>
+                    <li class="likes"><a href="/p/{{sharedfile.share_key}}" id="like-count-amount-{{sharedfile.share_key}}">{{sharedfile.like_count }}</a></li>
+                    <li class="comments {% if len(comments) > 0 %}selected{% end %}"><a href="/p/{{sharedfile.share_key}}#comments">{{sharedfile.comment_count() }}</a></li>
+                </ul>
+            </div>
+            {% if len(comments) > 0 %}
+                <div class="inline-details">
+                    {% include '../image/quick-comments.html' %}
+                </div>
+            {% else %}
+                <div class="inline-details" style="display:none;"></div>
+            {% end %}
+            <div class="clear"><!-- --></div>
+        {% end %}
     </div>
-      {% else %}
-    <div class="inline-details" style="display:none;"></div>
-      {% end %}
-    <div class="clear"><!-- --></div>
-    {% end %}
-
-  </div>
 </div>
