@@ -1,5 +1,5 @@
 *.pyc
-settings.py
+/settings.py
 celeryconfig.py
 .eggs/
 build/
