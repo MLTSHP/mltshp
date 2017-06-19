@@ -45,9 +45,11 @@ input, textarea, select, button {
 /* Links */
 a {
     color: $link-color;
-    transition: background-color .15s ease, color .15s ease;
+    -webkit-text-decoration-color: rgba($link-color, 0.5);
+    text-decoration-color: rgba($link-color, 0.5);
     -webkit-text-decoration-skip: ink;
     text-decoration-skip: ink;
+    transition: background-color .15s ease, color .15s ease;
 }
 
 a:hover,
@@ -2984,6 +2986,10 @@ iframe {
 .image-content .image-content-footer .originally-posted-by {
     clear: left;
     padding-bottom: 3px;
+}
+
+.image-content .image-content-footer .originally-posted-by .avatar--link {
+    text-decoration: none;
 }
 
 .image-content-footer .created-at {

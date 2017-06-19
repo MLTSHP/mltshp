@@ -1,0 +1,39 @@
+version: "2"
+services:
+  mltshp:
+    image: mltshp/mltshp-web:latest
+    volumes:
+      - ./settings.py:/srv/mltshp.com/mltshp/settings.py
+      - ../.git:/srv/mltshp.com/mltshp/.git
+    ports:
+      - "8000:80"
+    depends_on:
+      - fakes3
+      - mysql
+    links:
+      - fakes3
+      - mysql
+    networks:
+      app_net:
+        aliases:
+          - mltshp.dev
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "mltshp_testing"
+      MYSQL_USER: "mltshp"
+    networks:
+      - app_net
+  fakes3:
+    image: fingershock/fakes3
+    networks:
+      app_net:
+        aliases:
+          - mltshp-testing.fakes3
+          - mltshp-dev.fakes3
+
+networks:
+  app_net:

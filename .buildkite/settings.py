@@ -1,3 +1,6 @@
+# This is a collection of settings specifically for use with our automated
+# build and test setup on buildkite.com
+
 # dummy dict so main module loads okay
 settings = {}
 
@@ -12,11 +15,11 @@ test_settings = {
     "xsrf_cookies": True,
     "uploaded_files" : "/srv/mltshp.com/uploaded",
     "debug": True,
+    # docker container's host ip address
     "database_user": "root",
     "database_name": "mltshp_testing",
     "database_password" : "",
-    # docker container's host ip address
-    "database_host": "localhost",
+    "database_host": "mysql",
     "aws_bucket": "mltshp-testing",
     "aws_host": "fakes3",
     "aws_port": 8000,

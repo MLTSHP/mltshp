@@ -1,0 +1,18 @@
+steps:
+  - command: .buildkite/steps/build-web.sh
+    label: ":hammer: Build Web"
+
+  - command: .buildkite/steps/build-worker.sh
+    label: ":hammer: Build Worker"
+
+  - wait
+
+  - command: .buildkite/steps/test.sh
+    label: "Test"
+
+  - block: "Release to Production?"
+    branches: "master"
+
+  - command: .buildkite/steps/deploy.sh
+    label: ":truck: :linode: Deploy"
+    branches: "master"
