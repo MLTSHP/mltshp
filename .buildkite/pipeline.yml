@@ -14,5 +14,5 @@ steps:
     branches: "master"
 
   - command: .buildkite/steps/deploy.sh
-    label: ":truck: :linode: Deploy"
+    label: ":truck: Deploy"
     branches: "master"
