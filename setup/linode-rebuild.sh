@@ -33,7 +33,11 @@ DOCKER_IMAGE_NAME=${1:-mltshp/mltshp-web:latest}
 WORKER_IMAGE_NAME=$( echo $DOCKER_IMAGE_NAME | sed "s/-web/-worker/" )
 
 # A public key for assigning to each node we rebuild (root account)
-PUBLIC_KEY="setup/production/mltshp-web-key.pub"
+if [ -n "$DEPLOY_PUBLIC_KEY" ]; then
+    PUBLIC_KEY="$DEPLOY_PUBLIC_KEY"
+else
+    PUBLIC_KEY="setup/production/mltshp-web-key.pub"
+fi
 
 # Get a list of worker nodes from linode
 worker_nodes=$( linode linode $LINODE_USER_ARG --action list | grep -oE mltshp-worker-\\d+ )
