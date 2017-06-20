@@ -1,5 +1,7 @@
 #!/bin/bash
 
+shopt -s expand_aliases
+
 LINODE_USER_ARG=""
 
 if [ -f ".deploy.env" ]; then
@@ -8,6 +10,17 @@ fi
 if [ -n "$LINODE_USER" ]; then
     LINODE_USER_ARG="-u $LINODE_USER"
 fi
+if [ -n "$BUILDKITE_COMMIT" ]; then
+    GITHUB_COMMIT_SHA=$( echo -n "$BUILDKITE_COMMIT" | cut -c 1-8 )
+else
+    # Get latest commit to master... yields the first 8 characters of the sha1 hash of master
+    GITHUB_COMMIT_SHA=$( curl -s https://api.github.com/repos/MLTSHP/mltshp/commits/master | jq '.sha' | sed 's/"//g' | cut -c 1-8 );
+fi
+if [ -f "/usr/bin/tac" ]; then
+    alias reverse_lines="tac"
+else
+    alias reverse_lines="tail -r"
+fi
 
 # Our NodeBalancer label
 NODEBALANCER_NAME="mltshp-web-cluster"
@@ -15,16 +28,9 @@ NODEBALANCER_NAME="mltshp-web-cluster"
 # The Linode instance size for our web nodes
 NODE_PLAN="linode1024"
 
-# Get latest commit to master... yields the first 8 characters of the sha1 hash of master
-GITHUB_COMMIT_SHA=$( curl -s https://api.github.com/repos/MLTSHP/mltshp/commits/master | jq '.sha' | sed 's/"//g' | cut -c 1-8 );
-
 # Docker image to deploy (defaults to "mltshp/mltshp-web:latest")
 DOCKER_IMAGE_NAME=${1:-mltshp/mltshp-web:latest}
 WORKER_IMAGE_NAME=$( echo $DOCKER_IMAGE_NAME | sed "s/-web/-worker/" )
-
-# Get the Docker cloud sha1 for the "latest" build to compare with Github
-#DOCKER_WEB_SHA=$( )
-#DOCKER_WORKER_SHA=$( )
 
 # A public key for assigning to each node we rebuild (root account)
 PUBLIC_KEY="setup/production/mltshp-web-key.pub"
@@ -36,7 +42,7 @@ worker_nodes=$( linode linode $LINODE_USER_ARG --action list | grep -oE mltshp-w
 worker_nodes=(${worker_nodes//$'\n'/ })
 
 # Get a list of web nodes from the cluster
-web_nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-\\d+ | tail -r )
+web_nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-\\d+ | reverse_lines )
 
 # convert newline string to a real array
 web_nodes=(${web_nodes//$'\n'/ })
@@ -171,7 +177,12 @@ echo
 echo "Press Enter to continue or ^C to abort..."
 read
 
-slackpost "#operations" "MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME (Git master is: $GITHUB_COMMIT_SHA)..."
+build_url=""
+if [ -n "$BUILDKITE_BUILD_URL" ]; then
+    build_url=" Build URL: $BUILDKITE_BUILD_URL"
+fi
+deploy_msg="MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME - $build_url (Commit: $GITHUB_COMMIT_SHA)"
+slackpost "#operations" "$deploy_msg"
 
 # Rebuild the worker node(s) with latest docker image...
 rebuild_worker ${worker_nodes[@]}
@@ -182,6 +193,6 @@ rebuild_web_node ${web_nodes[0]}
 # Now rebuild remaining web nodes, in parallel
 rebuild_web_node ${web_nodes[@]:1}
 
-slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production (Git master is: $GITHUB_COMMIT_SHA)."
+slackpost "#operations" "Docker image $DOCKER_IMAGE_NAME deployed to production (Commit: $GITHUB_COMMIT_SHA)."
 
 echo "All nodes rebuilt!"
