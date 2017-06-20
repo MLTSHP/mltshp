@@ -179,9 +179,9 @@ read
 
 build_url=""
 if [ -n "$BUILDKITE_BUILD_URL" ]; then
-    build_url=" Build URL: $BUILDKITE_BUILD_URL"
+    build_url=" - Build URL: $BUILDKITE_BUILD_URL"
 fi
-deploy_msg="MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME - $build_url (Commit: $GITHUB_COMMIT_SHA)"
+deploy_msg="MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME$build_url (Commit: $GITHUB_COMMIT_SHA)"
 slackpost "#operations" "$deploy_msg"
 
 # Rebuild the worker node(s) with latest docker image...
