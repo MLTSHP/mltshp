@@ -36,13 +36,13 @@ WORKER_IMAGE_NAME=$( echo $DOCKER_IMAGE_NAME | sed "s/-web/-worker/" )
 PUBLIC_KEY="setup/production/mltshp-web-key.pub"
 
 # Get a list of worker nodes from linode
-worker_nodes=$( linode linode $LINODE_USER_ARG --action list | grep -oE mltshp-worker-\\d+ )
+worker_nodes=$( linode linode $LINODE_USER_ARG --action list | grep -oE mltshp-worker-[0-9]+ )
 
 # convert newline string to a real array
 worker_nodes=(${worker_nodes//$'\n'/ })
 
 # Get a list of web nodes from the cluster
-web_nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-\\d+ | reverse_lines )
+web_nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-[0-9]+ | reverse_lines )
 
 # convert newline string to a real array
 web_nodes=(${web_nodes//$'\n'/ })
