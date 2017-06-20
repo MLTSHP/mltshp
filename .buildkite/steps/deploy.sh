@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -eo pipefail
 
 # Grab CI images
 docker pull mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
