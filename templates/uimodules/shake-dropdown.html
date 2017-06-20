@@ -1,5 +1,5 @@
 <div id="choose-a-shake" class="choose-a-shake">
-  <button type="button" class="choose-a-shake--toggle">
+  <button type="button" class="choose-a-shake--toggle btn btn-success btn-pastel">
     Choose a shake
     <span class="caret"></span>
   </button>
@@ -19,7 +19,7 @@
       </ul>
     {% end %}
     {% if can_create_shake and not site_is_readonly %}
-      <a class="add-a-shake" href="/shake/create">+ Add a shake</a>
+      <a class="add-a-shake btn btn-success btn-small" href="/shake/create">+ Add a shake</a>
     {% end %}
   </div>
 </div>

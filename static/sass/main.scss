@@ -1,4 +1,5 @@
 @import "variables";
+@import "buttons";
 
 * {
     box-sizing: border-box;
@@ -126,7 +127,7 @@ a:active {
 /* actions toolbar */
 .site-nav {
     flex: 1;
-    margin-top: 65px;
+    margin-top: 69px;
     position: relative;
     text-align: right;
 }
@@ -134,10 +135,6 @@ a:active {
 /* ---------------------------------------------------------------------
   Site Nav Layout
 --------------------------------------------------------------------- */
-.site-nav--toggle {
-    display: inline-block;
-}
-
 .site-nav--list {
     display: none;
     flex-direction: column;
@@ -234,16 +231,7 @@ a:active {
     z-index: 3;
 }
 
-/* TODO: Make this a reusable button style */
 .choose-a-shake--toggle {
-    background-color: $color-success-pastel-bg;
-    border-radius: 10px;
-    border: none;
-    color: $color-success-pastel-fg;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 13px 19px;
-    white-space: nowrap;
     width: 100%;
 }
 
@@ -252,6 +240,12 @@ a:active {
     border-bottom-right-radius: 0;
     box-shadow: 5px 5px 0 #e5e5e5;
     outline: none;
+
+    &:hover,
+    &:focus {
+        background: $color-success-pastel-bg;
+        color: $color-success-pastel-fg;
+    }
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--toggle .caret {
@@ -268,7 +262,7 @@ a:active {
     padding: 1px 10px 10px 10px;
     position: absolute;
     right: 0;
-    top: 100%;
+    top: calc(100% - .22em);
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--dropdown {
@@ -325,80 +319,21 @@ a:active {
 .choose-a-shake--dropdown .add-a-shake {
     display: block;
     float: right;
-    background-color: $color-success-pastel-fg;
     margin-top: 10px;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 5px 10px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    color: #fff;
-    text-decoration: none;
-    text-shadow: 1px 1px 1px #0a8f72;
-}
-
-.choose-a-shake--dropdown .add-a-shake:hover {
-    background-color: #0a8f72;
 }
 
 /* ---------------------------------------------------------------------
   Site Nav Buttons
-  TODO: convert to reusable button styles
 --------------------------------------------------------------------- */
-
-/* site nav toggle */
-.site-nav--toggle {
-    background-color: $color-warning-pastel-bg;
-    border-radius: 10px;
-    border: none;
-    color: $color-warning;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    height: 42px;
-    line-height: 42px;
-    padding: 0;
-    text-decoration: none;
-    transition: background-color .15s ease, color .15s ease;
-    width: 42px;
-}
-
-.site-nav--toggle:hover,
-.site-nav--toggle:focus {
-    color: $color-mltshp-pink;
-    background-color: $color-edit;
-    outline: none;
-}
 
 /* your conversations button */
 .site-nav--conversations a {
-    background-color: $color-success-pastel-bg;
-    border-radius: 10px;
-    color: $color-success-pastel-fg;
     display: block;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 13px 20px;
-    text-decoration: none;
-    white-space: nowrap;
 }
 
 /* popular button */
 .site-nav--popular a {
-    background-color: $color-warning-pastel-bg;
-    border-radius: 10px;
-    color: $color-warning;
     display: block;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 13px 20px;
-    text-decoration: none;
-}
-
-.site-nav--popular a:hover {
-    color: $color-mltshp-pink;
-    background-color: $color-edit;
 }
 
 /* sign up button call-out text */
@@ -1282,34 +1217,6 @@ iframe {
     margin-top: 1em;
 }
 
-/* TODO: replace with reusable button styles */
-.content-migrate .button {
-    color: #fff;
-    font-size: 23px;
-    padding: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    float: left;
-    display: block;
-    text-shadow: 1px 1px 1px #bf0060;
-    background-color: $color-mltshp-pink;
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid $color-mltshp-pink;
-    -moz-box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
-    -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.25);
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-.content-migrate .button:hover {
-    background-color: #db008b;
-}
-
 .content-migrate p {
     line-height: 1.4;
     font-size: 20px;
@@ -1959,19 +1866,6 @@ iframe {
     margin-right: 8px;
 }
 
-/* TODO replace with reusable button styles */
-.permalink-sidebar .in-these-shakes .add-to-shakes-button {
-    background-color: $color-success-pastel-fg;
-    color: #fff;
-    border: 1px solid $color-success-pastel-fg;
-    padding: 4px 8px;
-    font-size: 14px;
-    margin-top: 10px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
-
 .permalink-sidebar .permalink-social {
     margin: 0;
     padding: 0;
@@ -2617,7 +2511,7 @@ iframe {
     border-radius: 5px;
     border: 1px solid #e0e0e0;
     background-color: #fff;
-    padding: 5px 5px 5px 0;
+    padding: 5px;
     position: relative;
     display: flex;
 }
@@ -2672,39 +2566,11 @@ iframe {
 .shake-invite-member-block .input-text {
     border-radius: 5px;
     border: 1px solid #fff;
-    padding: 5px;
-    height: 16px;
     flex: 1;
 }
 
-/* TODO replace with reusable button styles */
 .shake-invite-member-block .invite-button {
-    border: 1px solid #00d517;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    padding: 7px 10px;
-    background-color: #00d517;
-    font-size: 12px;
-    color: #fff;
-    font-weight: bold;
-    display: block;
-    float: left;
     margin-left: 5px;
-    text-decoration: none;
-    text-shadow: 1px 1px 1px #00a414;
-}
-
-.shake-invite-member-block .invite-button:focus {
-    outline: none;
-}
-
-.shake-invite-member-block .invite-button-inactive {
-    background-color: #e0e0e0;
-    color: #999;
-    text-shadow: none;
-    border: 1px solid #e0e0e0;
-    cursor: default;
 }
 
 .content-shake .shake-members {
@@ -3151,61 +3017,61 @@ iframe {
 
 .image-edit-title-form {
     display: none;
+    flex-direction: column;
+
+    &.is-active {
+        display: flex;
+    }
+}
+
+@media screen and (min-width: 480px) {
+    .image-edit-title-form {
+        flex-direction: row;
+    }
+}
+
+.image-content-list .image-edit-title-form {
     margin-bottom: 20px;
 }
 
 .image-content-list .image-edit-title-form .title-input {
     font-size: 30px;
     font-weight: bold;
-    border: 1px solid #ccc;
     padding: 2px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+    min-width: 250px;
 }
 
 .image-edit-title-form .title-input {
     font-size: 48px;
     font-weight: bold;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    min-width: 0;
     max-width: 100%;
+    border-radius: 5px;
+    flex: 1;
 }
 
-/* TODO replace with reusable button styles */
+@media screen and (min-width: 480px) {
+    .image-edit-title-form .title-input {
+        margin-bottom: 0;
+    }
+}
+
 .image-edit-title-form .buttons {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-left: 10px;
     display: flex;
-}
-
-.image-edit-title-form .save {
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid $color-mltshp-pink;
-    background-color: $color-mltshp-pink;
-    color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 20px;
+    align-items: center;
 }
 
 .image-edit-title-form .or {
-    padding: 10px;
+    padding: 0 10px;
     display: block;
     color: #888;
 }
 
-.image-edit-title-form .cancel {
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    background-color: #f5f5f5;
-    color: #666;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 20px;
-    text-decoration: none;
+.image-content-list .image-edit-title-form .btn {
+    @extend .btn-small;
 }
 
 /* Inline Editing Description */
@@ -3252,40 +3118,20 @@ textarea {
 
 .image-content .description .buttons {
     padding: 10px 0;
+    display: flex;
 }
 
-/* TODO replace with reusable button styles */
 .image-content .description .buttons .save {
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid $color-mltshp-pink;
-    background-color: $color-mltshp-pink;
-    color: #fff;
-    font-size: 12px;
-    text-decoration: none;
-    padding: 5px 10px;
-    float: left;
 }
 
 .image-content .description .buttons .or {
-    float: left;
     padding: 5px 10px 15px 10px;
     display: block;
     color: #888;
 }
 
 .image-content .description .buttons .cancel {
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    background-color: #f5f5f5;
-    color: #666;
-    font-size: 12px;
-    padding: 5px 10px;
-    text-decoration: none;
-    float: left;
+    color: #fff;
 }
 
 .image-content .inline-details {
@@ -3441,17 +3287,6 @@ textarea {
 
 .image-content .inline-details .post-comment-inline-expanded .button {
     display: block;
-}
-
-/* TODO replace with reusable button styles */
-.image-content .inline-details .post-comment-inline .button input {
-    background-color: #ff0099;
-    color: #fff;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    padding: 5px;
-    border: none;
 }
 
 /*----------------------------------------------
@@ -4302,47 +4137,6 @@ span.previous-link {
     padding-bottom: 30px;
 }
 
-/* TODO replace with reusable button styles */
-.api-accept-button {
-    background-color: $color-mltshp-pink;
-    text-shadow: 1px 1px 1px #B5005A;
-    color: #fff;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -moz-box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 4px 4px rgba(0, 0, 0, 0.1);
-    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
-}
-
-.api-accept-button:hover {
-    cursor: pointer;
-    background-color: #DB008B;
-}
-
-.api-decline-button {
-    background-color: #e0e0e0;
-    color: #666;
-    text-shadow: 1px 1px 1px #fff;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -moz-box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
-    -webkit-box-shadow: 4px 4px rgba(0, 0, 0, 0.05);
-    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
-}
-
-.api-decline-button:hover {
-    cursor: pointer;
-    background-color: #ccc;
-}
-
 /*----------------------------------------------
   Area: Developer
 ---------------------------------------------- */
@@ -4629,40 +4423,13 @@ span.previous-link {
     margin-top: 5px;
     margin-bottom: 10px;
     float: left;
-}
-
-/* TODO replace with reusable button styles */
-.shake-details .save {
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid $color-mltshp-pink;
-    background-color: $color-mltshp-pink;
-    color: #fff;
-    font-size: 14px;
-    font-weight: normal;
-    padding: 5px 10px;
-    float: left;
+    display: flex;
 }
 
 .shake-details .or {
-    float: left;
     padding: 5px;
     display: block;
     color: #888;
-}
-
-.shake-details .cancel {
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    background-color: #f5f5f5;
-    color: #666;
-    font-size: 14px;
-    padding: 5px 10px;
-    text-decoration: none;
-    float: left;
 }
 
 .shake-sidebar-editor-block {
@@ -5015,238 +4782,6 @@ ul.promotions .promotion-name {
 }
 ul.promotions li:hover .promotion-name {
     display: inherit;
-}
-
-/*----------------------------------------------------------------------
-  Buttons
---------------------------------------------------------------------- */
-.btn,
-.label {
-    border: none;
-    border-radius: .5em;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 18px;
-    font-weight: 500;
-    height: 2.2em;
-    letter-spacing: .033em;
-    line-height: 2.2em;
-    padding: 0 .88em;
-    text-align: center;
-    text-decoration: none;
-    text-shadow: .05em .05em .05em rgba(0, 0, 0, .5);
-    transition-duration: .2s;
-    transition-property: background-color, color;
-    user-select: none;
-    vertical-align: middle;
-    white-space: nowrap;
-}
-
-.label {
-    cursor: default;
-}
-
-.btn:hover,
-.btn:focus {
-    color: #fff;
-}
-
-/* buttons with muted colors */
-.btn-pastel,
-.label-pastel {
-    font-weight: 600;
-    letter-spacing: 0.015em;
-    text-shadow: none;
-}
-
-/* buttons with shadows */
-.btn-shadow {
-    box-shadow: .22em .22em 0 rgba(0, 0, 0, .125);
-    margin-right: .22em;
-}
-
-/* buttons with extra padding */
-.btn-padded {
-    height: 2.6em;
-    line-height: 2.6em;
-    padding: 0 1.25em;
-}
-
-/* button size variations */
-.btn-large,
-.label-large {
-    font-size: 24px;
-    letter-spacing: .066em;
-}
-
-.btn-large.btn-pastel,
-.label-large.label-pastel {
-    letter-spacing: 0.033em;
-}
-
-.btn-small,
-.btn-tiny,
-.label-small,
-.label-tiny {
-    font-size: 12px;
-    font-weight: 400;
-}
-
-.btn-tiny,
-.label-tiny {
-    font-size: 10px;
-    padding: 0 .66em;
-}
-
-.btn-small.btn-pastel,
-.btn-tiny.btn-pastel,
-.label-small.label-pastel,
-.label-tiny.label-pastel {
-    font-weight: 500;
-}
-
-/* buttons that only contain an icon */
-.btn-icon {
-    padding: 0;
-    width: 2.2em;
-}
-
-.btn-icon.btn-padded {
-    padding: 0;
-    width: 2.6em;
-}
-
-/* Primary: Provides extra visual weight and identifies the primary action in a set of buttons */
-.btn-primary,
-.label-primary {
-    background-color: $color-primary;
-}
-
-.btn-primary:hover,
-.btn-primary:focus {
-    background-color: $color-primary-hover;
-}
-
-.btn-primary.btn-pastel,
-.label-primary.label-pastel {
-    background-color: $color-primary-pastel-bg;
-    color: $color-primary-pastel-fg;
-}
-
-.btn-primary.btn-pastel:hover,
-.btn-primary.btn-pastel:focus {
-    background-color: $color-primary;
-    color: #fff;
-}
-
-/* Secondary: De-emphasizes and identifies secondary actions in a set of buttons */
-.btn-secondary,
-.label-secondary {
-    background-color: $color-secondary;
-}
-
-.btn-secondary:hover,
-.btn-secondary:focus {
-    background-color: $color-secondary-hover;
-}
-
-.btn-secondary.btn-pastel,
-.label-secondary.label-pastel {
-    background-color: $color-secondary-pastel-bg;
-    color: $color-secondary-pastel-fg;
-}
-
-.btn-secondary.btn-pastel:hover,
-.btn-secondary.btn-pastel:focus {
-    background-color: $color-secondary;
-    color: #fff;
-}
-
-/* Success: Indicates a successful or positive action */
-.btn-success,
-.label-success {
-    background-color: $color-success;
-}
-
-.btn-success:hover,
-.btn-success:focus {
-    background-color: $color-success-hover;
-}
-
-.btn-success.btn-pastel,
-.label-success.label-pastel {
-    background-color: $color-success-pastel-bg;
-    color: $color-success-pastel-fg;
-}
-
-.btn-success.btn-pastel:hover,
-.btn-success.btn-pastel:focus {
-    background-color: $color-success;
-    color: #fff;
-}
-
-/* Warning: Indicates caution should be taken with this action */
-.btn-warning,
-.label-warning {
-    background-color: $color-warning;
-}
-
-.btn-warning:hover,
-.btn-warning:focus {
-    background-color: $color-warning-hover;
-}
-
-.btn-warning.btn-pastel,
-.label-warning.label-pastel {
-    background-color: $color-warning-pastel-bg;
-    color: $color-warning-pastel-fg;
-}
-
-.btn-warning.btn-pastel:hover,
-.btn-warning.btn-pastel:focus {
-    background-color: $color-warning;
-    color: #fff;
-}
-
-/* Danger: Indicates a dangerous or potentially negative action */
-.btn-danger,
-.label-danger {
-    background-color: $color-danger;
-}
-
-.btn-danger:hover,
-.btn-danger:focus {
-    background-color: $color-danger-hover;
-}
-
-.btn-danger.btn-pastel,
-.label-danger.label-pastel {
-    background-color: $color-danger-pastel-bg;
-    color: $color-danger-pastel-fg;
-}
-
-.btn-danger.btn-pastel:hover,
-.btn-danger.btn-pastel:focus {
-    background-color: $color-danger;
-    color: #fff;
-}
-
-/* Disabled: buttons that cannot be used */
-.btn:disabled {
-    background-color: $color-disabled !important;
-    color: rgba(255, 255, 255, .8) !important;
-    text-shadow: none;
-    cursor: default;
-}
-
-.btn.btn-pastel:disabled {
-    background-color: $color-disabled-pastel-bg !important;
-    color: $color-disabled-pastel-fg !important;
-}
-
-.btn.btn-shadow:disabled {
-    box-shadow: none !important;
 }
 
 /*----------------------------------------------------------------------

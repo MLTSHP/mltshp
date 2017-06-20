@@ -32,9 +32,9 @@
         {{ xsrf_form_html() }}
         <input type="text" class="shake-edit-title-input" name="title" value=""/>
         <div class="buttons">
-          <input type="submit" class="save" value="Save">
+          <input type="submit" class="save btn btn-primary btn-small" value="Save">
           <span class="or">or</span>
-          <a href="" class="cancel">Cancel</a>
+          <a href="" class="cancel btn btn-secondary btn-small">Cancel</a>
         </div>
       </form>
     </div>
@@ -50,9 +50,9 @@
         {{ xsrf_form_html() }}
         <textarea class="shake-edit-description-input" name="description"></textarea>
         <div class="buttons">
-          <input type="submit" class="save" value="Save">
+          <input type="submit" class="save btn btn-primary btn-small" value="Save">
           <span class="or">or</span>
-          <a href="" class="cancel">Cancel</a>
+          <a href="" class="cancel btn btn-secondary btn-small">Cancel</a>
         </div>
       </form>
     </div>
@@ -87,8 +87,7 @@
           {{ xsrf_form_html() }}
           <div class="shake-input-wrapper">
             <input type="text" class="input-text" name="name">
-            <a href="" class="invite-button invite-button-inactive">Invite</a>
-            <div class="clear"><!-- --></div>
+            <button type="button" class="invite-button btn btn-success btn-small" disabled>Invite</button>
             <ul class="shake-results"></ul>
           </div>
         </form>
