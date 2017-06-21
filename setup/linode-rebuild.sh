@@ -170,7 +170,7 @@ function slackpost {
 echo "This script will rebuild all active MLTSHP web nodes"
 echo "using a Docker Cloud image."
 echo
-echo "GitHub master commit: $GITHUB_COMMIT_SHA"
+echo "Github commit to deploy: $GITHUB_COMMIT_SHA"
 echo "Web Docker image to deploy: $DOCKER_IMAGE_NAME"
 echo -n "Web Nodes to rebuild: "
 echo_with_delimiter ", " ${web_nodes[@]}
@@ -178,8 +178,11 @@ echo "Worker Docker image to deploy: $WORKER_IMAGE_NAME"
 echo -n "Worker Node to rebuild: "
 echo_with_delimiter ", " ${worker_nodes[@]}
 echo
-echo "Press Enter to continue or ^C to abort..."
-read
+
+if [ -n "$BUILDKITE" ]; then
+    echo "Press Enter to continue or ^C to abort..."
+    read
+fi
 
 build_url=""
 if [ -n "$BUILDKITE_BUILD_URL" ]; then

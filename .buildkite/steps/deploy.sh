@@ -17,4 +17,4 @@ export DEPLOY_PUBLIC_KEY="/tmp/setup/production/mltshp-web-key.pub"
 alias linode="docker run -i --volume $PWD/setup/production:/tmp/setup/production --rm -e LINODE_API_KEY linode"
 
 # Then deploy (rebuild script waits for user to press enter)
-echo | source ./setup/linode-rebuild.sh mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
+source ./setup/linode-rebuild.sh mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
