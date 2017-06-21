@@ -68,18 +68,18 @@
                     <a href="/"><img class="site-branding--logo" src="{{ static_url("images/logo-compact.svg") }}" alt="MLTSHP"></a>
                 </div>
                 <nav id="site-nav" class="site-nav">
-                    <button type="button" class="site-nav--toggle">&#9776;</button>
+                    <button type="button" class="site-nav--toggle btn btn-warning btn-pastel btn-icon">&#9776;</button>
                     <ul class="site-nav--list">
                         {% if current_user and current_user_object.is_member() %}
                             <li class="site-nav--item site-nav--shake-list">
                                 {{modules.ShakeDropdown(current_user_object)}}
                             </li>
                             <li class="site-nav--item site-nav--conversations">
-                                <a href="/conversations">Your Conversations</a>
+                                <a class="btn btn-success btn-pastel" href="/conversations">Your Conversations</a>
                             </li>
                         {% else %}
                             <li class="site-nav--item site-nav--popular">
-                                <a href="/popular">Popular</a>
+                                <a class="btn btn-warning btn-pastel" href="/popular">Popular</a>
                             </li>
                         {% end %}
                         {% if not site_is_readonly %}

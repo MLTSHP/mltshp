@@ -52,14 +52,24 @@
       </div>
 
       <div id="sidebar-stats" class="sidebar-stats">
-        <div class="sidebar-stats-block sidebar-stats-views"><span class="tab">{{view_count}} View{% if view_count != 1%}s{% end %}</span></div>
-        <div class="sidebar-stats-block sidebar-stats-saves {% if save_count > 0 %}enable-cursor{% end %}">
-          <span class="tab"><span class="save-count" id="save-count-amount-{{sharedfile.share_key}}">{{save_count}} Save{% if save_count != 1 %}s{% end %}</span></span></div>
-        <div class="sidebar-stats-block sidebar-stats-hearts {% if heart_count > 0 %}enable-cursor{% end %}">
-          <span class="tab"><span class="like-count" id="like-count-amount-{{sharedfile.share_key}}">{{heart_count}}  Like{% if heart_count != 1 %}s{% end %}</span></span></div>
-        <div class="sidebar-stats-content">
-
-        </div>
+        <ul class="sidebar-stats-tabs">
+          <li class="sidebar-stats-block sidebar-stats-views">
+            <span class="tab">
+              {{view_count}} View{% if view_count != 1%}s{% end %}
+            </span>
+          </li>
+          <li class="sidebar-stats-block sidebar-stats-saves {% if save_count > 0 %}enable-cursor{% end %}">
+            <span class="tab">
+              <span class="save-count" id="save-count-amount-{{sharedfile.share_key}}">{{save_count}} Save{% if save_count != 1 %}s{% end %}</span>
+            </span>
+          </li>
+          <li class="sidebar-stats-block sidebar-stats-hearts {% if heart_count > 0 %}enable-cursor{% end %}">
+            <span class="tab">
+              <span class="like-count" id="like-count-amount-{{sharedfile.share_key}}">{{heart_count}}  Like{% if heart_count != 1 %}s{% end %}</span>
+            </span>
+          </li>
+        </ul>
+        <div class="sidebar-stats-content"></div>
       </div>
 
       {% if sourcefile.type == 'image' %}
@@ -98,7 +108,7 @@
             {% end %}
           {% end %}
           </ul>
-          <input type="submit" class="add-to-shakes-button" value="Add">
+          <input type="submit" class="add-to-shakes-button btn btn-success btn-small" value="Add">
           </form>
         </div>
       {% end %}

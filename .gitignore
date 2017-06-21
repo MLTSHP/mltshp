@@ -1,5 +1,5 @@
 *.pyc
-settings.py
+/settings.py
 celeryconfig.py
 .eggs/
 build/
@@ -12,4 +12,6 @@ env
 mounts
 .deploy.env
 .coverage
+.sass-cache
 coverage.xml
+static/css/

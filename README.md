@@ -2,7 +2,7 @@
 
 ## Status
 
-[![Build Status](https://travis-ci.org/MLTSHP/mltshp.svg?branch=master)](https://travis-ci.org/MLTSHP/mltshp) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
+[![Build status](https://badge.buildkite.com/a86854c6272f21c9b46b8b6aafd3a4fb99bcfabe6e611bc370.svg)](https://buildkite.com/mltshp-inc/mltshp-web-service) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
 
 
 ## Development Environment
@@ -16,11 +16,26 @@ With Docker and a git client installed on your computer, clone the MLTSHP
 code from Github. If you intend to develop features for MLTSHP, you should
 clone from your own fork of the code. Once you have a copy checked out
 locally, use this command to create a `settings.py` and `celeryconfig.py`
-file suitable for local development:
+file suitable for local development (edit these as needed, but the defaults
+should be okay):
 
     $ make init-dev
 
-The defaults there should be okay for a local instance. Then, just run:
+Our stylesheets are SASS-based, so you'll also need to install the
+Ruby gem for SASS. If you don't have the `sass` command already,
+you can get it by running:
+
+    $ bundle install
+
+If that gives you an error, maybe you need to first install the
+Ruby bundler package:
+
+    $ gem install bundler
+
+Then, try the `bundle install` command.
+
+So, with those pre-requisites in place, you should be able to start the
+app itself using:
 
     $ make run
 

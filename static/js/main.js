@@ -317,7 +317,7 @@ $(document).ready(function() {
     // Inline editing of the title.
     $(".image-edit-title-form .cancel").click(function() {
       $(this).closest('.image-title').find(".image-edit-title").show();
-      $(this).closest(".image-edit-title-form").hide();
+      $(this).closest(".image-edit-title-form").removeClass('is-active');
       return false;
     });
 
@@ -336,7 +336,7 @@ $(document).ready(function() {
         if ('title_raw' in result) {
           $(that).hide();
           $title_container.find('.title-input').val(result['title_raw']);
-          $(that).next(".image-edit-title-form").show();
+          $(that).next(".image-edit-title-form").addClass('is-active');
         }
       }, 'json');
 
@@ -351,7 +351,7 @@ $(document).ready(function() {
           var $title_container = $(that).closest('.image-title');
           $title_container.find('.image-edit-title').html(result['title']).show();
           $title_container.find('.title-input').val(result['title_raw']);
-          $title_container.find('.image-edit-title-form').hide();
+          $title_container.find('.image-edit-title-form').removeClass('is-active');
         }
       }, 'json');
       return false;
@@ -409,10 +409,10 @@ $(document).ready(function() {
       }
 
       var $form = $(this).parents('form');
+      var $buttons = $form.children('button');
       var url = $form.attr('action');
       var data = $form.serialize() + '&json=1';
 
-      var button = this;
       $.post(url, data, function(response) {
         if (response['error']) {
           return false;
@@ -423,11 +423,10 @@ $(document).ready(function() {
           $("#like-count-amount-" + share_key).html(count_string);
           if (response['like'] === true) {
             $form.attr('action', '/p/' + share_key + '/unlike');
-            $(button).attr('src', '/static/images/liked-this.svg');
           } else {
             $form.attr('action', '/p/' + share_key + '/like');
-            $(button).attr('src', '/static/images/like-this.svg');
           }
+          $buttons.toggleClass('is-active');
           SidebarStatsView.refresh_likes();
           StreamStatsViewRegistry.refresh_likes(share_key);
         }
@@ -1551,7 +1550,7 @@ $(document).ready(function() {
         select_user: function(user_name) {
           this.clear_results();
           $input_field.val(user_name);
-          $invite_button.removeClass('invite-button-inactive');
+          $invite_button.removeAttr('disabled');
         },
 
         submit_form: function(ev) {
@@ -1570,11 +1569,11 @@ $(document).ready(function() {
 
         clear_input: function() {
           $input_field.val('');
-          $invite_button.addClass('invite-button-inactive');
+          $invite_button.attr('disabled', 'disabled');
         },
 
         send_invite: function() {
-          if ($invite_button.hasClass('invite-button-inactive')) {
+          if ($invite_button.disabled) {
             return false;
           } else {
             var url = $form.attr('action');
