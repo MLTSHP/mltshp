@@ -456,6 +456,19 @@ h6 {
     margin: 0;
 }
 
+h1,
+h2,
+h3 {
+    text-rendering: optimizeLegibility;
+    -webkit-font-kerning: normal;
+            font-kerning: normal;
+    -webkit-font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "pnum" 1;
+            font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "pnum" 1;
+    -webkit-font-variant-ligatures: common-ligatures;
+            font-variant-ligatures: common-ligatures;
+    font-variant-numeric: proportional-nums;
+}
+
 h1 {
     font-size: 48px;
     font-weight: bold;
@@ -1547,12 +1560,15 @@ iframe {
 }
 
 .image-content .image-interactions {
-    clear: both;
+    display: flex;
+    float: right;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
 .image-content .image-interactions .save-this {
     margin-right: 5px;
-    float: right;
     position: relative;
 }
 
@@ -1561,12 +1577,58 @@ iframe {
 }
 
 .image-content .image-interactions .like-this {
-    width: 59px;
-    float: right;
 }
 
 .image-content .image-interactions .like-this .like-button:focus {
     outline: none;
+}
+
+.image-content .image-interactions {
+
+    .like-button,
+    .unlike-button {
+        display: none;
+
+        &.is-active {
+            display: inline-block;
+        }
+    }
+
+    .unlike-button {
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+
+        img {
+            display: block;
+        }
+    }
+
+    .like-button,
+    .save-this-link {
+        line-height: 1;
+
+        .btn--content {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn--icon {
+            height: 1.5em;
+            margin-right: 0.33em;
+        }
+
+        .btn--caret {
+            font-size: 0.75em;
+            margin-left: 0.33em;
+            vertical-align: bottom;
+        }
+    }
+
+    .save-this-link {
+
+    }
 }
 
 .image-content .image-interactions .save-this-shake-selector {
@@ -1644,6 +1706,7 @@ iframe {
 
 .image-content .image-interactions .save-this-shake-selector a:hover {
     background-color: #ffb338;
+    color: #fff;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -1688,18 +1751,22 @@ iframe {
 .sidebar-stats {
     margin-top: 30px;
     background-color: #e5fcff;
-    padding: 5px 10px 0 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
+    padding: 10px;
     border-radius: 10px;
     font-size: 14px;
     font-weight: bold;
-    display: flex;
-    flex-wrap: wrap;
 }
 
-.sidebar-stats > * {
-    flex: 1;
+.sidebar-stats-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > * {
+        flex: 1;
+    }
 }
 
 .sidebar-stats-block {
@@ -1750,8 +1817,6 @@ iframe {
 
 .sidebar-stats-content {
     display: none;
-    clear: both;
-    margin-bottom: 15px;
     background-color: #fff;
     -webkit-border-bottom-right-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
@@ -1760,7 +1825,6 @@ iframe {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     padding: 15px;
-    flex-basis: 100%;
 }
 
 .sidebar-stats-content .user-action {
@@ -2858,9 +2922,17 @@ iframe {
     text-decoration: none;
 }
 
+.image-content-footer .inline-meta {
+    display: flex;
+    float: left;
+
+    > * {
+        flex: none;
+    }
+}
+
 .image-content-footer .created-at {
     padding-top: 7px;
-    float: left;
 }
 
 .image-content .image-content-footer .created-at a {
@@ -2878,7 +2950,6 @@ iframe {
     margin: 0 0 0 10px;
     padding: 0;
     color: #4b4b4b;
-    float: left;
 }
 
 .image-content-footer .stats li {
@@ -2904,10 +2975,6 @@ iframe {
     border-top-right-radius: 5px;
     display: block;
     float: left;
-}
-
-.image-content-footer .stats li a:focus {
-    outline: none;
 }
 
 .image-content-footer .stats li.saves a {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -eo pipefail
 
 # Grab CI images
 docker pull mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
@@ -13,7 +13,8 @@ docker push mltshp/mltshp-worker:latest
 
 # Rebuild Linode instances...
 docker build -t linode .buildkite/linode-cli
-alias linode="docker run -it --rm -e LINODE_API_KEY linode linode"
+export DEPLOY_PUBLIC_KEY="/tmp/setup/production/mltshp-web-key.pub"
+alias linode="docker run -i --volume $PWD/setup/production:/tmp/setup/production --rm -e LINODE_API_KEY linode"
 
 # Then deploy (rebuild script waits for user to press enter)
-echo | ./setup/linode-rebuild.sh mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
+source ./setup/linode-rebuild.sh mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}

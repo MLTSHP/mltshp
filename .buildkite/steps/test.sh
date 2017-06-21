@@ -8,6 +8,9 @@ docker tag mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER} mltshp/mltshp-web:l
 # launch fakes3/mysql/web app
 docker-compose -f .buildkite/docker-compose.yml up -d
 
+# let's wait a few seconds to allow mysql/fakes3 to spin up
+sleep 5
+
 # run our tests against it
 docker exec -t buildkite_mltshp_1 ./run-tests.sh
 

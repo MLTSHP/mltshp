@@ -33,16 +33,20 @@ DOCKER_IMAGE_NAME=${1:-mltshp/mltshp-web:latest}
 WORKER_IMAGE_NAME=$( echo $DOCKER_IMAGE_NAME | sed "s/-web/-worker/" )
 
 # A public key for assigning to each node we rebuild (root account)
-PUBLIC_KEY="setup/production/mltshp-web-key.pub"
+if [ -n "$DEPLOY_PUBLIC_KEY" ]; then
+    PUBLIC_KEY="$DEPLOY_PUBLIC_KEY"
+else
+    PUBLIC_KEY="setup/production/mltshp-web-key.pub"
+fi
 
 # Get a list of worker nodes from linode
-worker_nodes=$( linode linode $LINODE_USER_ARG --action list | grep -oE mltshp-worker-\\d+ )
+worker_nodes=$( linode linode $LINODE_USER_ARG --action list | grep -oE mltshp-worker-[0-9]+ )
 
 # convert newline string to a real array
 worker_nodes=(${worker_nodes//$'\n'/ })
 
 # Get a list of web nodes from the cluster
-web_nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-\\d+ | reverse_lines )
+web_nodes=$( linode nodebalancer $LINODE_USER_ARG --action node-list --label "$NODEBALANCER_NAME" --port 80 | grep -oE mltshp-web-[0-9]+ | reverse_lines )
 
 # convert newline string to a real array
 web_nodes=(${web_nodes//$'\n'/ })
@@ -166,7 +170,7 @@ function slackpost {
 echo "This script will rebuild all active MLTSHP web nodes"
 echo "using a Docker Cloud image."
 echo
-echo "GitHub master commit: $GITHUB_COMMIT_SHA"
+echo "Github commit to deploy: $GITHUB_COMMIT_SHA"
 echo "Web Docker image to deploy: $DOCKER_IMAGE_NAME"
 echo -n "Web Nodes to rebuild: "
 echo_with_delimiter ", " ${web_nodes[@]}
@@ -174,14 +178,17 @@ echo "Worker Docker image to deploy: $WORKER_IMAGE_NAME"
 echo -n "Worker Node to rebuild: "
 echo_with_delimiter ", " ${worker_nodes[@]}
 echo
-echo "Press Enter to continue or ^C to abort..."
-read
+
+if [ ! -n "$BUILDKITE" ]; then
+    echo "Press Enter to continue or ^C to abort..."
+    read
+fi
 
 build_url=""
 if [ -n "$BUILDKITE_BUILD_URL" ]; then
-    build_url=" Build URL: $BUILDKITE_BUILD_URL"
+    build_url=" - Build URL: $BUILDKITE_BUILD_URL"
 fi
-deploy_msg="MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME - $build_url (Commit: $GITHUB_COMMIT_SHA)"
+deploy_msg="MLTSHP deployment starting for Docker image $DOCKER_IMAGE_NAME$build_url (Commit: $GITHUB_COMMIT_SHA)"
 slackpost "#operations" "$deploy_msg"
 
 # Rebuild the worker node(s) with latest docker image...
