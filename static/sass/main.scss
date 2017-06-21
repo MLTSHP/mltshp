@@ -456,6 +456,19 @@ h6 {
     margin: 0;
 }
 
+h1,
+h2,
+h3 {
+    text-rendering: optimizeLegibility;
+    -webkit-font-kerning: normal;
+            font-kerning: normal;
+    -webkit-font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "pnum" 1;
+            font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "pnum" 1;
+    -webkit-font-variant-ligatures: common-ligatures;
+            font-variant-ligatures: common-ligatures;
+    font-variant-numeric: proportional-nums;
+}
+
 h1 {
     font-size: 48px;
     font-weight: bold;
