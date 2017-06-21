@@ -1738,18 +1738,22 @@ iframe {
 .sidebar-stats {
     margin-top: 30px;
     background-color: #e5fcff;
-    padding: 5px 10px 0 10px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
+    padding: 10px;
     border-radius: 10px;
     font-size: 14px;
     font-weight: bold;
-    display: flex;
-    flex-wrap: wrap;
 }
 
-.sidebar-stats > * {
-    flex: 1;
+.sidebar-stats-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > * {
+        flex: 1;
+    }
 }
 
 .sidebar-stats-block {
@@ -1800,8 +1804,6 @@ iframe {
 
 .sidebar-stats-content {
     display: none;
-    clear: both;
-    margin-bottom: 15px;
     background-color: #fff;
     -webkit-border-bottom-right-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
@@ -1810,7 +1812,6 @@ iframe {
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
     padding: 15px;
-    flex-basis: 100%;
 }
 
 .sidebar-stats-content .user-action {
