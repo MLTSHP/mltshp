@@ -2,7 +2,7 @@
 
 ## Status
 
-[![Build Status](https://travis-ci.org/MLTSHP/mltshp.svg?branch=master)](https://travis-ci.org/MLTSHP/mltshp) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
+[![Build status](https://badge.buildkite.com/a86854c6272f21c9b46b8b6aafd3a4fb99bcfabe6e611bc370.svg)](https://buildkite.com/mltshp-inc/mltshp-web-service) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
 
 
 ## Development Environment
