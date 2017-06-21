@@ -179,7 +179,7 @@ echo -n "Worker Node to rebuild: "
 echo_with_delimiter ", " ${worker_nodes[@]}
 echo
 
-if [ -n "$BUILDKITE" ]; then
+if [ ! -n "$BUILDKITE" ]; then
     echo "Press Enter to continue or ^C to abort..."
     read
 fi
