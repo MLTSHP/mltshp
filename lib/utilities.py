@@ -49,22 +49,46 @@ def parse_xml(xml_string):
 
 
 def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None, 
-                             seconds=3600, https=False):
+                             seconds=3600):
     """
     Return S3 authenticated URL sans network access or phatty dependencies like boto.
     """
     assert bucket_name
     assert file_path
+
     seconds = int(time.time()) + seconds
     to_sign = "GET\n\n\n%s\n/%s/%s" % (seconds, bucket_name, file_path)
     digest = hmac.new(s3_secret, to_sign, hashlib.sha1).digest()
     signature = urllib.quote(base64.encodestring(digest).strip())
-    if https:
+    signature = "?AWSAccessKeyId=%s&Expires=%s&Signature=%s" % (s3_key, seconds, signature)
+
+    if options.aws_host == "s3.amazonaws.com":
+        url_prefix = "https://"
+    else:
+        url_prefix = "http://"
+
+    port = options.aws_port and (":%d" % options.aws_port) or ""
+
+    return "%s%s.%s%s/%s%s" % (
+        url_prefix, bucket_name, options.aws_host, port,
+        file_path, signature)
+
+
+def s3_url(file_path):
+    """
+    Return S3 authenticated URL sans network access or phatty dependencies like boto.
+    """
+    assert file_path
+
+    if options.aws_host == "s3.amazonaws.com":
         url_prefix = 'https://'
     else:
         url_prefix = 'http://'
-    return "%s%s.s3.amazonaws.com/%s?AWSAccessKeyId=%s&Expires=%s&Signature=%s" % \
-        (url_prefix,  bucket_name, file_path, s3_key, seconds, signature)
+
+    return "%s%s.%s%s/%s" % (
+        url_prefix, options.aws_bucket, options.aws_host,
+        (options.aws_port in (443, 80, None) and "" or (":%d" % options.aws_port)),
+        file_path)
 
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
