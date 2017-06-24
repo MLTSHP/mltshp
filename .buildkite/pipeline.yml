@@ -1,18 +1,28 @@
 steps:
   - command: .buildkite/steps/build-web.sh
     label: ":hammer: Build Web"
+    agents:
+      - "stack=buildkite-trusted"
 
   - command: .buildkite/steps/build-worker.sh
     label: ":hammer: Build Worker"
+    agents:
+      - "stack=buildkite-trusted"
 
   - wait
 
   - command: .buildkite/steps/test.sh
     label: "Test"
+    agents:
+      - "stack=buildkite-trusted"
 
   - block: "Release to Production?"
     branches: "master"
+    agents:
+      - "stack=buildkite-trusted"
 
   - command: .buildkite/steps/deploy.sh
     label: ":truck: Deploy"
     branches: "master"
+    agents:
+      - "stack=buildkite-trusted"
