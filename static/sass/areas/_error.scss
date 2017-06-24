@@ -1,0 +1,27 @@
+/* Error Page */
+
+.error-uh-oh {
+    padding-top: 160px;
+    text-align: center;
+    background: transparent
+        url('/static/images/tools-uh-oh.svg')
+        center
+        top
+        no-repeat;
+    background-size: 282px 133px;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+.content-narrow .error-p {
+    font-size: 18px;
+    color: #888;
+    text-align: center;
+}
+
+.content-narrow .error-p-long {
+    font-size: 18px;
+    line-height: 1.4;
+    color: #888;
+    text-align: left;
+}

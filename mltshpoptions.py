@@ -43,7 +43,7 @@ define('server_id', help='A name for this server instance (unique per server)')
 
 # APIs
 define('aws_key', metavar="KEY", help="Amazon API key for S3 & Payments")
-define('aws_host', metavar="AWS_HOST", help="AWS Host", default=None)
+define('aws_host', metavar="AWS_HOST", help="AWS Host", default="s3.amazonaws.com")
 define('aws_port', metavar="AWS_PORT", type=int, help="AWS Port", default=None)
 define('aws_secret', metavar="SECRET", help="Amazon API secret for S3 & Payments")
 define('aws_bucket', metavar="NAME", help="Name of Amazon S3 bucket to use")

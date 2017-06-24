@@ -1,0 +1,100 @@
+/*----------------------------------------------
+  Area: Incoming
+---------------------------------------------- */
+
+.content-incoming .sidebar p {
+    margin: 25px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #444;
+}
+
+.content-incoming .sidebar h3 {
+    font-size: 22px;
+    margin: 28px 0;
+    font-weight: bold;
+}
+
+.content-incoming .sidebar h4 {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.content-incoming .tip-block {
+    float: left;
+    padding: 20px;
+    background-color: #ededed;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.content-incoming .tip-block h3 {
+    color: $color-mltshp-pink;
+    margin: 10px 0;
+    padding: 0;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.content-incoming .tip-block p {
+    color: #464646;
+    font-size: 14px;
+    margin: 0;
+    padding-top: 5px;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.incoming-header {
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        #fff calc(100% - 6px),
+        #eee
+    );
+    padding: 16px 20px;
+    cursor: pointer;
+}
+
+.incoming-header::before {
+    background: url('/static/images/incoming-header.svg') center no-repeat;
+    background-size: 100%;
+    content: '';
+    display: block;
+    height: 115px;
+    max-width: 100%;
+    width: 395px;
+}
+
+.incoming-header--title {
+    margin-top: 8px;
+}
+
+@media screen and (min-width: 768px) {
+    .incoming-header {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .incoming-header--title {
+        font-size: 1.75em;
+        margin-left: 20px;
+        margin-top: 0;
+    }
+}
+
+.incoming-reload {
+    text-align: center;
+}
+
+/* this is awful*/
+.content-incoming h3 {
+    padding: 15px;
+    font-size: 25px;
+}
+.content-incoming .body  p {
+    padding: 10px;
+    font-size: 15px;
+}
