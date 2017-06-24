@@ -1,0 +1,79 @@
+/*----------------------------------------------
+  UIMODULE: ImageMedium
+
+  (.image-medium-list)
+    .image-medium
+      .user-and-title
+      .stats
+---------------------------------------------- */
+
+.image-medium {
+    margin-right: 15px;
+    padding-bottom: 30px;
+}
+
+.image-medium-thumb {
+}
+
+.image-medium-thumb a {
+    display: block;
+}
+
+.image-medium-thumb img {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.user-and-title {
+    padding-top: 10px;
+}
+
+.image-medium .user-and-title a {
+    display: block;
+    float: left;
+    width: 20px;
+    margin-right: 10px;
+}
+
+.image-medium .user-and-title .title {
+    font-size: 20px;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.image-medium .stats {
+    margin: 0;
+    padding: 10px 0 0;
+    list-style: none;
+    color: #4b4b4b;
+    clear: both;
+    display: flex;
+}
+
+.image-medium .stats li {
+    float: left;
+    font-size: 12px;
+    padding-right: 10px;
+}
+
+.image-medium .stats li.saves {
+    background: url('/static/images/save-tiny.svg') 0 2px no-repeat;
+    background-size: 16px 11px;
+    padding-left: 19px;
+    color: #ff8400;
+}
+
+.image-medium .stats li.likes {
+    background: url('/static/images/like-tiny.svg') 0 2px no-repeat;
+    background-size: 12px 9px;
+    padding-left: 15px;
+    color: #ff0000;
+}
+
+.image-medium .stats li.comments a {
+    background: url('/static/images/comment-tiny.svg') 0 2px no-repeat;
+    background-size: 12px 9px;
+    padding-left: 15px;
+    color: $color-mltshp-blue;
+    text-decoration: none;
+}

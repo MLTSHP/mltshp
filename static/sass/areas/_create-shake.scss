@@ -1,0 +1,27 @@
+/* Create Shake */
+
+.content-create-shake .fun-form-errors {
+    font-size: 18px;
+    margin-top: 20px;
+    padding: 0 40px;
+    margin-bottom: 0;
+}
+
+.content-create-shake .fun-form-errors strong {
+    color: #c00;
+}
+
+.fun-form-create-shake #create-shake-name-field {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.fun-form-create-shake #create-shake-name-field label {
+    flex-basis: 100%;
+}
+
+.fun-form-create-shake #create-shake-name-field .name-prefix {
+    font-size: 18px;
+    color: #999;
+    margin-right: .5em;
+}
