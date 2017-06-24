@@ -1,0 +1,32 @@
+/* Friends Page */
+.account-header {
+    padding: 24px 30px 16px;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        #fff calc(100% - 6px),
+        #eee
+    );
+}
+
+.account-header .avatar {
+    display: flex;
+}
+
+.account-header .avatar-media {
+    flex: none;
+}
+
+.account-header .avatar img {
+    display: block;
+}
+
+.account-header h2 {
+    font-size: 42px;
+    line-height: 50px;
+    font-weight: bold;
+    padding-left: 24px;
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}

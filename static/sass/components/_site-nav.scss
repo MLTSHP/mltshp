@@ -1,0 +1,85 @@
+/* ---------------------------------------------------------------------
+  Site Nav Layout
+--------------------------------------------------------------------- */
+.site-nav--list {
+    display: none;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 47px;
+    z-index: 99;
+}
+
+.site-nav.is-expanded .site-nav--list {
+    display: flex;
+}
+
+.site-nav--item {
+    display: flex;
+    flex: none;
+    justify-content: flex-end;
+}
+
+.site-nav--item > * {
+    flex: 1;
+}
+
+.site-nav--item + .site-nav--item {
+    margin-top: .25em;
+}
+
+@media screen and (min-width: 768px) {
+    .site-nav--toggle {
+        display: none;
+    }
+
+    .site-nav--list {
+        display: flex;
+        flex-direction: row;
+        position: static;
+    }
+
+    .site-nav--item > * {
+        flex: none;
+    }
+
+    .site-nav--item + .site-nav--item {
+        margin-top: 0;
+        margin-left: 1em;
+    }
+
+    /* stretch the last item in the nav */
+    .site-nav--upload,
+    .site-nav--signup {
+        flex-grow: 1;
+    }
+}
+
+/* ---------------------------------------------------------------------
+  Site Nav Buttons
+--------------------------------------------------------------------- */
+
+/* your conversations button */
+.site-nav--conversations a {
+    display: block;
+}
+
+/* popular button */
+.site-nav--popular a {
+    display: block;
+}
+
+/* sign up button call-out text */
+.site-nav--signup .call-out {
+    background-color: #dbfaff;
+    width: 220px;
+    font-size: 14px;
+    padding-right: 10px;
+    padding-top: 3px;
+    color: #777;
+    font-weight: bold;
+    line-height: 1.3;
+}

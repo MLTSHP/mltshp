@@ -1,0 +1,27 @@
+/* ---------------------------------------------------------------------
+  Header Layout
+--------------------------------------------------------------------- */
+.site-header {
+    display: flex;
+}
+
+/* logo */
+.site-branding {
+    margin-right: 1em;
+    margin-top: 1em;
+    width: 211px;
+}
+
+.site-branding--logo {
+    display: block;
+    height: auto;
+    width: 100%;
+}
+
+/* actions toolbar */
+.site-nav {
+    flex: 1;
+    margin-top: 69px;
+    position: relative;
+    text-align: right;
+}

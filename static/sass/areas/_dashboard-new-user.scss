@@ -1,0 +1,63 @@
+
+/* Dashboard New User */
+.dashboard-new-user {
+    padding: 20px 30px;
+}
+
+.dashboard-new-user h1 {
+    color: #22AE8B;
+    font-size: 50px;
+    margin-bottom: 18px;
+}
+
+.dashboard-new-user h2 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.dashboard-new-user h3 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.dashboard-new-user h4 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.dashboard-new-user p {
+    font-size: 14px;
+    line-height: 25px;
+    padding-bottom: 15px;
+}
+
+.dashboard-new-user a {
+    color: $color-mltshp-pink;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.dashboard-new-user .two-columns {
+    display: flex;
+}
+
+.dashboard-new-user .two-columns .left-column {
+    margin-top: 9px;
+    margin-right: 20px;
+    flex: 0 0 70px;
+}
+
+@media screen and (min-width: 768px) {
+    .dashboard-new-user .two-columns .left-column {
+        flex-basis: 130px;
+        margin-left: 20px;
+        margin-right: 40px;
+    }
+}
+
+.dashboard-new-user .two-columns .right-column {
+    flex: 1;
+    margin-top: 36px;
+}
