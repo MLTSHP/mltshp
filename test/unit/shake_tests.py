@@ -29,7 +29,7 @@ class ShakeModelTests(BaseTestCase):
         self.assertEqual('/static/images/default-icon-venti.svg', self.user.shake().page_image())
         self.shake.image = 1
         self.shake.save
-        self.assertEqual('https://%s.s3.amazonaws.com/account/1/shake_asdf.jpg' % options.aws_bucket, self.shake.page_image())
+        self.assertEqual('http://%s.fakes3:8000/account/1/shake_asdf.jpg' % options.aws_bucket, self.shake.page_image())
 
     def test_correct_thumbnail_url_is_returned(self):
         """
@@ -39,7 +39,7 @@ class ShakeModelTests(BaseTestCase):
         self.assertEqual('https://mltshp-cdn.com/static/images/default-icon-venti.svg', self.user.shake().thumbnail_url())
         self.shake.image = 1
         self.shake.save()
-        self.assertEqual('https://%s.s3.amazonaws.com/account/1/shake_asdf_small.jpg' % options.aws_bucket, self.shake.thumbnail_url())
+        self.assertEqual('http://%s.fakes3:8000/account/1/shake_asdf_small.jpg' % options.aws_bucket, self.shake.thumbnail_url())
 
     def test_correct_path_is_returned(self):
         """

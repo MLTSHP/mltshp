@@ -11,7 +11,7 @@ from PIL import Image
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.reservedshakenames import reserved_names
-from lib.utilities import transform_to_square_thumbnail
+from lib.utilities import transform_to_square_thumbnail, s3_url
 
 import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
 
@@ -96,7 +96,7 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url()
         else:
             if self.image:
-                return "https://%s.s3.amazonaws.com/account/%s/shake_%s.jpg" % (options.aws_bucket, self.user_id, self.name)
+                return s3_url("account/%s/shake_%s.jpg" % (self.user_id, self.name))
             else:
                 return None
 
@@ -105,7 +105,7 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url(include_protocol=True)
         else:
             if self.image:
-                return "https://%s.s3.amazonaws.com/account/%s/shake_%s_small.jpg" % (options.aws_bucket, self.user_id, self.name)
+                return s3_url("account/%s/shake_%s_small.jpg" % (self.user_id, self.name))
             else:
                 if options.app_host == "mltshp.com":
                     return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host

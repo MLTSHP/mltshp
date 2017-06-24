@@ -1,0 +1,341 @@
+/*----------------------------------------------
+  Area: Settings
+---------------------------------------------- */
+
+.settings-header {
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0),
+        #fff calc(100% - 6px),
+        #eee
+    );
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media screen and (min-width: 768px) {
+    .settings-header {
+        padding: 40px;
+        flex-direction: row;
+    }
+
+    .settings-header > * {
+        flex: 1 1 0;
+        max-width: calc(50% - 20px);
+    }
+}
+
+.content-settings h1 {
+    margin-bottom: 15px;
+    font-size: 48px;
+}
+
+@media screen and (min-width: 768px) {
+    .content-settings h1 {
+        margin-bottom: 0;
+    }
+}
+
+.content-settings .settings-navigation {
+}
+
+.content-settings .settings-navigation ul {
+    margin: 0;
+    list-style: none;
+    display: inline-flex;
+    background-color: #ededed;
+    padding: 15px 15px 0;
+    border-radius: 10px;
+}
+
+@media screen and (min-width: 480px) {
+    .content-settings .settings-navigation li + li {
+        margin-left: 15px;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .content-settings .settings-navigation ul {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .content-settings .settings-navigation li + li {
+        margin-left: 30px;
+    }
+}
+
+.content-settings .settings-navigation li a {
+    color: $color-mltshp-pink;
+    display: block;
+    padding: 10px 10px 15px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.content-settings .settings-navigation li.selected a {
+    background-color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.content-settings .settings-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.content-settings .settings-body > * + * {
+    margin-top: 15px;
+}
+
+@media screen and (min-width: 768px) {
+    .content-settings .settings-body {
+        padding: 40px;
+        flex-direction: row;
+    }
+
+    .content-settings .settings-body > * {
+        flex: 1 1 0;
+        max-width: calc(50% - 20px);
+    }
+
+    .content-settings .settings-body > * + * {
+        margin-top: 0;
+    }
+}
+
+.content-settings .settings-body form {
+    margin-top: 0;
+}
+
+.content-settings .settings-body form + form {
+    margin-top: 20px;
+}
+
+.migration-block,
+.member-status-block,
+.archive-block {
+    padding: 15px;
+    background: #dfffcb;
+    border-radius: 10px;
+}
+
+.migration-block {
+    background: #e5fcff;
+    margin-bottom: 20px;
+}
+
+.migration-block h3 {
+    color: $color-mltshp-blue;
+}
+
+.archive-block {
+    background: #e5fcff;
+    margin-top: 20px;
+}
+
+.member-status-block h3 {
+    color: $color-success-pastel-fg;
+}
+
+.archive-block h3 {
+    color: $color-mltshp-blue;
+}
+
+.migration-block-content,
+.member-status-block-content,
+.archive-block-content {
+    background: #fff;
+    font-size: 14px;
+    line-height: 1.3;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 8px;
+}
+
+.migration-block-content::after,
+.member-status-block-content::after,
+.archive-block-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.migration-block :first-child,
+.member-status-block :first-child,
+.archive-block :first-child {
+    margin-top: 0;
+}
+
+.migration-block :last-child,
+.member-status-block :last-child,
+.archive-block :last-child {
+    margin-bottom: 0;
+}
+
+.settings-subscription-sidebar {
+    line-height: 1.4;
+}
+
+.settings-subscription-sidebar h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.settings-subscription-sidebar .transaction-list li {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.settings-subscription-sidebar .transaction-list li .id {
+    color: #999;
+}
+
+.settings-subscription-sidebar .transaction-list li .amount {
+    font-weight: bold;
+}
+
+.settings-subscription-sidebar p {
+    font-size: 14px;
+    margin: 20px 0;
+}
+
+.settings-body-sidebar {
+}
+
+.settings-body-content {
+}
+
+.settings-body-content #fun-form-settings-profile {
+    margin-top: 0;
+}
+
+.settings-body-sidebar .profile-photo {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-body-sidebar .profile-photo-media {
+    flex: none;
+}
+
+.settings-body-sidebar .profile-photo-meta {
+    flex: 1;
+    padding-top: 10px;
+}
+
+@media screen and (min-width: 480px) {
+    .settings-body-sidebar .profile-photo {
+        flex-direction: row;
+    }
+
+    .settings-body-sidebar .profile-photo-meta {
+        padding-top: 5px;
+        margin-left: 10px;
+    }
+}
+
+.settings-body-sidebar .profile-photo-meta h3 {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.settings-body-sidebar .profile-photo-meta h4 {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.settings-body-sidebar .profile-photo-meta .settings-photo-upload {
+    font-size: 12px;
+    color: #666;
+}
+
+.settings-body-sidebar .info-block {
+    margin-top: 40px;
+    padding: 15px;
+    background-color: #ededed;
+    border-radius: 10px;
+}
+
+@media screen and (min-width: 480px) {
+    .settings-body-sidebar .info-block {
+        padding: 30px;
+    }
+}
+
+.settings-body-sidebar .info-block h3 {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.settings-body-sidebar .info-block p {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.content-settings .settings-body-connections {
+    display: block;
+}
+
+.content-settings .settings-body-connections > * {
+    max-width: none;
+}
+
+.settings-body-connections h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.settings-body-connections .apps {
+    margin: 30px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.settings-body-connections .apps li {
+    margin-bottom: 20px;
+}
+
+.settings-body-connections .apps h4 {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.settings-body-connections .apps h4 .title {
+    color: $color-mltshp-pink;
+    font-weight: bold;
+}
+
+.settings-body-connections .apps h4 .by {
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.settings-body-connections .apps h4 .by a {
+    text-decoration: none;
+}
+
+.settings-body-connections .apps p {
+    font-size: 14px;
+    line-height: 1.3;
+    margin-bottom: 5px;
+}
+
+.settings-body-connections .apps .disconnect {
+    font-size: 12px;
+    text-decoration: none;
+}

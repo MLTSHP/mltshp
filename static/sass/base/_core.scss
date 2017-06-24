@@ -1,0 +1,178 @@
+//
+// Core Styles for Native HTML Elements
+//
+// This partial should only contain styles for the basic native HTML elements.
+// There shouldn't be much here, since we use bootstrap.
+//
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    background-color: #dbfaff;
+    color: #333;
+    margin: 0;
+}
+
+//
+// New and improved system font stack:
+//
+// 1. target Mac system fonts
+// 2. list of known system fonts
+// 3. fallback fonts
+//
+// see: https://www.smashingmagazine.com/?p=229756
+//
+// Need to apply to form fields because iOS tries to force Helvetica
+//
+html, input, textarea, keygen, select, button {
+    font-family:
+        /* 1 */ -apple-system, BlinkMacSystemFont,
+        /* 2 */ "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+        /* 3 */ "Helvetica Neue", sans-serif;
+}
+
+input, textarea, select, button {
+    font-size: 16px;
+}
+
+.page {
+    padding: 0 0.5em;
+    position: relative;
+}
+
+.wrapper {
+    margin: 0 auto;
+    max-width: 960px;
+}
+
+//
+// Links
+//
+a {
+    color: $link-color;
+    -webkit-text-decoration-color: rgba($link-color, 0.5);
+    text-decoration-color: rgba($link-color, 0.5);
+    -webkit-text-decoration-skip: ink;
+    text-decoration-skip: ink;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+a:hover,
+a:focus,
+a:active {
+    color: $link-color-hover;
+}
+
+.link--primary {
+    color: $link-color-primary;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.link--primary:hover,
+.link--primary:focus,
+.link--primary:active {
+    color: $link-color-primary-hover;
+}
+
+.link--danger {
+    color: $color-danger;
+}
+
+.link--danger:hover,
+.link--danger:focus,
+.link--danger:active {
+    color: $color-danger-hover;
+}
+
+/* ---------------------------------------------------------------------
+  Typography
+--------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+}
+
+h1,
+h2,
+h3 {
+    text-rendering: optimizeLegibility;
+    -webkit-font-kerning: normal;
+            font-kerning: normal;
+    -webkit-font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "pnum" 1;
+            font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "pnum" 1;
+    -webkit-font-variant-ligatures: common-ligatures;
+            font-variant-ligatures: common-ligatures;
+    font-variant-numeric: proportional-nums;
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: -1px;
+}
+
+@media screen and (min-width: 768px) {
+    h1 {
+        font-size: 60px;
+    }
+}
+
+.content-narrow p {
+    margin: 30px 0;
+    font-size: 26px;
+    line-height: 40px;
+    color: #333;
+}
+
+.content-narrow .extra-info p {
+    line-height: 22px;
+    font-size: 16px;
+    color: #666;
+}
+
+pre {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table pre {
+    margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+  Media
+--------------------------------------------------------------------- */
+img:not(.avatar--img),
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+.avatar--img {
+    object-fit: cover;
+}
+
+iframe {
+    max-width: 100%;
+}
+
+.data-wrapper {
+    padding-top: 56.25%;
+    position: relative;
+}
+
+.data-wrapper > iframe {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
