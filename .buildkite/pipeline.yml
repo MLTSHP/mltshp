@@ -18,8 +18,6 @@ steps:
 
   - block: "Release to Production?"
     branches: "master"
-    agents:
-      - "stack=buildkite-trusted"
 
   - command: .buildkite/steps/deploy.sh
     label: ":truck: Deploy"
