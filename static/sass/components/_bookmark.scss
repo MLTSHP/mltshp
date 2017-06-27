@@ -13,7 +13,7 @@
 .bookmark-flag {
     flex: none;
     margin-top: -3px;
-    background: #ff0180;
+    background: $color-primary;
     color: #fff;
     font-weight: bold;
     font-size: 12px;
@@ -55,10 +55,11 @@
     line-height: 1;
 }
 
+// 1. this is less than the border width to avoid a gap due to pixel-rounding errors
 .bookmark-flag--content::after {
     top: 0;
-    right: -.866em;
-    border: 1em solid #ff0180;
+    right: -.833em; // 1
+    border: 1em solid $color-primary;
     border-width: 1em .866em 1em 0;
     border-right-color: transparent;
 }
