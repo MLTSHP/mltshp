@@ -105,7 +105,10 @@
           {% else %}
             <div class="bookmark">
               <span class="bookmark-flag">
-                <span class="bookmark-flag--content">You started <span class="hide-on-small">reading</span> here {{sharedfile.pretty_created_at() }}</span>
+                <span class="bookmark-flag--content">
+                    You started <span class="hide-on-small">reading</span> here
+                    <time datetime="{{sharedfile.created_at}}" title="{{sharedfile.feed_date()}}">{{sharedfile.pretty_created_at()}}</time>
+                </span>
               </span>
               {% if sharedfile.previous_sharedfile_id > 0 %}
                 <span class="jump-back">

@@ -35,7 +35,12 @@
                     </a>
                   </div>
                   <div class="body">
-                    <div class="meta"><a href="/user/{{comment.user().name}}" class="user-name">{{comment.user().name}}</a> <span class="created-at">{{comment.pretty_created_at()}}</span></div>
+                    <div class="meta">
+                        <a href="/user/{{comment.user().name}}" class="user-name">{{comment.user().name}}</a>
+                        <span class="created-at">
+                            <time datetime="{{comment.created_at}}" title="{{comment.feed_date()}}">{{comment.pretty_created_at()}}</time>
+                        </span>
+                    </div>
                     {{comment.body_formatted()}}
                   </div>
                 </div>

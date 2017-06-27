@@ -14,7 +14,9 @@
             <img alt="pro" src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center">
           </a>
         {% end %}
-        <span class="created-at">{{comment.pretty_created_at()}}</span>
+        <span class="created-at">
+            <time datetime="{{comment.created_at}}" title="{{comment.feed_date()}}">{{comment.pretty_created_at()}}</time>
+        </span>
         {% if not site_is_readonly %}
           {% if current_user and current_user_object.email_confirmed == 1 %}
         <a class="reply-to" href="">Reply</a>
