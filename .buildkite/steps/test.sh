@@ -25,3 +25,6 @@ docker exec -t -e BUILDKITE -e BUILDKITE_JOB_ID -e BUILDKITE_BRANCH -e COVERALLS
 
 # tear down containers
 docker-compose -f .buildkite/docker-compose.yml down
+
+docker container prune
+docker image prune
