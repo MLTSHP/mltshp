@@ -30,6 +30,8 @@ services:
       - app_net
   fakes3:
     image: fingershock/fakes3
+    ports:
+      - "8000:8000"
     networks:
       app_net:
         aliases:
