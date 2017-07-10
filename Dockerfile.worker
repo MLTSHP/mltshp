@@ -19,24 +19,23 @@ RUN apt-get -y update && apt-get install -y \
     libpcre3-dev \
     libssl-dev \
     libffi-dev \
-    python-pip \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN pip install -U pip setuptools distribute
-# Fix for a really weird issue when installing postmark library
-# distribute fails to run since it sees a setuptools with "0.7"
-# in the name, even though ubuntu:16.04 has pre-installed "20.7.0"
-# https://github.com/pypa/setuptools/issues/543
-RUN rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info
-
-RUN groupadd ubuntu --gid=1010 && \
+    python-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install -U pip setuptools distribute && \
+    # Fix for a really weird issue when installing postmark library
+    # distribute fails to run since it sees a setuptools with "0.7"
+    # in the name, even though ubuntu:16.04 has pre-installed "20.7.0"
+    # https://github.com/pypa/setuptools/issues/543
+    rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info && \
+    groupadd ubuntu --gid=1010 && \
     useradd ubuntu --create-home --home-dir=/home/ubuntu \
-        --uid=1010 --gid=1010
-RUN mkdir -p /srv/mltshp.com/logs && \
+        --uid=1010 --gid=1010 && \
+    mkdir -p /srv/mltshp.com/logs && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
 COPY requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+
 COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 
 # NOTE: /srv/mltshp.com/logs should be a mounted volume for this image

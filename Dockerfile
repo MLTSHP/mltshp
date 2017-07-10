@@ -2,6 +2,9 @@ FROM ubuntu:16.04
 LABEL maintainer "brad@bradchoate.com"
 ENV PYTHONUNBUFFERED 1
 
+# Installs the base system dependencies for running the site.
+# None of this will change with the codebase itself, so this
+# whole layer and steps to build it should be cached.
 RUN apt-get -y update && apt-get install -y \
         supervisor \
         libmysqlclient-dev \
@@ -56,13 +59,16 @@ RUN apt-get -y update && apt-get install -y \
     mkdir -p /srv/mltshp.com/uploaded /srv/mltshp.com/logs && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
-COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf
-COPY setup/production/nginx.conf /etc/nginx/nginx.conf
-
+# Install python dependencies which will be cached on the
+# contents of requirements.txt:
 COPY requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
-# NOTE: /srv/mltshp.com/logs should be a mounted volume for this image
+# Copy configuration settings into place
+COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf
+COPY setup/production/nginx.conf /etc/nginx/nginx.conf
+
+# Add "." for the app code itself (also allows for local dev)
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
 
