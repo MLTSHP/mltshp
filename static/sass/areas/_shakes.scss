@@ -146,34 +146,41 @@
     color: $color-mltshp-pink;
 }
 
-.shake-sidebar-subscribe {
+.shake-sidebar-actions {
     margin-top: 10px;
     margin-bottom: 20px;
     display: flex;
+
+    > * {
+        flex: none;
+
+        + * {
+            margin-left: 10px;
+        }
+    }
 }
 
-.shake-sidebar-subscribe .user-follow {
+.shake-sidebar-actions .user-follow {
 }
 
-.shake-sidebar-subscribe .user-follow h4 a {
+.shake-sidebar-actions .user-follow h4 a {
     display: none;
 }
 
-.shake-sidebar-subscribe .request-invitation {
-    margin-left: 10px;
+.shake-sidebar-actions .request-invitation {
     font-size: 14px;
     color: #555;
     height: 27px;
 }
 
-.shake-sidebar-subscribe .request-invitation span {
+.shake-sidebar-actions .request-invitation span {
     padding-top: 5px;
     height: 22px;
     display: block;
 }
 
-.shake-sidebar-subscribe .icon,
-.shake-sidebar-subscribe .follow h4 {
+.shake-sidebar-actions .icon,
+.shake-sidebar-actions .follow h4 {
     display: none;
 }
 
@@ -198,9 +205,6 @@
     color: #333;
     font-size: 14px;
     line-height: 18px;
-}
-
-.shake-details .description .content {
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -277,15 +281,4 @@
 
 .shake-sidebar-requests {
     margin: 20px 0;
-}
-
-.sidebar .quit-shake {
-    background-color: #fff;
-    margin-top: 20px;
-    color: #F09;
-    border: none;
-    text-decoration: none;
-    padding: 5px 10px 5px 12px;
-    font-size: 11px;
-    cursor: pointer;
 }
