@@ -22,11 +22,19 @@
 }
 
 .account-header h2 {
-    font-size: 42px;
+    font-size: 30px;
     line-height: 50px;
     font-weight: bold;
     padding-left: 24px;
     word-break: break-word;
     word-wrap: break-word;
     overflow-wrap: break-word;
+
+    @media screen and (min-width: 480px) {
+        font-size: 36px;
+    }
+
+    @media screen and (min-width: 800px) {
+        font-size: 42px;
+    }
 }

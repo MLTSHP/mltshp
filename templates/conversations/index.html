@@ -4,6 +4,11 @@
 
 {% block main %}
   <div class="content content-with-sidebar content-conversations">
+    <div class="account-header">
+      <div class="avatar">
+        <h2>Your Conversations</h2>
+      </div>
+    </div>
     <div class="sidebar">
       <div class="conversations-nav">
         <h3>Looking for something?</h3>
@@ -16,8 +21,6 @@
       </div>
     </div>
     <div class="body">
-      <h2>Your Conversations</h2>
-
       {% for conversation in conversations %}
         <div class="conversation">
           <a class="thumb" href="/p/{{conversation['sharedfile'].share_key}}"><img src="{{ conversation['sharedfile'].thumbnail_url() }}"></a>
