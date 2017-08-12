@@ -159,22 +159,21 @@
 }
 
 .new-post-panel .shake-selector ul {
+    background-color: #dfffcb;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
+    clear: both;
     display: none;
+    left: 30px;
+    list-style: none;
+    margin: 0;
+    max-height: 66vh;
+    overflow: auto;
+    padding: 10px 0 5px 0;
     position: absolute;
     top: 20px;
-    left: 30px;
-    clear: both;
-    background-color: #dfffcb;
     width: 200px;
-    margin: 0;
-    padding: 10px 0 5px 0;
-    list-style: none;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -moz-box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
-    -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.25);
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
+    z-index: 2;
 }
 
 .new-post-panel .shake-selector ul li {
