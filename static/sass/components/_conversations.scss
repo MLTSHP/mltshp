@@ -29,21 +29,6 @@
     text-decoration: none;
 }
 
-.content-conversations .body h2 {
-    font-size: 30px;
-    color: #333;
-    font-weight: bold;
-    margin: 30px;
-
-    @media screen and (min-width: 480px) {
-        font-size: 36px;
-    }
-
-    @media screen and (min-width: 800px) {
-        font-size: 48px;
-    }
-}
-
 .conversation {
     margin-top: 30px;
     border-bottom: 1px dotted #e0e0e0;
