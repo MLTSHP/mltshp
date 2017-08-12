@@ -8,6 +8,11 @@
 {% block main %}
 
 <div class="content content-with-sidebar content-account">
+  <div class="account-header">
+    <div class="avatar">
+      <h2>Your Favorites</h2>
+    </div>
+  </div>
   <div class="sidebar">
     <div class="user-info">
       {{modules.ShakeFollow(follow_user=user, current_user=current_user_obj, avatar_size=100)}}
