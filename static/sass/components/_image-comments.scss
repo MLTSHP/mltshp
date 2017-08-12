@@ -103,12 +103,15 @@
     padding-left: 40px;
 }
 
+.image-comment-form header {
+    display: flex;
+}
+
 .image-comment-form .avatar {
-    float: left;
+    flex: none;
 }
 
 .image-comment-form h3 {
-    float: left;
     display: block;
     background: transparent
         url('/static/images/comment-quip-left.svg')
@@ -131,7 +134,19 @@
     padding-left: 35px;
     padding-right: 20px;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 12px;
+
+    @media screen and (min-width: 360px) {
+        font-size: 14px;
+    }
+
+    @media screen and (min-width: 480px) {
+        font-size: 16px;
+    }
+
+    @media screen and (min-width: 820px) {
+        font-size: 18px;
+    }
 }
 
 .image-comment-form .field {

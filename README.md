@@ -68,6 +68,12 @@ no password. If you want to mark any of your user accounts as paid users,
 find them in the `user` table and set their `is_paid` value to `1` and
 their `stripe_plan_id` column value to `mltshp-double`.
 
+## Compiling Sass
+
+You can run a Sass Watch command, which will automatically recompile
+the CSS whenever a change is detected to the Sass files using:
+
+    $ make sass-watch
 
 ## Logs and Data
 

@@ -64,17 +64,28 @@
   {% end %}
 
   {% if not site_is_readonly %}
-  <div class="shake-sidebar-subscribe">
+  <div class="shake-sidebar-actions">
+
     {{modules.ShakeFollow(follow_shake=shake, current_user=current_user_obj, avatar_size=100)}}
+
     {% if current_user_obj and current_user_obj.can_request_invitation_to_shake(shake.id) %}
       <div id="request-invitation" class="request-invitation">
         <form method="post" action="/shake/{{shake.name}}/request_invitation">
           {{ xsrf_form_html() }}
-          <input class="btn btn-success btn-shadow btn-small" type="submit" value="+ Join this shake">
+          <input class="btn btn-success btn-pastel btn-small" type="submit" value="+ Join this shake">
         </form>
       </div>
     {% end %}
-    <div class="clear"><!-- --></div>
+
+    {% if managers and is_shake_manager %}
+      <div class="quit-shake">
+        <form class="quit-shake-form" method="post" action="/shake/{{shake.name}}/quit">
+          {{ xsrf_form_html() }}
+          <input class="btn btn-danger btn-pastel btn-small" type="submit" class="quit-shake" id="quit-shake-page" value="Quit this shake?">
+        </form>
+      </div>
+    {% end %}
+
   </div>
 
   {{modules.NotificationInvitations(invitation)}}
@@ -124,14 +135,6 @@
       </ul>
     </div>
   </div>
-  <p>
-    {% if is_shake_manager and not site_is_readonly %}
-      <form class="quit-shake-form" method="post" action="/shake/{{shake.name}}/quit">
-        {{ xsrf_form_html() }}
-        <input type="submit" class="quit-shake" id="quit-shake-page" value="Quit this shake?">
-      </form>
-    {% end %}
-  </p>
   {% end %}
 
   <div class="following-wrapper">
