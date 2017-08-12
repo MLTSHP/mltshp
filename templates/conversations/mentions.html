@@ -4,6 +4,11 @@
 
 {% block main %}
   <div class="content content-with-sidebar content-conversations">
+    <div class="account-header">
+      <div class="avatar">
+        <h2>Your Mentions</h2>
+      </div>
+    </div>
     <div class="sidebar">
       <div class="conversations-nav">
         <h3>Looking for something?</h3>
@@ -16,7 +21,6 @@
       </div>
     </div>
     <div class="body">
-      <h2>Mentions</h2>
       <div class="mentions">
         {% for mention in mentions %}
           <div class="conversation">

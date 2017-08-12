@@ -29,13 +29,6 @@
     text-decoration: none;
 }
 
-.content-conversations .body h2 {
-    font-size: 48px;
-    color: #333;
-    font-weight: bold;
-    margin: 30px;
-}
-
 .conversation {
     margin-top: 30px;
     border-bottom: 1px dotted #e0e0e0;
@@ -46,16 +39,19 @@
     padding-right: 10px;
 }
 
-@media screen and (min-width: 768px) {
-    .conversation {
-        display: flex;
-    }
+.conversation {
+    display: flex;
 }
 
 .conversation .thumb {
     flex: none;
-    width: 100px;
-    margin-left: 30px;
+    width: 50px;
+    margin-left: 10px;
+
+    @media screen and (min-width: 480px) {
+        width: 100px;
+        margin-left: 30px;
+    }
 }
 
 .conversation .details-wrapper {
