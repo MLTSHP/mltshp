@@ -208,8 +208,10 @@
       <div id="post-comment" class="image-comment-form">
         <form action="/p/{{sharedfile.share_key}}/comment" method="post">
           {{ xsrf_form_html() }}
-            <img class="avatar avatar--img" src="{{current_user_obj.profile_image_url()}}" height="48" width="48" alt="">
-            <h3><span>I've got something to say!</span></h3>
+            <header>
+              <img class="avatar avatar--img" src="{{current_user_obj.profile_image_url()}}" height="48" width="48" alt="">
+              <h3><span>I've got something to say!</span></h3>
+            </header>
             <div class="field">
               <textarea id="post-comment-body" name="body"></textarea>
             </div>
