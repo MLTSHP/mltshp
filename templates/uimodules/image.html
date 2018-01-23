@@ -141,9 +141,13 @@
                 <a class="user-name" href="/user/{{original_user.name}}">{{ original_user.name }}</a>
             </div>
         {% end %}
-        {% if list_view %}
-            <div class="inline-meta">
-                <span class="created-at"><a href="/p/{{sharedfile.share_key}}">{{sharedfile.pretty_created_at()}}</a></span>
+        <div class="inline-meta">
+            <span class="created-at">
+                <a href="/p/{{sharedfile.share_key}}">
+                    <time datetime="{{sharedfile.created_at}}" title="{{sharedfile.feed_date()}}">{{sharedfile.pretty_created_at()}}</time>
+                </a>
+            </span>
+            {% if list_view %}
                 <ul class="stats">
                     {% set view_count = sharedfile.livish_view_count() %}
                     <li class="views">{{view_count }} View{% if view_count != 1 %}s{% end %}</li>
@@ -151,7 +155,9 @@
                     <li class="likes"><a href="/p/{{sharedfile.share_key}}" id="like-count-amount-{{sharedfile.share_key}}">{{sharedfile.like_count }}</a></li>
                     <li class="comments {% if len(comments) > 0 %}selected{% end %}"><a href="/p/{{sharedfile.share_key}}#comments">{{sharedfile.comment_count() }}</a></li>
                 </ul>
-            </div>
+            {% end %}
+        </div>
+        {% if list_view %}
             {% if len(comments) > 0 %}
                 <div class="inline-details">
                     {% include '../image/quick-comments.html' %}
@@ -159,7 +165,7 @@
             {% else %}
                 <div class="inline-details" style="display:none;"></div>
             {% end %}
-            <div class="clear"><!-- --></div>
         {% end %}
+        <div class="clear"><!-- --></div>
     </div>
 </div>

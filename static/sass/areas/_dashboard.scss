@@ -1,0 +1,561 @@
+/*----------------------------------------------
+  Area: Dashboard
+---------------------------------------------- */
+
+.notification-block {
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.notification-block-follow {
+    background-color: #e5fcff;
+    color: $color-mltshp-pink;
+}
+
+.notification-block-save {
+    background-color: #fffbd9;
+    color: #ff8400;
+}
+
+.notification-block-like {
+    color: $color-danger-pastel-fg;
+    background-color: $color-danger-pastel-bg;
+}
+
+.notification-block-comment {
+    color: $color-mltshp-blue;
+    background-color: $color-secondary-pastel-bg;
+}
+
+.notification-block-invitations {
+    color: $color-mltshp-pink;
+    background-color: #ffcfe7;
+}
+
+.notification-block-shakeinvitation {
+    color: $color-success-pastel-fg;
+    background-color: #dfffcb;
+}
+
+.notification-block-invitation-request {
+    color: $color-success-pastel-fg;
+    background-color: #dfffcb;
+}
+
+.notification-block-invitation-approved {
+    color: $color-success-pastel-fg;
+    background-color: #dfffcb;
+}
+
+.notification-block-aggregate {
+    color: $color-mltshp-pink;
+    background-color: #e5fdff;
+}
+
+.notification-block-hd {
+    font-weight: bold;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.notification-block-bd {
+    display: none;
+    padding: 0 10px 10px;
+}
+
+.notification-block-bd .notification {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.notification-block-bd .notification::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.notification-block-bd .notification + .notification {
+    margin-top: 10px;
+}
+
+.notification-block-bd .notification .notification-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    outline: none;
+}
+
+.notification-block-bd .notification .thumb {
+    float: left;
+    width: 100px;
+    background-color: #fff;
+    text-align: center;
+    padding-right: 10px;
+}
+
+.notification-block-bd .notification .context {
+    color: #4b4b4b;
+    line-height: 1.2;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.notification-block-bd .clear-all {
+    clear: both;
+    text-align: right;
+    margin-top: 10px;
+}
+
+/* Notification block for new followers */
+
+.notification-block-follow .user-follow .follow {
+    width: 180px;
+}
+
+.notification-block-follow .user-follow h4 {
+    padding-right: 20px;
+    padding-bottom: 5px;
+    color: #555;
+}
+
+.notification-block-follow .user-follow h4 a {
+    float: none;
+}
+
+/* Notification block for invitations */
+
+.notification-block-invitations .notification-block-hd {
+    position: relative;
+}
+
+.notification-block-invitations .notification-block-hd span.invitation-dude {
+    position: absolute;
+    background: transparent
+        url('/static/images/invitation-dude.svg')
+        0
+        0
+        no-repeat;
+    height: 63px;
+    width: 84px;
+    top: -4px;
+    right: 10px;
+}
+
+.notification-block-bd .invitation-form {
+    color: #4b4b4b;
+    background-color: #fff;
+    padding: 10px;
+    color: #4b4b4b;
+    margin: 0 10px 10px 10px;
+    list-style: none;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.notification-block-bd .invitation-form li {
+    margin: 5px 5px 5px 10px;
+    font-weight: bold;
+}
+
+.notification-block-bd .invitation-form p {
+    margin: 10px 0;
+}
+
+.notification-block-bd .invitation-form .input-text {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 5px;
+    color: #333;
+    width: 230px;
+    font-weight: bold;
+}
+
+.notification-block-bd .invitation-form .submit-button {
+    float: right;
+}
+
+/* Shake Invitation Approved Notifications */
+
+.notification-block-invitation-approved .notification {
+    font-size: 14px;
+    line-height: 1.3;
+    color: #333;
+}
+
+/* Shake Invitation Notifications */
+
+.notification-block-shakeinvitation .shake-thumb {
+    width: 48px;
+    float: left;
+    margin-right: 10px;
+}
+
+.notification-block-shakeinvitation h4 {
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+.notification-block-shakeinvitation h4 a {
+    text-decoration: none;
+    color: $color-success-pastel-fg;
+}
+
+.notification-block-shakeinvitation .shake-context {
+    clear: both;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #4b4b4b;
+}
+
+.notification-block-shakeinvitation .shake-context a {
+    font-weight: bold;
+    color: $color-mltshp-pink;
+}
+
+.notification-block-shakeinvitation .buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Notification block for Shake Invitation Request */
+
+.notification-block-invitation-request .notification a {
+    color: $color-mltshp-pink;
+}
+
+.notification-block-invitation-request .notification {
+    font-size: 14px;
+    line-height: 1.3;
+    color: #333;
+}
+
+.notification-block-invitation-request .notification-actions {
+    clear: both;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.notification-block-invitation-request .approve-invitation,
+.notification-block-invitation-request .decline-invitation {
+}
+
+/* Notification block for mentions */
+
+.notification-block-mention .notification-block-link a {
+    color: $color-mltshp-blue;
+    background-color: #ededed;
+    display: block;
+    padding: 15px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.notification-block-tou .notification-block-link a {
+    color: #000;
+    background-color: #ededed;
+    display: block;
+    padding: 15px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.find-shakes-block {
+    padding: 15px;
+    background-color: #e5fcff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.find-shakes-block h3 {
+    margin-top: 5px;
+    color: $color-mltshp-blue;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.find-shakes-block-content {
+    background-color: #fff;
+    font-size: 14px;
+    padding: 20px;
+    line-height: 1.3;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.find-shakes-block-content p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.find-shakes-block-content p strong {
+    font-weight: bold;
+}
+
+.find-shakes-block-content p a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.upgrade-account-block {
+    padding: 15px;
+    background-color: #dfffcb;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin-bottom: 23px;
+}
+
+.upgrade-account-block-content {
+    background-color: #fff;
+    font-size: 14px;
+    padding: 20px;
+    line-height: 1.4;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+.upgrade-account-block .upgrade-account-block-content h3 a {
+    color: $color-mltshp-pink;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.upgrade-account-block .upgrade-account-block-content p {
+    margin: 3px 0 0;
+}
+
+.cool-tools-block {
+    float: left;
+    padding: 20px;
+    background-color: #ededed;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.cool-tools-block h3 {
+    color: $color-mltshp-pink;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.cool-tools-block p {
+    color: #464646;
+    font-size: 14px;
+    padding-top: 5px;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.cool-tools-block .browser-tools {
+    list-style: none;
+    margin: 20px 0 0;
+    background-color: #f6f6f6;
+    padding: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.cool-tools-block .browser-tools li + li {
+    margin-top: 5px;
+}
+
+.cool-tools-block .browser-tools li  a {
+    font-weight: bold;
+    text-decoration: none;
+    color: $color-mltshp-pink;
+    display: block;
+    background-color: #fff;
+    padding: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 55px;
+}
+
+.cool-tools-block .browser-tools li.bookmarklet a {
+    background: #fff url('/static/images/bookmarklet.svg') 5px 5px no-repeat;
+    background-size: 40px 45px;
+}
+
+.cool-tools-block .browser-tools li.safari a {
+    background: #fff
+        url('/static/images/cool-tools-safari.png')
+        5px
+        5px
+        no-repeat;
+    background-size: 40px 45px;
+}
+
+.cool-tools-block .browser-tools li.firefox a {
+    background: #fff
+        url('/static/images/cool-tools-firefox.png')
+        5px
+        5px
+        no-repeat;
+    background-size: 40px 45px;
+}
+
+.cool-tools-block .browser-tools li.chrome a {
+    background: #fff
+        url('/static/images/cool-tools-chrome.png')
+        5px
+        5px
+        no-repeat;
+    background-size: 40px 45px;
+}
+
+.cool-tools-block .twitter-setup {
+    margin-top: 15px;
+    display: block;
+    background: #f9f9f9
+        url('/static/images/cool-tools-twitter.png')
+        5px
+        5px
+        no-repeat;
+    background-size: 40px 45px;
+    padding: 20px 15px;
+    padding-left: 50px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    color: $color-mltshp-pink;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.content-shake .notification-block-shakeinvitation {
+    margin-top: 20px;
+}
+
+.shake-invite-member-block {
+    margin-top: 20px;
+    background-color: #e0e0e0;
+    position: relative;
+    top: 5px;
+    left: 5px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    clear: both;
+}
+
+.shake-invite-member-block .inner {
+    position: relative;
+    top: -5px;
+    left: -5px;
+    background-color: $color-mltshp-pink;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.shake-invite-member-block h3 {
+    padding: 15px 10px;
+    color: #fff;
+    text-shadow: 1px 1px 1px #666;
+}
+
+.shake-invite-member-block form {
+    padding: 0 10px 20px 10px;
+}
+
+.shake-invite-member-block .shake-input-wrapper {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    padding: 5px;
+    position: relative;
+    display: flex;
+}
+
+.shake-invite-member-block .shake-results {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: #fff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    width: 220px;
+    padding: 10px;
+    float: left;
+    display: none;
+    border: 1px solid #e0e0e0;
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, .1);
+    -webkit-box-shadow: inset 0px 0px 10px rgba(0, 0, 0, .1);
+    -moz-box-shadow: inset 0px 0px 10px rgba(0, 0, 0, .1);
+    margin: 0;
+    list-style: none;
+}
+
+.shake-invite-member-block .shake-results li {
+    padding: 5px 10px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 200px;
+    float: left;
+    clear: left;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.shake-invite-member-block .shake-results li img {
+    margin-right: 5px;
+    float: left;
+}
+
+.shake-invite-member-block .shake-results li span {
+    float: left;
+    display: block;
+    padding-top: 5px;
+}
+
+.shake-invite-member-block .shake-results li:hover {
+    background-color: #DFFFCB;
+}
+
+.shake-invite-member-block .input-text {
+    border-radius: 5px;
+    border: 1px solid #fff;
+    flex: 1;
+}
+
+.shake-invite-member-block .invite-button {
+    margin-left: 5px;
+}

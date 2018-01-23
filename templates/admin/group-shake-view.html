@@ -2,10 +2,6 @@
 
 {% block title %}Group Shake: {{shake.display_name()}}{% end %}
 
-{% block included_headers %}
-<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
-{% end %}
-
 {% block main %}
 <div class="content content-narrow admin-new-users">
   <h1 class="shake-view-title">{{shake.display_name()}}</h1>

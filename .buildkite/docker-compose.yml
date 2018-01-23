@@ -5,8 +5,9 @@ services:
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py
       - ../.git:/srv/mltshp.com/mltshp/.git
+      - ./supervisord.conf:/etc/supervisor/conf.d/mltshp.conf
     ports:
-      - "8000:80"
+      - "8001:80"
     depends_on:
       - fakes3
       - mysql
@@ -29,6 +30,8 @@ services:
       - app_net
   fakes3:
     image: fingershock/fakes3
+    ports:
+      - "8000:8000"
     networks:
       app_net:
         aliases:

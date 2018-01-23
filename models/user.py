@@ -12,7 +12,7 @@ from boto.s3.key import Key
 import postmark
 from tornado.options import define, options
 
-from lib.utilities import email_re, s3_authenticated_url, transform_to_square_thumbnail
+from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
@@ -257,7 +257,7 @@ hello@mltshp.com
                 else:
                     protocol = 'http:'
             aws_url = "%s//%s.%s%s" % (protocol, options.aws_bucket, options.aws_host,
-                options.aws_port == 80 and "" or (":%d" % options.aws_port))
+                options.aws_port in (443, 80, None) and "" or (":%d" % options.aws_port))
             return "%s/account/%s/profile.jpg" % (aws_url, self.id)
         else:
             if include_protocol:
@@ -650,14 +650,14 @@ hello@mltshp.com
                 this_follow['name'] = us['user_name']
                 this_follow['type'] = 'user'
                 if us['user_image']:
-                    this_follow['image'] = "//%s.s3.amazonaws.com/account/%s/profile.jpg" % (options.aws_bucket, us['user_id'])
+                    this_follow['image'] = s3_url("account/%s/profile.jpg" % us['user_id'])
             else:
                 this_follow['id'] = us['shake_id']
                 this_follow['path'] = '/%s' % (us['shake_name'])
                 this_follow['name'] = us['shake_name']
                 this_follow['type'] = 'shake'
                 if us['shake_image']:
-                    this_follow['image'] = "//%s.s3.amazonaws.com/account/%s/shake_%s.jpg" % (options.aws_bucket, us['user_id'], us['shake_name'])
+                    this_follow['image'] = s3_url("account/%s/shake_%s.jpg" % (us['user_id'], us['shake_name']))
 
             us_list.append(this_follow)
         return us_list

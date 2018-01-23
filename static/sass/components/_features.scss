@@ -1,0 +1,213 @@
+/* ---------------------------------------------------------------------
+  Feature List (used on logged-out homepage)
+--------------------------------------------------------------------- */
+@media screen and (min-width: 480px) {
+    .feature-list {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .feature-list .feature {
+        flex: 1 1 50%;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 959px) {
+    .feature-list {
+        flex-wrap: nowrap;
+    }
+
+    .feature-list .feature {
+        flex-basis: 25%;
+    }
+}
+
+/* ---------------------------------------------------------------------
+  Features (used on logged-out homepage)
+--------------------------------------------------------------------- */
+.feature {
+    border-left: 1px dashed #e0dfe0;
+    border-top: 1px dashed #e0dfe0;
+    margin: 0;
+    padding: 15px;
+    position: relative;
+}
+
+@media screen and (max-width: 479px) {
+    .feature {
+        border-left: none;
+    }
+}
+
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    .feature:nth-child(2n - 1) {
+        border-left: none;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .feature {
+        padding: 25px;
+    }
+
+    .feature:first-child {
+        border-left: none;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .feature {
+        display: flex;
+        flex-direction: row-reverse;
+        padding: 35px;
+    }
+
+    .feature:nth-child(2n - 1) {
+        border-left: none;
+    }
+
+    .feature--content {
+        flex: 1 1 auto;
+    }
+
+    .feature--image {
+        flex: 0 0 163px;
+    }
+}
+
+/* feature content */
+.feature > * + * {
+    margin-top: 15px;
+}
+
+@media screen and (min-width: 768px) {
+    .feature > * + * {
+        margin-top: 25px;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .feature > * + * {
+        margin-right: 20px;
+        margin-top: 0;
+    }
+}
+
+/* feature image */
+.feature--image-media {
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #eee;
+    box-shadow: 3px 3px 0 #eee;
+}
+
+/* feature title */
+.feature--title {
+    color: #000;
+    font-size: 22px;
+    margin: 0;
+    text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+    .feature--title {
+        text-align: left;
+    }
+}
+
+/* feature body copy */
+.feature--body {
+    color: #4b4b4b;
+    font-size: 14px;
+    line-height: 1.25;
+    margin: 10px 0 0;
+}
+
+.feature--body p {
+    margin: 0;
+}
+
+.feature--body p + p {
+    margin-top: 1.25em;
+}
+
+.feature--cta {
+    text-align: center;
+}
+
+/* Primary Feature Modifier */
+.feature--primary {
+    border: none;
+}
+
+@media screen and (min-width: 960px) {
+    .feature--primary > * {
+        flex: 1;
+    }
+
+    .feature--primary > * + * {
+        margin-right: 70px;
+    }
+}
+
+.feature--primary .feature--image-media,
+.feature--finale .feature--image-media {
+    border: none;
+    box-shadow: none;
+}
+
+.feature--primary .feature--title {
+    font-size: 42px;
+    letter-spacing: -3px;
+    line-height: 90%;
+}
+
+@media screen and (min-width: 768px) {
+    .feature--primary .feature--title {
+        font-size: 60px;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .feature--primary .feature--title {
+        font-size: 72px;
+    }
+}
+
+.feature--primary .feature--body {
+    color: #6a6a6a;
+    font-size: 16px;
+    margin-top: 1.25em;
+}
+
+/* Reversed Feature Modifier */
+@media screen and (min-width: 960px) {
+    .feature--flipped {
+        flex-direction: row;
+    }
+
+    .feature--flipped > * + * {
+        margin-left: 20px;
+        margin-right: 0;
+    }
+
+    .feature--flipped.feature--primary > * + * {
+        margin-left: 70px;
+    }
+}
+
+/* Final Feature Modifier */
+.feature--finale {
+    align-items: center;
+}
+
+@media screen and (min-width: 960px) {
+  .feature--finale {
+    padding-left: 150px;
+    padding-right: 150px;
+  }
+}
+
+.feature--finale .feature--image {
+    flex: none;
+}

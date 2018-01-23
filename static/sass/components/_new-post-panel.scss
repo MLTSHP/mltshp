@@ -1,0 +1,226 @@
+/*----------------------------------------------
+  New Post Panel
+---------------------------------------------- */
+
+.new-post-panel {
+    display: none;
+    background-color: #fff;
+    position: fixed;
+    top: -10px; /* to avoid the shadow being cut off */
+    left: 30px;
+    right: 30px;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 15px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.25);
+    z-index: 999;
+}
+
+@media screen and (min-width: 768px) {
+    .new-post-panel {
+        padding: 50px;
+    }
+}
+
+.new-post-panel--inner {
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+    .new-post-panel--inner {
+        flex-direction: row;
+    }
+}
+
+.new-post-panel--inner > * {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.new-post-panel .email-unverified h2 {
+    color: $color-mltshp-pink;
+    font-size: 24px;
+    text-align: center;
+}
+
+.new-post-panel .over-upload-limit {
+    width: 260px;
+    float: left;
+    margin-top: 60px;
+    border-right: 1px dashed #e0e0e0;
+    margin-bottom: 40px;
+}
+
+.new-post-panel .upload-an-image {
+    padding-top: 15px;
+    border-bottom: 1px dashed #e0e0e0;
+    padding-bottom: 15px;
+    padding-right: 25px;
+}
+
+@media screen and (min-width: 768px) {
+    .new-post-panel .upload-an-image {
+        border-bottom: 0;
+        border-right: 1px dashed #e0e0e0;
+        padding-top: 60px;
+        padding-bottom: 40px;
+    }
+}
+
+.new-post-panel .link-to-video {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+@media screen and (min-width: 768px) {
+    .new-post-panel .link-to-video {
+        padding-top: 60px;
+        padding-bottom: 40px;
+        padding-left: 25px;
+    }
+}
+
+.new-post-panel .upload-an-image h2 {
+    font-size: 28px;
+    margin-bottom: 7px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.new-post-panel .over-upload-limit h2 {
+    font-size: 28px;
+    margin-bottom: 7px;
+}
+
+.new-post-panel .over-upload-limit h3 {
+    color: #555;
+    padding-right: 20px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.new-post-panel .upload-image-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.new-post-panel .link-to-video h2 {
+    font-size: 28px;
+    margin-bottom: 7px;
+}
+
+.new-post-panel .upload-an-image h2 a,
+.new-post-panel .link-to-video h2 a {
+    color: $color-mltshp-pink;
+    text-decoration: none;
+}
+
+.new-post-panel .shake-selector {
+    position: relative;
+}
+
+.new-post-panel .shake-selector h3 {
+    font-size: 18px;
+    font-weight: bold;
+    text-indent: 3px;
+}
+
+.new-post-panel .shake-selector h3 a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+.new-post-panel .shake-selector h3 a:focus {
+    outline: none;
+}
+
+.new-post-panel .shake-selector h3 a span {
+}
+
+.new-post-panel .shake-selector h3 a span.green {
+    color: $color-success-pastel-fg;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.new-post-panel .shake-selector h3 a:hover span.green,
+.new-post-panel .shake-selector h3 a:focus span.green {
+    color: #128169;
+}
+
+.new-post-panel .shake-selector ul {
+    background-color: #dfffcb;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.25);
+    clear: both;
+    display: none;
+    left: 30px;
+    list-style: none;
+    margin: 0;
+    max-height: 66vh;
+    overflow: auto;
+    padding: 10px 0 5px 0;
+    position: absolute;
+    top: 20px;
+    width: 200px;
+    z-index: 2;
+}
+
+.new-post-panel .shake-selector ul li {
+}
+
+.new-post-panel .shake-selector ul li a {
+    font-weight: bold;
+    color: $color-success-pastel-fg;
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 5px 15px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.new-post-panel .shake-selector ul li a:hover {
+    color: #333;
+}
+
+.new-post-panel h2 {
+    font-size: 60px;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+}
+
+.new-post-panel p {
+    padding: 0 5px;
+    font-size: 14px;
+    color: #333;
+    margin: 20px 0;
+    line-height: 18px;
+}
+
+.new-post-panel .save-video-form {
+    display: flex;
+}
+
+.new-post-panel .save-video-form .field-input {
+    flex: 1;
+}
+
+.new-post-panel .save-video-form .btn {
+    flex: none;
+    margin-left: 10px;
+}
+
+.new-post-panel .post-video-form {
+    margin-top: 20px;
+}

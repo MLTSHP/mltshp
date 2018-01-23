@@ -1,0 +1,163 @@
+/*----------------------------------------------
+  IMAGE COMMENTS : .image-comments
+  Used on the permalink area, as well as the
+  Conversations area to render the comments.
+---------------------------------------------- */
+
+.image-comments {
+    padding-left: 40px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.image-comments .comments {
+    clear: both;
+}
+
+.image-comments .comment {
+    display: flex;
+}
+
+.image-comments .comment + .comment {
+    margin-top: 20px;
+}
+
+.image-comments .comment .avatar {
+    width: 48px;
+    margin-right: 10px;
+}
+
+.image-comments .comment .body {
+    flex: 1;
+    color: #4b4b4b;
+    font-size: 14px;
+    line-height: 18px;
+    overflow: hidden;
+}
+
+.image-comments .comment  .meta {
+    font-size: 12px;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.image-comments .comment .meta > * + * {
+    margin-left: .8em;
+}
+
+.image-comments .comment .meta .username {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.image-comments .comment .meta .pro-badge {
+    margin-left: .25em;
+}
+
+.image-comments .comment .meta .reply-to {
+    background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
+    background-size: 12px 11px;
+    padding-left: 15px;
+    display: none;
+}
+
+.image-comments .comment:hover .meta .reply-to {
+    display: inline;
+}
+
+.image-comments .comment:hover .meta form {
+    display: none;
+}
+
+.image-comments .comment .meta .delete {
+    background: url('/static/images/icon-delete-comment.svg') 0 0 no-repeat;
+    background-size: 13px 13px;
+    padding-left: 16px;
+    display: none;
+}
+
+.image-comments .comment:hover .meta .delete {
+    display: inline;
+}
+
+.image-comments .comment .meta .created-at {
+    color: #7f7f7f;
+}
+
+.image-comments .comment .body .where-from {
+    padding-top: 10px;
+    color: #7f7f7f;
+    font-size: 12px;
+}
+
+.image-comments .comment .comment-body-text {
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.image-comment-form {
+    margin-top: 30px;
+    padding-left: 40px;
+}
+
+.image-comment-form header {
+    display: flex;
+}
+
+.image-comment-form .avatar {
+    flex: none;
+}
+
+.image-comment-form h3 {
+    display: block;
+    background: transparent
+        url('/static/images/comment-quip-left.svg')
+        left
+        top
+        no-repeat;
+    background-size: auto 45px;
+    position: relative;
+    left: -10px;
+    border-top-right-radius: 25px 20px;
+    border-bottom-right-radius: 15px;
+}
+
+.image-comment-form h3 span {
+    height: 45px;
+    display: block;
+    color: #fff600;
+    line-height: 45px;
+    white-space: nowrap;
+    padding-left: 35px;
+    padding-right: 20px;
+    font-weight: bold;
+    font-size: 12px;
+
+    @media screen and (min-width: 360px) {
+        font-size: 14px;
+    }
+
+    @media screen and (min-width: 480px) {
+        font-size: 16px;
+    }
+
+    @media screen and (min-width: 820px) {
+        font-size: 18px;
+    }
+}
+
+.image-comment-form .field {
+    margin: 20px 0;
+    clear: both;
+    text-align: right;
+}
+
+.image-comment-form textarea {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    height: 130px;
+}
