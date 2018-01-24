@@ -1018,15 +1018,16 @@ class PaymentCancelHandler(BaseHandler):
                     subscription = customer.subscriptions.data[0]
                     if subscription:
                         subscription.delete(at_period_end=True)
-                        user.stripe_plan_id = user.stripe_plan_id + "-canceled"
+                        if user.stripe_plan_id and ("-canceled" not in user.stripe_plan_id):
+                            user.stripe_plan_id = user.stripe_plan_id + "-canceled"
                         user.stripe_plan_rate = None
                         user.save()
 
                         if options.postmark_api_key:
                             pm = postmark.PMMail(api_key=options.postmark_api_key,
                                 sender="hello@mltshp.com", to="hello@mltshp.com",
-                                subject="%s has cancelled a subscription" % (user.display_name()),
-                                text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (sub["id"], user.display_name(), user.email, user.id))
+                                subject="%s has canceled a subscription" % (user.display_name()),
+                                text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (subscription.id, user.display_name(), user.email, user.id))
                             pm.send()
 
                         payment_notifications(user, 'cancellation')
