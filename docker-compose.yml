@@ -35,6 +35,7 @@ services:
       - "3306:3306"
     volumes:
       - ./mounts/mysql:/var/lib/mysql
+      - ./setup/dev/mysql-conf.d:/etc/mysql/conf.d
       - ./setup/db-install.sql:/docker-entrypoint-initdb.d/00_db-install.sql
       - ./setup/db-fixtures.sql:/docker-entrypoint-initdb.d/01_db-fixtures.sql
     environment:
