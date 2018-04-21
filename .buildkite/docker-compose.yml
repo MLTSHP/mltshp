@@ -19,11 +19,9 @@ services:
         aliases:
           - mltshp.dev
   mysql:
-    image: mysql:latest
+    image: mysql:5
     ports:
       - "3306:3306"
-    volumes:
-      - ./setup/dev/mysql-conf.d:/etc/mysql/conf.d
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: "mltshp_testing"
