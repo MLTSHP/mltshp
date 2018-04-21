@@ -556,7 +556,7 @@ class OEmbedHandler(BaseHandler):
             parsed_url = urlparse(self.get_argument('url', None))
         except:
             raise tornado.web.HTTPError(404)
-        if parsed_url.netloc not in [options.app_host, 'mltshp.dev:8000', 'localhost:8000', 'localhost:81', 'www.' + options.app_host]:
+        if parsed_url.netloc not in [options.app_host, 'mltshp.local:8000', 'localhost:8000', 'localhost:81', 'www.' + options.app_host]:
             raise tornado.web.HTTPError(404)
         share_key = re.search("/p/([A-Za-z0-9]+)", parsed_url.path)
         if not share_key:

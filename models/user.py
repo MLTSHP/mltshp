@@ -256,8 +256,12 @@ hello@mltshp.com
                     protocol = 'https:'
                 else:
                     protocol = 'http:'
-            aws_url = "%s//%s.%s%s" % (protocol, options.aws_bucket, options.aws_host,
-                options.aws_port in (443, 80, None) and "" or (":%d" % options.aws_port))
+            if options.app_host == 'mltshp.com':
+                aws_url = "%s//%s.%s%s" % (protocol, options.aws_bucket, options.aws_host,
+                    options.aws_port in (443, 80, None) and "" or (":%d" % options.aws_port))
+            else:
+                # must be running for development. use the /s3 alias
+                aws_url = "/s3"
             return "%s/account/%s/profile.jpg" % (aws_url, self.id)
         else:
             if include_protocol:
