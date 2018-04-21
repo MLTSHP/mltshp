@@ -19,7 +19,7 @@ services:
     networks:
       app_net:
         aliases:
-          - mltshp.dev
+          - mltshp.local
   fakes3:
     image: fingershock/fakes3
     volumes:
