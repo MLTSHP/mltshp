@@ -3,7 +3,7 @@ LABEL maintainer "brad@bradchoate.com"
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get -y update && \
-    apt-get install software-properties-common python-software-properties && \
+    apt-get install -y software-properties-common python-software-properties && \
     add-apt-repository -y ppa:jonathonf/ffmpeg-3 && \
     apt-get install -y \
     supervisor \
