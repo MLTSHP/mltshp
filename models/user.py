@@ -257,8 +257,7 @@ hello@mltshp.com
                 else:
                     protocol = 'http:'
             if options.app_host == 'mltshp.com':
-                aws_url = "%s//%s.%s%s" % (protocol, options.aws_bucket, options.aws_host,
-                    options.aws_port in (443, 80, None) and "" or (":%d" % options.aws_port))
+                aws_url = "%s//%s.%s" % (protocol, options.aws_bucket, options.aws_host)
             else:
                 # must be running for development. use the /s3 alias
                 aws_url = "/s3"
