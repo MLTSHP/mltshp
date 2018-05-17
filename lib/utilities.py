@@ -48,7 +48,7 @@ def parse_xml(xml_string):
     return undom(minidom.parseString(xml_string))
 
 
-def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None, 
+def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
                              seconds=3600):
     """
     Return S3 authenticated URL sans network access or phatty dependencies like boto.
@@ -64,10 +64,10 @@ def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
 
     if options.aws_host == "s3.amazonaws.com":
         url_prefix = "https://"
+        port = ""
     else:
         url_prefix = "http://"
-
-    port = options.aws_port and (":%d" % options.aws_port) or ""
+        port = options.aws_port and (":%d" % options.aws_port) or ""
 
     return "%s%s.%s%s/%s%s" % (
         url_prefix, bucket_name, options.aws_host, port,
@@ -80,15 +80,16 @@ def s3_url(file_path):
     """
     assert file_path
 
+    port = ""
     if options.aws_host == "s3.amazonaws.com":
         url_prefix = 'https://'
     else:
         url_prefix = 'http://'
+        if options.aws_port:
+            port = ":%d" % options.aws_port
 
     return "%s%s.%s%s/%s" % (
-        url_prefix, options.aws_bucket, options.aws_host,
-        (options.aws_port in (443, 80, None) and "" or (":%d" % options.aws_port)),
-        file_path)
+        url_prefix, options.aws_bucket, options.aws_host, port, file_path)
 
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
@@ -165,7 +166,7 @@ def pretty_date(time=False):
         if diff > 1:
             diff_string = "months"
         return "%s %s ago" % (str(diff), diff_string)
-    
+
     diff_string = "year"
     diff = day_diff/365
     if diff > 1:
@@ -243,7 +244,7 @@ def transform_to_square_thumbnail(file_path, size_constraint, destination):
     if img.mode != "RGB":
         img = img.convert("RGB")
     width, height = img.size
-    
+
     # if image is below size constraint, we just paste it on
     # and let any pieces that are above constraint just get clipped off.
     if width < size_constraint or height < size_constraint:
