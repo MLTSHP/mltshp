@@ -168,20 +168,66 @@ class SettingsHandler(BaseHandler):
         user = self.get_current_user_object()
         payments = []
         if user.is_paid:
-            payments = PaymentLog.last_payments(count=3, user_id = user.id)
+            payments = []
+            if user.stripe_customer_id:
+                charges = stripe.Charge.list(limit=3, customer=user.stripe_customer_id)
+                for charge in charges.data:
+                    payments.append({
+                        "transaction_amount": "USD %0.2f" % (charge.amount / 100.0,),
+                        "created_at": datetime.datetime.fromtimestamp(charge.created),
+                        "status": charge.status,
+                    })
+            else:
+                log = PaymentLog.last_payments(count=3, user_id = user.id)
+                for payment in log:
+                    payments.append({
+                        "transaction_amount": payment.transaction_amount,
+                        "created_at": payment.created_at,
+                        "status": payment.status,
+                    })
+
 
         already_requested = self.get_secure_cookie("image_request")
         cancel_flag = "canceled" in (user.stripe_plan_id or "")
-        migrated_flag = self.get_argument('migrated', 0)
+        updated_flag = self.get_argument("update", "") == "1"
+        migrated_flag = self.get_argument("migrated", 0)
+        past_due = False
+        source_card_type = None
+        source_last_4 = None
+        source_expiration = None
 
         promotions = Promotion.active()
 
         has_data_to_migrate = not MigrationState.has_migrated(user.id)
 
+        if user.stripe_customer_id:
+            customer = None
+            try:
+                customer = stripe.Customer.retrieve(user.stripe_customer_id)
+            except stripe.error.InvalidRequestError:
+                pass
+            if customer and not hasattr(customer, 'deleted'):
+                if customer.subscriptions.total_count >= 1:
+                    subscriptions = [sub for sub in customer.subscriptions.data
+                        if sub.plan.id == user.stripe_plan_id]
+                    if subscriptions:
+                        subscription = subscriptions[0]
+                        past_due = subscription.status == "past_due"
+                        if customer.sources.total_count > 0:
+                            source_card_type = customer.sources.data[0].brand
+                            source_last_4 = customer.sources.data[0].last4
+                            source_expiration = "%d/%d" % (customer.sources.data[0].exp_month, customer.sources.data[0].exp_year)
+
         return self.render("account/settings.html", user=user, payments=payments,
             already_requested=already_requested, promotions=promotions,
             plan_name=plan_name(user.stripe_plan_id),
+            past_due=past_due,
+            stripe_public_key=options.stripe_public_key,
+            source_card_type=source_card_type,
+            source_last_4=source_last_4,
+            source_expiration=source_expiration,
             has_data_to_migrate=has_data_to_migrate,
+            updated_flag=updated_flag,
             migrated_flag=migrated_flag,
             cancel_flag=cancel_flag)
 
@@ -1005,6 +1051,41 @@ class RSSFeedHandler(BaseHandler):
         self.set_header("Content-Type", "application/xml")
         return self.render("shakes/rss.html", shake=shake, sharedfiles=sharedfiles,
             app_host=options.app_host, build_date=build_date)
+
+
+class PaymentUpdateHandler(BaseHandler):
+    """
+    Handles updating the Stripe payment source for a member.
+
+    """
+    @tornado.web.authenticated
+    def post(self):
+        user = self.get_current_user_object()
+        if user.stripe_customer_id:
+            token_id = self.get_argument("stripeToken")
+            try:
+                customer = stripe.Customer.retrieve(user.stripe_customer_id)
+                if customer:
+                    customer.source = token_id
+                    customer.save()
+
+                    if options.postmark_api_key:
+                        pm = postmark.PMMail(api_key=options.postmark_api_key,
+                            sender="hello@mltshp.com", to="hello@mltshp.com",
+                            subject="%s has updated their payment info" % (user.display_name()),
+                            text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (subscription.id, user.display_name(), user.email, user.id))
+                        pm.send()
+
+                    return self.redirect('/account/settings?update=1')
+
+            except stripe.error.InvalidRequestError:
+                pass
+
+        return self.redirect('/account/settings')
+
+    @tornado.web.authenticated
+    def get(self):
+        return self.redirect('/account/settings')
 
 
 class PaymentCancelHandler(BaseHandler):

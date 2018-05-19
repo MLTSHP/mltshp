@@ -3,6 +3,7 @@ CELERY_IMPORTS = ("tasks.timeline", "tasks.counts", "tasks.migration", "tasks.tr
 
 ## Result store settings.
 CELERY_RESULT_BACKEND = "rpc://"
+CELERY_RESULT_PERSISTENT = False
 
 ## Broker settings.
 BROKER_HOST = "rabbitmq"

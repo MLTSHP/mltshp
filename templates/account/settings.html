@@ -1,4 +1,29 @@
 {% extends "base.html" %}
+{% block included_scripts %}
+<script type="text/javascript" src="https://checkout.stripe.com/checkout.js" charset="utf-8"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  var updateCardDetails = StripeCheckout.configure({
+    key: '{{ stripe_public_key }}',
+    name: 'MLTSHP, Inc.',
+    image: '{{ static_url("images/apple-touch-icon.png") }}',
+    email: '{{ current_user_object.email }}',
+    panelLabel: 'Update Card Details',
+    token: function(token) {
+      // Use the token to create the charge with a server-side script.
+      // You can access the token ID with `token.id`
+      $('#update-token').val(token.id);
+      $('#update-card-details-form').submit();
+    }
+  });
+
+  $('#update-card-details-btn').click(function(e) {
+    e.preventDefault();
+    updateCardDetails.open();
+  });
+});
+</script>
+{% end %}
 
 {% block title %}Your Account Settings{% end %}
 
@@ -115,12 +140,24 @@
           <h3>Membership Status</h3>
           <div class="member-status-block-content">
             {% if user.is_paid %}
+
               {% if cancel_flag %}
               <h4>You have canceled your subscription, but it will remain active
                 until the end of your subscription term.</h4>
               <p>View the <a href="/account/membership">Membership</a> page if you would
                 like to resubscribe.</p>
               {% else %}
+
+              {% if updated_flag %}
+              <p>Thanks for updating your credit card information!</p>
+              {% else %}
+              {% if past_due %}
+              <p><strong>IMPORTANT</strong> — Your subscription is currently <strong>Past Due</strong>.
+              This means your billing information needs to be updated, or you have no
+              active credit card. Use the button below to update your credit card information.</p>
+              {% end %}
+              {% end %}
+
               <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
                 {% if user.stripe_plan_id == "mltshp-double" and user.stripe_plan_rate > 24 %}
               <p>You subscribe at a custom rate of ${{ user.stripe_plan_rate }}/year.
@@ -132,12 +169,33 @@
               <ol class="transaction-list">
                 {% for item in payments %}
                   <li>
-                    <span class="amount">{{item.transaction_amount}}</span>
-                    {% if item.status == 'credit' %}credited{% else %}received{% end %}
-                    on <span class="date">{{item.created_at.strftime("%B %d, %Y")}}</span>
+                    <span class="amount">{{item['transaction_amount']}}</span>
+                    {% if item['status'] == 'credit' %}credited{% else %}received{% end %}
+                    on <span class="date">{{item['created_at'].strftime("%B %d, %Y")}}</span>
                   </li>
                 {% end %}
               </ol>
+
+              {% if not cancel_flag %}
+              <p><hr></p>
+
+              <p><strong>Current Payment Source</strong><br>
+                {% if source_card_type and source_last_4 and source_expiration %}
+                  Card type: {{ source_card_type }}<br>
+                  Card ending in: {{ source_last_4 }}<br>
+                  Expiration date: {{ source_expiration }}
+                {% else %}
+                  <em>No card presently on file!</em>
+                {% end %}
+              </p>
+
+              <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
+
+              <form id="update-card-details-form" action="/account/payment/update" method="POST">
+                {{ xsrf_form_html() }}
+                <input type="hidden" id="update-token" value="">
+              </form>
+              {% end %}
 
               {% if not cancel_flag %}
               <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
