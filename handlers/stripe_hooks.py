@@ -25,6 +25,7 @@ class StripeWebhook(BaseHandler):
         checkout_id = None
         status = None
         subscription_id = None
+        invoice_id = None
         charge_id = None
         amount = 0
         operation = None
@@ -37,6 +38,8 @@ class StripeWebhook(BaseHandler):
             # with the member's credit card or something
             # for now, just email hello@mltshp.com about this
             stripe_customer_id = evt.data.object.customer
+            subscription_id = evt.data.object.subscription
+            invoice_id = evt.data.object.id
 
             subscriber = User.get("stripe_customer_id=%s and deleted=0",
                 stripe_customer_id)
@@ -46,9 +49,9 @@ class StripeWebhook(BaseHandler):
                     api_key=options.postmark_api_key,
                     sender="hello@mltshp.com", to="hello@mltshp.com",
                     subject="%s has a subscription failure" % (subscriber.display_name()),
-                    text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" %
+                    text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\nInvoice ID: %s\n" %
                     (subscription_id, subscriber.display_name(),
-                     subscriber.email, subscriber.id))
+                     subscriber.email, subscriber.id, invoice_id))
                 pm.send()
 
             return self.finish("OK")
