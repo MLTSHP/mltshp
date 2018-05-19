@@ -307,7 +307,8 @@ class SaveVideoHandler(BaseHandler):
                 url = "%swatch?v=%s" % (m.group(1), m.group(2))
                 j_oembed['html'] = """<iframe class="youtube-player"
                 type="text/html" width="%s" height="%s"
-                src="https://www.youtube.com/embed/%s?fs=1&feature=oembed&rnd=%s" frameborder="0" id="ytframe"></iframe>""" % (550, 339, m.group(2), str(random.random()))
+                src="https://www.youtube.com/embed/%s?fs=1&feature=oembed&rnd=%s"
+                frameborder="0" id="ytframe" allowfullscreen></iframe>""" % (550, 339, m.group(2), str(random.random()))
             else:
                 self.render("tools/save-video-error.html", message="We could not load the embed code for this file. Please contact support.")
                 return
