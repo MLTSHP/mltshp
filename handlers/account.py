@@ -172,11 +172,12 @@ class SettingsHandler(BaseHandler):
             if user.stripe_customer_id:
                 charges = stripe.Charge.list(limit=3, customer=user.stripe_customer_id)
                 for charge in charges.data:
-                    payments.append({
-                        "transaction_amount": "USD %0.2f" % (charge.amount / 100.0,),
-                        "created_at": datetime.datetime.fromtimestamp(charge.created),
-                        "status": charge.status,
-                    })
+                    if charge.paid:
+                        payments.append({
+                            "transaction_amount": "USD %0.2f" % (charge.amount / 100.0,),
+                            "created_at": datetime.datetime.fromtimestamp(charge.created),
+                            "status": charge.status,
+                        })
             else:
                 log = PaymentLog.last_payments(count=3, user_id = user.id)
                 for payment in log:
@@ -1073,7 +1074,7 @@ class PaymentUpdateHandler(BaseHandler):
                         pm = postmark.PMMail(api_key=options.postmark_api_key,
                             sender="hello@mltshp.com", to="hello@mltshp.com",
                             subject="%s has updated their payment info" % (user.display_name()),
-                            text_body="Subscription ID: %s\nBuyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (subscription.id, user.display_name(), user.email, user.id))
+                            text_body="Buyer Name:%s\nBuyer Email:%s\nUser ID:%s\n" % (user.display_name(), user.email, user.id))
                         pm.send()
 
                     return self.redirect('/account/settings?update=1')
