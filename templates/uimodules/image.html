@@ -49,7 +49,7 @@
         {% else %}
             {% if sharedfile.type() == 'link' %}
                 <div class="data-wrapper">
-                {{sharedfile.render_data(user=current_user).replace('autoplay=0', '')}}
+                {{sharedfile.render_data(user=current_user)}}
                 </div>
             {% else %}
                 {% if sourcefile.mp4_flag or sourcefile.webm_flag %}

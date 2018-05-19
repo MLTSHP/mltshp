@@ -77,12 +77,12 @@ class Sharedfile(ModelQueryCache, Model):
             #description = escape.xhtml_escape(description)
             extra_params = 'target="_blank" rel="nofollow"'
 
-            description = escape.linkify(description, True, 
+            description = escape.linkify(description, True,
                 extra_params=extra_params)
-            
+
             #re_hash = re.compile(r'#[0-9a-zA-Z+]*',re.IGNORECASE)
             #for iterator in re_hash.finditer(description):
-            
+
             description = re.sub(r'(\A|\s)#(\w+)', r'\1<a href="/tag/\2">#\2</a>', description)
 
             description = description.replace('\n', '<br>')
@@ -110,7 +110,7 @@ class Sharedfile(ModelQueryCache, Model):
 
         if ignore_tags:
             return
-        
+
         # clear out all tags
         all_tagged_files = models.TaggedFile.where('sharedfile_id = %s', self.id)
         for tf in all_tagged_files:
@@ -125,13 +125,13 @@ class Sharedfile(ModelQueryCache, Model):
                 tag = models.Tag(name=t)
                 tag.save()
 
-            tagged_file = models.TaggedFile.get('sharedfile_id = %s and tag_id = %s', 
+            tagged_file = models.TaggedFile.get('sharedfile_id = %s and tag_id = %s',
                 self.id, tag.id)
             if tagged_file and tagged_file.deleted:
                 tagged_file.deleted = 0
                 tagged_file.save()
             else:
-                tagged_file = models.TaggedFile(sharedfile_id=self.id, 
+                tagged_file = models.TaggedFile(sharedfile_id=self.id,
                     tag_id = tag.id, deleted=0)
                 tagged_file.save()
 
@@ -246,7 +246,19 @@ class Sharedfile(ModelQueryCache, Model):
         oembed = escape.json_decode(source.data)
         if store_view:
             self.add_view(user_id)
-        return (oembed['html'] or "").replace('http://', 'https://')
+
+        html = oembed['html'] or ""
+
+        # force https for any URLs in the html
+        html = html.replace('http://', 'https://')
+
+        # force any iframe to permit full-screen display
+        if 'allowfullscreen' not in html:
+            html = html.replace('<iframe ', '<iframe allowfullscreen ')
+
+        html = html.replace('autoplay=0', '')
+
+        return html
 
     def as_json(self, user_context=None):
         """
@@ -557,7 +569,7 @@ class Sharedfile(ModelQueryCache, Model):
         if sourcefile.nsfw == 0:
             sourcefile.update_attribute('nsfw', 1)
 
-    def find_tags(self):    
+    def find_tags(self):
         if not self.description:
             return []
         candidates = set(part[1:] for part in self.description.split() if part.startswith('#'))
