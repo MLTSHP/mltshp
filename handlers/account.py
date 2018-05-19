@@ -1062,7 +1062,7 @@ class PaymentUpdateHandler(BaseHandler):
     def post(self):
         user = self.get_current_user_object()
         if user.stripe_customer_id:
-            token_id = self.get_argument("stripeToken")
+            token_id = self.get_argument("token")
             try:
                 customer = stripe.Customer.retrieve(user.stripe_customer_id)
                 if customer:

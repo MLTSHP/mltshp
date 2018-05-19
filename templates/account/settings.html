@@ -193,7 +193,7 @@ $(document).ready(function() {
 
               <form id="update-card-details-form" action="/account/payment/update" method="POST">
                 {{ xsrf_form_html() }}
-                <input type="hidden" id="update-token" value="">
+                <input name="token" type="hidden" id="update-token" value="">
               </form>
               {% end %}
 
