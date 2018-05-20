@@ -170,21 +170,31 @@ class SettingsHandler(BaseHandler):
         if user.is_paid:
             payments = []
             if user.stripe_customer_id:
-                charges = stripe.Charge.list(limit=3, customer=user.stripe_customer_id)
+                customer_id = user.stripe_customer_id
+                charges = stripe.Charge.list(limit=5, customer=customer_id)
                 for charge in charges.data:
-                    if charge.paid:
-                        payments.append({
-                            "transaction_amount": "USD %0.2f" % (charge.amount / 100.0,),
-                            "created_at": datetime.datetime.fromtimestamp(charge.created),
-                            "status": charge.status,
-                        })
+                    payments.append({
+                        "transaction_amount": "USD %0.2f" % (charge.amount / 100.0,),
+                        "refund_amount": charge.refunded and "USD %0.2f" % (charge.amount_refunded / 100.0,) or "",
+                        "created_at": datetime.datetime.fromtimestamp(charge.created),
+                        "status": "charged",
+                        "is_pending": charge.status == "pending",
+                        "is_failed": charge.status == "failed",
+                        "is_success": charge.status == "succeeded",
+                        "is_refund": charge.refunded,
+                    })
             else:
-                log = PaymentLog.last_payments(count=3, user_id = user.id)
+                log = PaymentLog.last_payments(count=5, user_id = user.id)
                 for payment in log:
                     payments.append({
                         "transaction_amount": payment.transaction_amount,
+                        "refund_amount": "",
                         "created_at": payment.created_at,
                         "status": payment.status,
+                        "is_pending": False,
+                        "is_success": True,
+                        "is_failed": False,
+                        "is_refund": False,
                     })
 
 
