@@ -165,13 +165,22 @@ $(document).ready(function() {
                 {% end %}
               {% end %}
 
-              <p>Your last 3 payments or credits:</p>
+              <p>Your recent payment history:</p>
               <ol class="transaction-list">
                 {% for item in payments %}
                   <li>
+                    {% if item['is_refund'] %}
                     <span class="amount">{{item['transaction_amount']}}</span>
-                    {% if item['status'] == 'credit' %}credited{% else %}received{% end %}
+                    charged; refunded <span class="amount">{{item['refund_amount']}}</span>
                     on <span class="date">{{item['created_at'].strftime("%B %d, %Y")}}</span>
+                    {% else %}
+                    <span class="amount">{{item['transaction_amount']}}</span>
+                    {% if item['status'] == 'credit' %}credited{% else %}charged{% end %}
+                    on <span class="date">{{item['created_at'].strftime("%B %d, %Y")}}</span>
+                    {% if item['is_pending'] %} (pending){% end %}
+                    {% if item['is_failed'] %} (failed){% end %}
+                    {% if item['is_success'] %} &#128077;{% end %}
+                    {% end %}
                   </li>
                 {% end %}
               </ol>
