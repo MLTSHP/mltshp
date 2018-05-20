@@ -29,7 +29,7 @@ class PaymentTests(test.base.BaseAsyncTestCase):
         self.user.is_paid = 1
         self.user.save()
         response = self.fetch_url('/account/settings')
-        self.assertTrue(response.body.find('Your last 3 payments or credits:') > -1)
+        self.assertTrue(response.body.find('Your recent payment history:') > -1)
 
     def test_subcription_webhook_sets_paid_status(self):
         self.user.stripe_customer_id = "cus_AHgKQnggJErzEA"
