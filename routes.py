@@ -200,6 +200,7 @@ routes = [
     (r"/account/welcome-to-mltshp", handlers.account.WelcomeToMltshp),
     (r"/account/membership", handlers.account.MembershipHandler),
     (r"/account/payment/cancel", handlers.account.PaymentCancelHandler),
+    (r"/account/delete", handlers.account.AccountDeleteHandler),
     (r"/account/payment/update", handlers.account.PaymentUpdateHandler),
     (r'/account/settings/resend-verification-email',
         handlers.account.ResendVerificationEmailHandler),

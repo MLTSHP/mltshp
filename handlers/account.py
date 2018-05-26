@@ -1132,6 +1132,54 @@ class PaymentCancelHandler(BaseHandler):
         return self.render('account/payment-cancel.html')
 
 
+class AccountDeleteHandler(BaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        username = self.get_argument("username")
+        user = self.get_current_user_object()
+        if user.name != username:
+            self.add_error("username", "The username entered did not match your MLTSHP username.")
+            return self.get()
+
+        # username confirmation matched; assign for deletion (handled via on_finish)
+        # logout and return to the home page.
+        self._user = self.get_current_user_object()
+        self.log_out()
+
+        return self.redirect('/')
+
+    def on_finish(self):
+        """
+        Account deletion can take a while, so we sign out the
+        user and delete the account via on_finish.
+
+        """
+        if not hasattr(self, "_user"):
+            return
+
+        user = self._user
+        self._user = None
+
+        if user is None:
+            return
+
+        user.delete()
+
+        payment_notifications(user, "deleted")
+
+    @tornado.web.authenticated
+    def get(self):
+        user = self.get_current_user_object()
+        user_post_count = user.all_sharedfile_count()
+        user_comment_count = user.comment_count()
+        user_shake_count = len(user.shakes())
+        return self.render('account/delete.html',
+            user_post_count=user_post_count,
+            user_comment_count=user_comment_count,
+            user_shake_count=user_shake_count,
+        )
+
+
 class ResendVerificationEmailHandler(BaseHandler):
     """
     Simply resends an email to verify your email address.
