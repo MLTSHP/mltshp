@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Delete Your Account{% end %}
+{% block main %}
+  <div class="content content-narrow">
+    <h1 class="thank-you">Deleting Your Account</h1>
+
+    {% if errors %}
+    <p class="fun-form-errors"><strong>Account deletion confirmation failed.</strong>
+        Please enter your MLTSHP username to confirm deletion of your account.</p>
+    {% else %}
+    <p>
+      Was it something we said? If you want to talk about anything, feel free to
+      email us at <a href="mailto:hello@mltshp.com">hello@mltshp.com</a> before
+      continuing...
+    </p>
+
+    {% if user_post_count or user_comment_count or user_shake_count %}
+    <p>Please note that this
+      is <strong>an irreversible action.</strong> All content you have posted to MLTSHP will be deleted
+      as a result, including comments, and shakes you have created, posts you have made to any shake that you may have
+      contributed to.
+    </p>
+
+    <p>
+      This content includes:</p>
+    <ul>
+        {% if user_shake_count %}
+        <li>{{ user_shake_count }} shake{% if user_shake_count != 1 %}s{% end %}</li>
+        {% end %}
+        {% if user_post_count %}
+        <li>{{ user_post_count }} post{% if user_post_count != 1 %}s{% end %}</li>
+        {% end %}
+        {% if user_comment_count %}
+        <li>{{ user_comment_count }} comment{% if user_comment_count != 1 %}s{% end %}</li>
+        {% end %}
+    </ul>
+    {% end %}
+
+    <p>
+      To delete your MLTSHP account right now including all your content, type in your MLTSHP username
+      below and click the Delete button to confirm.
+    </p>
+    {% end %}
+
+    <div class="fun-form fun-form-stacked fun-form-border">
+      <form action="/account/delete" method="POST">
+        {{ xsrf_form_html() }}
+
+        <div id="create-shake-name-field" class="field">
+          <label>Your username</label>
+          <div class="field-input">
+            <input class="input-text" type="text" name="username">
+            {% if errors.username %}
+            <div class="error">
+              <span class="error-text">
+              {{errors.username }}
+              </span>
+            </div>
+           {% end %}
+          </div>
+        </div>
+
+        <div class="field field-submit">
+          <a class="btn btn-primary btn-shadow" href="">Delete My Account</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="clear"><!-- --></div>
+  </div>
+{% end %}

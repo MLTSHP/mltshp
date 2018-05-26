@@ -221,6 +221,10 @@ def payment_notifications(user, action, amount=None):
         msg = """<https://%s/user/%s|%s> just gave us some cold hard cash: %s! :smile:""" % (
             options.app_host, user.name, user.name, amount
         )
+    elif action == "deleted":
+        msg = """<https://%s/user/%s|%s> has deleted their account. :ghost:""" % (
+            options.app_host, user.name, user.name
+        )
     elif action == "cancellation":
         msg = """<https://%s/user/%s|%s> has canceled their subscription. :frowning:""" % (
             options.app_host, user.name, user.name

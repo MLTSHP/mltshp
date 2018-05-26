@@ -1,21 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Cancel Your Subscription{% end %}
 {% block main %}
-  <div class="content content-membership">
-    <h1 class="thank-you">Canceling</h1>
+  <div class="content content-narrow">
+    <h1 class="thank-you">Canceling Your Subscription</h1>
     <p>
       Thanks for trying us out, we're sorry to see you go but understand the site isn't for everyone.
     </p>
+
     <p>
       To cancel your account right now, click this button to confirm your the cancellation of your
       subscription:
     </p>
 
-    <form action="/account/payment/cancel" method="POST">
-      {{ xsrf_form_html() }}
-      <input type="submit"
-        class="subscription-button" value="Yes, Please Cancel" border="0">
-    </form>
+    <div class="fun-form fun-form-stacked fun-form-border">
+      <form action="/account/payment/cancel" method="POST">
+        {{ xsrf_form_html() }}
+        <div class="field field-submit">
+          <a class="btn btn-primary btn-shadow" href="">Yes, Please Cancel</a>
+        </div>
+      </form>
+    </div>
 
     <div class="clear"><!-- --></div>
     <p>

@@ -28,6 +28,7 @@ import sharedfile
 import externalservice
 import invitation_request
 import shakemanager
+import comment
 # we use models.favorite due to some weird edge case where the reference
 # to the module gets lost.  To recreate, rename to "import favorite" and
 # change references from models.favorite to just favorite.  You can then
@@ -278,6 +279,18 @@ hello@mltshp.com
         #return Sharedfile.where("user_id = %s and deleted=0 order by id desc limit %s, %s ", self.id, int(limit_start), per_page)
         user_shake = self.shake()
         return user_shake.sharedfiles(page=page, per_page=per_page)
+
+    def comment_count(self):
+        """
+        Count of all of a user's comments, excluding deleted.
+        """
+        return comment.Comment.where_count("user_id = %s and deleted=0", self.id)
+
+    def all_sharedfile_count(self):
+        """
+        Count of all of a user's sharedfile records, excluding deleted.
+        """
+        return sharedfile.Sharedfile.where_count("user_id = %s and deleted=0", self.id)
 
     def sharedfiles_count(self):
         """

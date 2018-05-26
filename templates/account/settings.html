@@ -198,6 +198,7 @@ $(document).ready(function() {
                 {% end %}
               </p>
 
+              {% if not site_is_readonly %}
               <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
 
               <form id="update-card-details-form" action="/account/payment/update" method="POST">
@@ -205,23 +206,32 @@ $(document).ready(function() {
                 <input name="token" type="hidden" id="update-token" value="">
               </form>
               {% end %}
+              {% end %}
 
-              {% if not cancel_flag %}
+              {% if not cancel_flag and not site_is_readonly %}
               <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
               {% end %}
             {% else %}
+              {% if cancel_flag %}
+              <h4>You have canceled your subscription.</h4>
+              {% else %}
               <p>
                 You are currently using a free account. If you'd like
                 to support MLTSHP and get some nifty new benefits you can
                 <a href="/account/membership">upgrade to a paid account</a>.
               </p>
+              {% end %}
+
+              {% if not site_is_readonly %}
+              <p>If you would like to delete your account, <a href="/account/delete">you can do so here</a>.</p>
+              {% end %}
 
               {% if promotions and not site_is_readonly %}
-                <p>
-                  We have an active promotion running now. To learn more about them and
-                  to redeem a code, click this button:
-                </p>
-                <a class="btn btn-primary btn-shadow" href="/account/redeem">Redeem Code</a>
+              <p>
+                We have an active promotion running now. To learn more about them and
+                to redeem a code, click this button:
+              </p>
+              <a class="btn btn-primary btn-shadow" href="/account/redeem">Redeem Code</a>
               {% end %}
             {% end %}
           </div>
