@@ -20,15 +20,13 @@ $(document).ready(function() {
   $('#subscribe-button-single-scoop').click(function(e) {
     e.preventDefault();
     $('#subscribe-plan-id').val('mltshp-single');
-    {% if stripe_customer_id == None %}
+
     // Open Checkout with further options
     subscribeHandler.open({
       description: '1 Year ($3.00)',
-      amount: 300
+      amount: 300,
+      zipCode: true
     });
-    {% else %}
-    $('#membership-form').submit();
-    {% end %}
     return false;
   });
 
@@ -48,15 +46,12 @@ $(document).ready(function() {
     }
     $('#subscribe-plan-quantity').val(quantity.toString());
 
-    {% if stripe_customer_id == None %}
     // Open Checkout with further options
     subscribeHandler.open({
       description: '1 Year ($' + quantity.toString() + '.00)',
-      amount: quantity * 100
+      amount: quantity * 100,
+      zipCode: true
     });
-    {% else %}
-    $('#membership-form').submit();
-    {% end %}
     return false;
   });
 
