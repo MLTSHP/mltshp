@@ -965,17 +965,21 @@ class MembershipHandler(BaseHandler):
                         sub.quantity = quantity
                     else:
                         sub.quantity = 1
+                    sub.source = token_id
                     sub.save()
             else:
                 if plan_id == "mltshp-double":
                     sub = customer.subscriptions.create(
-                        plan=plan_id, quantity=quantity)
+                        plan=plan_id, quantity=quantity,
+                        source=token_id)
                 else:
                     sub = customer.subscriptions.create(
-                        plan=plan_id)
+                        plan=plan_id,
+                        source=token_id)
         except stripe.error.CardError as ex:
-            return self.render("account/return-subscription-completed.html",
-                error=unicode(ex),
+            return self.render("account/return-subscription-error.html",
+                error=True,
+                error_message=ex.user_message,
                 has_data_to_migrate=False)
 
         if not sub:
