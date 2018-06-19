@@ -955,6 +955,10 @@ class MembershipHandler(BaseHandler):
                     metadata={"mltshp_user": current_user.name},
                     source=token_id,
                 )
+                # A Stripe token cannot be used more than once; if we used it
+                # during the Customer creation request, clear it so it isn't
+                # used for later requests.
+                token_id = None
 
             # if this works, we should have a customer with 1 subscription, this one
             if customer.subscriptions.total_count > 0:
@@ -965,7 +969,8 @@ class MembershipHandler(BaseHandler):
                         sub.quantity = quantity
                     else:
                         sub.quantity = 1
-                    sub.source = token_id
+                    if token_id is not None:
+                        sub.source = token_id
                     sub.save()
             else:
                 if plan_id == "mltshp-double":
@@ -978,9 +983,7 @@ class MembershipHandler(BaseHandler):
                         source=token_id)
         except stripe.error.CardError as ex:
             return self.render("account/return-subscription-error.html",
-                error=True,
-                error_message=ex.user_message,
-                has_data_to_migrate=False)
+                error_message=ex.user_message)
 
         if not sub:
             raise Exception("Error issuing subscription")
