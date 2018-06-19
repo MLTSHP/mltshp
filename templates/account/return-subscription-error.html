@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Uh oh! We had a problem.{% end %}
+{% block main %}
+  <div class="content content-narrow">
+    <p class="error-uh-oh">We had a problem.</p>
+    <p>
+      We weren't able to process your payment.
+      {% if error_message %}
+      Our credit card processor returned this message:
+      {% end %}
+    </p>
+    {% if error_message %}
+    <blockquote>
+      <p>
+        <strong>{{ error_message }}</strong>
+      </p>
+    </blockquote>
+    {% end %}
+    <p>
+      You may want to <a href="/account/membership">try again</a> with a different credit card.
+      You can also <a href="mailto:hello@mltsp.com">contact us</a> if you need any help.
+    </p>
+  </div>
+{% end %}
