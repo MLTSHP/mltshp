@@ -44,7 +44,7 @@ RUN apt-get -y update && apt-get install -y \
         --conf-path=/etc/nginx/nginx.conf \
         --error-log-path=/srv/mltshp.com/nginx-error.log \
         --http-log-path=/srv/mltshp.com/nginx-access.log \
-        --add-module=/tmp/install/nginx-upload-module-2.2 && \
+        --add-module=/tmp/install/nginx-upload-module-2.2.0 && \
     make && make install && \
     mkdir -p /etc/nginx && \
     rm -rf /tmp/install && \
