@@ -33,7 +33,7 @@ RUN apt-get -y update && apt-get install -y \
     mkdir -p /tmp/install && \
     cd /tmp/install && \
     wget http://nginx.org/download/nginx-0.8.55.tar.gz && tar zxf nginx-0.8.55.tar.gz && \
-    wget https://github.com/vkholodkov/nginx-upload-module/archive/2.2.tar.gz && tar zxf 2.2.tar.gz && \
+    wget https://github.com/fdintino/nginx-upload-module/archive/2.2.0.tar.gz && tar zxf 2.2.0.tar.gz && \
     cd /tmp/install/nginx-0.8.55 && \
     ./configure \
         --with-http_ssl_module \
