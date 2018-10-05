@@ -48,7 +48,7 @@ file:
 
 The web app itself runs on port 8000. You should be able to reach it via:
 
-[http://mltshp.local:8000/]()
+[http://mltshp.local:8000/](http://mltshp.local:8000/)
 
 Subsequent invocations of `make run` should be faster, once you have
 the dependency images downloaded.
