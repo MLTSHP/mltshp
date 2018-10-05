@@ -33,7 +33,7 @@ RUN apt-get -y update && apt-get install -y \
     mkdir -p /tmp/install && \
     cd /tmp/install && \
     wget http://nginx.org/download/nginx-0.8.55.tar.gz && tar zxf nginx-0.8.55.tar.gz && \
-    wget https://github.com/vkholodkov/nginx-upload-module/archive/2.2.tar.gz && tar zxf 2.2.tar.gz && \
+    wget https://github.com/fdintino/nginx-upload-module/archive/2.2.0.tar.gz && tar zxf 2.2.0.tar.gz && \
     cd /tmp/install/nginx-0.8.55 && \
     ./configure \
         --with-http_ssl_module \
@@ -44,7 +44,7 @@ RUN apt-get -y update && apt-get install -y \
         --conf-path=/etc/nginx/nginx.conf \
         --error-log-path=/srv/mltshp.com/nginx-error.log \
         --http-log-path=/srv/mltshp.com/nginx-access.log \
-        --add-module=/tmp/install/nginx-upload-module-2.2 && \
+        --add-module=/tmp/install/nginx-upload-module-2.2.0 && \
     make && make install && \
     mkdir -p /etc/nginx && \
     rm -rf /tmp/install && \
