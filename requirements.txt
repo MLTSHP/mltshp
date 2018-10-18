@@ -17,7 +17,7 @@ torndb==0.3
 tweepy==2.3
 wsgiref==0.1.2
 mock==1.0.1
-pyOpenSSL==16.2.0
+pyOpenSSL==17.5.0
 backports.ssl==0.0.9
 requests==2.13.0
 stripe==1.82.1
