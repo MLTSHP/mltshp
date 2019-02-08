@@ -5,8 +5,9 @@
     <h2 class="tools-saved-it">{{escape(sf.get_title())}} has been saved.</h2>
 
     <form id="fun-form-settings-profile" class="fun-form fun-form-stacked fun-form-border">
-        <div class="field">
-            <label>Image URL</label>
+        <div class="field"> 
+	        <!-- added link to page mare 2019-02-05 -->
+            <label>Image URL  (<a href="http://{{host}}/p/{{sf.share_key}}" target="_blank">Go there now</a>)</label>
             <div class="field-input">
                 <input nonClick="javascript:this.focus();this.select();" type="text" class="input-text" name="bookmarklet"
                 value="http://{{host}}/p/{{sf.share_key}}">
