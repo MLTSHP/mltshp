@@ -225,9 +225,13 @@ class SettingsHandler(BaseHandler):
                         subscription = subscriptions[0]
                         past_due = subscription.status == "past_due"
                         if customer.sources.total_count > 0:
-                            source_card_type = customer.sources.data[0].brand
-                            source_last_4 = customer.sources.data[0].last4
-                            source_expiration = "%d/%d" % (customer.sources.data[0].exp_month, customer.sources.data[0].exp_year)
+                            if customer.sources.data[0].object == "card":
+                                card = customer.sources.data[0]
+                            elif customer.sources.data[0].object == "source":
+                                card = customer.sources.data[0].card
+                            source_card_type = card.brand
+                            source_last_4 = card.last4
+                            source_expiration = "%d/%d" % (card.exp_month, card.exp_year)
 
         return self.render("account/settings.html", user=user, payments=payments,
             already_requested=already_requested, promotions=promotions,
