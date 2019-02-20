@@ -82,15 +82,70 @@ class CodeOfConductHandler(BaseHandler):
     def get(self):
         return self.render("misc/code-of-conduct.html")
 
-class AdBannerHandler(BaseHandler):
+class PromoHandler(BaseHandler):
     def get(self):
         ads = [
-            #{
-            #    'img': 'url-of-banner',
-            #    'link': 'clickout-of-banner',
-            #    'text': 'html caption for ad',
-            #}
+            {
+               'img': '/static/promos/merch/1.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/2.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/3.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/4.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/5.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/6.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/7.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/8.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/9.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/10.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/11.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
+            {
+               'img': '/static/promos/merch/12.jpg',
+               'link': 'https://teespring.com/stores/mltshp-store',
+               'text': '',
+            },
         ]
         banner = random.choice(ads)
-        return self.render("misc/ad_banner.html", banner = banner)
+        return self.render("misc/promo.html", banner = banner)
 

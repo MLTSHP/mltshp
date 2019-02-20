@@ -351,6 +351,19 @@
     margin: 3px 0 0;
 }
 
+.promo-block {
+    margin: 20px auto;
+    max-width: 100%;
+    text-align: center;
+    width: 285px;
+}
+
+@media screen and (max-width: 338px) {
+    .promo-block {
+        display: none;
+    }
+}
+
 .cool-tools-block {
     float: left;
     padding: 20px;
