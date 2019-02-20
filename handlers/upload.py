@@ -5,6 +5,7 @@ from tornado.httpclient import HTTPRequest
 import tornado.web
 import postmark
 from tornado.options import define, options
+import tornado.escape
 
 from models import Sharedfile, Externalservice
 
@@ -110,7 +111,9 @@ class UploadHandler(BaseHandler):
                 user_id = external_service.user_id,
                 title = title
                 )
-            self.write("<mediaurl>https://s.%s/r/%s.%s</mediaurl>" % (options.app_host, sf.share_key, self.get_argument("media_content_type").split('/')[1]))
+            media_type = self.get_argument("media_content_type").split('/')[1]
+            media_type = tornado.escape.xhtml_escape(media_type)
+            self.write("<mediaurl>https://s.%s/r/%s.%s</mediaurl>" % (options.app_host, sf.share_key, media_type))
             return self.finish()
         raise tornado.web.HTTPError(403)
 
