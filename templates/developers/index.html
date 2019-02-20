@@ -61,6 +61,18 @@
     "algorithm": "hmac-sha-1"
 }</pre>
     <p>
+        Please be aware that your parameters should be url encoded. This is a command line example using curl:
+    </p>
+    <pre>
+    curl \
+      --data-urlencode "grant_type=<strong>password</strong>" \
+      --data-urlencode "client_id=<strong>your app key</strong>" \
+      --data-urlencode "client_secret=<strong>your app secret</strong>" \
+      --data-urlencode "username=<strong>the user's name</strong>" \
+      --data-urlencode "password=<strong>the user's password</strong>" \
+      -s -X POST "https://mltshp.com/api/token"
+    </pre>
+    <p>
         Requests to the API should be signed with the access token as normal in the above script examples.
     </p>
     <h2>API Reference</h2>

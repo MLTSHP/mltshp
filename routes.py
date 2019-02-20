@@ -4,7 +4,7 @@ routes = [
     (r"/(before|after)/([A-Z0-9]+)?/?(returning)?", handlers.home.HomeHandler),
     (r"/", handlers.home.HomeHandler),
 
-    (r"/ad", handlers.misc.AdBannerHandler),
+    (r"/promo", handlers.misc.PromoHandler),
     (r"/api/authorize", handlers.api.AuthorizeHandler),
     (r"/api/token", handlers.api.TokenHandler),
     (r"/api/sharedfile/([a-zA-Z0-9]+)", handlers.api.SharedfileHandler),
