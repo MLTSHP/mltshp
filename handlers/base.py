@@ -89,8 +89,9 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         kwargs['current_user_object'] = current_user_object
         kwargs['site_is_readonly'] = options.readonly == 1
         kwargs['disable_signups'] = options.disable_signups == 1
-        kwargs['show_ads'] = options.show_ads and (
-            not current_user_object or current_user_object.is_paid == 0)
+        # site merchandise promotions are shown to members
+        kwargs['show_promos'] = options.show_promos and (
+            current_user_object and current_user_object.is_paid == 1)
 
         return super(BaseHandler, self).render_string(template_name, **kwargs)
 

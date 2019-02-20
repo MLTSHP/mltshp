@@ -16,7 +16,7 @@ define('cdn_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for 
 define('cdn_ssl_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for SSL CDN")
 define('disable_signups', type=bool, default=False, help="Are new user signups disabled")
 define('readonly', type=bool, default=False, help="Switch to enable site-wide readonly mode (disables posts, signups, etc).")
-define('show_ads', type=bool, default=False, help="Are we showing ad banners")
+define('show_promos', type=bool, default=True, help="Are we showing promos")
 define('cookie_secret', metavar="SECRET", help="Secret to use for encoding secure cookies")
 define('xsrf_cookies', type=bool, default=True, help="Use Tornado XSRF protection")
 define('on_port', default=8000, help="Run on port")
