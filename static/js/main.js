@@ -770,7 +770,7 @@ $(document).ready(function() {
       click_reply_to: function(ev) {
         this.click_comment_textarea();
         var username = $(ev.target).parents('.comment').find('.username').html();
-        var username_clean = username.replace(/[^a-zA-Z0-9\-]+/g, '');
+        var username_clean = username.replace(/[^a-zA-Z0-9_\-]+/g, '');
         var current_text = this.$comment_textarea.val();
         this.$comment_textarea.val(current_text + "@" + username_clean + ' ');
         setCaret(this.$comment_textarea.get(0));
