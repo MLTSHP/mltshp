@@ -25,7 +25,7 @@
         <div class="conversation">
           <a class="thumb" href="/p/{{conversation['sharedfile'].share_key}}"><img src="{{ conversation['sharedfile'].thumbnail_url() }}"></a>
           <div class="details-wrapper">
-            <h3 class="sharedfile-title">{{ conversation['sharedfile'].get_title() }}</h3>
+            <h3 class="sharedfile-title">{{ escape(conversation['sharedfile'].get_title()) }}</h3>
             <p class="sharedfile-description">
               {{ conversation['sharedfile'].get_description() }}
             </p>

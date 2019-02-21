@@ -40,7 +40,7 @@
                             </span>
                         </div>
                         {{mention['comment'].body_formatted()}}
-                        <div class="where-from">Posted on "<a href="/p/{{mention['sharedfile'].share_key}}">{{mention['sharedfile'].get_title()}}</a>"</div>
+                        <div class="where-from">Posted on "<a href="/p/{{mention['sharedfile'].share_key}}">{{escape(mention['sharedfile'].get_title())}}</a>"</div>
                     </div>
                     <div class="clear"><!-- --></div>
                   </div>
