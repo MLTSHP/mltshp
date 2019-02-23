@@ -1207,7 +1207,7 @@ $(document).ready(function() {
         var $target = $(ev.target);
         var $meta = $target.parent();
         var username = $meta.find('.username').html();
-        var username_clean = username.replace(/[^a-zA-Z0-9\-]+/g, '');
+        var username_clean = username.replace(/[^a-zA-Z0-9_\-]+/g, '');
         var current_text = this.$post_comment_body.val();
         this.$post_comment_body.val(current_text + "@" + username_clean + ' ');
         setCaret(this.$post_comment_body.get(0));
