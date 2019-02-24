@@ -130,15 +130,19 @@
                 </div>
             {% end %}
         </div>
-        {% if sharedfile.original() %}
+        {% if sharedfile.original() or sharedfile.original_id > 0 %}
             <div class="originally-posted-by">
                 {{ original_user = sharedfile.original_user()}}
                 originally
+                {% if original_user %}
                 <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by
                 <a class="avatar--link" href="/user/{{original_user.name}}">
                     <img class="avatar--img" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt="">
                 </a>
                 <a class="user-name" href="/user/{{original_user.name}}">{{ original_user.name }}</a>
+                {% else %}
+                posted by someone else
+                {% end %}
             </div>
         {% end %}
         <div class="inline-meta">

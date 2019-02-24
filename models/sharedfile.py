@@ -322,7 +322,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         if options.readonly:
             return False
-        ssf = shakesharedfile.Shakesharedfile.get("shake_id = %s and sharedfile_id = %s", from_shake.id, self.id)
+        ssf = shakesharedfile.Shakesharedfile.get("shake_id = %s and sharedfile_id = %s and deleted=0", from_shake.id, self.id)
         if not ssf:
             return False
         ssf.deleted = 1
@@ -338,7 +338,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         if options.readonly:
             return False
-        ssf = shakesharedfile.Shakesharedfile.get("shake_id = %s and sharedfile_id = %s", to_shake.id, self.id)
+        ssf = shakesharedfile.Shakesharedfile.get("shake_id = %s and sharedfile_id = %s and deleted=0", to_shake.id, self.id)
         if not ssf:
             ssf = shakesharedfile.Shakesharedfile(shake_id=to_shake.id, sharedfile_id=self.id)
         ssf.deleted = 0
@@ -364,7 +364,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         Returns sharedfile's user.
         """
-        return user.User.get("id = %s", self.user_id)
+        return user.User.get("id = %s and deleted=0", self.user_id)
 
     def parent(self):
         """
@@ -372,7 +372,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         if not bool(self.parent_id):
             return None
-        return self.get("id = %s", self.parent_id)
+        return self.get("id = %s and deleted=0", self.parent_id)
 
     def original(self):
         """
@@ -380,7 +380,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         if not bool(self.original_id):
             return None
-        return self.get("id = %s", self.original_id)
+        return self.get("id = %s and deleted=0", self.original_id)
 
     def parent_user(self):
         """
