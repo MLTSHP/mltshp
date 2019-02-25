@@ -152,7 +152,7 @@ $(document).ready(function() {
           var that = this;
           $post_video_form_button.unbind('click').find('span').html('Posting...');
           $.post(url, data, function(response) {
-            document.location = 'http://' + document.location.host + response['path'];
+            document.location = document.location.protocol + '//' + document.location.host + response['path'];
           }, 'json');
         },
         refresh_panel: function(response) {
@@ -1475,7 +1475,7 @@ $(document).ready(function() {
 
     //make incoming clickable (I know.)
     $('.incoming-header').click(function(){
-        document.location = 'http://' + document.location.host + '/incoming';
+        document.location = document.location.protocol + '//' + document.location.host + '/incoming';
 
     });
 
