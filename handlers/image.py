@@ -314,7 +314,7 @@ class ShowRawHandler(BaseHandler):
 
         # piece together headers to be picked up by nginx to proxy file from S3
         self.set_header("Content-Type", sharedfile.content_type)
-        self.set_header("Surrogate-Control", "max-age=86400")        
+        self.set_header("Surrogate-Control", "max-age=86400")
         self.set_header("Connection", "close")
         return
 
@@ -521,8 +521,8 @@ class UnlikeHandler(BaseHandler):
                 return self.redirect('/p/%s' % (sharedfile_key))
 
         #Attempt to remove favorites for the parent and original
-        original_sf = sharedfile.original()
-        parent_sf = sharedfile.parent()
+        original_sf = sharedfile.original(include_deleted=True)
+        parent_sf = sharedfile.parent(include_deleted=True)
         if original_sf:
             user.remove_favorite(original_sf)
         if parent_sf and parent_sf.user_id != original_sf.user_id:
