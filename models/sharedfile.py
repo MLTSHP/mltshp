@@ -366,21 +366,29 @@ class Sharedfile(ModelQueryCache, Model):
         """
         return user.User.get("id = %s and deleted=0", self.user_id)
 
-    def parent(self):
+    def parent(self, include_deleted=False):
         """
         Returns the parent object if it's set, otherwise returns None.
         """
         if not bool(self.parent_id):
             return None
-        return self.get("id = %s and deleted=0", self.parent_id)
+        if include_deleted:
+            deleted_clause = ''
+        else:
+            deleted_clause = ' and deleted=0'
+        return self.get("id = %s" + deleted_clause, self.parent_id)
 
-    def original(self):
+    def original(self, include_deleted=False):
         """
         Returns the original object if it's set, otherwise returns None.
         """
         if not bool(self.original_id):
             return None
-        return self.get("id = %s and deleted=0", self.original_id)
+        if include_deleted:
+            deleted_clause = ''
+        else:
+            deleted_clause = ' and deleted=0'
+        return self.get("id = %s" + deleted_clause, self.original_id)
 
     def parent_user(self):
         """

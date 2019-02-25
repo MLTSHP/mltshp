@@ -20,16 +20,16 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         self.joe = User(name='joe', email='joe@example.com', email_confirmed=1, is_paid=1)
         self.joe.set_password('asdfasdf')
         self.joe.save()
-        
+
         self.bill = User(name='bill', email='bill@example.com', email_confirmed=1, is_paid=1)
         self.bill.set_password('asdfasdf')
         self.bill.save()
-                
+
         self.frank = User(name='frank', email='frank@example.com', email_confirmed=1, is_paid=1)
         self.frank.set_password('asdfasdf')
         self.frank.save()
-        
-    
+
+
     def _create_sharedfile(self, user):
         """
         Utility to create a stub sharedfile for the user.
@@ -46,15 +46,15 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
     def test_liking_image(self):
         """
         admin creates a sharedfile.  Joe (authenticated) likes it.
-        
+
         Response should be successful and include following fields:
-        
+
             {
              'response' : 'ok',
              'count' : 1,
              'share_key', 1
             }
-        
+
         A new entry should be present in favorites table.  like_count on the sharedfile
         should be incremented.
         """
@@ -63,7 +63,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         favorite = Favorite.get('user_id = %s and sharedfile_id = %s' % (self.joe.id, sharedfile.id))
         self.assertEqual(None, favorite)
         self.assertEqual(0, sharedfile.like_count)
-        
+
         response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
         json_response = json.loads(response.body)
         self.assertEqual(json_response['response'], 'ok')
@@ -73,7 +73,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         self.assertTrue(favorite)
         sharedfile_fetched = Sharedfile.get("id = %s", sharedfile.id)
         self.assertEqual(1, sharedfile_fetched.like_count)
-    
+
     def test_unliking_image(self):
         """
         admin creates a sharedfile. Joe likes it. Then, joe decides to unlike it.
@@ -130,11 +130,11 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         self.sign_in('admin', 'asdfasdf')
         response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
         json_response = json.loads(response.body)
-        
+
         self.assertEqual(response.code, 200)
         self.assertTrue(json_response.has_key('error'))
         favorite = Favorite.get('user_id= %s and sharedfile_id = %s', self.admin.id, sharedfile.id)
-        self.assertFalse(favorite)        
+        self.assertFalse(favorite)
 
     def test_like_creates_notification(self):
         """
@@ -145,14 +145,14 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         sharedfile = self._create_sharedfile(self.admin)
         self.sign_in('joe', 'asdfasdf')
         response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
-        
+
         notifications = Notification.all()
-        self.assertEqual(len(notifications), 1)        
+        self.assertEqual(len(notifications), 1)
         self.assertEqual(notifications[0].sender_id, self.joe.id)
         self.assertEqual(notifications[0].receiver_id, self.admin.id)
         self.assertEqual(notifications[0].type, 'favorite')
         self.assertEqual(notifications[0].action_id, 1)
-    
+
     def test_like_gives_like_to_parent_and_original(self):
         """
         This tests that if user A posts a file, user B saves it and
@@ -161,12 +161,12 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         sharedfile = self._create_sharedfile(self.admin)
         joe_sharedfile = sharedfile.save_to_shake(self.joe)
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
-        
+
         self.sign_in('frank', 'asdfasdf')
         response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
-        
+
         self.assertEqual(len(Favorite.all()), 3)
-        
+
     def test_unlike_removes_likes_from_parent_and_original(self):
         """
         A test of unliking a file and the likes being removed
@@ -175,16 +175,16 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         sharedfile = self._create_sharedfile(self.admin)
         joe_sharedfile = sharedfile.save_to_shake(self.joe)
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
-        
+
         self.sign_in('frank', 'asdfasdf')
         response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
-        
+
         response = self.post_url('/p/%s/unlike?json=1' % bill_sharedfile.share_key)
-        
+
         un_favorites = Favorite.where('deleted=1')
         self.assertEqual(len(un_favorites),3)
-        
-        
+
+
     def test_reliking_undeletes_parent_and_original(self):
         """
         A test that reliking a file that was previously unliked
@@ -193,14 +193,14 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         sharedfile = self._create_sharedfile(self.admin)
         joe_sharedfile = sharedfile.save_to_shake(self.joe)
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
-        
+
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)        
+        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
         response = self.post_url('/p/%s/unlike?json=1' % bill_sharedfile.share_key)
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)        
-        
+        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
+
         self.assertEqual(len(Favorite.all()), 3)
-        
+
     def test_like_does_not_go_to_original_file_if_liker_is_poster(self):
         """
         This tests that if user A posts a file, user B saves it and then
@@ -208,12 +208,12 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         """
         sharedfile = self._create_sharedfile(self.admin)
         joe_sharedfile = sharedfile.save_to_shake(self.joe)
-        
+
         self.sign_in('admin', 'asdfasdf')
         response = self.post_url('/p/%s/like?json=1' % joe_sharedfile.share_key)
-        
+
         self.assertEqual(len(Favorite.all()), 1)
-        
+
     def test_unlike_of_shared_file_with_deleted_parents(self):
         """
         This tests that if you delete the original and parents of a file
@@ -223,16 +223,16 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         sharedfile = self._create_sharedfile(self.admin)
         joe_sharedfile = sharedfile.save_to_shake(self.joe)
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
-        
+
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)        
-        
+        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
+
         self.assertEqual(len(Favorite.all()), 3)
         sharedfile.delete()
         joe_sharedfile.delete()
-        
+
         response = self.post_url('/p/%s/unlike?json=1' % bill_sharedfile.share_key)
-        
+
         self.assertEqual(len(Favorite.where('deleted = 1')), 3)
 
     def test_like_of_shared_file_with_deleted_parents(self):
@@ -246,11 +246,11 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
 
         sharedfile.delete()
         joe_sharedfile.delete()
-        
+
         self.sign_in('frank', 'asdfasdf')
         response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
-        
+
         self.assertEqual(len(Favorite.all()), 1)
-        
-        
+
+
 
