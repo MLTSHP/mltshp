@@ -215,6 +215,26 @@ $(document).ready(function() {
                 You have no active MLTSHP subscription. <a href="/account/membership">Click here to re-subscribe</a>
                 if you'd like to support MLTSHP!
               </p>
+
+              <p><hr></p>
+
+              <p><strong>Current Payment Source</strong><br>
+                {% if source_card_type and source_last_4 and source_expiration %}
+                  Card type: {{ source_card_type }}<br>
+                  Card ending in: {{ source_last_4 }}<br>
+                  Expiration date: {{ source_expiration }}
+                {% else %}
+                  <em>No card presently on file!</em>
+                {% end %}
+              </p>
+
+              <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
+
+              <form id="update-card-details-form" action="/account/payment/update" method="POST">
+                {{ xsrf_form_html() }}
+                <input name="token" type="hidden" id="update-token" value="">
+              </form>
+
               {% else %}
               <p>
                 You are currently using a free account. If you'd like
