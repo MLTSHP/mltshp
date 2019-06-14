@@ -918,11 +918,13 @@ class MembershipHandler(BaseHandler):
     def post(self):
         current_user = self.get_current_user_object()
 
-        token_id = None
+        # if a token is provided, pass through for subscription
+        # any creation/update (user may be updating their credit card info)
+        token_id = self.get_argument("token")
+
         if current_user.stripe_customer_id is None:
-            token_id = self.get_argument("token")
             if token_id is None:
-                # invalid request
+                # invalid request; token must be present for new subscribers
                 raise Exception("Invalid request")
 
         plan_id = self.get_argument("plan_id")
@@ -959,10 +961,12 @@ class MembershipHandler(BaseHandler):
                     metadata={"mltshp_user": current_user.name},
                     source=token_id,
                 )
-                # A Stripe token cannot be used more than once; if we used it
-                # during the Customer creation request, clear it so it isn't
-                # used for later requests.
-                token_id = None
+            else:
+                # if a token is provided for an existing customer, update the
+                # source (affecting their default payment source too)
+                if token_id is not None:
+                    customer.source = token_id
+                    customer.save()
 
             # if this works, we should have a customer with 1 subscription, this one
             if customer.subscriptions.total_count > 0:
@@ -973,18 +977,14 @@ class MembershipHandler(BaseHandler):
                         sub.quantity = quantity
                     else:
                         sub.quantity = 1
-                    if token_id is not None:
-                        sub.source = token_id
                     sub.save()
             else:
                 if plan_id == "mltshp-double":
                     sub = customer.subscriptions.create(
-                        plan=plan_id, quantity=quantity,
-                        source=token_id)
+                        plan=plan_id, quantity=quantity)
                 else:
                     sub = customer.subscriptions.create(
-                        plan=plan_id,
-                        source=token_id)
+                        plan=plan_id)
         except stripe.error.CardError as ex:
             return self.render("account/return-subscription-error.html",
                 error_message=ex.user_message)

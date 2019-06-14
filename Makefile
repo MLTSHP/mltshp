@@ -14,6 +14,9 @@ sass-watch:
 run: sass-compile
 	docker-compose up -d
 
+stop:
+	docker-compose down
+
 build:
 	docker build -t mltshp/mltshp-web:latest .
 
