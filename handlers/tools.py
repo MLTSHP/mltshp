@@ -70,11 +70,13 @@ class PickerPopupHandler(BaseHandler):
         is_video = False
 
         shakes = current_user.shakes(include_managed=True)
+        can_upload_this_month = current_user.can_upload_this_month()
 
         #replace plus signs with %20's
         return self.render("tools/picker.html", file_name=file_name, width="", height="", \
             url=parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path + parsed_url_query, \
-            source_url=source_url, description='', is_video=is_video, shakes=shakes)
+            source_url=source_url, description='', is_video=is_video, shakes=shakes,
+            can_upload_this_month=can_upload_this_month)
 
     @tornado.web.authenticated
     @tornado.web.asynchronous
