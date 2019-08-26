@@ -130,4 +130,12 @@
         font-size: 26px;
         font-weight: bold;
     }
+
+    .picker-content .email-unverified h2,
+    .picker-content .over-upload-limit h2 {
+        color: $color-mltshp-pink;
+        font-size: 24px;
+        text-align: center;
+        height: 1.5em;
+    }
 }
