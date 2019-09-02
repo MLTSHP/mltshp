@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% end %}
+
+{% block main %}
+<div class="content content-with-sidebar content-shake content-search">
+  {% include "search/_sidebar.html" %}
+
+  <div class="body">
+    {% if len(sharedfiles) > 0 %}
+      <div class="image-content-list meta hentry">
+        {% for sharedfile in sharedfiles %}
+          {% if sharedfile.__class__.__name__ == 'Sharedfile' %}
+            {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
+          {% end %}
+        {% end %}
+      </div>
+      <div class="linear-navigation">
+        <div class="older">
+          {% if older_link %}
+            <a class="btn btn-secondary btn-shadow" href="{{ older_link }}">&laquo; Older</a>
+          {% end %}
+        </div>
+        <div class="newer">
+          {% if newer_link %}
+            <a class="btn btn-secondary btn-shadow" href="{{ newer_link }}">Newer &raquo;</a>
+          {% end %}
+        </div>
+      </div>
+    {% else %}
+      {% if q %}
+      <div class="search-empty-results">
+        <h1 class="error-uh-oh">Couldn't find anything like that.</h1>
+      </div>
+      {% end %}
+    {% end %}
+  </div>
+</div>
+{% end %}

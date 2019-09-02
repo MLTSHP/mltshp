@@ -126,25 +126,6 @@ routes = [
         handlers.account.FollowingHandler),
     (r"/user/([a-zA-Z0-9_\-]+)/counts", handlers.account.FileCountHandler),
 
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/?([\d]+)?",
-        handlers.account.AccountImagesHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/subscribe",
-        handlers.account.SubscribeHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/unsubscribe",
-        handlers.account.UnsubscribeHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/"
-        "likes/(before|after)/([0-9]+)?", handlers.account.UserLikesHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/likes/?",
-        handlers.account.UserLikesHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/rss",
-        handlers.account.RSSFeedHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/followers/?([\d]+)?",
-        handlers.account.FollowerHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/following/?([\d]+)?",
-        handlers.account.FollowingHandler),
-    (r"/AdvertisingEyeFaceOpportunity/([a-zA-Z0-9_\-]+)/counts",
-        handlers.account.FileCountHandler),
-
     (r"/~([a-zA-Z0-9_\-]+)/?([\d]+)?",
         handlers.account.AccountImagesHandler),
     (r"/~([a-zA-Z0-9_\-]+)/subscribe",
@@ -214,8 +195,6 @@ routes = [
     (r"/faq/?", handlers.misc.FAQHandler),
     (r"/coming-soon/?", handlers.misc.ComingSoonHandler),
     (r"/heartbeat", handlers.misc.HeartbeatHandler),
-    ## TODO: needs customization for mltshp.com domain
-    #(r"/googlead81c5d028a3e443.html", handlers.misc.WebmasterToolsHandler),
     (r"/styleguide", handlers.misc.StyleguideHandler),
     (r"/terms-of-use", handlers.misc.TermsOfUseHandler),
     (r"/code-of-conduct", handlers.misc.CodeOfConductHandler),
@@ -254,6 +233,10 @@ routes = [
 
     (r"/upload", handlers.upload.UploadHandler),
     (r"/internalupload", handlers.upload.UploadHandler),
+
+    (r"/search/?", handlers.search.SearchHandler),
+    (r"/search/(before|after)/([0-9]+)?",
+        handlers.search.SearchHandler),
 
     # the shake handler
     (r"/([a-zA-Z0-9\-]+)", handlers.shake.ShakeHandler),

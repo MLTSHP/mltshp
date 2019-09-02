@@ -1,0 +1,29 @@
+<div class="sidebar">
+  <h2>Search!</h2>
+  <div class="sidebar-search-block fun-form">
+    <form method="GET" action="/search">
+      <div class="field">
+        <div class="field-input">
+          <input {% if len(sharedfiles) == 0 %}autofocus {% end %}class="input-text" type="search" placeholder="Search" name="q" value="{{xhtml_escape(q)}}" autocapitalize="none">
+          {% if errors.q %}
+          <div class="error">
+            <span class="error-text">
+              {{ errors.q }}
+            </span>
+          </div>
+          {% end %}
+        </div>
+        <div class="field-help">
+          <p>
+            Enter keywords or &quot;quoted phrases&quot;. Supports <tt>*</tt> as a wildcard for matching.
+            Also supports filtering by username like this: <tt>from:<em>username</em></tt>
+            or by shake name (the name used in the shake site address) like this:
+            <tt>in:<em>shakename</em></tt> (special supported "shake" names: <tt>mine</tt>,
+            <tt>friends</tt>, <tt>popular</tt>).
+          </p>
+        </div>
+      </div>
+    </form>
+    <div class="clear"><!-- --></div>
+  </div>
+</div>

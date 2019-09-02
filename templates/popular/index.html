@@ -23,6 +23,18 @@
 
     {{modules.ShakeFollow(follow_user=best_of_user, follow_shake=best_of_shake, current_user=current_user_obj, avatar_size=100, extended=True)}}
 
+    <div class="sidebar-search-block fun-form">
+      <form method="GET" action="/search">
+        <input type="hidden" name="context" value="in:popular">
+        <div class="field">
+          <div class="field-input">
+            <input type="search" class="input-text" name="q" placeholder="Search the popular shake!">
+          </div>
+        </div>
+      </form>
+      <div class="clear"><!-- --></div>
+    </div>
+
     {% if current_user_obj %}
       {% if not current_user_obj.is_plus() %}
     <div class="upgrade-account-block">

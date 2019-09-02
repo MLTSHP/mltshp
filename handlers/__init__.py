@@ -17,3 +17,4 @@ import popular
 import shake
 import tag
 import stripe_hooks
+import search

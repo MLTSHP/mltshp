@@ -23,6 +23,18 @@
         {{modules.UserCounts(user=user)}}
       {% end %}
 
+      <div class="sidebar-search-block fun-form">
+        <form method="GET" action="/search">
+          <input type="hidden" name="context" value="{% if user.id == current_user_obj.id %}in:mine{% else %}from:{{escape(user.name)}}{% end %}">
+          <div class="field">
+            <div class="field-input">
+              <input type="search" class="input-text" name="q" placeholder="{% if user.id == current_user_obj.id %}Search your shake!{% else %}Search posts by this user!{% end %}">
+            </div>
+          </div>
+        </form>
+        <div class="clear"><!-- --></div>
+      </div>
+
       {% if len(other_shakes) > 0 %}
         <div class="other-shakes-wrapper">
           <h3>{{escape(user.display_name())}}'s other shakes</h3>

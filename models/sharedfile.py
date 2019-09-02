@@ -589,7 +589,7 @@ class Sharedfile(ModelQueryCache, Model):
         return [models.Tag.get('id = %s', tf.tag_id) for tf in models.TaggedFile.where("sharedfile_id = %s and deleted = 0", self.id)]
 
     @classmethod
-    def from_subscriptions(self, user_id, per_page=10, before_id=None, after_id=None):
+    def from_subscriptions(self, user_id, per_page=10, before_id=None, after_id=None, q=None):
         """
         Pulls the user's timeline, can key off and go backwards (before_id) and forwards (after_id)
         in time to pull the per_page amount of posts.  Always returns the files in reverse
@@ -606,6 +606,11 @@ class Sharedfile(ModelQueryCache, Model):
             order = "asc"
             constraint_sql = "AND post.sharedfile_id > %s" % (int(after_id))
 
+        select_args = []
+        if q is not None:
+            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
+            select_args.append(q)
+
         select = """SELECT sharedfile_id, shake_id FROM post
                     JOIN sharedfile on sharedfile.id = sharedfile_id and sharedfile.deleted = 0
                     WHERE post.user_id = %s
@@ -614,7 +619,7 @@ class Sharedfile(ModelQueryCache, Model):
                     %s
                     ORDER BY post.sharedfile_id %s limit %s, %s""" % (int(user_id), constraint_sql, order, 0, per_page)
 
-        posts = self.query(select)
+        posts = self.query(select, *select_args)
         results = []
         for post in posts:
             sf = Sharedfile.get('id=%s', post['sharedfile_id'])
@@ -642,7 +647,7 @@ class Sharedfile(ModelQueryCache, Model):
 
 
     @classmethod
-    def favorites_for_user(self, user_id, before_id=None, after_id=None, per_page=10):
+    def favorites_for_user(self, user_id, before_id=None, after_id=None, per_page=10, q=None):
         """
         A user likes (i.e. Favorite).
         """
@@ -655,6 +660,11 @@ class Sharedfile(ModelQueryCache, Model):
             order = "asc"
             constraint_sql = "AND favorite.id > %s" % (int(after_id))
 
+        select_args = []
+        if q is not None:
+            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
+            select_args.append(q)
+
         select = """SELECT sharedfile.*, favorite.id as favorite_id FROM sharedfile
                     left join favorite
                     on favorite.sharedfile_id = sharedfile.id
@@ -664,7 +674,7 @@ class Sharedfile(ModelQueryCache, Model):
                     %s
                     GROUP BY sharedfile.source_id
                     ORDER BY favorite.id %s limit 0, %s""" % (int(user_id), constraint_sql, order, per_page)
-        files = self.object_query(select)
+        files = self.object_query(select, *select_args)
         if order == "asc":
             files.reverse()
         return files
