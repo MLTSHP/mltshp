@@ -16,3 +16,5 @@ INSERT INTO `_yoyo_migration` (`id`, `ctime`) VALUES ('20170507_01_mRphn-add-vid
 INSERT INTO `_yoyo_migration` (`id`, `ctime`) VALUES ('20170509_01_bP9rC-add-disable-autoplay-column-to-user','2017-05-10 00:58:32');
 INSERT INTO `_yoyo_migration` (`id`, `ctime`) VALUES ('20170513_01_JutYy-use-null-video-flags','2017-05-13 17:35:41');
 INSERT INTO `_yoyo_migration` (`id`, `ctime`) VALUES ('20170513_02_hJ1nf-add-stripe-plan-rate-column','2017-05-13 23:37:37');
+INSERT INTO `_yoyo_migration` (`id`, `ctime`) VALUES ('20190901_01_6HEw7-adds-a-fulltext-index-to-the-sharedfile-table','2019-09-02 19:11:03');
+INSERT INTO `_yoyo_migration` (`id`, `ctime`) VALUES ('20190902_01_73ZB1-create-post-index-on-user-seen-deleted-columns','2019-09-03 23:38:27');

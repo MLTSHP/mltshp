@@ -21,7 +21,9 @@ CREATE TABLE `sharedfile` (
   PRIMARY KEY (`id`),
   KEY `files_sharedfile_fbfc09f1` (`user_id`),
   KEY `original_id_deleted_idx` (`original_id`,`deleted`) USING BTREE,
-  KEY `parent_id_deleted_idx` (`parent_id`,`deleted`) USING BTREE
+  KEY `parent_id_deleted_idx` (`parent_id`,`deleted`) USING BTREE,
+  KEY `id_deleted_idx` (`id`, `deleted`) USING BTREE,
+  FULLTEXT KEY `titledesc_fulltext_idx` (`title`,`description`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `sourcefile` (
@@ -61,7 +63,7 @@ CREATE TABLE `user` (
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `restricted` tinyint(1) NOT NULL DEFAULT '0',
   `show_naked_people` tinyint(1) NOT NULL DEFAULT '0',
-  `show_stats` tinyint(1) NOT NULL DEFAULT '0',  
+  `show_stats` tinyint(1) NOT NULL DEFAULT '0',
   `disable_autoplay` tinyint(1) NOT NULL DEFAULT '0',
   `verify_email_token` varchar(40) DEFAULT NULL,
   `reset_password_token` varchar(40) DEFAULT NULL,
@@ -104,7 +106,7 @@ CREATE TABLE `externalservice` (
   `type` tinyint(1) NOT NULL DEFAULT '0',
   `service_key` varchar(128) DEFAULT NULL,
   `service_secret` varchar(128) DEFAULT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT '0',  
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -126,7 +128,7 @@ CREATE TABLE `shake` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT '0',
   `type` enum('user','group') DEFAULT 'user',
-  `image` tinyint(1) DEFAULT '0',  
+  `image` tinyint(1) DEFAULT '0',
   `name` varchar(25) DEFAULT '',
   `title` varchar(128) DEFAULT NULL,
   `description` text,
@@ -186,15 +188,16 @@ CREATE TABLE `comment` (
 
 CREATE TABLE `post` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) DEFAULT '0',
-  `sourcefile_id` int(11) DEFAULT '0',
-  `sharedfile_id` int(11) DEFAULT '0',
-  `seen` tinyint(1) DEFAULT '0',
-  `deleted` tinyint(1) DEFAULT '0',
-  `shake_id` int(11) DEFAULT '0',
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `sourcefile_id` int(11) NOT NULL DEFAULT '0',
+  `sharedfile_id` int(11) NOT NULL DEFAULT '0',
+  `seen` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `shake_id` int(11) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `usersrcdeleted_idx` (`user_id`,`sourcefile_id`, `deleted`) USING BTREE,
+  KEY `userseendeletedid_idx` (`user_id`, `seen`, `deleted`, `id`) USING BTREE,
   KEY `sharedfile_idx` (`sharedfile_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -292,7 +295,7 @@ CREATE TABLE `shake_manager` (
 
 CREATE TABLE `payment_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL DEFAULT '0',  
+  `user_id` int(11) NOT NULL DEFAULT '0',
   `status` varchar(128) DEFAULT NULL,
   `reference_id` varchar(128) DEFAULT NULL,
   `transaction_id` varchar(128) DEFAULT NULL,
@@ -318,7 +321,7 @@ CREATE TABLE `bookmark` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT '0',
   `sharedfile_id` int(11) DEFAULT '0',
-  `previous_sharedfile_id` int(11) DEFAULT '0',  
+  `previous_sharedfile_id` int(11) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   UNIQUE KEY `user_id_created_at_idx` (`user_id`,`created_at`) USING BTREE,
   PRIMARY KEY (`id`)
