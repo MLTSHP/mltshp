@@ -611,8 +611,10 @@ class Sharedfile(ModelQueryCache, Model):
             constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
             select_args.append(q)
 
+        # Adding some FORCE INDEX hinting here, since the optimizer was ignoring
+        # the appropriate index for some reason.
         select = """SELECT sharedfile_id, shake_id FROM post
-                    JOIN sharedfile on sharedfile.id = sharedfile_id and sharedfile.deleted = 0
+                    JOIN sharedfile FORCE INDEX (id_deleted_idx) on sharedfile.id = sharedfile_id and sharedfile.deleted = 0
                     WHERE post.user_id = %s
                     AND post.seen = 0
                     AND post.deleted = 0
