@@ -287,11 +287,11 @@ hello@mltshp.com
         user_shake = self.shake()
         return user_shake.sharedfiles_count()
 
-    def likes(self, before_id=None, after_id=None, per_page=10):
+    def likes(self, before_id=None, after_id=None, per_page=10, q=None):
         """
         User's likes, paginated.
         """
-        return Sharedfile.favorites_for_user(self.id, before_id=before_id, after_id=after_id, per_page=per_page)
+        return Sharedfile.favorites_for_user(self.id, before_id=before_id, after_id=after_id, per_page=per_page, q=q)
 
     def likes_count(self):
         """
@@ -299,11 +299,11 @@ hello@mltshp.com
         """
         return models.favorite.Favorite.where_count("user_id = %s and deleted=0", self.id)
 
-    def sharedfiles_from_subscriptions(self, before_id=None, after_id=None, per_page=10):
+    def sharedfiles_from_subscriptions(self, before_id=None, after_id=None, per_page=10, q=None):
         """
         Shared files from subscriptions, paginated.
         """
-        return Sharedfile.from_subscriptions(user_id=self.id, before_id=before_id, after_id=after_id, per_page=per_page)
+        return Sharedfile.from_subscriptions(user_id=self.id, before_id=before_id, after_id=after_id, per_page=per_page, q=q)
 
     def has_favorite(self, sharedfile):
         """

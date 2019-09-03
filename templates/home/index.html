@@ -44,6 +44,18 @@
     </div>
     {% end %}
 
+    <div class="sidebar-search-block fun-form">
+      <form action="/search">
+        <input type="hidden" name="context" value="in:friends">
+        <div class="field">
+          <div class="field-input">
+            <input type="search" class="input-text" name="q" placeholder="Search your friend shake!">
+          </div>
+        </div>
+      </form>
+      <div class="clear"><!-- --></div>
+    </div>
+
     {% if not site_is_readonly %}
       {% if externalservice %}
     <div class="find-shakes-block">

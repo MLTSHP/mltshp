@@ -32,13 +32,23 @@
     background-color: $color-success-pastel-bg;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    border-top-left-radius: 10px;
     box-shadow: 5px 5px 0 #e5e5e5;
     display: none;
-    left: 0;
+    right: 0;
     padding: 1px 10px 10px 10px;
     position: absolute;
-    right: 0;
     top: calc(100% - .22em);
+    max-width: 400px;
+}
+
+@media screen and (min-width: 768px) {
+    .choose-a-shake--dropdown {
+        left: 0;
+        right: auto;
+        border-top-left-radius: 0;
+        border-top-right-radius: 10px;
+    }
 }
 
 .choose-a-shake.is-expanded .choose-a-shake--dropdown {
@@ -51,10 +61,16 @@
     list-style: none;
 }
 
+.choose-a-shake--dropdown ul li a {
+    overflow: hidden;
+    padding: 10px 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .choose-a-shake--dropdown ul.top-shakes li a {
     display: block;
     background-color: #fff;
-    padding: 10px 0 10px 15px;
     margin: 10px 0;
     font-size: 14px;
     color: $color-mltshp-pink;
@@ -78,14 +94,11 @@
 
 .choose-a-shake--dropdown ul.group-shakes li a {
     text-decoration: none;
-    padding: 10px 15px;
     border-radius: 10px;
     display: block;
     font-size: 14px;
     color: $color-mltshp-pink;
     font-weight: bold;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
 .choose-a-shake--dropdown ul.group-shakes li a:hover {

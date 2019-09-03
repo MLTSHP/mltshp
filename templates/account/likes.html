@@ -17,6 +17,18 @@
     <div class="user-info">
       {{modules.ShakeFollow(follow_user=user, current_user=current_user_obj, avatar_size=100)}}
 
+      <div class="sidebar-search-block fun-form">
+        <form method="GET" action="/search">
+          <input type="hidden" name="context" value="in:likes">
+          <div class="field">
+            <div class="field-input">
+              <input type="search" class="input-text" name="q" placeholder="Search your favorites!">
+            </div>
+          </div>
+        </form>
+        <div class="clear"><!-- --></div>
+      </div>
+
       <div class="following-wrapper">
         <h3>Following <span class="count">({{following_shakes_count}})</span></h3>
         <div class="following">
@@ -53,8 +65,6 @@
           {% end %}
         </div>
       </div>
-
-
 
     </div>
   </div>
