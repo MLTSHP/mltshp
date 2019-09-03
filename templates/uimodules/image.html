@@ -132,7 +132,7 @@
         </div>
         {% if sharedfile.original() or sharedfile.original_id > 0 %}
             <div class="originally-posted-by">
-                {{ original_user = sharedfile.original_user()}}
+                {% set original_user = sharedfile.original_user() %}
                 originally
                 {% if original_user %}
                 <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by
