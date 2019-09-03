@@ -15,6 +15,20 @@ class SearchHandler(BaseHandler):
     def get(self, before_or_after=None, id_=None):
         self.set_header("Cache-Control", "private")
 
+        # This handler supports several modes of search, influenced by
+        # special search terms, or the "context" query parameter, which
+        # is another way to convey the search mode (used by contextual
+        # forms). The following terms are recognized:
+        # * in:<shakename>: <shakename> is a shake identifier, the keyword
+        #       supplied on shake creation and used for the URL path to the
+        #       shake. This can also be one of the following special names:
+        #       mine, likes, friends, popular.
+        # * from:<username>: <username> is the login name of any MLTSHP
+        #       user.
+        # When search words are combined with one or both of these special
+        # terms, the search is constrained to that context. The "likes" and
+        # "friends" context does not support a username filter at this time.
+
         before_id = None
         after_id = None
         if before_or_after == 'before':
@@ -28,7 +42,6 @@ class SearchHandler(BaseHandler):
         if context:
             q = q + " " + context
 
-        # find a 'user:' term if one exists
         user_join_clause = ""
         shake_join_clause = ""
         parent_where_clause = "AND sharedfile.parent_id=0 AND sharedfile.original_id=0"
@@ -97,7 +110,6 @@ class SearchHandler(BaseHandler):
                 if before_id is not None and before_id > 0 and len(sharedfiles) > 0:
                     newer_link = "/search/after/%d?q=%s" % (sharedfiles[0].id, escape.xhtml_escape(q))
                 if (after_id is not None and after_id > 0 and len(sharedfiles) == MAX_PER_PAGE) or (len(sharedfiles) > MAX_PER_PAGE):
-                    # we always want reverse-chronological order
                     older_link = "/search/before/%d?q=%s" % (sharedfiles[MAX_PER_PAGE-1].id, escape.xhtml_escape(q))
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
             elif likes_shake:
@@ -106,7 +118,6 @@ class SearchHandler(BaseHandler):
                 if before_id is not None and before_id > 0 and len(sharedfiles) > 0:
                     newer_link = "/search/after/%d?q=%s" % (sharedfiles[0].favorite_id, escape.xhtml_escape(q))
                 if (after_id is not None and after_id > 0 and len(sharedfiles) == MAX_PER_PAGE) or (len(sharedfiles) > MAX_PER_PAGE):
-                    # we always want reverse-chronological order
                     older_link = "/search/before/%d?q=%s" % (sharedfiles[MAX_PER_PAGE-1].favorite_id, escape.xhtml_escape(q))
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
             else:
