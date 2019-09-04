@@ -235,7 +235,7 @@ routes = [
     (r"/internalupload", handlers.upload.UploadHandler),
 
     (r"/search/?", handlers.search.SearchHandler),
-    (r"/search/(before|after)/([0-9]+)?",
+    (r"/search/(before|after)/([0-9A-Za-z]+)?",
         handlers.search.SearchHandler),
 
     # the shake handler
