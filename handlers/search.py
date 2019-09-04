@@ -4,6 +4,7 @@ import tornado.web
 from tornado import escape
 from tornado.options import options
 from base import BaseHandler, require_membership
+import lib.utilities
 
 from models import sharedfile, user
 
@@ -12,7 +13,7 @@ MAX_PER_PAGE = 10
 
 class SearchHandler(BaseHandler):
     @require_membership
-    def get(self, before_or_after=None, id_=None):
+    def get(self, before_or_after=None, base36_id=None):
         self.set_header("Cache-Control", "private")
 
         # This handler supports several modes of search, influenced by
@@ -31,10 +32,11 @@ class SearchHandler(BaseHandler):
 
         before_id = None
         after_id = None
-        if before_or_after == 'before':
-            before_id = id_
-        elif before_or_after == "after":
-            after_id = id_
+        if base36_id:
+            if before_or_after == 'before':
+                before_id = lib.utilities.base36decode(base36_id)
+            elif before_or_after == "after":
+                after_id = lib.utilities.base36decode(base36_id)
 
         current_user_obj = self.get_current_user_object()
         q = self.get_argument("q", "")
@@ -108,9 +110,9 @@ class SearchHandler(BaseHandler):
                     per_page=MAX_PER_PAGE+1, q=query_str, before_id=before_id,
                     after_id=after_id)
                 if before_id is not None and before_id > 0 and len(sharedfiles) > 0:
-                    newer_link = "/search/after/%d?q=%s" % (sharedfiles[0].id, escape.xhtml_escape(q))
+                    newer_link = "/search/after/%s?q=%s" % (sharedfiles[0].share_key, escape.xhtml_escape(q))
                 if (after_id is not None and after_id > 0 and len(sharedfiles) == MAX_PER_PAGE) or (len(sharedfiles) > MAX_PER_PAGE):
-                    older_link = "/search/before/%d?q=%s" % (sharedfiles[MAX_PER_PAGE-1].id, escape.xhtml_escape(q))
+                    older_link = "/search/before/%s?q=%s" % (sharedfiles[MAX_PER_PAGE-1].share_key, escape.xhtml_escape(q))
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
             elif likes_shake:
                 sharedfiles = current_user_obj.likes(before_id=before_id, after_id=after_id,
