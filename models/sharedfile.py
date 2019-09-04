@@ -611,10 +611,12 @@ class Sharedfile(ModelQueryCache, Model):
             constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
             select_args.append(q)
 
-        # Adding some FORCE INDEX hinting here, since the optimizer was ignoring
-        # the appropriate index for some reason.
+        # We aren't joining on sharedfile using the deleted column since that
+        # causes the query to run more slowly, particulary when looking for
+        # ranges when paginating. We apply a delete filter for the post records,
+        # which should suffice (post records are deleted when an image is deleted).
         select = """SELECT sharedfile_id, shake_id FROM post
-                    JOIN sharedfile FORCE INDEX (id_deleted_idx) on sharedfile.id = sharedfile_id and sharedfile.deleted = 0
+                    JOIN sharedfile on sharedfile.id = sharedfile_id
                     WHERE post.user_id = %s
                     AND post.seen = 0
                     AND post.deleted = 0
