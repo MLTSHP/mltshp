@@ -170,8 +170,7 @@ class UserModelTests(BaseTestCase):
         self.assertEqual(1, len(shared_files))
         self.assertEqual(shared_files[0].source_id, source_file.id)
 
-        shared_files[0].deleted = 1
-        shared_files[0].save()
+        shared_files[0].delete()
 
         # they should no longer see the shared file since it
         # was deleted.
