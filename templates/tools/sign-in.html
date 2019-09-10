@@ -11,7 +11,7 @@
           <label>Username:</label>
           <div class="field-input">
             <input class="input-text" type="text" name="name" value="{{name}}"
-             autocorrect="off" autocapitalize="none">
+             autocorrect="off" autocapitalize="none" autocomplete="username">
             {% if errors.name %}
             <div class="error">
               <span class="error-text">
@@ -24,7 +24,7 @@
         <div class="field">
           <label>Password:</label>
           <div class="field-input">
-            <input class="input-text" type="password" name="password" >
+            <input class="input-text" type="password" name="password" autocomplete="new-password">
           </div>
         </div>
         <div class="field field-submit">

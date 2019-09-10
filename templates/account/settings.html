@@ -61,7 +61,7 @@ $(document).ready(function() {
           <div class="field">
             <label for="email">Email</label>
             <div class="field-input more">
-              <input type="text" name="email" class="input-text" value="{{escape(user.email)}}"{% if site_is_readonly %} disabled="disabled"{% end %}>
+              <input type="text" name="email" class="input-text" value="{{escape(user.email)}}"{% if site_is_readonly %} disabled="disabled"{% end %} autocomplete="email">
               {% if errors.email %}
               <div class="error">
                 <span class="error-text">

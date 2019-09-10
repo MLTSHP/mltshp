@@ -25,10 +25,10 @@
 
       <div class="sidebar-search-block fun-form">
         <form method="GET" action="/search">
-          <input type="hidden" name="context" value="{% if user.id == current_user_obj.id %}in:mine{% else %}from:{{escape(user.name)}}{% end %}">
+          <input type="hidden" name="context" value="{% if user.id == current_user_obj.id %}in:mine{% else %}from:{{escape(user.name)}}{% end %}" autocomplete="off">
           <div class="field">
             <div class="field-input">
-              <input type="search" class="input-text" name="q" placeholder="{% if user.id == current_user_obj.id %}Search your shake!{% else %}Search posts by this user!{% end %}">
+              <input type="search" class="input-text" name="q" placeholder="{% if user.id == current_user_obj.id %}Search your shake!{% else %}Search posts by this user!{% end %}" autocorrect="off">
             </div>
           </div>
         </form>
