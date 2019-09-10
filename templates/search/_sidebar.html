@@ -4,7 +4,7 @@
     <form method="GET" action="/search">
       <div class="field">
         <div class="field-input">
-          <input {% if len(sharedfiles) == 0 %}autofocus {% end %}class="input-text" type="search" placeholder="Search" name="q" value="{{xhtml_escape(q)}}" autocapitalize="none">
+          <input {% if len(sharedfiles) == 0 %}autofocus {% end %}class="input-text" type="search" placeholder="Search" name="q" value="{{xhtml_escape(q)}}" autocorrect="off">
           {% if errors.q %}
           <div class="error">
             <span class="error-text">

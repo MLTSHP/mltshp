@@ -20,7 +20,7 @@
         <div class="field">
           <label for="name">Username:</label>
           <div class="field-input">
-            <input class="input-text" type="text" name="name" value="{{xhtml_escape(name)}}" autocapitalize="none">
+            <input class="input-text" type="text" name="name" value="{{xhtml_escape(name)}}" autocapitalize="none" autocomplete="username">
             {% if errors.name %}
             <div class="error">
               <span class="error-text">
@@ -37,7 +37,7 @@
         <div class="field">
           <label for="password">Password:</label>
           <div class="field-input">
-            <input class="input-text" type="password" name="password" >
+            <input class="input-text" type="password" name="password" autocomplete="new-password">
             {% if errors.password %}
             <div class="error">
               <span class="error-text">
@@ -51,7 +51,7 @@
         <div class="field">
           <label for="password_again">Password, again:</label>
           <div class="field-input">
-            <input class="input-text" type="password" name="password_again" >
+            <input class="input-text" type="password" name="password_again" autocomplete="new-password">
           </div>
           <div class="field-help">
             Enter the same password as above for verification.
@@ -61,7 +61,7 @@
         <div class="field">
           <label>Email:</label>
           <div class="field-input">
-            <input class="input-text" type="email" name="email" value="{{xhtml_escape(email)}}">
+            <input class="input-text" type="email" name="email" value="{{xhtml_escape(email)}}" autocomplete="email">
             {% if errors.email %}
             <div class="error">
               <span class="error-text">
