@@ -11,6 +11,9 @@
       <div class="image-content-list meta hentry">
         {% for sharedfile in sharedfiles %}
           {% if sharedfile.__class__.__name__ == 'Sharedfile' %}
+            {% if sharedfile == sharedfiles[-1] %}
+            <a name="bottom"></a>
+            {% end %}
             {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=True)}}
           {% end %}
         {% end %}

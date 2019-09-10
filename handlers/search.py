@@ -13,7 +13,7 @@ MAX_PER_PAGE = 10
 
 class SearchHandler(BaseHandler):
     @require_membership
-    def get(self, before_or_after=None, base36_id=None):
+    def get(self, base36_id=None):
         self.set_header("Cache-Control", "private")
 
         # This handler supports several modes of search, influenced by
@@ -31,12 +31,8 @@ class SearchHandler(BaseHandler):
         # "friends" context does not support a username filter at this time.
 
         before_id = None
-        after_id = None
         if base36_id:
-            if before_or_after == 'before':
-                before_id = lib.utilities.base36decode(base36_id)
-            elif before_or_after == "after":
-                after_id = lib.utilities.base36decode(base36_id)
+            before_id = lib.utilities.base36decode(base36_id)
 
         current_user_obj = self.get_current_user_object()
         q = self.get_argument("q", "")
@@ -107,21 +103,16 @@ class SearchHandler(BaseHandler):
         if query_str:
             if friend_shake:
                 sharedfiles = current_user_obj.sharedfiles_from_subscriptions(
-                    per_page=MAX_PER_PAGE+1, q=query_str, before_id=before_id,
-                    after_id=after_id)
-                if before_id is not None and before_id > 0 and len(sharedfiles) > 0:
-                    newer_link = "/search/after/%s?q=%s" % (sharedfiles[0].share_key, escape.xhtml_escape(q))
-                if (after_id is not None and after_id > 0 and len(sharedfiles) == MAX_PER_PAGE) or (len(sharedfiles) > MAX_PER_PAGE):
-                    older_link = "/search/before/%s?q=%s" % (sharedfiles[MAX_PER_PAGE-1].share_key, escape.xhtml_escape(q))
+                    per_page=MAX_PER_PAGE+1, q=query_str, before_id=before_id)
+                if len(sharedfiles) > MAX_PER_PAGE:
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
+                    older_link = "/search/before/%s?q=%s" % (sharedfiles[-1].share_key, escape.url_escape(q))
             elif likes_shake:
-                sharedfiles = current_user_obj.likes(before_id=before_id, after_id=after_id,
+                sharedfiles = current_user_obj.likes(before_id=before_id,
                     per_page=MAX_PER_PAGE+1, q=q)
-                if before_id is not None and before_id > 0 and len(sharedfiles) > 0:
-                    newer_link = "/search/after/%d?q=%s" % (sharedfiles[0].favorite_id, escape.xhtml_escape(q))
-                if (after_id is not None and after_id > 0 and len(sharedfiles) == MAX_PER_PAGE) or (len(sharedfiles) > MAX_PER_PAGE):
-                    older_link = "/search/before/%d?q=%s" % (sharedfiles[MAX_PER_PAGE-1].favorite_id, escape.xhtml_escape(q))
+                if len(sharedfiles) > MAX_PER_PAGE:
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
+                    older_link = "/search/before/%d?q=%s" % (sharedfiles[-1].favorite_id, escape.url_escape(q))
             else:
                 offset = int(self.get_argument("offset", "0"))
                 sql = """SELECT sharedfile.*
@@ -138,9 +129,9 @@ class SearchHandler(BaseHandler):
                     sql,
                     query_str, offset, MAX_PER_PAGE + 1)
                 if offset > 0:
-                    newer_link = "/search?q=%s&offset=%d" % (escape.xhtml_escape(q), max(offset - MAX_PER_PAGE, 0))
+                    newer_link = "/search?q=%s&offset=%d" % (escape.url_escape(q), max(offset - MAX_PER_PAGE, 0))
                 if len(sharedfiles) > MAX_PER_PAGE:
-                    older_link = "/search?q=%s&offset=%d" % (escape.xhtml_escape(q), offset + MAX_PER_PAGE)
+                    older_link = "/search?q=%s&offset=%d" % (escape.url_escape(q), offset + MAX_PER_PAGE)
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
 
         return self.render("search/search.html",
