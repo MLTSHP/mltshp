@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
 {% block title %}
-{% if sharedfiles %}
-  {{sharedfiles[0].created_at.strftime("%B")}}
-{% end %}
+  {% if sharedfiles %}{{sharedfiles[0].created_at.strftime("%B")}} &ndash; {% end %}
+  Friend Shake
 {% end %}
 
 {% block main %}
