@@ -136,9 +136,6 @@
       {% end %}
 
       <ul class="permalink-social">
-        <li class="stumbleupon">
-          <a target="_blank" href="https://www.stumbleupon.com/badge?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key))}}" onclick="window.open('https://www.stumbleupon.com/badge?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/stumbleupon.png") }}" width="21" height="21" alt="StumbleUpon"></a>
-        </li>
         <li class="twitter">
           <a target="_blank" href="https://twitter.com/share?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key))}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}" onclick="window.open('https://twitter.com/share?url={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;text={{url_escape(sharedfile.get_title())}}&amp;via={{owner_twitter_account}}','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tweet-this.png") }}" width="21" height="21" alt="Tweet this"></a>
         </li>
