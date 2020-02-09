@@ -27,13 +27,48 @@
       <li>Use the key to make requests on behalf of your user and sign each request with the secret. </li>
       <li>If the request is properly signed you can request resources and make updates to those resources on behalf of the user.</li>
     </ul>
+    <h3>Signing API Requests</h3>
     <p>
-      Here are two example scripts. Both require you to input your access key and secret you get
+        To sign a request to the API, you'll need to add an <code>Authorization</code> header to your request.
+        The value of that header is the authorization string. Start by constructing the signature string:
+    </p>
+    <pre><code>${TIMESTAMP}
+${NONCE}
+${METHOD}
+mltshp.com
+${PORT}
+${PATH}
+${QUERY}</code></pre>
+    <ul>
+        <li><strong>timestamp</strong> is a UTC timestamp in seconds.</li>
+        <li><strong>nonce</strong> is a random string between 10 and 35 characters long.</li>
+        <li><strong>method</strong> either <code>GET</code> or <code>POST</code>.</li>
+        <li><strong>host</strong> is <code>mltshp.com</code>.</li>
+        <li><strong>port</strong> should be <code>443</code> for SSL, but there's a bug in the API right now, and you'll have to use <code>80</code>.</li>
+        <li><strong>path</strong> is the API endpoint you're fetching, such as <code>/api/sharedfile/GA4</code>.</li>
+        <li><strong>query</strong> any parameters for a <code>POST</code> request. Leave blank for <code>GET</code> requests.</li>
+    </ul>
+    <p>
+        Once you've constructed that signature string, you'll need to encode it into an HMAC-SHA1 hash using the <code>secret</code> value from the <code>token</code> object. Then Base64 encode the hash.
+    </p>
+    <p>Now you can construct the authorization string:</p>
+    <pre><code>MAC token=${TOKEN}, timestamp=${TIMESTAMP}, nonce=${NONCE}, signature=${SIGNATURE}</code></pre>
+    <ul>
+        <li><strong>token</strong> is the <code>access_token</code> value of the <code>token</code> object.</li>
+        <li><strong>timestamp</strong> needs to match the <code>timestamp</code> in the signature.</li>
+        <li><strong>nonce</strong> needs to match the <code>nonce</code> in the signature.</li>
+        <li><strong>signature</strong> is the encoded signature string you just built.</li>
+    </ul>
+    <p>Set this authorization string as the value of the <code>Authorization</code> header in your API request.</p>
+    <h2>Example Scripts</h2>
+    <p>
+      Here are some example scripts. They require you to input your access key and secret you get
       from <a href="/developers/apps">creating an application here</a>.
     </p>
     <ul>
       <li><a href="/static/developers/example.py.txt">Python Script</a></li>
       <li><a href="/static/developers/example.php.txt">PHP Script</a></li>
+      <li><a href="https://github.com/spaceninja/mltshp-api-test-js">JavaScript</a></li>
     </ul>
     <a name='desktop'></a>
     <h2>Desktop or Mobile Device App</h2>
