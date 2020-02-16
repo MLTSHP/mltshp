@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get -y update && \
     apt-get install -y software-properties-common python-software-properties && \
-    add-apt-repository -y ppa:jonathonf/ffmpeg-3 && \
+    add-apt-repository -y ppa:jonathonf/ffmpeg-4 && \
     apt-get install -y \
     supervisor \
     cron \
