@@ -165,6 +165,27 @@ The resources (URL endpoints) in the MLTSHP API are:
    :status 401: authentication failed
 
 
+.. http:get:: /api/shake_id/(int:shakeid)
+
+   Returns information for the shake with the given numeric shake ID.
+
+   :param shakeid: the shake's numeric ID
+   :type userid: int
+   :status 200: the response is the requested :entity:`shake`
+   :status 404: no such shake with that ID
+
+
+.. http:get:: /api/shake_name/(shakepathname)
+
+   Returns information for the shake with the given pathname.
+
+   Note that name in this case refers to the URL path to the shake. e.g., for https://mltshp.com/weloveamberandandre the pathname is `weloveamberandandre`.
+
+   :param shakepathname: the shake's pathname
+   :status 200: the response is the requested :entity:`shake`
+   :status 404: no such shake with that pathname
+
+
 .. http:get:: /api/shakes
 
    Returns the authorized user's shakes.
