@@ -1,8 +1,8 @@
 # Development settings; suitable for running against our Docker
 # image.
 settings = {
-    "app_host": "mltshp.local",
-    "cdn_host": "s.mltshp.local",
+    "app_host": "mltshp.localhost",
+    "cdn_host": "s.mltshp.localhost",
     "api_hits_per_hour" : 150,
     "auth_secret" : "dummy-secret",
     "aws_bucket": "mltshp-dev",
