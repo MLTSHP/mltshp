@@ -41,14 +41,14 @@ app itself using:
 
 This will do a lot of things. But ultimately, you should end up with a
 copy of MLTSHP running locally. It expects to be accessed via a hostname
-of `mltshp.local` and `s.mltshp.local`. Add these entries to your `/etc/hosts`
+of `mltshp.localhost` and `s.mltshp.localhost`. Add these entries to your `/etc/hosts`
 file:
 
-    127.0.0.1   mltshp.local s.mltshp.local
+    127.0.0.1   mltshp.localhost s.mltshp.localhost
 
 The web app itself runs on port 8000. You should be able to reach it via:
 
-[http://mltshp.local:8000/](http://mltshp.local:8000/)
+[http://mltshp.localhost:8000/](http://mltshp.localhost:8000/)
 
 Subsequent invocations of `make run` should be faster, once you have
 the dependency images downloaded.
