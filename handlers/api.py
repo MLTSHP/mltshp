@@ -451,7 +451,7 @@ class ShakeHandler(BaseHandler):
             self.set_status(404)
             return self.write({'error' : "No such shake."})
 
-        return self.write(s.as_json(extended=True))
+        return self.write(shake.as_json(extended=True))
 
 
 class FileUploadHandler(BaseHandler):
