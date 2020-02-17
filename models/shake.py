@@ -69,8 +69,8 @@ class Shake(ModelQueryCache, Model):
             'thumbnail_url': self.thumbnail_url(),
             'description': self.description,
             'type': self.type,
-            'created_at': self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
-            'updated_at': self.updated_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z'
+            'created_at': self.created_at and self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z' or None,
+            'updated_at': self.updated_at and self.updated_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z' or None
         }
 
         if extended:

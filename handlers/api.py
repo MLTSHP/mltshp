@@ -434,6 +434,26 @@ class UserShakesHandler(BaseHandler):
         return self.write(obj)
 
 
+class ShakeHandler(BaseHandler):
+
+    def check_xsrf_cookie(self):
+        return
+
+    @oauth2authenticated
+    def get(self, type, resource=''):
+        shake = None
+        if type == 'shake_path':
+            shake = Shake.get('path=%s and deleted=0', resource)
+        elif type == 'shake_id':
+            shake = Shake.get('id=%s and deleted=0', resource)
+
+        if not shake:
+            self.set_status(404)
+            return self.write({'error' : "No such shake."})
+
+        return self.write(shake.as_json(extended=True))
+
+
 class FileUploadHandler(BaseHandler):
 
     def check_xsrf_cookie(self):
