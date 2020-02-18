@@ -443,7 +443,7 @@ class ShakeHandler(BaseHandler):
     def get(self, type, resource=''):
         shake = None
         if type == 'shake_name':
-            shake = Shake.get('path=%s and deleted=0', resource)
+            shake = Shake.get('name=%s and deleted=0', resource)
         elif type == 'shake_id':
             shake = Shake.get('id=%s and deleted=0', resource)
 
