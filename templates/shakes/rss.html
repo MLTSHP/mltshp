@@ -1,16 +1,20 @@
 <rss version="2.0">
 <channel>
 <title>{{xhtml_escape(shake.display_name())}}</title>
-<link>https://{{ app_host }}/{{shake.name}}</link>
+<link>https://{{ app_host }}{{shake.path()}}</link>
+{% if shake.description %}
 <description>
 {{xhtml_escape(shake.description)}}
 </description>
+{% end %}
 <language>en-us</language>
+{% if build_date %}
 <lastBuildDate>{{build_date}}</lastBuildDate>
+{% end %}
 <image>
 <url>https:{{shake.page_image()}}</url>
 <title>{{xhtml_escape(shake.display_name())}}</title>
-<link>https://{{ app_host }}/{{shake.name}}</link>
+<link>https://{{ app_host }}{{shake.path()}}</link>
 </image>
 
 {% for sf in sharedfiles %}
