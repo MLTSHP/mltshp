@@ -195,9 +195,15 @@
 }
 
 .new-post-panel h2 {
-    font-size: 60px;
+    font-size: 30px;
     font-weight: bold;
     margin: 0 0 20px 0;
+}
+
+@media screen and (min-width: 768px) {
+    .new-post-panel h2 {
+        font-size: 60px;
+    }
 }
 
 .new-post-panel p {
