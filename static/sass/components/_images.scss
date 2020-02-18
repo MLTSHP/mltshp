@@ -94,21 +94,21 @@
 }
 
 .image-content-footer .stats li.saves a {
-    background: url('/static/images/save-tiny.svg') 5px 8px no-repeat;
+    background: url("/static/images/save-tiny.svg") 5px 8px no-repeat;
     background-size: 16px 11px;
     padding-left: 24px;
     color: #ff8400;
 }
 
 .image-content-footer .stats li.likes a {
-    background: url('/static/images/like-tiny.svg') 5px 8px no-repeat;
+    background: url("/static/images/like-tiny.svg") 5px 8px no-repeat;
     background-size: 12px 9px;
     padding-left: 20px;
     color: #ff0000;
 }
 
 .image-content-footer .stats li.comments a {
-    background: url('/static/images/comment-tiny.svg') 5px 8px no-repeat;
+    background: url("/static/images/comment-tiny.svg") 5px 8px no-repeat;
     background-size: 12px 9px;
     padding-left: 20px;
     color: $color-mltshp-blue;
@@ -177,6 +177,7 @@
 
 .image-title h1,
 .image-title h3 {
+    word-break: break-word;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -386,7 +387,7 @@ textarea {
 }
 
 .image-content .inline-details .comment .meta > * + * {
-    margin-left: .8em;
+    margin-left: 0.8em;
 }
 
 .image-content .inline-details .comment .delete-form {
@@ -398,7 +399,7 @@ textarea {
 }
 
 .image-content .inline-details .comment .meta .pro-badge {
-    margin-left: .25em;
+    margin-left: 0.25em;
 }
 
 .image-content .inline-details .comment .created-at {
@@ -408,7 +409,7 @@ textarea {
 
 .image-content .inline-details .comment .reply-to {
     padding-left: 15px;
-    background: url('/static/images/icon-reply-arrow.svg') 0 0 no-repeat;
+    background: url("/static/images/icon-reply-arrow.svg") 0 0 no-repeat;
     background-size: 12px 11px;
     display: none;
     color: $link-color;
@@ -421,7 +422,7 @@ textarea {
 }
 
 .image-content .inline-details .comment .delete {
-    background: url('/static/images/icon-delete-comment.svg') 0 0 no-repeat;
+    background: url("/static/images/icon-delete-comment.svg") 0 0 no-repeat;
     background-size: 13px 13px;
     padding-left: 20px;
     display: none;
@@ -454,7 +455,7 @@ textarea {
 .image-content .inline-details .post-comment-inline textarea {
     color: #999;
     border-radius: 5px;
-    padding: .5em;
+    padding: 0.5em;
     height: 2.15em;
     border: 1px solid #d6d6d6;
 }
