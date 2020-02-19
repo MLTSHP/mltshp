@@ -22,7 +22,7 @@ routes = [
         handlers.api.ShakeHandler),
     (r"/api/(shake_name)/([a-zA-Z0-9\-]+)",
         handlers.api.ShakeHandler),
-    (r"/api/(shake_user)/([a-zA-Z0-9\-]+)",
+    (r"/api/(shake_user)/([a-zA-Z0-9_\-]+)",
         handlers.api.ShakeHandler),
     (r"/api/shakes/([0-9]+)", handlers.api.ShakeStreamHandler),
     (r"/api/shakes/([0-9]+)/(before|after)/([\a-zA-Z0-9]+)",
