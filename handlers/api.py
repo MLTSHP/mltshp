@@ -446,6 +446,10 @@ class ShakeHandler(BaseHandler):
             shake = Shake.get('name=%s and deleted=0', resource)
         elif type == 'shake_id':
             shake = Shake.get('id=%s and deleted=0', resource)
+        elif type == 'shake_user':
+            user = User.get('name=%s and deleted=0', resource)
+            if user is not None:
+                shake = user.shake()
 
         if not shake:
             self.set_status(404)

@@ -186,6 +186,15 @@ The resources (URL endpoints) in the MLTSHP API are:
    :status 404: no such shake with that pathname
 
 
+.. http:get:: /api/shake_user/(username)
+
+   Returns information for the shake belonging to the specified user.
+
+   :param username: the user's username
+   :status 200: the response is the requested :entity:`shake`
+   :status 404: no such user with that name
+
+
 .. http:get:: /api/shakes
 
    Returns the authorized user's shakes.
@@ -296,4 +305,4 @@ The resources (URL endpoints) in the MLTSHP API are:
 
    :param username: the user's username
    :status 200: the response is the requested :entity:`user`
-   :status 404: no such user with that ID
+   :status 404: no such user with that name
