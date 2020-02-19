@@ -391,6 +391,29 @@
 </dd></dl>
 
 <dl class="get">
+<dt id="get--api-shake_user-(username)">
+<code class="descname">GET </code><code class="descname">/api/shake_user/</code><span class="sig-paren">(</span><em>username</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-shake_user-(username)" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns information for the shake belonging to the specified user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>username</strong> – the user’s username</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – the response is the requested <a class="reference internal" href="#entity-shake"><em class="xref std std-entity">shake</em></a></li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – no such user with that name</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="get">
 <dt id="get--api-shakes">
 <code class="descname">GET </code><code class="descname">/api/shakes</code><a class="headerlink" href="#get--api-shakes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the authorized user’s shakes.</p>
@@ -656,7 +679,7 @@ unless the shake_id parameter is provided.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first last simple">
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – the response is the requested <a class="reference internal" href="#entity-user"><em class="xref std std-entity">user</em></a></li>
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – no such user with that ID</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5">404 Not Found</a> – no such user with that name</li>
 </ul>
 </td>
 </tr>
