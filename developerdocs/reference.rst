@@ -42,7 +42,7 @@ Responses from the MLTSHP API are :mimetype:`application/json` responses that re
    :key comments: the number of :entity:`comments <comment>` on the file
    :key nsfw: whether the file has been marked NSFW, and so is hidden by default when displayed on MLTSHP (`true` for NSFW/hidden, `false` for SFW/visible)
    :key original_image_url: if the file is an image, the URL of the image on MLTSHP
-   :key source_url: if the file is *not* an image, the original URL of the shared item
+   :key url: if the file is *not* an image, the original URL of the shared item
    :key pivot_id: a key that is used for pagination. It varies based on the API method.
    :key saved: flag indicating whether authenticated user has already saved the sharedfile
    :key liked: flag indicating whether authenticated user has already liked the sharedfile
@@ -115,8 +115,8 @@ The resources (URL endpoints) in the MLTSHP API are:
 
 
 .. http:get:: /api/magicfiles
-.. http:get:: /api/magicfiles/(id)/before/(beforekey)
-.. http:get:: /api/magicfiles/(id)/after/(afterkey)
+.. http:get:: /api/magicfiles/before/(beforekey)
+.. http:get:: /api/magicfiles/after/(afterkey)
 
    Returns the 10 most recent files accepted by the "magic" file selection algorithm. Currently any files with 10 or more likes are magic.
 
@@ -131,8 +131,8 @@ The resources (URL endpoints) in the MLTSHP API are:
 
 
 .. http:get:: /api/incoming
-.. http:get:: /api/incoming/(id)/before/(beforekey)
-.. http:get:: /api/incoming/(id)/after/(afterkey)
+.. http:get:: /api/incoming/before/(beforekey)
+.. http:get:: /api/incoming/after/(afterkey)
 
    Returns the 10 most recently posted sharedfiles.
 
@@ -140,7 +140,6 @@ The resources (URL endpoints) in the MLTSHP API are:
 
    :param beforekey: the :entity:`pivot_id` of the file to show posts before
    :param afterkey: the :entity:`pivot_id` of the file to show posts after
-   :param filter_nsfw: determines whether NSFW users get filtered from result. Set to True by default.
 
    :status 200: the response is the latest files as an object containing:
 
@@ -243,7 +242,7 @@ The resources (URL endpoints) in the MLTSHP API are:
    unless the shake_id parameter is provided.
 
    :param sharekey: the :entity:`sharekey` of the file to save
-   :param shake_id: the id of the destination :entity:`shake` the file should be saved to (optional)
+   :form shake_id: the id of the destination :entity:`shake` the file should be saved to (optional)
    :status 200: the file was saved, and the response is the saved :entity:`sharedfile`
    :status 400: the file could not be saved, probably because the file belongs to the authenticated user
    :status 403: the file could not be saved due to permission issues
@@ -278,7 +277,7 @@ The resources (URL endpoints) in the MLTSHP API are:
    :form shake_id: numeric ID of the shake to post to (optional)
    :form title: text for the image title (optional)
    :form description: text for the image description (optional)
-   :status 201: the image was posted to the shake, and the response body is a :entity:`sharedfile` representing it
+   :status 201: the image was posted to the shake, and the response body is an abbreviated :entity:`sharedfile` representing it, containing only :entity:`sharekey` and name
    :status 400: the file could not be identified as an image
 
 
