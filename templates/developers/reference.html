@@ -83,7 +83,7 @@
 <li><strong>comments</strong> – the number of <a class="reference internal" href="#entity-comment"><em class="xref std std-entity">comments</em></a> on the file</li>
 <li><strong>nsfw</strong> – whether the file has been marked NSFW, and so is hidden by default when displayed on MLTSHP (<cite>true</cite> for NSFW/hidden, <cite>false</cite> for SFW/visible)</li>
 <li><strong>original_image_url</strong> – if the file is an image, the URL of the image on MLTSHP</li>
-<li><strong>source_url</strong> – if the file is <em>not</em> an image, the original URL of the shared item</li>
+<li><strong>url</strong> – if the file is <em>not</em> an image, the original URL of the shared item</li>
 <li><strong>pivot_id</strong> – a key that is used for pagination. It varies based on the API method.</li>
 <li><strong>saved</strong> – flag indicating whether authenticated user has already saved the sharedfile</li>
 <li><strong>liked</strong> – flag indicating whether authenticated user has already liked the sharedfile</li>
@@ -233,13 +233,13 @@
 <dd></dd></dl>
 
 <dl class="get">
-<dt id="get--api-magicfiles-(id)-before-(beforekey)">
-<code class="descname">GET </code><code class="descname">/api/magicfiles/</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><code class="descname">/before/</code><span class="sig-paren">(</span><em>beforekey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-magicfiles-(id)-before-(beforekey)" title="Permalink to this definition">¶</a></dt>
+<dt id="get--api-magicfiles-before-(beforekey)">
+<code class="descname">GET </code><code class="descname">/api/magicfiles/before/</code><span class="sig-paren">(</span><em>beforekey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-magicfiles-before-(beforekey)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="get">
-<dt id="get--api-magicfiles-(id)-after-(afterkey)">
-<code class="descname">GET </code><code class="descname">/api/magicfiles/</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><code class="descname">/after/</code><span class="sig-paren">(</span><em>afterkey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-magicfiles-(id)-after-(afterkey)" title="Permalink to this definition">¶</a></dt>
+<dt id="get--api-magicfiles-after-(afterkey)">
+<code class="descname">GET </code><code class="descname">/api/magicfiles/after/</code><span class="sig-paren">(</span><em>afterkey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-magicfiles-after-(afterkey)" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the 10 most recent files accepted by the “magic” file selection algorithm. Currently any files with 10 or more likes are magic.</p>
 <p>Use the <code class="samp docutils literal notranslate"><span class="pre">before/</span><em><span class="pre">beforekey</span></em></code> and <code class="samp docutils literal notranslate"><span class="pre">after/</span><em><span class="pre">afterkey</span></em></code> variations to page through the sharedfiles. That is, specify the last <em class="xref std std-entity">pivot_id</em> as the key to the <code class="samp docutils literal notranslate"><span class="pre">before/</span><em><span class="pre">beforekey</span></em></code> resource to get the page of files saved before the current page.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -271,13 +271,13 @@
 <dd></dd></dl>
 
 <dl class="get">
-<dt id="get--api-incoming-(id)-before-(beforekey)">
-<code class="descname">GET </code><code class="descname">/api/incoming/</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><code class="descname">/before/</code><span class="sig-paren">(</span><em>beforekey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-incoming-(id)-before-(beforekey)" title="Permalink to this definition">¶</a></dt>
+<dt id="get--api-incoming-before-(beforekey)">
+<code class="descname">GET </code><code class="descname">/api/incoming/before/</code><span class="sig-paren">(</span><em>beforekey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-incoming-before-(beforekey)" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="get">
-<dt id="get--api-incoming-(id)-after-(afterkey)">
-<code class="descname">GET </code><code class="descname">/api/incoming/</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><code class="descname">/after/</code><span class="sig-paren">(</span><em>afterkey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-incoming-(id)-after-(afterkey)" title="Permalink to this definition">¶</a></dt>
+<dt id="get--api-incoming-after-(afterkey)">
+<code class="descname">GET </code><code class="descname">/api/incoming/after/</code><span class="sig-paren">(</span><em>afterkey</em><span class="sig-paren">)</span><a class="headerlink" href="#get--api-incoming-after-(afterkey)" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the 10 most recently posted sharedfiles.</p>
 <p>Use the <code class="samp docutils literal notranslate"><span class="pre">before/</span><em><span class="pre">beforekey</span></em></code> and <code class="samp docutils literal notranslate"><span class="pre">after/</span><em><span class="pre">afterkey</span></em></code> variations to page through the sharedfiles. That is, specify the last <em class="xref std std-entity">pivot_id</em> as the key to the <code class="samp docutils literal notranslate"><span class="pre">before/</span><em><span class="pre">beforekey</span></em></code> resource to get the page of files saved before the current page.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -287,7 +287,6 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>beforekey</strong> – the <em class="xref std std-entity">pivot_id</em> of the file to show posts before</li>
 <li><strong>afterkey</strong> – the <em class="xref std std-entity">pivot_id</em> of the file to show posts after</li>
-<li><strong>filter_nsfw</strong> – determines whether NSFW users get filtered from result. Set to True by default.</li>
 </ul>
 </td>
 </tr>
@@ -524,11 +523,16 @@ unless the shake_id parameter is provided.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>sharekey</strong> – the <a class="reference internal" href="#entity-sharekey"><em class="xref std std-entity">sharekey</em></a> of the file to save</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Form Parameters:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
 <li><strong>shake_id</strong> – the id of the destination <a class="reference internal" href="#entity-shake"><em class="xref std std-entity">shake</em></a> the file should be saved to (optional)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first last simple">
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.1">200 OK</a> – the file was saved, and the response is the saved <a class="reference internal" href="#entity-sharedfile"><em class="xref std std-entity">sharedfile</em></a></li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a> – the file could not be saved, probably because the file belongs to the authenticated user</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4">403 Forbidden</a> – the file could not be saved due to permission issues</li>
@@ -615,7 +619,7 @@ unless the shake_id parameter is provided.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Status Codes:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.2">201 Created</a> – the image was posted to the shake, and the response body is a <a class="reference internal" href="#entity-sharedfile"><em class="xref std std-entity">sharedfile</em></a> representing it</li>
+<li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.2">201 Created</a> – the image was posted to the shake, and the response body is an abbreviated <a class="reference internal" href="#entity-sharedfile"><em class="xref std std-entity">sharedfile</em></a> representing it, containing only <a class="reference internal" href="#entity-sharekey"><em class="xref std std-entity">sharekey</em></a> and name</li>
 <li><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1">400 Bad Request</a> – the file could not be identified as an image</li>
 </ul>
 </td>
