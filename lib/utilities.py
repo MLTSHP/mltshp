@@ -312,3 +312,13 @@ def uses_a_banned_phrase(s):
     as a stop-gap mechanism to prevent spammers from self-promotion.
     """
     return False
+
+def clean_search_term(s):
+    """
+    Routine to centralize search term character input cleaning rules.
+    Replacing unicode left/right double quotation with standard quote
+    """
+    if s is None:
+        return None
+
+    return s.replace(u"\u201C", '"').replace(u"\u201D", '"')
