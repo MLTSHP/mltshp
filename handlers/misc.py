@@ -86,66 +86,77 @@ class PromoHandler(BaseHandler):
     def get(self):
         ads = [
             {
-               'img': '/static/promos/merch/1.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/1.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/2.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/2.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/3.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/3.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/4.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/4.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/5.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/5.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/6.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/6.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/7.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/7.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/8.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/8.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/9.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/9.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/10.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/10.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/11.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/11.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
             {
-               'img': '/static/promos/merch/12.jpg',
-               'link': 'https://teespring.com/stores/mltshp-store',
-               'text': '',
+                'img': '/static/promos/merch/12.jpg',
+                'link': 'https://teespring.com/stores/mltshp-store',
+                'text': '',
             },
         ]
+
+        current_user_obj = self.get_current_user_object()
+        if current_user_obj is not None:
+            # user is signed in; check if they are a member already
+            if current_user_obj.is_paid:
+                ads.append({
+                    'img': '/static/promos/pause-sub/1.gif',
+                    'link': 'https://mailchi.mp/545317251df6/hi-from-mltshp-community-updates-inside',
+                    'text': '',
+                })
+
         banner = random.choice(ads)
-        return self.render("misc/promo.html", banner = banner)
+        return self.render("misc/promo.html", banner=banner)
 
