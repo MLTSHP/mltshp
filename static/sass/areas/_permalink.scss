@@ -495,35 +495,12 @@
     margin-left: 8px;
 }
 
-/* adding tumblr */
-.permalink-sidebar .permalink-social .tumblr {
-    a {
-        background-color: #001935;
-        display: inline-block;
-        height: 20px;
-        border-radius: 3px;
-        text-decoration: none;
-        color: #fff;
-        font-family: Helvetica Neue,HelveticaNeue,Helvetica,Arial,sans-serif;
-        cursor: pointer;
-        box-sizing: border-box;
-    }
-
-    a .inner {
-        /* original url https://assets.tumblr.com/images/flat-t-button-white.svg*/
-        background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMzciIHZpZXdCb3g9IjAgMCAyMSAzNyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjEgMzYuNzVoLTYuMmMtNS41NzcgMC05LjczMy0yLjg0NC05LjczMy05LjY0NlYxNi4yMUgwdi01LjlDNS41NzYgOC44NzYgNy45MDkgNC4xMiA4LjE3NyAwaDUuNzl2OS4zNTRoNi43NTd2Ni44NTZoLTYuNzU2djkuNDg2YzAgMi44NDMgMS40NDggMy44MjYgMy43NTMgMy44MjZoMy4yNzFMMjEgMzYuNzV6IiBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=") no-repeat 6px 50%;
-        background-size: 9px 12px;
-        float: left;
-        padding: 0 6px 0 21px;
-        height: 20px;
-    }
-
-    a .text {
-        line-height: 20px;
-        font-weight: 700;
-        font-size: 12px;
-        float: right;
-    }
+.permalink-sidebar .permalink-social .tumblr a img {
+    box-sizing: content-box;
+    width: 9px;
+    height: 12px;
+    padding: 5px 6px 4px 6px;
+    background-color: #001935;
 }
 
 .permalink-sidebar .flag-image {
