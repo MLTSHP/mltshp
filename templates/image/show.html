@@ -142,6 +142,9 @@
         <li class="facebook">
           <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key))}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{url_escape('https://mltshp.com/p/' + str(sharedfile.share_key) )}}&amp;quote={{url_escape(sharedfile.get_title())}}&amp;display=popup','sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/fb_icon.png") }}" width="21" height="21" alt="Post to Facebook"></a>
         </li>
+        <li class="tumblr">
+          <a target="_blank" href="https://tumblr.com/widgets/share/tool?canonicalUrl={{ url_escape('https://mltshp.com/p/' + str(sharedfile.share_key)) }}&amp;{% if sourcefile.type == 'image' %}content={{ url_escape('https://mltshp-cdn.com/r/' + str(sharedfile.share_key)) }}{% if sourcefile.mp4_flag %}.mp4{% end %}{% if sourcefile.webm_flag %}.webm{% end %}{% if sourcefile.mp4_flag or sourcefile.webm_flag %}&amp;posttype=video{% else %}&amp;posttype=photo{% end %}&amp;caption=**{{ url_escape(sharedfile.get_title()) }}**%0A%0A{{ url_escape(sharedfile.get_description()) }}{% else %}&amp;content={{ url_escape(sharedfile.get_description()) }}&amp;posttype=link&amp;title={{ url_escape(sharedfile.get_title()) }}{% end %}&amp;tags=mltshp{% if sourcefile.nsfw %}%2Cnsfw{% end %}" onclick="window.open(this.href,'sharer','toolbar=0,status=0,width=626,height=436');return false;"><img src="{{ static_url("images/tumblr-flat-t-button-white.svg") }}" width="21" height="21" alt="Post to Tumblr" /></a>
+        </li>
       </ul>
 
       {% if current_user_obj and not site_is_readonly %}
