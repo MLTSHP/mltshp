@@ -49,6 +49,7 @@ class SearchHandler(BaseHandler):
         terms = q.split(" ")
         new_terms = []
         for term in terms:
+            term = lib.utilities.clean_search_term(term)
             if term.lower().startswith("from:"):
                 parent_where_clause = ""
                 user_name = term.split(":", 1)[1]
