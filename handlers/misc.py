@@ -152,7 +152,7 @@ class PromoHandler(BaseHandler):
             # user is signed in; check if they are a member already
             if current_user_obj.is_paid:
                 ads.append({
-                    'img': '/static/promos/pause-sub/1.gif',
+                    'img': '/static/promos/pause-sub/1.png',
                     'link': 'https://mailchi.mp/545317251df6/hi-from-mltshp-community-updates-inside',
                     'text': '',
                 })
