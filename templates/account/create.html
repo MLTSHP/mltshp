@@ -1,11 +1,27 @@
 {% extends "base.html" %}
 
+{% block included_headers %}
+{% if recaptcha_site_key %}
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+  function captchaSubmit(token) {
+    $('#account-form [name=recaptcha_token]').val(token);
+    $('#account-form').submit();
+  }
+</script>
+{% end %}
+{% end %}
+
 {% block title %}Create Account{% end %}
 
 {% block main %}
 
   <div class="content content-narrow">
     <h1>Create Account</h1>
+
+    {% if errors.recaptcha %}
+      <p class="fun-form-errors"><strong>Couldn't create the account:</strong> {{ errors.recaptcha }}</p>
+    {% end %}
 
     <div class="extra-info">
       <p><strong>NOTE:</strong> If you are a returning MLKSHK user, just use your MLKSHK
@@ -15,8 +31,11 @@
 
     {% if not site_is_readonly %}
     <div class="fun-form">
-      <form method="POST" action="/create-account/">
+      <form id="account-form" method="POST" action="/create-account/">
         {{ xsrf_form_html() }}
+        {% if recaptcha_site_key %}
+        <input type="hidden" name="recaptcha_token" value="">
+        {% end %}
         <div class="field">
           <label for="name">Username:</label>
           <div class="field-input">
@@ -103,29 +122,15 @@
           </div>
         </div>
 
-        {% if recaptcha %}
-        <div class="field">
-          <label>Prove you’re not just a MLTSHP-lovin’ robot:</label>
-          <div class="field-input" style="margin-left: 0">
-          {{recaptcha}}
-          </div>
-          {% if errors.recaptcha %}
-          <div class="error">
-            <span class="error-text">
-              {{errors.recaptcha}}
-            </span>
-          </div>
-          {% end %}
-        </div>
-        {% end %}
-
         <div class="field">
           <div class="field-help">
             By creating an account you agree to MLTSHP’s <a href="/terms-of-use" target="_blank">terms of use</a>.
           </div>
         </div>
         <div class="field field-submit">
-          <input class="btn btn-primary btn-shadow btn-large" type="submit" value="Create It!">
+          <input class="btn btn-primary btn-shadow btn-large{% if recaptcha_site_key %} g-recaptcha{% end %}" type="submit" value="Create It!" {% if recaptcha_site_key %}
+          data-sitekey="{{ recaptcha_site_key }}" data-callback="captchaSubmit" data-action="submit"
+          {% end %}>
         </div>
       </form>
       <div class="clear"><!-- --></div>
