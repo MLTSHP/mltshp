@@ -52,8 +52,8 @@ define('twitter_consumer_secret', metavar='SECRET', help="Twitter API consumer s
 define('twitter_access_key', metavar='KEY', help="Twitter API Access Key")
 define('twitter_access_secret', metavar='SECRET', help="Twitter API Access Secret")
 define('postmark_api_key', metavar='KEY', help="Postmark (postmarkapp.com) API key")
-define('recaptcha_public_key', metavar="KEY", help="Public key from recaptcha.net")
-define('recaptcha_private_key', metavar="SECRET", help="Private key from recaptcha.net")
+define('recaptcha_site_key', metavar="KEY", help="Site key for reCAPTCHA v3")
+define('recaptcha_secret_key', metavar="SECRET", help="Secret key for reCAPTCHA v3")
 define('slack_webhook_url', metavar="SECRET", help="URL for posting notifications to Slack")
 
 # Stripe

@@ -2,6 +2,7 @@ import datetime
 import re
 import json
 from urllib import urlencode
+import logging
 
 import tornado.httpclient
 import tornado.web
@@ -9,7 +10,7 @@ from tornado.escape import json_encode, xhtml_escape
 from tornado.options import define, options
 import torndb
 import postmark
-from recaptcha.client import captcha
+import requests
 
 from base import BaseHandler, require_membership
 from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
@@ -652,18 +653,10 @@ class CreateAccountHandler(BaseHandler):
             self.request.headers.get("X-Forwarded-Proto",
                 self.request.protocol) == "https"
 
-        #recaptcha hot fix
-        if options.recaptcha_public_key:
-            captcha_string = captcha.displayhtml(
-                options.recaptcha_public_key,
-                use_ssl=using_https
-            )
-        else:
-            captcha_string = ""
         return self.render("account/create.html", name="", email="",
             key=key_value,
             promotions=promotions,
-            recaptcha=captcha_string)
+            recaptcha_site_key=options.recaptcha_site_key)
 
     def post(self):
         if options.disable_signups:
@@ -686,21 +679,25 @@ class CreateAccountHandler(BaseHandler):
              self.get_argument('password_again', ""))
 
         skip_recaptcha = self.get_argument('_skip_recaptcha_test_only', False)
-        if not options.recaptcha_private_key:
+        if not options.recaptcha_secret_key:
             skip_recaptcha = True
 
-        #recaptcha hotfix
+        # recaptcha validation, when configured
         if not skip_recaptcha:
-            response = captcha.submit(
-               self.get_argument('recaptcha_challenge_field'),
-               self.get_argument('recaptcha_response_field'),
-               options.recaptcha_private_key,
-               self.request.remote_ip
-            )
-
-            if not response.is_valid:
+            response = requests.post(
+                "https://www.google.com/recaptcha/api/siteverify",
+                params={
+                    "secret": options.recaptcha_secret_key,
+                    "response": self.get_argument("recaptcha_token"),
+                })
+            try:
+                result = response.json()
+                if not result["success"] or result["score"] < 0.5:
+                    has_errors = True
+                    self.add_error("recaptcha", "Invalid captcha")
+            except ValueError:
                 has_errors = True
-                self.add_error('recaptcha', 'Invalid captcha')
+                self.add_error("recaptcha", "Invalid captcha")
 
         if not has_errors:
             try:
@@ -736,13 +733,10 @@ class CreateAccountHandler(BaseHandler):
             has_errors = True
             self.add_errors(new_user.errors)
 
-        #recaptcha hot fix
-        captcha_string = captcha.displayhtml(
-            options.recaptcha_public_key
-        )
         promotions = Promotion.active()
         return self.render("account/create.html", name=name_value,
-            email=email_value, key=key_value, recaptcha=captcha_string,
+            email=email_value, key=key_value,
+            recaptcha_site_key=options.recaptcha_site_key,
             promotions=promotions)
 
 
