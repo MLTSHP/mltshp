@@ -20,21 +20,7 @@ should be okay):
 
     $ make init-dev
 
-Our stylesheets are SASS-based, so you'll also need to install the
-Ruby gem for SASS. If you don't have the `sass` command already,
-you can get it by running:
-
-    $ bundle install
-
-If that gives you an error, maybe you need to first install the
-Ruby bundler package:
-
-    $ gem install bundler
-
-Then, try the `bundle install` command.
-
-So, with those pre-requisites in place, you should be able to start the
-app itself using:
+You should be able to start the app itself using:
 
     $ make run
 
@@ -66,13 +52,6 @@ server you may have running). The login for the database is `root` with
 no password. If you want to mark any of your user accounts as paid users,
 find them in the `user` table and set their `is_paid` value to `1` and
 their `stripe_plan_id` column value to `mltshp-double`.
-
-## Compiling Sass
-
-You can run a Sass Watch command, which will automatically recompile
-the CSS whenever a change is detected to the Sass files using:
-
-    $ make sass-watch
 
 ## Logs and Data
 
