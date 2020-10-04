@@ -4,7 +4,6 @@
 
 [![Build status](https://badge.buildkite.com/a86854c6272f21c9b46b8b6aafd3a4fb99bcfabe6e611bc370.svg)](https://buildkite.com/mltshp-inc/mltshp-web-service) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
 
-
 ## Development Environment
 
 MLTSHP is a Dockerized application. This greatly simplifies running the
@@ -100,7 +99,6 @@ The directory structure looks like this:
         mysql/
             (mysql data files)
 
-
 ## Database Migrations
 
 Occassionally, a database migration will need to be performed to
@@ -113,7 +111,6 @@ commands to make a new one. To update your database, just do this:
     docker-shell$ cd /srv/mltshp.com/mltshp; python migrate.py
 
 That should do it.
-
 
 ## Tests
 
@@ -133,7 +130,6 @@ Then, just run:
 
 Which will invoke a Docker process to run the unit test suite.
 
-
 ## Connecting to the MLTSHP shell
 
 If you ever need to access the Docker image running the application,
@@ -146,10 +142,9 @@ This should place you in the /srv/mltshp.com/mltshp directory as the
 root user. You can use `apt-get` commands to install utilities you
 may need.
 
-
 ## Cleanup
 
-If you ever want to *wipe your local data* and rebuild your Docker
+If you ever want to _wipe your local data_ and rebuild your Docker
 containers, just use this command:
 
     $ make destroy
@@ -161,6 +156,13 @@ compose command:
 
 Then, run another `make run`.
 
+## Relationship with MLTSHP-Patterns
+
+The CSS in this repo is just the compiled version of the styles from the MLTSHP
+pattern library, which can be found in the
+[mltshp-patterns](https://github.com/MLTSHP/mltshp-patterns) repo. Please do
+not edit the CSS in this repo, since any changes will be lost the next time we
+update from the pattern library.
 
 ## About
 
