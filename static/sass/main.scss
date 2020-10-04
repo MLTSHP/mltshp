@@ -348,7 +348,7 @@ html {
 
   /**
    * Do not edit directly
-   * Generated on Fri, 02 Oct 2020 03:01:35 GMT
+   * Generated on Sun, 04 Oct 2020 04:37:51 GMT
    */
   :root {
     --color-background-content-dark: #263238;
@@ -497,6 +497,7 @@ html {
     --color-text-link-danger-underline-hover: rgba(204, 41, 0, 0.33);
   }
 
+  /* prettier-ignore */
   @media screen and (prefers-color-scheme: light) {
     :root {
       --color-background-page: var(--color-background-page-light);
@@ -507,6 +508,7 @@ html {
       --color-page-text-secondary: var(--color-text-dark-secondary);
       --color-border-default: var(--color-base-gray-300);
       --color-border-form: var(--color-base-blue-gray-light);
+      --color-border-focus-ring: rgba(0, 174, 255, 0.25);
       --color-form-bg: var(--color-brand-secondary-very-light);
       --color-form-error-bubble-bg: var(--color-brand-secondary-pastel-medium);
       --color-form-error-bubble-text: var(--color-page-text);
@@ -518,6 +520,40 @@ html {
       --color-bg-success-pastel: var(--color-status-success-pastel-very-light);
       --color-bg-danger-pastel: var(--color-status-danger-pastel-light);
       --color-bg-warning-pastel: var(--color-status-highlight);
+      --color-background-button-primary: var(--color-brand-primary);
+      --color-background-button-primary-hover: var(--color-brand-primary-dark);
+      --color-background-button-primary-pastel: var(--color-brand-primary-pastel-light);
+      --color-background-button-primary-pastel-hover: var(--color-brand-primary);
+      --color-text-button-primary-pastel: var(--color-brand-primary-pastel-dark);
+      --color-text-button-primary-pastel-hover: var(--color-text-light-emphasis);
+      --color-background-button-secondary: var(--color-brand-secondary);
+      --color-background-button-secondary-hover: var(--color-brand-secondary-dark);
+      --color-background-button-secondary-pastel: var(--color-brand-secondary-pastel-light);
+      --color-background-button-secondary-pastel-hover: var(--color-brand-secondary);
+      --color-text-button-secondary-pastel: var(--color-brand-secondary-pastel-dark);
+      --color-text-button-secondary-pastel-hover: var(--color-text-light-emphasis);
+      --color-background-button-success: var(--color-status-success);
+      --color-background-button-success-hover: var(--color-status-success-dark);
+      --color-background-button-success-pastel: var(--color-status-success-pastel-light);
+      --color-background-button-success-pastel-hover: var(--color-status-success);
+      --color-text-button-success-pastel: var(--color-status-success-pastel-dark);
+      --color-text-button-success-pastel-hover: var(--color-text-light-emphasis);
+      --color-background-button-warning: var(--color-status-warning);
+      --color-background-button-warning-hover: var(--color-status-warning-dark);
+      --color-background-button-warning-pastel: var(--color-status-warning-pastel-light);
+      --color-background-button-warning-pastel-hover: var(--color-status-warning);
+      --color-text-button-warning-pastel: var(--color-status-warning-pastel-dark);
+      --color-text-button-warning-pastel-hover: var(--color-text-light-emphasis);
+      --color-background-button-danger: var(--color-status-danger);
+      --color-background-button-danger-hover: var(--color-status-danger-dark);
+      --color-background-button-danger-pastel: var(--color-status-danger-pastel-light);
+      --color-background-button-danger-pastel-hover: var(--color-status-danger);
+      --color-text-button-danger-pastel: var(--color-status-danger-pastel-dark);
+      --color-text-button-danger-pastel-hover: var(--color-text-light-emphasis);
+      --color-background-choose-shake-link: var(--color-background-content);
+      --color-background-choose-shake-link-hover: var(--color-status-highlight);
+      --color-text-choose-shake-link: var(--color-text-link-primary);
+      --color-text-choose-shake-link-hover: var(--color-text-link-primary-hover);
     }
   }
 
@@ -530,6 +566,7 @@ html {
     --color-page-text-secondary: var(--color-text-dark-secondary);
     --color-border-default: var(--color-base-gray-300);
     --color-border-form: var(--color-base-blue-gray-light);
+    --color-border-focus-ring: rgba(0, 174, 255, 0.25);
     --color-form-bg: var(--color-brand-secondary-very-light);
     --color-form-error-bubble-bg: var(--color-brand-secondary-pastel-medium);
     --color-form-error-bubble-text: var(--color-page-text);
@@ -541,8 +578,43 @@ html {
     --color-bg-success-pastel: var(--color-status-success-pastel-very-light);
     --color-bg-danger-pastel: var(--color-status-danger-pastel-light);
     --color-bg-warning-pastel: var(--color-status-highlight);
+    --color-background-button-primary: var(--color-brand-primary);
+    --color-background-button-primary-hover: var(--color-brand-primary-dark);
+    --color-background-button-primary-pastel: var(--color-brand-primary-pastel-light);
+    --color-background-button-primary-pastel-hover: var(--color-brand-primary);
+    --color-text-button-primary-pastel: var(--color-brand-primary-pastel-dark);
+    --color-text-button-primary-pastel-hover: var(--color-text-light-emphasis);
+    --color-background-button-secondary: var(--color-brand-secondary);
+    --color-background-button-secondary-hover: var(--color-brand-secondary-dark);
+    --color-background-button-secondary-pastel: var(--color-brand-secondary-pastel-light);
+    --color-background-button-secondary-pastel-hover: var(--color-brand-secondary);
+    --color-text-button-secondary-pastel: var(--color-brand-secondary-pastel-dark);
+    --color-text-button-secondary-pastel-hover: var(--color-text-light-emphasis);
+    --color-background-button-success: var(--color-status-success);
+    --color-background-button-success-hover: var(--color-status-success-dark);
+    --color-background-button-success-pastel: var(--color-status-success-pastel-light);
+    --color-background-button-success-pastel-hover: var(--color-status-success);
+    --color-text-button-success-pastel: var(--color-status-success-pastel-dark);
+    --color-text-button-success-pastel-hover: var(--color-text-light-emphasis);
+    --color-background-button-warning: var(--color-status-warning);
+    --color-background-button-warning-hover: var(--color-status-warning-dark);
+    --color-background-button-warning-pastel: var(--color-status-warning-pastel-light);
+    --color-background-button-warning-pastel-hover: var(--color-status-warning);
+    --color-text-button-warning-pastel: var(--color-status-warning-pastel-dark);
+    --color-text-button-warning-pastel-hover: var(--color-text-light-emphasis);
+    --color-background-button-danger: var(--color-status-danger);
+    --color-background-button-danger-hover: var(--color-status-danger-dark);
+    --color-background-button-danger-pastel: var(--color-status-danger-pastel-light);
+    --color-background-button-danger-pastel-hover: var(--color-status-danger);
+    --color-text-button-danger-pastel: var(--color-status-danger-pastel-dark);
+    --color-text-button-danger-pastel-hover: var(--color-text-light-emphasis);
+    --color-background-choose-shake-link: var(--color-background-content);
+    --color-background-choose-shake-link-hover: var(--color-status-highlight);
+    --color-text-choose-shake-link: var(--color-text-link-primary);
+    --color-text-choose-shake-link-hover: var(--color-text-link-primary-hover);
   }
 
+  /* prettier-ignore */
   @media screen and (prefers-color-scheme: dark) {
     :root {
       --color-background-page: var(--color-background-page-dark);
@@ -553,6 +625,7 @@ html {
       --color-page-text-secondary: var(--color-text-light-secondary);
       --color-border-default: var(--color-base-gray-700);
       --color-border-form: var(--color-base-gray-800);
+      --color-border-focus-ring: rgba(0, 174, 255, 0.4);
       --color-form-bg: var(--color-background-content-secondary);
       --color-form-error-bubble-bg: var(--color-base-gray-800);
       --color-form-error-bubble-text: var(--color-status-danger);
@@ -564,6 +637,40 @@ html {
       --color-bg-success-pastel: rgba(9, 184, 150, 0.1);
       --color-bg-danger-pastel: rgba(255, 51, 0, 0.1);
       --color-bg-warning-pastel: rgba(255, 150, 0, 0.1);
+      --color-background-button-primary: var(--color-brand-primary-dark);
+      --color-background-button-primary-hover: var(--color-brand-primary);
+      --color-background-button-primary-pastel: var(--color-brand-primary-pastel-dark);
+      --color-background-button-primary-pastel-hover: var(--color-brand-primary-pastel-light);
+      --color-text-button-primary-pastel: var(--color-text-light-emphasis);
+      --color-text-button-primary-pastel-hover: var(--color-brand-primary-pastel-dark);
+      --color-background-button-secondary: var(--color-brand-secondary-dark);
+      --color-background-button-secondary-hover: var(--color-brand-secondary);
+      --color-background-button-secondary-pastel: var(--color-brand-secondary-pastel-dark);
+      --color-background-button-secondary-pastel-hover: var(--color-brand-secondary-pastel-light);
+      --color-text-button-secondary-pastel: var(--color-text-light-emphasis);
+      --color-text-button-secondary-pastel-hover: var(--color-brand-secondary-pastel-dark);
+      --color-background-button-success: var(--color-status-success-dark);
+      --color-background-button-success-hover: var(--color-status-success);
+      --color-background-button-success-pastel: var(--color-status-success-pastel-dark);
+      --color-background-button-success-pastel-hover: var(--color-status-success-pastel-light);
+      --color-text-button-success-pastel: var(--color-text-light-emphasis);
+      --color-text-button-success-pastel-hover: var(--color-status-success-pastel-dark);
+      --color-background-button-warning: var(--color-status-warning-dark);
+      --color-background-button-warning-hover: var(--color-status-warning);
+      --color-background-button-warning-pastel: var(--color-status-warning-pastel-dark);
+      --color-background-button-warning-pastel-hover: var(--color-status-warning-pastel-light);
+      --color-text-button-warning-pastel: var(--color-text-light-emphasis);
+      --color-text-button-warning-pastel-hover: var(--color-status-warning-pastel-dark);
+      --color-background-button-danger: var(--color-status-danger-dark);
+      --color-background-button-danger-hover: var(--color-status-danger);
+      --color-background-button-danger-pastel: var(--color-status-danger-pastel-dark);
+      --color-background-button-danger-pastel-hover: var(--color-status-danger-pastel-light);
+      --color-text-button-danger-pastel: var(--color-text-light-emphasis);
+      --color-text-button-danger-pastel-hover: var(--color-status-danger-pastel-dark);
+      --color-background-choose-shake-link: var(--color-background-button-success);
+      --color-background-choose-shake-link-hover: var(--color-background-button-success-pastel-hover);
+      --color-text-choose-shake-link: var(--color-text-light-emphasis);
+      --color-text-choose-shake-link-hover: var(--color-text-button-success-pastel-hover);
     }
   }
 
@@ -576,6 +683,7 @@ html {
     --color-page-text-secondary: var(--color-text-light-secondary);
     --color-border-default: var(--color-base-gray-700);
     --color-border-form: var(--color-base-gray-800);
+    --color-border-focus-ring: rgba(0, 174, 255, 0.4);
     --color-form-bg: var(--color-background-content-secondary);
     --color-form-error-bubble-bg: var(--color-base-gray-800);
     --color-form-error-bubble-text: var(--color-status-danger);
@@ -587,6 +695,40 @@ html {
     --color-bg-success-pastel: rgba(9, 184, 150, 0.1);
     --color-bg-danger-pastel: rgba(255, 51, 0, 0.1);
     --color-bg-warning-pastel: rgba(255, 150, 0, 0.1);
+    --color-background-button-primary: var(--color-brand-primary-dark);
+    --color-background-button-primary-hover: var(--color-brand-primary);
+    --color-background-button-primary-pastel: var(--color-brand-primary-pastel-dark);
+    --color-background-button-primary-pastel-hover: var(--color-brand-primary-pastel-light);
+    --color-text-button-primary-pastel: var(--color-text-light-emphasis);
+    --color-text-button-primary-pastel-hover: var(--color-brand-primary-pastel-dark);
+    --color-background-button-secondary: var(--color-brand-secondary-dark);
+    --color-background-button-secondary-hover: var(--color-brand-secondary);
+    --color-background-button-secondary-pastel: var(--color-brand-secondary-pastel-dark);
+    --color-background-button-secondary-pastel-hover: var(--color-brand-secondary-pastel-light);
+    --color-text-button-secondary-pastel: var(--color-text-light-emphasis);
+    --color-text-button-secondary-pastel-hover: var(--color-brand-secondary-pastel-dark);
+    --color-background-button-success: var(--color-status-success-dark);
+    --color-background-button-success-hover: var(--color-status-success);
+    --color-background-button-success-pastel: var(--color-status-success-pastel-dark);
+    --color-background-button-success-pastel-hover: var(--color-status-success-pastel-light);
+    --color-text-button-success-pastel: var(--color-text-light-emphasis);
+    --color-text-button-success-pastel-hover: var(--color-status-success-pastel-dark);
+    --color-background-button-warning: var(--color-status-warning-dark);
+    --color-background-button-warning-hover: var(--color-status-warning);
+    --color-background-button-warning-pastel: var(--color-status-warning-pastel-dark);
+    --color-background-button-warning-pastel-hover: var(--color-status-warning-pastel-light);
+    --color-text-button-warning-pastel: var(--color-text-light-emphasis);
+    --color-text-button-warning-pastel-hover: var(--color-status-warning-pastel-dark);
+    --color-background-button-danger: var(--color-status-danger-dark);
+    --color-background-button-danger-hover: var(--color-status-danger);
+    --color-background-button-danger-pastel: var(--color-status-danger-pastel-dark);
+    --color-background-button-danger-pastel-hover: var(--color-status-danger-pastel-light);
+    --color-text-button-danger-pastel: var(--color-text-light-emphasis);
+    --color-text-button-danger-pastel-hover: var(--color-status-danger-pastel-dark);
+    --color-background-choose-shake-link: var(--color-background-button-success);
+    --color-background-choose-shake-link-hover: var(--color-background-button-success-pastel-hover);
+    --color-text-choose-shake-link: var(--color-text-light-emphasis);
+    --color-text-choose-shake-link-hover: var(--color-text-button-success-pastel-hover);
   }
 
   *,
@@ -598,6 +740,11 @@ html {
   body {
     background-color: var(--color-background-page);
     color: var(--color-page-text);
+  }
+
+  *:focus {
+    box-shadow: 0 0 0 0.25rem var(--color-border-focus-ring);
+    outline: 0;
   }
 
   a {
@@ -762,6 +909,7 @@ html {
   }
 
   .avatar--img {
+    display: block;
     max-width: none;
     -o-object-fit: cover;
        object-fit: cover;
@@ -1033,7 +1181,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -1058,7 +1206,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -1149,128 +1297,128 @@ html {
   }
 
   .label-primary {
-    background-color: var(--color-brand-primary);
+    background-color: var(--color-background-button-primary);
   }
 
   .btn-primary {
-    background-color: var(--color-brand-primary);
+    background-color: var(--color-background-button-primary);
   }
   .btn-primary:hover, .btn-primary:focus {
-    background-color: var(--color-brand-primary-dark);
+    background-color: var(--color-background-button-primary-hover);
   }
 
   .label-primary.label-pastel {
-    background-color: var(--color-brand-primary-pastel-light);
-    color: var(--color-brand-primary-pastel-dark);
+    background-color: var(--color-background-button-primary-pastel);
+    color: var(--color-text-button-primary-pastel);
   }
 
   .btn-primary.btn-pastel {
-    background-color: var(--color-brand-primary-pastel-light);
-    color: var(--color-brand-primary-pastel-dark);
+    background-color: var(--color-background-button-primary-pastel);
+    color: var(--color-text-button-primary-pastel);
   }
   .btn-primary.btn-pastel:hover, .btn-primary.btn-pastel:focus {
-    background-color: var(--color-brand-primary);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-primary-pastel-hover);
+    color: var(--color-text-button-primary-pastel-hover);
   }
 
   .label-secondary {
-    background-color: var(--color-brand-secondary);
+    background-color: var(--color-background-button-secondary);
   }
 
   .btn-secondary {
-    background-color: var(--color-brand-secondary);
+    background-color: var(--color-background-button-secondary);
   }
   .btn-secondary:hover, .btn-secondary:focus {
-    background-color: var(--color-brand-secondary-dark);
+    background-color: var(--color-background-button-secondary-hover);
   }
 
   .label-secondary.label-pastel {
-    background-color: var(--color-brand-secondary-pastel-light);
-    color: var(--color-brand-secondary-pastel-dark);
+    background-color: var(--color-background-button-secondary-pastel);
+    color: var(--color-text-button-secondary-pastel);
   }
 
   .btn-secondary.btn-pastel {
-    background-color: var(--color-brand-secondary-pastel-light);
-    color: var(--color-brand-secondary-pastel-dark);
+    background-color: var(--color-background-button-secondary-pastel);
+    color: var(--color-text-button-secondary-pastel);
   }
   .btn-secondary.btn-pastel:hover, .btn-secondary.btn-pastel:focus {
-    background-color: var(--color-brand-secondary);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-secondary-pastel-hover);
+    color: var(--color-text-button-secondary-pastel-hover);
   }
 
   .label-success {
-    background-color: var(--color-status-success);
+    background-color: var(--color-background-button-success);
   }
 
   .btn-success {
-    background-color: var(--color-status-success);
+    background-color: var(--color-background-button-success);
   }
   .btn-success:hover, .btn-success:focus {
-    background-color: var(--color-status-success-dark);
+    background-color: var(--color-background-button-success-hover);
   }
 
   .label-success.label-pastel {
-    background-color: var(--color-status-success-pastel-light);
-    color: var(--color-status-success-pastel-dark);
+    background-color: var(--color-background-button-success-pastel);
+    color: var(--color-text-button-success-pastel);
   }
 
   .btn-success.btn-pastel {
-    background-color: var(--color-status-success-pastel-light);
-    color: var(--color-status-success-pastel-dark);
+    background-color: var(--color-background-button-success-pastel);
+    color: var(--color-text-button-success-pastel);
   }
   .btn-success.btn-pastel:hover, .btn-success.btn-pastel:focus {
-    background-color: var(--color-status-success);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-success-pastel-hover);
+    color: var(--color-text-button-success-pastel-hover);
   }
 
   .label-warning {
-    background-color: var(--color-status-warning);
+    background-color: var(--color-background-button-warning);
   }
 
   .btn-warning {
-    background-color: var(--color-status-warning);
+    background-color: var(--color-background-button-warning);
   }
   .btn-warning:hover, .btn-warning:focus {
-    background-color: var(--color-status-warning-dark);
+    background-color: var(--color-background-button-warning-hover);
   }
 
   .label-warning.label-pastel {
-    background-color: var(--color-status-warning-pastel-light);
-    color: var(--color-status-warning-pastel-dark);
+    background-color: var(--color-background-button-warning-pastel);
+    color: var(--color-text-button-warning-pastel);
   }
 
   .btn-warning.btn-pastel {
-    background-color: var(--color-status-warning-pastel-light);
-    color: var(--color-status-warning-pastel-dark);
+    background-color: var(--color-background-button-warning-pastel);
+    color: var(--color-text-button-warning-pastel);
   }
   .btn-warning.btn-pastel:hover, .btn-warning.btn-pastel:focus {
-    background-color: var(--color-status-warning);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-warning-pastel-hover);
+    color: var(--color-text-button-warning-pastel-hover);
   }
 
   .label-danger {
-    background-color: var(--color-status-danger);
+    background-color: var(--color-background-button-danger);
   }
 
   .btn-danger {
-    background-color: var(--color-status-danger);
+    background-color: var(--color-background-button-danger);
   }
   .btn-danger:hover, .btn-danger:focus {
-    background-color: var(--color-status-danger-dark);
+    background-color: var(--color-background-button-danger-hover);
   }
 
   .label-danger.label-pastel {
-    background-color: var(--color-status-danger-pastel-light);
-    color: var(--color-status-danger-pastel-dark);
+    background-color: var(--color-background-button-danger-pastel);
+    color: var(--color-text-button-danger-pastel);
   }
 
   .btn-danger.btn-pastel {
-    background-color: var(--color-status-danger-pastel-light);
-    color: var(--color-status-danger-pastel-dark);
+    background-color: var(--color-background-button-danger-pastel);
+    color: var(--color-text-button-danger-pastel);
   }
   .btn-danger.btn-pastel:hover, .btn-danger.btn-pastel:focus {
-    background-color: var(--color-status-danger);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-danger-pastel-hover);
+    color: var(--color-text-button-danger-pastel-hover);
   }
 
   .choose-a-shake {
@@ -1289,15 +1437,15 @@ html {
     outline: none;
   }
   .choose-a-shake.is-expanded .choose-a-shake--toggle:hover, .choose-a-shake.is-expanded .choose-a-shake--toggle:focus {
-    background: var(--color-status-success-pastel-light);
-    color: var(--color-status-success-pastel-dark);
+    background-color: var(--color-background-button-success-pastel);
+    color: var(--color-text-button-success-pastel);
   }
   .choose-a-shake.is-expanded .choose-a-shake--toggle .caret {
     transform: rotate(180deg);
   }
 
   .choose-a-shake--dropdown {
-    background-color: var(--color-status-success-pastel-light);
+    background-color: var(--color-background-button-success-pastel);
     border-radius: var(--size-border-radius-large);
     border-top-right-radius: 0;
     box-shadow: var(--size-spacing-half) var(--size-spacing-half) 0 var(--color-base-black-transparent-100);
@@ -1331,13 +1479,11 @@ html {
     padding: 0;
   }
   .choose-a-shake--dropdown ul li a {
-    color: var(--color-text-link-primary);
-    -webkit-text-decoration-color: var(--color-text-link-primary-underline);
-            text-decoration-color: var(--color-text-link-primary-underline);
     font-weight: var(--number-font-weight-bold);
     text-decoration: none;
-    background-color: var(--color-background-content);
+    background-color: var(--color-background-choose-shake-link);
     border-radius: var(--size-border-radius-large);
+    color: var(--color-text-choose-shake-link);
     display: block;
     font-size: 0.875rem;
     overflow: hidden;
@@ -1346,21 +1492,18 @@ html {
     white-space: nowrap;
   }
   .choose-a-shake--dropdown ul li a:hover, .choose-a-shake--dropdown ul li a:focus, .choose-a-shake--dropdown ul li a:active {
-    color: var(--color-text-link-primary-hover);
-    -webkit-text-decoration-color: var(--color-text-link-primary-underline-hover);
-            text-decoration-color: var(--color-text-link-primary-underline-hover);
-  }
-  .choose-a-shake--dropdown ul li a:hover, .choose-a-shake--dropdown ul li a:focus, .choose-a-shake--dropdown ul li a:active {
     text-decoration: underline;
   }
   .choose-a-shake--dropdown ul li a:hover, .choose-a-shake--dropdown ul li a:focus, .choose-a-shake--dropdown ul li a:active {
-    background-color: var(--color-status-highlight);
+    background-color: var(--color-background-choose-shake-link-hover);
+    color: var(--color-text-choose-shake-link-hover);
+    text-decoration: none;
   }
   .choose-a-shake--dropdown ul.top-shakes li a {
     margin: var(--size-spacing-default) 0;
   }
   .choose-a-shake--dropdown ul.group-shakes {
-    background-color: var(--color-background-content);
+    background-color: var(--color-background-choose-shake-link);
     border-radius: var(--size-border-radius-large);
   }
 
@@ -1852,6 +1995,9 @@ html {
     margin-right: var(--size-spacing-default);
     width: 48px;
   }
+  .image-comments .comment .avatar a {
+    display: block;
+  }
   .image-comments .comment .body {
     flex: 1;
     font-size: 0.875rem;
@@ -2055,6 +2201,9 @@ html {
     float: left;
     padding-right: var(--size-spacing-default);
   }
+  .image-title .image-poster a {
+    display: block;
+  }
   .image-title h1,
   .image-title h3 {
     overflow-wrap: break-word;
@@ -2148,6 +2297,10 @@ html {
     .image-content {
       padding: var(--size-spacing-half-again) var(--size-spacing-quadruple) var(--size-spacing-quadruple);
     }
+  }
+  .image-content .the-image a,
+  .image-content .the-image img {
+    display: block;
   }
   .image-content img.unsized {
     height: auto;
@@ -2367,14 +2520,16 @@ html {
   .image-content-footer {
     color: var(--color-page-text-secondary);
     font-size: 0.75rem;
-    padding-top: var(--size-spacing-half);
+    padding-top: var(--size-spacing-default);
   }
   .image-content-footer .originally-posted-by {
     clear: left;
     padding-bottom: var(--size-spacing-half);
   }
   .image-content-footer .originally-posted-by .avatar--link {
+    display: inline-block;
     text-decoration: none;
+    vertical-align: middle;
   }
   .image-content-footer .inline-meta {
     display: flex;
@@ -2481,6 +2636,9 @@ html {
   }
   .image-content .inline-details .comment .avatar {
     flex: none;
+  }
+  .image-content .inline-details .comment .avatar a {
+    display: block;
   }
   .image-content .inline-details .comment .comment-body {
     flex: 1;
@@ -2794,7 +2952,8 @@ html {
     margin-bottom: var(--size-spacing-triple);
     padding-bottom: var(--size-spacing-triple);
   }
-  .new-members > li .avatar {
+  .new-members > li > a {
+    display: block;
     float: left;
     margin-right: var(--size-spacing-default);
   }
@@ -2948,6 +3107,9 @@ html {
     float: left;
     margin-right: var(--size-spacing-default);
     width: 48px;
+  }
+  .notification-block-shakeinvitation .shake-thumb a {
+    display: block;
   }
   .notification-block-shakeinvitation h4 {
     padding-top: var(--size-spacing-default);
@@ -3151,7 +3313,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -3160,7 +3322,7 @@ html {
     vertical-align: middle;
     white-space: nowrap;
     cursor: pointer;
-    background-color: var(--color-brand-primary);
+    background-color: var(--color-background-button-primary);
     box-shadow: 0.22em 0.22em 0 var(--color-base-black-transparent-100);
     margin-right: 0.22em;
     bottom: -3.5em;
@@ -3184,7 +3346,7 @@ html {
     text-shadow: none;
   }
   .promotions .promotion-name:hover, .promotions .promotion-name:focus {
-    background-color: var(--color-brand-primary-dark);
+    background-color: var(--color-background-button-primary-hover);
   }
   .promotions .promotion-name:disabled {
     box-shadow: none !important;
@@ -3404,7 +3566,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -3413,7 +3575,7 @@ html {
     vertical-align: middle;
     white-space: nowrap;
     cursor: pointer;
-    background-color: var(--color-brand-secondary);
+    background-color: var(--color-background-button-secondary);
     font-size: 12px;
     font-weight: 400;
     float: right;
@@ -3431,7 +3593,7 @@ html {
     text-shadow: none;
   }
   .following-wrapper h3 a:hover, .following-wrapper h3 a:focus {
-    background-color: var(--color-brand-secondary-dark);
+    background-color: var(--color-background-button-secondary-hover);
   }
   .following-wrapper h3 span {
     color: var(--color-page-text-secondary);
@@ -3455,7 +3617,7 @@ html {
     margin-bottom: var(--size-spacing-half);
     margin-right: var(--size-spacing-half);
   }
-  .following ul li li a {
+  .following ul li a {
     display: block;
     height: 48px;
     width: 48px;
@@ -3785,7 +3947,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -3799,8 +3961,8 @@ html {
     font-weight: 600;
     letter-spacing: 0.015em;
     text-shadow: none;
-    background-color: var(--color-status-danger-pastel-light);
-    color: var(--color-status-danger-pastel-dark);
+    background-color: var(--color-background-button-danger-pastel);
+    color: var(--color-text-button-danger-pastel);
   }
   .sidebar-flag-nsfw .flag-nsfw-button:hover, .sidebar-flag-nsfw .flag-nsfw-button:focus,
   .sidebar-flag-nsfw .unflag-nsfw-button:hover,
@@ -3826,8 +3988,8 @@ html {
   .sidebar-flag-nsfw .flag-nsfw-button:hover, .sidebar-flag-nsfw .flag-nsfw-button:focus,
   .sidebar-flag-nsfw .unflag-nsfw-button:hover,
   .sidebar-flag-nsfw .unflag-nsfw-button:focus {
-    background-color: var(--color-status-danger);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-danger-pastel-hover);
+    color: var(--color-text-button-danger-pastel-hover);
   }
 
   .flag-image {
@@ -3845,7 +4007,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -3859,8 +4021,8 @@ html {
     font-weight: 600;
     letter-spacing: 0.015em;
     text-shadow: none;
-    background-color: var(--color-status-warning-pastel-light);
-    color: var(--color-status-warning-pastel-dark);
+    background-color: var(--color-background-button-warning-pastel);
+    color: var(--color-text-button-warning-pastel);
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' viewBox='-283.8 415 7 9'%3E%3Cstyle%3E.st0%7Bfill:red%7D.st1%7Bfill:none%7D.st2%7Bfill:%23695a5a%7D%3C/style%3E%3Ctitle%3Eflag-this-here%3C/title%3E%3Cpath class='st0' d='M-282.8 415h6v5h-6z'/%3E%3Cpath class='st1' d='M-289 370.5h32.2'/%3E%3Cpath class='st2' d='M-283.8 415h1v9h-1z'/%3E%3C/svg%3E");
     background-position: 0.5em center;
     background-repeat: no-repeat;
@@ -3885,8 +4047,8 @@ html {
     color: var(--color-status-disabled-pastel-dark) !important;
   }
   .flag-image:hover, .flag-image:focus {
-    background-color: var(--color-status-warning);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-warning-pastel-hover);
+    color: var(--color-text-button-warning-pastel-hover);
   }
   .flag-image.flag-image-set {
     color: var(--color-status-danger);
@@ -3907,7 +4069,7 @@ html {
     text-align: center;
     text-decoration: none;
     text-shadow: 0.05em 0.05em 0.05em var(--color-base-black-transparent-500);
-    transition-duration: 0.2s;
+    transition-duration: var(--time-speed-quick);
     transition-property: background-color, color;
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -3921,8 +4083,8 @@ html {
     font-weight: 600;
     letter-spacing: 0.015em;
     text-shadow: none;
-    background-color: var(--color-status-danger-pastel-light);
-    color: var(--color-status-danger-pastel-dark);
+    background-color: var(--color-background-button-danger-pastel);
+    color: var(--color-text-button-danger-pastel);
     margin-top: var(--size-spacing-triple);
   }
   .delete-post-text:hover, .delete-post-text:focus {
@@ -3942,8 +4104,8 @@ html {
     color: var(--color-status-disabled-pastel-dark) !important;
   }
   .delete-post-text:hover, .delete-post-text:focus {
-    background-color: var(--color-status-danger);
-    color: var(--color-text-light-emphasis);
+    background-color: var(--color-background-button-danger-pastel-hover);
+    color: var(--color-text-button-danger-pastel-hover);
   }
 
   .sidebar-stats {
@@ -4164,6 +4326,13 @@ html {
     margin-right: 1em;
     margin-top: 1em;
     width: 211px;
+  }
+  .site-branding a {
+    display: block;
+  }
+  .site-branding a:focus {
+    box-shadow: none;
+    opacity: 0.75;
   }
 
   .site-branding--logo {
