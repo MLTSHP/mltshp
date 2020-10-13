@@ -12,7 +12,5 @@ env
 mounts
 .deploy.env
 .coverage
-.sass-cache
 coverage.xml
-static/css/
 .vscode/

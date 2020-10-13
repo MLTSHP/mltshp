@@ -20,7 +20,6 @@ RUN apt-get -y update && apt-get install -y \
         libpcre3-dev \
         libssl-dev \
         libffi-dev \
-        ruby-sass \
         python-pip && \
     rm -rf /var/lib/apt/lists/* && \
     \
@@ -71,9 +70,6 @@ COPY setup/production/nginx.conf /etc/nginx/nginx.conf
 # Add "." for the app code itself (also allows for local dev)
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
-
-# Compile sass files
-RUN sass --update --stop-on-error --style compressed static/sass:static/css
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]

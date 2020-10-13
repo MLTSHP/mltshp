@@ -1,17 +1,11 @@
-.PHONY: init-dev run shell test destroy migrate mysql sass-watch sass-compile build
+.PHONY: init-dev run shell test destroy migrate mysql
 
 init-dev:
 	cp settings.example.py settings.py
 	cp celeryconfig.example.py celeryconfig.py
 	mkdir -p mounts/mysql mounts/logs mounts/fakes3 mounts/uploaded
 
-sass-compile:
-	sass --update --stop-on-error --style compressed static/sass:static/css
-
-sass-watch:
-	sass --watch --stop-on-error --style compressed static/sass:static/css
-
-run: sass-compile
+run:
 	docker-compose up -d
 
 stop:

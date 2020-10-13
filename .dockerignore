@@ -1,5 +1,4 @@
 .git
-.sass-cache
 .buildkite
 .vscode
 env
