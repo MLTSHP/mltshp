@@ -1,7 +1,7 @@
 {% if extended %}
 <div class="user-follow user-follow-extended">
   <a class="icon" href="{{shake.path()}}">
-    <img class="avatar--img" src="{{shake.thumbnail_url()}}" width="{{avatar_size}}" height="{{avatar_size}}">
+    <img class="avatar--img" src="{{shake.thumbnail_url()}}" width="{{avatar_size}}" height="{{avatar_size}}" alt="">
   </a>
     <div class="follow">
       <div class="details">
@@ -33,7 +33,7 @@
 {% else %}
 <div class="user-follow">
     <a class="icon" href="{{shake.path()}}">
-      <img class="avatar--img" src="{% if avatar_size > 48 %}{{ shake.page_image() }}{% else %}{{shake.thumbnail_url()}}{% end %}" width="{{avatar_size}}" height="{{avatar_size}}">
+      <img class="avatar--img" src="{% if avatar_size > 48 %}{{ shake.page_image() }}{% else %}{{shake.thumbnail_url()}}{% end %}" width="{{avatar_size}}" height="{{avatar_size}}" alt="">
     </a>
     <div class="follow">
       <h4><a href="{{shake.path()}}">{{ escape(shake.display_name()) }}</a> {% if follow_user %}{% if follow_user.is_plus() %}<a href="/account/membership"><img alt="pro" src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center"></a>{% end %}{% end %}{{post_name_text}}</h4>

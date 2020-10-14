@@ -112,7 +112,7 @@
 
   <div class="shake-sidebar-editor-block">
     <div class="editor-image">
-      <img class="avatar--img" src="{{shake_editor.profile_image_url()}}" width="48" height="48">
+      <img class="avatar--img" src="{{shake_editor.profile_image_url()}}" width="48" height="48" alt="">
     </div>
     <div class="editor-details">
       <a href="/user/{{shake_editor.name}}">{% if current_user_obj and current_user_obj.id == shake_editor.id %}You</a> are{% else %}{{shake_editor.name}}</a> is{% end %} this shake's editor.
@@ -140,7 +140,7 @@
         {% for manager in managers %}
           <li>
             <a href="/user/{{manager.name}}">
-              <img class="avatar--img" border="0" width="48" height="48" src="{{manager.profile_image_url()}}">
+              <img class="avatar--img" border="0" width="48" height="48" src="{{manager.profile_image_url()}}" alt="{{manager.name}}">
             </a>
           </li>
         {% end %}
@@ -156,7 +156,7 @@
         {% for follower in followers %}
           <li>
             <a href="/user/{{follower.name}}" title="{{follower.display_name()}}">
-              <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48">
+              <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48" alt="{{follower.name}}">
             </a>
           </li>
         {% end %}

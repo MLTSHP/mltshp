@@ -15,7 +15,7 @@
       {% for manager in managers %}
         <li>
           <a class="member--img" href="/user/{{escape(manager.name)}}">
-            <img class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48">
+            <img class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48" alt="">
           </a>
           <div class="details">
             <h4><a href="/user/{{escape(manager.name)}}">{{escape(manager.display_name())}}</a></h4>

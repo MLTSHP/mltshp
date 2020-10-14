@@ -10,7 +10,7 @@
   <div class="account-header">
     <div class="avatar">
       <a class="avatar-media" href="/user/{{current_user_obj.name}}">
-        <img class="avatar--img" src="{{current_user_obj.profile_image_url()}}" width="50" height="50">
+        <img class="avatar--img" src="{{current_user_obj.profile_image_url()}}" width="50" height="50" alt="">
       </a>
       {% if front_page %}
         <h2 class="avatar-title">Hi {{ escape(current_user_obj.display_name()) }}!</h2>
