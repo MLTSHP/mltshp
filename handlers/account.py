@@ -255,6 +255,7 @@ class SettingsHandler(BaseHandler):
         show_naked_people = self.get_argument('show_naked_people', 0)
         show_stats = self.get_argument('show_stats', 0)
         disable_autoplay = self.get_argument('disable_autoplay', 0)
+        color_scheme = self.get_argument('color_scheme', 'match')
 
         if email != user.email and email != None:
             user.update_email(email)
@@ -279,6 +280,8 @@ class SettingsHandler(BaseHandler):
             user.disable_autoplay = 1
         else:
             user.disable_autoplay = 0
+
+        user.color_scheme = color_scheme
 
         if user.save():
             return self.redirect("/account/settings")
