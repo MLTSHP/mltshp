@@ -14,11 +14,11 @@
     <ul id="shake-members-list" class="shake-members">
       {% for manager in managers %}
         <li>
-          <a class="member--img" href="/user/{{escape(manager.name)}}">
+          <a class="member--img" href="/user/{{manager.name}}">
             <img class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48" alt="">
           </a>
           <div class="details">
-            <h4><a href="/user/{{escape(manager.name)}}">{{escape(manager.display_name())}}</a></h4>
+            <h4><a href="/user/{{manager.name}}">{{escape(manager.display_name())}}</a></h4>
             <p class="about">{{escape(manager.about)}}
             {% if manager.website %}
               <br />
