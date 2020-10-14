@@ -4,8 +4,8 @@
     <a href="/p/{{sharedfile.share_key}}"><img src="{{sharedfile.small_thumbnail_url()}}" height="{{sourcefile.height}}" width="{{sourcefile.width}}" alt="" style="max-height: 184px; max-width: 240px; height: auto;"></a>
   </div>
   <div class="user-and-title">
-    <a href="/user/{{sharedfile_user.name}}" title="{{sharedfile_user.name}}">
-      <img class="avatar--img" src="{{sharedfile_user.profile_image_url()}}" width="20" height="20" alt="{{sharedfile_user.name}}">
+    <a href="/user/{{sharedfile_user.name}}" title="{{escape(sharedfile_user.display_name())}}">
+      <img class="avatar--img" src="{{sharedfile_user.profile_image_url()}}" width="20" height="20" alt="{{escape(sharedfile_user.display_name())}}">
     </a>
     <div class="title">{{escape(sharedfile.get_title())}}</div>
   </div>

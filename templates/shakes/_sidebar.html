@@ -139,8 +139,8 @@
       <ul id='following-list'>
         {% for manager in managers %}
           <li>
-            <a href="/user/{{manager.name}}">
-              <img class="avatar--img" border="0" width="48" height="48" src="{{manager.profile_image_url()}}" alt="{{manager.name}}">
+            <a href="/user/{{manager.name}}" title="{{escape(manager.display_name())}}">
+              <img class="avatar--img" border="0" width="48" height="48" src="{{manager.profile_image_url()}}" alt="{{escape(manager.display_name())}}">
             </a>
           </li>
         {% end %}
@@ -155,8 +155,8 @@
       <ul id='following-list'>
         {% for follower in followers %}
           <li>
-            <a href="/user/{{follower.name}}" title="{{follower.display_name()}}">
-              <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48" alt="{{follower.name}}">
+            <a href="/user/{{follower.name}}" title="{{escape(follower.display_name())}}">
+              <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48" alt="{{escape(follower.display_name())}}">
             </a>
           </li>
         {% end %}
