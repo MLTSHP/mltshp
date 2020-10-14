@@ -55,6 +55,7 @@ class User(ModelQueryCache, Model):
     show_naked_people = Property(default=0)
     show_stats = Property(default=0)
     disable_autoplay = Property(default=0)
+    color_scheme = Property(default='match')
     verify_email_token = Property()
     reset_password_token = Property()
     profile_image = Property()

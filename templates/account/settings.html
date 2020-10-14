@@ -109,6 +109,19 @@ $(document).ready(function() {
             <div class="field-help"><a href="/faq/#settings">What do these settings mean?</a></div>
           </div>
 
+          <div class="field">
+            <div class="field-input field-input-checkbox">
+              <label>
+                Color Scheme
+              </label>
+              <select name="color_scheme">
+                <option value="match"{% if user.color_scheme == 'match' %} selected="selected"{% end %}>Match System</option>
+                <option value="light"{% if user.color_scheme == 't-light' %} selected="selected"{% end %}>Light</option>
+                <option value="dark"{% if user.color_scheme == 't-dark' %} selected="selected"{% end %}>Dark</option>
+              </select>
+            </div>
+          </div>
+
           {% if not site_is_readonly %}
           <div class="field field-submit">
             <a class="btn btn-primary btn-shadow" href="">Save This</a>
