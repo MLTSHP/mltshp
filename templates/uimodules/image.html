@@ -18,7 +18,7 @@
         {% if show_attribution_in_title %}
             <div class="image-poster">
                 <a href="{{attribution['path']}}" title="{{escape(attribution['name'])}}">
-                    <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="">
+                    <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="{{escape(attribution['name'])}}">
                 </a>
             </div>
         {% end %}

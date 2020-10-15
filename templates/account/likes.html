@@ -35,8 +35,8 @@
           <ul id='following-list'>
             {% for follow in following_shakes %}
               <li>
-                <a href="{{follow['path']}}" title="{{follow['name']}}">
-                  <img class="avatar--img" src="{{follow['image']}}" width="48" height="48">
+                <a href="{{follow['path']}}" title="{{escape(follow['name'])}}">
+                  <img class="avatar--img" src="{{follow['image']}}" width="48" height="48" alt="{{escape(follow['name'])}}">
                 </a>
               </li>
             {% end %}
@@ -53,8 +53,8 @@
           <ul id='following-list'>
             {% for follower in followers %}
               <li>
-                <a href="/user/{{follower.name}}" title="{{follower.display_name()}}">
-                  <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48">
+                <a href="/user/{{follower.name}}" title="{{escape(follower.display_name())}}">
+                  <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48" alt="{{escape(follower.display_name())}}">
                 </a>
               </li>
             {% end %}
