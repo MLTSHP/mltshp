@@ -63,10 +63,21 @@
             background-position: 12px center;
             background-size: 48px;
             background-repeat: no-repeat;
-            padding-left: 72px;"
+            padding-left: 72px;
+            display: flex;
+            align-items: center;"
         >
-        It is very important that Americans <a href="https://www.aclu.org/voter/">vote in the upcoming election</a>.
-        If you’ve voted, tag your post&nbsp;<a href="https://mltshp.com/tag/IVoted">#IVoted</a>!
+        <span class="alert__content" style="flex: 1;">
+            It is very important that Americans <a href="https://www.aclu.org/voter/">vote in the upcoming election</a>.
+            If you’ve voted, tag your post&nbsp;<a href="https://mltshp.com/tag/IVoted">#IVoted</a>!
+        </span>
+        <button
+            aria-label="Dismiss Banner"
+            id="banner-dismiss"
+            type="button"
+            class="alert__dismiss btn btn-warning btn-pastel btn-small btn-icon"
+            style="flex: none;"
+            >✕</button>
     </div>
     <div class="page">
         <div class="wrapper">
