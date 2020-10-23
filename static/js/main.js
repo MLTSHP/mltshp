@@ -1629,5 +1629,21 @@ $(document).ready(function() {
       var shake_member_list = new ShakeMemberList($shake_member_list);
     }
 
+    // support for dismissable "Vote 2020" banner; cookie naturally expires on Nov 4th
+    var alertVote2020 = $("#alert-vote-2020");
+    var alertVote2020CookieVal = 'dismiss-alert-vote-2020=1';
+    var alertVote2020Expires = new Date('2020-11-04T00:00:00');
+    if (document.cookie.indexOf(alertVote2020CookieVal) === -1 &&
+      (new Date()) < alertVote2020Expires) {
+      alertVote2020.css({ display: 'block' });
+      alertVote2020.find('button').click(function() {
+        document.cookie = [
+          alertVote2020CookieVal,
+          'expires=' + alertVote2020Expires.toGMTString(),
+          'path=/'
+        ].join('; ');
+        alertVote2020.css({ display: 'none' });
+      });
+    }
 
 });
