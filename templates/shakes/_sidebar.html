@@ -15,7 +15,7 @@
       {% end %}
       <form method="post" action="/shake/{{shake.name}}/update"  enctype="multipart/form-data">
         {{ xsrf_form_html() }}
-        <input class="shake-image-input" type="file" name="file">
+        <input class="shake-image-input" type="file" name="file" accept="image/png,image/jpeg">
       </form>
       <div class="border"></div>
     </div>
