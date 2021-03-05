@@ -24,7 +24,7 @@ RUN apt-get -y update && \
     libffi-dev \
     python-pip && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install -U pip 'setuptools==44.0.0' distribute && \
+    pip install -U 'pip==20' 'setuptools==44.0.0' distribute && \
     # Fix for a really weird issue when installing postmark library
     # distribute fails to run since it sees a setuptools with "0.7"
     # in the name, even though ubuntu:16.04 has pre-installed "20.7.0"
