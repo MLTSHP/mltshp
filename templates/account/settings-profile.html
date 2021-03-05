@@ -30,7 +30,7 @@
               <h3>This is your user photo.</h3>
               {% if not site_is_readonly and user.email_confirmed == 1 %}
                 <h4>Want to change it?</h4>
-                <input class="settings-photo-upload" type="file" name="photo" size="10">
+                <input class="settings-photo-upload" type="file" name="photo" size="10" accept="image/png,image/jpeg">
               {% end %}
             </div>
           </div>

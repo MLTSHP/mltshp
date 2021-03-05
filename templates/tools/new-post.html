@@ -10,7 +10,7 @@
   <div class="upload-an-image">
     <form id="upload-image-form" method="POST" action="/upload" enctype="multipart/form-data">
     {{ xsrf_form_html() }}
-    <h2>Upload an <a href="">image</a><input name="file" type="file" id="upload-image-input" class="upload-image-input"></h2>
+    <h2>Upload an <a href="">image</a><input name="file" type="file" id="upload-image-input" class="upload-image-input" accept="image/gif,image/jpeg,image/png"></h2>
     {% if shakes and len(shakes) > 1 %}
       <div class="shake-selector">
         <input type="hidden" name="shake_id" value="">
