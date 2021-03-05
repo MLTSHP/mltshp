@@ -23,7 +23,7 @@ RUN apt-get -y update && apt-get install -y \
         python-pip && \
     rm -rf /var/lib/apt/lists/* && \
     \
-    pip install -U 'pip==20.0.1' 'setuptools==44.0.0' distribute && \
+    pip install -U 'pip==20.3.4' 'setuptools==44.0.0' distribute && \
     # fixes a weird issue where distribute complains about setuptools "0.7"
     # (incorrectly matching version "20.7.0" which ubuntu 16.04 has preinstalled)
     rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info && \
