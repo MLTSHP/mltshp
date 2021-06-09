@@ -33,7 +33,7 @@
             <ul class="promotions">
             {% for promo in promotions %}
             {% set promo_shake = promo.shake() %}
-            <li><a href="{{ promo.promotion_url }}" rel="nofollow" target="_blank"><div class="promotion-avatar"><img src="{{promo_shake.page_image()}}" width="100" height="100" alt=""></div><span class="promotion-name">{{ xhtml_escape(promo.name) }}</span></a></li>
+            <li><a href="{{ promo.promotion_url }}" rel="nofollow noopener noreferrer" target="_blank"><div class="promotion-avatar"><img src="{{promo_shake.page_image()}}" width="100" height="100" alt=""></div><span class="promotion-name">{{ xhtml_escape(promo.name) }}</span></a></li>
             {% end %}
             </ul>
             <div class="clear"><!-- --></div>
