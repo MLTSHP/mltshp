@@ -146,3 +146,5 @@ update from the pattern library.
 ## About
 
 MLTSHP is open-source software, ©2017 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.
+
+[![Fastly logo](/static/images/fastly-logo.png)](https://www.fastly.com) MLTSHP is proudly powered by Fastly.
