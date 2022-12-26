@@ -280,6 +280,11 @@ class ShowRawHandler(BaseHandler):
             self.set_header("Surrogate-Control", "max-age=86400")
             self.set_header("X-Accel-Redirect", "/s3/%s?%s" % (file_path, query))
 
+            # We already counted the request made to s.mltshp.com/r/ when
+            # we redirected to the CDN, so don't count the view a second time.
+            if options.use_cdn:
+                self._sharedfile = None
+
     def on_finish(self):
         """
         We quickly return the redirect to the image, and using on_finish(),
