@@ -252,6 +252,13 @@ class ShowRawHandler(BaseHandler):
             if format != "":
                 cdn_url += ".%s" % format
 
+            # Pass through width query parameter if present
+            if self.get_argument("width"):
+                try:
+                    cdn_url + "?width=%d" % int(self.get_argument("width"))
+                except ValueError:
+                    pass
+
             self.redirect(cdn_url)
         else:
             # piece together headers to be picked up by nginx to proxy file from S3

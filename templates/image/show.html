@@ -21,10 +21,10 @@
 {% end %}
 {% if sourcefile.type == 'image' %}
 <meta property="twitter:card" content="photo">
-<meta property="og:image" content="https://mltshp-cdn.com/r/{{sharedfile.share_key}}?width=800">
+<meta property="og:image" content="https://mltshp-cdn.com/r/{{sharedfile.share_key}}?width={{og_width}}">
 <meta property="og:image:type" content="image/{{sharedfile.content_type}}">
-<meta property="og:image:width" content="{{sourcefile.width}}">
-<meta property="og:image:height" content="{{sourcefile.height}}">
+<meta property="og:image:width" content="{{og_width}}">
+<meta property="og:image:height" content="{{og_height}}">
 {% end %}
 {% if sourcefile.mp4_flag == 1 %}
 <meta property="og:video" content="https://mltshp-cdn.com/r/{{sharedfile.share_key}}.mp4">
