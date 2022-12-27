@@ -253,7 +253,7 @@ class ShowRawHandler(BaseHandler):
                 cdn_url += ".%s" % format
 
             # Pass through width query parameter if present
-            if self.get_argument("width"):
+            if self.get_argument("width", None) is not None:
                 try:
                     cdn_url + "?width=%d" % int(self.get_argument("width"))
                 except ValueError:
