@@ -123,6 +123,12 @@ class ShowHandler(BaseHandler):
         thumb_url = s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
         jsonp = 'jsonp%s' % int(time.mktime(sharedfile.created_at.timetuple()))
 
+        # OpenGraph recommendation for image size is 1200x630
+        og_width = None
+        og_height = None
+        if sourcefile.type == 'image':
+            og_width, og_height = sourcefile.width_constrained_dimensions(1200)
+
         return self.render("image/show.html", sharedfile=sharedfile, thumb_url=thumb_url,
             sharedfile_owner=sharedfile_owner, image_url=image_url, jsonp=jsonp,
             view_count=view_count, can_delete=can_delete, save_count=save_count,
@@ -131,7 +137,8 @@ class ShowHandler(BaseHandler):
             add_to_shakes=add_to_shakes, can_add_to_shakes=can_add_to_shakes,
             can_comment=can_comment,
             owner_twitter_account=owner_twitter_account,
-            user_is_owner=user_is_owner)
+            user_is_owner=user_is_owner,
+            og_width=og_width, og_height=og_height)
 
 
 class ShowLikesHandler(BaseHandler):

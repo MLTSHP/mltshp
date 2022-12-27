@@ -27,11 +27,8 @@ class Apihit(Model):
             utcnow = datetime.utcnow()
         hour_start = utcnow.strftime('%Y-%m-%d %H:00:00')
 
-        sql = """SET @total_hits := 1;
-                 INSERT INTO apihit (accesstoken_id, hits, hour_start) VALUES (%s, 1, %s)
-                 ON DUPLICATE KEY
-                    UPDATE hits = (@total_hits := (hits + 1));
-                 SELECT @total_hits AS hits;"""
+        sql = """INSERT INTO apihit (accesstoken_id, hits, hour_start) VALUES (%s, 1, %s)
+                 ON DUPLICATE KEY UPDATE hits = hits + 1"""
         args = (accesstoken_id, hour_start)
         kwargs = ()
 
@@ -39,9 +36,9 @@ class Apihit(Model):
         cursor = conn._cursor()
         try:
             conn._execute(cursor, sql, args, kwargs)
-            # The SELECT was in the third statement, so the value is the third result set.
-            cursor.nextset()
-            cursor.nextset()
+            conn._execute(cursor,
+                "SELECT hits FROM apihit WHERE accesstoken_id=%s AND hour_start=%s",
+                args, kwargs)
             (hits,) = cursor.fetchone()
         finally:
             cursor.close()
