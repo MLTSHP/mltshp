@@ -15,17 +15,17 @@ build:
 	docker build -t mltshp/mltshp-web:latest .
 
 shell:
-	docker exec -it mltshp_mltshp_1 bash
+	docker-compose exec mltshp bash
 
 test:
-	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $(TEST)"
+	docker-compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $(TEST)"
 
 destroy:
 	docker-compose down
 	rm -rf mounts
 
 migrate:
-	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"
+	docker-compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"
 
 mysql:
-	docker exec -it mltshp_mltshp_1 su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"
+	docker-compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"
