@@ -18,7 +18,7 @@
         {% if show_attribution_in_title %}
             <div class="image-poster">
                 <a href="{{attribution['path']}}" title="{{escape(attribution['name'])}}">
-                    <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="{{escape(attribution['name'])}}">
+                    <img class="avatar--img" src="{{attribution['thumbnail_url']}}" width="48" height="48" alt="{{escape(attribution['name'])}}" loading="lazy" decoding="async">
                 </a>
             </div>
         {% end %}
@@ -151,7 +151,7 @@
                 {% if original_user %}
                 <a class="the-post" href="/p/{{sharedfile.original().share_key}}">posted</a> by
                 <a class="avatar--link" href="/user/{{original_user.name}}">
-                    <img class="avatar--img" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt="">
+                    <img class="avatar--img" valign="bottom" width="20" height="20" src="{{original_user.profile_image_url()}}" alt="" loading="lazy" decoding="async">
                 </a>
                 <a class="user-name" href="/user/{{original_user.name}}">{{ original_user.name }}</a>
                 {% else %}
