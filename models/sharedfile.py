@@ -260,7 +260,7 @@ class Sharedfile(ModelQueryCache, Model):
 
         # Enable sandbox; only permit scripting (most rich embeds will need this)
         if 'sandbox=' not in html:
-            extra_attributes += ' sandbox="allow-scripts"'
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin"'
 
         # Prevent referrer leaks to third parties
         if 'referrerpolicy=' not in html:
