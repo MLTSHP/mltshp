@@ -59,9 +59,23 @@
                     </video>
                 {% else %}
                     {% if list_view %}
-                        <a href="/p/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}" height="{{sized_height}}" width="{{sized_width}}" alt="{{escape(sharedfile.get_title())}}"></a>
+                        <a href="/p/{{sharedfile.share_key}}"><img
+                            srcset="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
+                            src="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}"
+                            height="{{sized_height}}"
+                            width="{{sized_width}}"
+                            loading="lazy"
+                            decoding="async"
+                            alt="{{escape(sharedfile.get_title())}}"></a>
                     {% else %}
-                        <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img src="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}" height="{{sized_height}}" width="{{sized_width}}" alt="{{escape(sharedfile.get_title())}}"></a>
+                        <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img
+                            srcset="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
+                            src="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}"
+                            height="{{sized_height}}"
+                            width="{{sized_width}}"
+                            loading="lazy"
+                            decoding="async"
+                            alt="{{escape(sharedfile.get_title())}}"></a>
                     {% end %}
                 {% end %}
             {% end %}
