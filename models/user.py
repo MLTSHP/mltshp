@@ -252,15 +252,17 @@ hello@mltshp.com
         protocol = ''
         if self.profile_image:
             host = options.app_host
+            if options.app_host == 'mltshp.com':
+                host = options.cdn_ssl_host
+            else:
+                host = options.use_cdn and options.cdn_host or host
             if include_protocol:
                 if options.app_host == 'mltshp.com':
                     protocol = 'https:'
-                    host = options.cdn_ssl_host
                 else:
                     protocol = 'http:'
-                    host = options.use_cdn and options.cdn_host or host
             if options.app_host == 'mltshp.com':
-                aws_url = "%s//%s" % (protocol, host)
+                aws_url = "%s//%s/s3" % (protocol, host)
             else:
                 # must be running for development. use the /s3 alias
                 aws_url = "/s3"
