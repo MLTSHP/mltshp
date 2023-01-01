@@ -97,7 +97,7 @@ class Shake(ModelQueryCache, Model):
         else:
             if self.image:
                 if options.app_host == "mltshp.com":
-                    return "https://%s/account/%s/shake_%s.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
+                    return "https://%s/s3/account/%s/shake_%s.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
                 else:
                     return s3_url("account/%s/shake_%s.jpg" % (self.user_id, self.name))
             else:
@@ -109,7 +109,7 @@ class Shake(ModelQueryCache, Model):
         else:
             if self.image:
                 if options.app_host == "mltshp.com":
-                    return "https://%s/account/%s/shake_%s_small.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
+                    return "https://%s/s3/account/%s/shake_%s_small.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
                 else:
                     return s3_url("account/%s/shake_%s_small.jpg" % (self.user_id, self.name))
             else:
