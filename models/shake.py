@@ -96,7 +96,10 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url()
         else:
             if self.image:
-                return s3_url("account/%s/shake_%s.jpg" % (self.user_id, self.name))
+                if options.app_host == "mltshp.com":
+                    return "https://%s/account/%s/shake_%s.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
+                else:
+                    return s3_url("account/%s/shake_%s.jpg" % (self.user_id, self.name))
             else:
                 return None
 
@@ -105,7 +108,10 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url(include_protocol=True)
         else:
             if self.image:
-                return s3_url("account/%s/shake_%s_small.jpg" % (self.user_id, self.name))
+                if options.app_host == "mltshp.com":
+                    return "https://%s/account/%s/shake_%s_small.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
+                else:
+                    return s3_url("account/%s/shake_%s_small.jpg" % (self.user_id, self.name))
             else:
                 if options.app_host == "mltshp.com":
                     return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
