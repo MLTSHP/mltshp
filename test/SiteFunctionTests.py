@@ -88,7 +88,21 @@ class FileViewTests(BaseAsyncTestCase):
 
         response = self.wait()
         options.use_cdn = False
-        self.assertEquals(response.headers['location'], 'https://mltshp-cdn.com/r/1?width=550')
+        self.assertEquals(response.headers['location'], 'https://mltshp-cdn.com/r/1?width=550&dpr=1')
+
+    def test_cdn_image_view_with_width_and_dpr(self):
+        response = self.upload_file(self.test_file1_path, self.test_file1_sha1,
+            self.test_file1_content_type, 1, self.sid, self.xsrf)
+
+        options.use_cdn = True
+        request = HTTPRequest(self.get_url('/r/1?width=550&dpr=2'), 'GET',
+            {"Cookie": "sid=%s" % (self.sid), "Host": "s.mltshp.com"},
+            follow_redirects=False)
+        self.http_client.fetch(request, self.stop)
+
+        response = self.wait()
+        options.use_cdn = False
+        self.assertEquals(response.headers['location'], 'https://mltshp-cdn.com/r/1?width=550&dpr=2')
 
     def test_raw_image_view_counts(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1,
