@@ -252,10 +252,12 @@ class ShowRawHandler(BaseHandler):
             if format != "":
                 cdn_url += ".%s" % format
 
-            # Pass through width query parameter if present
+            # Pass through width and dpr query parameter if present.
+            # These are supported by Fastly for rendering variant images.
             if self.get_argument("width", None) is not None:
                 try:
                     cdn_url += "?width=%d" % int(self.get_argument("width"))
+                    cdn_url += ("&dpr=%.1f" % float(self.get_argument("dpr", "1"))).replace(".0", "")
                 except ValueError:
                     pass
 
