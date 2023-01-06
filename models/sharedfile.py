@@ -259,12 +259,16 @@ class Sharedfile(ModelQueryCache, Model):
             extra_attributes += " allowfullscreen"
 
         # Enable sandbox; only permit scripting (most rich embeds will need this)
+        # allow-popups is needed for opening links to original content (ie, YouTube embeds)
         if 'sandbox=' not in html:
-            extra_attributes += ' sandbox="allow-scripts allow-same-origin"'
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups"'
 
         # Prevent referrer leaks to third parties
         if 'referrerpolicy=' not in html:
-            extra_attributes += ' referrerpolicy="no-referrer"'
+            extra_attributes += ' referrerpolicy="no-referrer-when-downgrade"'
+
+        if 'allow=' not in html:
+            extra_attributes += ' allow="encrypted-media"'
 
         # Force lazy loading
         if 'loading=' not in html:
@@ -272,7 +276,7 @@ class Sharedfile(ModelQueryCache, Model):
 
         # Force low priority fetching
         if 'fetchpriority=' not in html:
-            extra_attributes += ' <iframe fetchpriority="low"'
+            extra_attributes += ' fetchpriority="low"'
 
         if extra_attributes:
             html = html.replace('<iframe ', '<iframe ' + extra_attributes)
