@@ -12,9 +12,11 @@
 
 <meta name="thumbnail" content="{{thumb_url}}">
 <meta name="twitter:url" content="https://mltshp.com/p/{{sharedfile.share_key}}">
+<meta property="og:url" content="https://mltshp.com/p/{{sharedfile.share_key}}">
 <meta property="og:site_name" content="MLTSHP">
 <meta property="og:title" content="{{escape(sharedfile.get_title())}}">
 <meta property="og:description" content="{{escape(sharedfile.get_description())}}">
+<meta property="og:type" content="article">
 <meta name="twitter:site" content="@mltshphq">
 {% if owner_twitter_account != 'mltshphq' %}
 <meta name="twitter:creator" content="@{{owner_twitter_account}}">
