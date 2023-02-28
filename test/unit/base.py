@@ -20,7 +20,10 @@ class BaseTestCase(unittest.TestCase):
         f = open("setup/db-install.sql")
         load_query = f.read()
         f.close()
-        db.execute(load_query)
+        statements = load_query.split(";")
+        for statement in statements:
+            if statement.strip() != "":
+                db.execute(statement.strip())
         return db
         
     def generate_string_of_len(self, length):

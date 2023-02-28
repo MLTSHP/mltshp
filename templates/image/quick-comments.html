@@ -2,7 +2,7 @@
   <div class="comment" {% if key > 2 and expanded is False %}style="display: none;"{% end %}>
     <div class="avatar">
       <a href="/user/{{comment.user().name}}">
-        <img class="avatar--img" src="{{comment.user().profile_image_url()}}" height="30" width="30" alt="">
+        <img class="avatar--img" src="{{comment.user().profile_image_url()}}" height="30" width="30" alt="" loading="lazy" decoding="async">
       </a>
     </div>
     <div class="comment-body">
