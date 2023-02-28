@@ -252,9 +252,34 @@ class Sharedfile(ModelQueryCache, Model):
         # force https for any URLs in the html
         html = html.replace('http://', 'https://')
 
-        # force any iframe to permit full-screen display
+        extra_attributes = ""
+
+        # Allows iframe to trigger full-screen display
         if 'allowfullscreen' not in html:
-            html = html.replace('<iframe ', '<iframe allowfullscreen ')
+            extra_attributes += " allowfullscreen"
+
+        # Enable sandbox; only permit scripting (most rich embeds will need this)
+        # allow-popups is needed for opening links to original content (ie, YouTube embeds)
+        if 'sandbox=' not in html:
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups"'
+
+        # Prevent referrer leaks to third parties
+        if 'referrerpolicy=' not in html:
+            extra_attributes += ' referrerpolicy="no-referrer-when-downgrade"'
+
+        if 'allow=' not in html:
+            extra_attributes += ' allow="encrypted-media"'
+
+        # Force lazy loading
+        if 'loading=' not in html:
+            extra_attributes += ' loading="lazy"'
+
+        # Force low priority fetching
+        if 'fetchpriority=' not in html:
+            extra_attributes += ' fetchpriority="low"'
+
+        if extra_attributes:
+            html = html.replace('<iframe ', '<iframe ' + extra_attributes)
 
         html = html.replace('autoplay=0', '')
 

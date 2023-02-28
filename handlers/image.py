@@ -123,6 +123,12 @@ class ShowHandler(BaseHandler):
         thumb_url = s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
         jsonp = 'jsonp%s' % int(time.mktime(sharedfile.created_at.timetuple()))
 
+        # OpenGraph recommendation for image size is 1200x630
+        og_width = None
+        og_height = None
+        if sourcefile.type == 'image':
+            og_width, og_height = sourcefile.width_constrained_dimensions(1200)
+
         return self.render("image/show.html", sharedfile=sharedfile, thumb_url=thumb_url,
             sharedfile_owner=sharedfile_owner, image_url=image_url, jsonp=jsonp,
             view_count=view_count, can_delete=can_delete, save_count=save_count,
@@ -131,7 +137,8 @@ class ShowHandler(BaseHandler):
             add_to_shakes=add_to_shakes, can_add_to_shakes=can_add_to_shakes,
             can_comment=can_comment,
             owner_twitter_account=owner_twitter_account,
-            user_is_owner=user_is_owner)
+            user_is_owner=user_is_owner,
+            og_width=og_width, og_height=og_height)
 
 
 class ShowLikesHandler(BaseHandler):
@@ -245,6 +252,15 @@ class ShowRawHandler(BaseHandler):
             if format != "":
                 cdn_url += ".%s" % format
 
+            # Pass through width and dpr query parameter if present.
+            # These are supported by Fastly for rendering variant images.
+            if self.get_argument("width", None) is not None:
+                try:
+                    cdn_url += "?width=%d" % int(self.get_argument("width"))
+                    cdn_url += ("&dpr=%.1f" % float(self.get_argument("dpr", "1"))).replace(".0", "")
+                except ValueError:
+                    pass
+
             self.redirect(cdn_url)
         else:
             # piece together headers to be picked up by nginx to proxy file from S3
@@ -279,6 +295,11 @@ class ShowRawHandler(BaseHandler):
             self.set_header("Content-Type", content_type)
             self.set_header("Surrogate-Control", "max-age=86400")
             self.set_header("X-Accel-Redirect", "/s3/%s?%s" % (file_path, query))
+
+            # We already counted the request made to s.mltshp.com/r/ when
+            # we redirected to the CDN, so don't count the view a second time.
+            if options.use_cdn:
+                self._sharedfile = None
 
     def on_finish(self):
         """

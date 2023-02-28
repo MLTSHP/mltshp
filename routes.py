@@ -205,6 +205,7 @@ routes = [
     (r"/terms-of-use", handlers.misc.TermsOfUseHandler),
     (r"/code-of-conduct", handlers.misc.CodeOfConductHandler),
     (r"/healthy/is_healthy.php", handlers.misc.HAProxyHandler),
+    (r"/healthy/is-healthy", handlers.misc.HAProxyHandler),
 
     (r"/popular", handlers.popular.IndexHandler),
     (r"/popular/([\d]+)", handlers.popular.IndexHandler),

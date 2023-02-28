@@ -76,7 +76,10 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         load_query = f.read()
         f.close()
         f = None
-        db.execute(load_query)
+        statements = load_query.split(";")
+        for statement in statements:
+            if statement.strip() != "":
+                db.execute(statement.strip())
         end_time = int(time.time())
         #print "Database reset took: %s" % (end_time - start_time)
         return db
