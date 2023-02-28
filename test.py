@@ -82,5 +82,8 @@ if __name__ == '__main__':
         with open("setup/db-install.sql") as f:
             load_query = f.read()
         db.execute("USE %s" % options.database_name)
-        db.execute(load_query)
+        statements = load_query.split(";")
+        for statement in statements:
+            if statement.strip() != "":
+                db.execute(statement.strip())
     tornado.testing.main()

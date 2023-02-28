@@ -99,7 +99,7 @@ class Image(UIModule):
 
         # minimum height is used for the NSFW cover.
         min_height = 90
-        width, height = sourcefile.width_constrained_dimensions(555)
+        width, height = sourcefile.width_constrained_dimensions(550)
         if height > 170:
             min_height = height - 80
 

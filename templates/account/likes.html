@@ -36,7 +36,7 @@
             {% for follow in following_shakes %}
               <li>
                 <a href="{{follow['path']}}" title="{{escape(follow['name'])}}">
-                  <img class="avatar--img" src="{{follow['image']}}" width="48" height="48" alt="{{escape(follow['name'])}}">
+                  <img class="avatar--img" src="{{follow['image']}}" width="48" height="48" alt="{{escape(follow['name'])}}" loading="lazy" decoding="async">
                 </a>
               </li>
             {% end %}
@@ -54,7 +54,7 @@
             {% for follower in followers %}
               <li>
                 <a href="/user/{{follower.name}}" title="{{escape(follower.display_name())}}">
-                  <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48" alt="{{escape(follower.display_name())}}">
+                  <img class="avatar--img" src="{{follower.profile_image_url()}}" width="48" height="48" alt="{{escape(follower.display_name())}}" loading="lazy" decoding="async">
                 </a>
               </li>
             {% end %}
