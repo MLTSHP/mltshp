@@ -29,7 +29,8 @@ services:
     networks:
       - app_net
   fakes3:
-    image: fingershock/fakes3
+    image: ourtownrentals/fake-s3
+    entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 8000
     ports:
       - "8000:8000"
     networks:

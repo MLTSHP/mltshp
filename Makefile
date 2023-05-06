@@ -6,26 +6,26 @@ init-dev:
 	mkdir -p mounts/mysql mounts/logs mounts/fakes3 mounts/uploaded
 
 run:
-	docker-compose up -d
+	docker-compose --env-file .env up -d
 
 stop:
-	docker-compose down
+	docker-compose --env-file .env down
 
 build:
 	docker build -t mltshp/mltshp-web:latest .
 
 shell:
-	docker-compose exec mltshp bash
+	docker-compose --env-file .env exec mltshp bash
 
 test:
-	docker-compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $(TEST)"
+	docker-compose --env-file .env exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $(TEST)"
 
 destroy:
 	docker-compose down
 	rm -rf mounts
 
 migrate:
-	docker-compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"
+	docker-compose --env-file .env exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"
 
 mysql:
-	docker-compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"
+	docker-compose --env-file .env exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"
