@@ -10,6 +10,7 @@ pip-log.txt
 *.swp
 env
 mounts
+.env
 .deploy.env
 .coverage
 coverage.xml

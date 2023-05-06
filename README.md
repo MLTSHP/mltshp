@@ -93,10 +93,20 @@ That should do it.
 
 ## Tests
 
-With your copy of MLTSHP running, you may want to run unit tests. Some
-of the unit tests actually test against Twitter itself, so you'll want
-to generate a custom Twitter app with your own set of keys. Configure
-the `test_settings` in your `settings.py` file appropriately:
+With your copy of MLTSHP running, you may want to run unit tests.
+
+Some tests rely on accessing AWS S3. We have a dummy S3 server in
+place to mock those API requests. But it requires a license key
+in order to use it. Visit [this page](https://supso.org/projects/fake-s3)
+to obtain a license key. For individual developers and small organizations,
+there is no cost. Add the following to a local `.env` file in the root
+of the project:
+
+    FAKES3_LICENSE_KEY=your-license-key-here
+
+Some of the unit tests actually test against Twitter itself, so you'll
+want to generate a custom Twitter app with your own set of keys.
+Configure the `test_settings` in your `settings.py` file appropriately:
 
     "twitter_consumer_key" : "twitter_consumer_key_here",
     "twitter_consumer_secret" : "twitter_consumer_secret_key_here",
