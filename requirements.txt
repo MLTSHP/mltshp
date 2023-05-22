@@ -19,7 +19,7 @@ wsgiref==0.1.2
 mock==1.0.1
 pyOpenSSL==17.5.0
 backports.ssl==0.0.9
-requests==2.20.0
+requests==2.31.0
 stripe==1.82.1
 yoyo-migrations==5.0.5
 ffmpy==0.2.2
