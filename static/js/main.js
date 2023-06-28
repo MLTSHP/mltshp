@@ -398,6 +398,47 @@ $(document).ready(function() {
       return false;
     });
 
+    // Inline editing of the alt text.
+    $(".alt-text-edit-form").submit(function() {
+      var data = $(this).serialize();
+      var url = $(this).attr('action');
+      var that = this;
+      $.post(url, data, function (result){
+        if ('alt_text' in result && 'alt_text_raw' in result) {
+          var $alt_text_container = $(that).closest('.alt-text-edit');
+          $alt_text_container.find('.the-alt-text').html(result['alt_text']).removeClass('the-alt-text-blank').show();
+          $alt_text_container.find('textarea').val(result['alt_text_raw']);
+          $alt_text_container.find('.alt-text-edit-form').hide();
+        }
+      }, 'json');
+      return false;
+    });
+
+    $(".alt-text-edit .the-alt-text").hover(function() {
+      $(this).addClass('the-alt-text-hover');
+    }, function() {
+      $(this).removeClass('the-alt-text-hover');
+    });
+
+    $(".alt-text-edit .the-alt-text").click(function() {
+      var $alt_text_container = $(this).closest('.alt-text-edit');
+      var url = $alt_text_container.find('form').attr('action');
+      var that = this;
+      $.get(url, function(result) {
+        if ('alt_text_raw' in result) {
+          $(that).hide();
+          $alt_text_container.find('.alt-text-edit-textarea').val(result['alt_text_raw']);
+          $(that).next(".alt-text-edit-form").show();
+        }
+      }, 'json');
+    });
+
+    $(".alt-text-edit .cancel").click(function() {
+      $(this).closest('.alt-text-edit').find(".the-alt-text").show();
+      $(this).closest(".alt-text-edit-form").hide();
+      return false;
+    });
+
     $(".delete-from-shakes-form").click(function() {
       return confirm('Are you sure you want to remove it?');
     });

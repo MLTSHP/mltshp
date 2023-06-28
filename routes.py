@@ -72,6 +72,8 @@ routes = [
         handlers.image.QuickEditTitleHandler),
     (r"/p/([a-zA-Z0-9]+)/quick-edit-description",
         handlers.image.QuickEditDescriptionHandler),
+    (r"/p/([a-zA-Z0-9]+)/quick-edit-alt-text",
+        handlers.image.QuickEditAltTextHandler),
     (r"/p/([a-zA-Z0-9]+)/quick-edit-source-url",
         handlers.image.QuickEditSourceURLHandler),
     (r"/p/([a-zA-Z0-9]+)/comment/([0-9]+)/like",

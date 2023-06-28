@@ -36,6 +36,7 @@ class Sharedfile(ModelQueryCache, Model):
     name = Property()
     title = Property()
     description = Property()
+    alt_text = Property()
     source_url = Property()
     share_key = Property()
     content_type = Property()
@@ -87,6 +88,20 @@ class Sharedfile(ModelQueryCache, Model):
 
             description = description.replace('\n', '<br>')
         return description
+
+    def get_alt_text(self, raw=False):
+        """
+        Returns alt text, escapes double quotes if sans_quotes is True, used
+        for rendering description inside fields.
+        """
+        alt_text = self.alt_text
+        if not alt_text:
+            alt_text = ''
+
+        if not raw:
+            alt_text = alt_text.replace('\n', '<br>')
+
+        return alt_text
 
     def save(self, *args, **kwargs):
         """
@@ -800,4 +815,3 @@ class Sharedfile(ModelQueryCache, Model):
                 return None
         else:
             return None
-
