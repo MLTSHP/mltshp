@@ -6,6 +6,7 @@ CREATE TABLE `sharedfile` (
   `title` varchar(250) DEFAULT NULL,
   `source_url` text,
   `description` text,
+  `alt_text` text,
   `share_key` varchar(40) DEFAULT NULL,
   `content_type` varchar(128) DEFAULT NULL,
   `size` int(128) NOT NULL DEFAULT '0',
