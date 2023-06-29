@@ -122,7 +122,7 @@ class SearchHandler(BaseHandler):
                     %s
                     WHERE sharedfile.deleted=0
                         %s
-                        AND MATCH (sharedfile.title, sharedfile.description)
+                        AND MATCH (sharedfile.title, sharedfile.description, sharedfile.alt_text)
                         AGAINST (%%s in boolean mode)
                     ORDER BY sharedfile.created_at DESC LIMIT %%s,%%s""" % (
                         user_join_clause, shake_join_clause, parent_where_clause)

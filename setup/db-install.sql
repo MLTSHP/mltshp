@@ -24,7 +24,7 @@ CREATE TABLE `sharedfile` (
   KEY `original_id_deleted_idx` (`original_id`,`deleted`) USING BTREE,
   KEY `parent_id_deleted_idx` (`parent_id`,`deleted`) USING BTREE,
   KEY `id_deleted_idx` (`id`, `deleted`) USING BTREE,
-  FULLTEXT KEY `titledesc_fulltext_idx` (`title`,`description`)
+  FULLTEXT KEY `titledesc_fulltext_idx` (`title`,`description`,`alt_text`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `sourcefile` (
