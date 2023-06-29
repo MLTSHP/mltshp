@@ -406,9 +406,16 @@ $(document).ready(function() {
       $.post(url, data, function (result){
         if ('alt_text' in result && 'alt_text_raw' in result) {
           var $alt_text_container = $(that).closest('.alt-text-edit');
-          $alt_text_container.find('.the-alt-text').html(result['alt_text']).removeClass('the-alt-text-blank').show();
+          if (result['alt_text']) {
+            $alt_text_container.removeClass('alt-text--blank');
+            $alt_text_container.find('.the-alt-text').html(result['alt_text']);
+          } else {
+            $alt_text_container.addClass('alt-text--blank');
+            $alt_text_container.find('.the-alt-text').html('add some alt text');
+          }
+          $alt_text_container.removeClass('alt-text--hidden');
+          $alt_text_container.removeClass('alt-text--editing');
           $alt_text_container.find('textarea').val(result['alt_text_raw']);
-          $alt_text_container.find('.alt-text-edit-form').hide();
         }
       }, 'json');
       return false;
@@ -426,17 +433,20 @@ $(document).ready(function() {
       var that = this;
       $.get(url, function(result) {
         if ('alt_text_raw' in result) {
-          $(that).hide();
+          $(that).closest('.alt-text-edit').addClass('alt-text--editing');
           $alt_text_container.find('.alt-text-edit-textarea').val(result['alt_text_raw']);
-          $(that).next(".alt-text-edit-form").show();
         }
       }, 'json');
     });
 
     $(".alt-text-edit .cancel").click(function() {
-      $(this).closest('.alt-text-edit').find(".the-alt-text").show();
-      $(this).closest(".alt-text-edit-form").hide();
+      $(this).closest('.alt-text-edit').removeClass('alt-text--hidden');
+      $(this).closest('.alt-text-edit').removeClass('alt-text--editing');
       return false;
+    });
+
+    $(".alt-text-toggle").click(function() {
+      $(this).closest('.alt-text').toggleClass('alt-text--hidden');
     });
 
     $(".delete-from-shakes-form").click(function() {

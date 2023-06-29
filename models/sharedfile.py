@@ -91,8 +91,8 @@ class Sharedfile(ModelQueryCache, Model):
 
     def get_alt_text(self, raw=False):
         """
-        Returns alt text, escapes double quotes if sans_quotes is True, used
-        for rendering description inside fields.
+        Returns alt text, converts new lines to <br> unless raw is True, used
+        for rendering alt text inside textarea fields.
         """
         alt_text = self.alt_text
         if not alt_text:

@@ -66,7 +66,7 @@
                             width="{{sized_width}}"
                             loading="lazy"
                             decoding="async"
-                            alt="{{escape(sharedfile.get_alt_text())}}"></a>
+                            alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt from user')}}"></a>
                     {% else %}
                         <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img
                             srcset="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
@@ -75,22 +75,27 @@
                             width="{{sized_width}}"
                             loading="lazy"
                             decoding="async"
-                            alt="{{escape(sharedfile.get_alt_text())}}"></a>
+                            alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt from user')}}"></a>
                     {% end %}
                 {% end %}
             {% end %}
         {% end %}
     </div>
     <div id="image-content-footer-{{sharedfile.share_key}}" class="image-content-footer">
-        <div class="alt-text {% if can_edit %}alt-text-edit{%end%}">
+        <div class="alt-text {% if can_edit %}alt-text-edit{%end%}{% if not sharedfile.get_alt_text() %} alt-text--blank{%else%} alt-text--hidden{%end%}">
+            <div class="alt-text-toggle link link--primary">alt text</div>
             {% if can_edit and not site_is_readonly %}
                 {% if not sharedfile.get_alt_text() %}
-                    <div class="the-alt-text the-alt-text-blank">Add some alt text</div>
+                    <div class="the-alt-text">add some alt text</div>
                 {% else %}
                     <div class="the-alt-text">{{sharedfile.get_alt_text()}}</div>
                 {% end %}
                 <form method="post" class="alt-text-edit-form" action="/p/{{sharedfile.share_key}}/quick-edit-alt-text">
                     {{ xsrf_form_html() }}
+                    <h3>Edit alt text</h3>
+                    <p class="alt-text-learn">
+                      <a href="/alt-text">learn about alt text</a>
+                    </p>
                     <textarea name="alt_text" class="alt-text-edit-textarea"></textarea>
                     <div class="buttons">
                         <input type="submit" class="save btn btn-primary btn-small" value="Save">
@@ -113,6 +118,7 @@
                 {% end %}
                 <form method="post" class="description-edit-form" action="/p/{{sharedfile.share_key}}/quick-edit-description">
                     {{ xsrf_form_html() }}
+                    <h3>Edit description</h3>
                     <textarea name="description" class="description-edit-textarea"></textarea>
                     <div class="buttons">
                         <input type="submit" class="save btn btn-primary btn-small" value="Save">
