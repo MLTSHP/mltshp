@@ -86,9 +86,9 @@
             <div class="alt-text-toggle link link--primary">alt text</div>
             {% if can_edit and not site_is_readonly %}
                 {% if not sharedfile.get_alt_text() %}
-                    <div class="the-alt-text">add some alt text</div>
+                    <div class="the-alt-text" role="button">add some alt text</div>
                 {% else %}
-                    <div class="the-alt-text">{{sharedfile.get_alt_text()}}</div>
+                    <div class="the-alt-text" role="button">{{sharedfile.get_alt_text()}}</div>
                 {% end %}
                 <form method="post" class="alt-text-edit-form" action="/p/{{sharedfile.share_key}}/quick-edit-alt-text">
                     {{ xsrf_form_html() }}
