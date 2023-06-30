@@ -5,7 +5,7 @@ from tornado import escape
 from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.utilities import pretty_date
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 
 import user
 import notification
@@ -190,3 +190,5 @@ class Comment(Model):
         comment = Comment(user_id=user.id, sharedfile_id=sharedfile.id, body=body)
         comment.save()
         return comment
+
+
