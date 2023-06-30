@@ -53,7 +53,7 @@
                 </div>
             {% else %}
                 {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
-                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}" aria-description="Video embed: {{escape(sharedfile.get_alt_text(raw=True) or 'No alt from user')}}">
+                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}" aria-description="Video embed: {{escape(sharedfile.get_alt_text(raw=True) or 'No alt provided')}}">
                         {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
                         {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
                     </video>
@@ -66,7 +66,7 @@
                             width="{{sized_width}}"
                             loading="lazy"
                             decoding="async"
-                            alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt from user')}}"></a>
+                            alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt provided')}}"></a>
                     {% else %}
                         <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img
                             srcset="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
@@ -75,7 +75,7 @@
                             width="{{sized_width}}"
                             loading="lazy"
                             decoding="async"
-                            alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt from user')}}"></a>
+                            alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt provided')}}"></a>
                     {% end %}
                 {% end %}
             {% end %}

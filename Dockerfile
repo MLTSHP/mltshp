@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 LABEL maintainer "brad@bradchoate.com"
 ENV PYTHONUNBUFFERED 1
 
@@ -9,7 +9,7 @@ RUN apt-get -y update && apt-get install -y \
         supervisor \
         libmysqlclient-dev \
         mysql-client \
-        python-dev \
+        python3-dev \
         libjpeg-dev \
         libcurl4-openssl-dev \
         curl \
@@ -20,20 +20,15 @@ RUN apt-get -y update && apt-get install -y \
         libpcre3-dev \
         libssl-dev \
         libffi-dev \
-        python-pip && \
+        python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
-    \
-    pip install -U 'pip==20.3.4' 'setuptools==44.0.0' distribute && \
-    # fixes a weird issue where distribute complains about setuptools "0.7"
-    # (incorrectly matching version "20.7.0" which ubuntu 16.04 has preinstalled)
-    rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info && \
     \
     # install nginx + upload module
     mkdir -p /tmp/install && \
     cd /tmp/install && \
-    wget http://nginx.org/download/nginx-0.8.55.tar.gz && tar zxf nginx-0.8.55.tar.gz && \
-    wget https://github.com/fdintino/nginx-upload-module/archive/2.2.0.tar.gz && tar zxf 2.2.0.tar.gz && \
-    cd /tmp/install/nginx-0.8.55 && \
+    wget http://nginx.org/download/nginx-1.21.6.tar.gz && tar zxf nginx-1.21.6.tar.gz && \
+    wget https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz && tar zxf 2.3.0.tar.gz && \
+    cd /tmp/install/nginx-1.21.6 && \
     ./configure \
         --with-http_ssl_module \
         --with-http_stub_status_module \
@@ -43,7 +38,7 @@ RUN apt-get -y update && apt-get install -y \
         --conf-path=/etc/nginx/nginx.conf \
         --error-log-path=/srv/mltshp.com/nginx-error.log \
         --http-log-path=/srv/mltshp.com/nginx-access.log \
-        --add-module=/tmp/install/nginx-upload-module-2.2.0 && \
+        --add-module=/tmp/install/nginx-upload-module-2.3.0 && \
     make && make install && \
     mkdir -p /etc/nginx && \
     rm -rf /tmp/install && \
@@ -56,7 +51,8 @@ RUN apt-get -y update && apt-get install -y \
         /mnt/tmpuploads/9 && \
     chmod 777 /mnt/tmpuploads/* && \
     mkdir -p /srv/mltshp.com/uploaded /srv/mltshp.com/logs && \
-    chown -R ubuntu:ubuntu /srv/mltshp.com
+    chown -R ubuntu:ubuntu /srv/mltshp.com && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
 # Install python dependencies which will be cached on the
 # contents of requirements.txt:

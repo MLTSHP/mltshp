@@ -10,7 +10,7 @@ import tornado.web
 from tornado.escape import url_escape, json_decode
 from tornado.options import define, options
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from models import Externalservice, User, Sourcefile, Sharedfile, Shake, ExternalRelationship, ShakeCategory
 from base import BaseHandler, require_membership
