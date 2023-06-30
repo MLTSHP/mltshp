@@ -145,7 +145,7 @@ class FileViewTests(BaseAsyncTestCase):
 
         imageviews = self.db.query("SELECT id, user_id, sharedfile_id, created_at from fileview WHERE user_id = 0")
         self.assertEqual(len(imageviews), 5)
-        
+
     def test_delete_image_raw_404s(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
 
@@ -265,6 +265,14 @@ class SharedFileTests(BaseAsyncTestCase):
         response = self.wait()
         j = json_decode(response.body)
         self.assertEqual(j['description_raw'], 'Bilbo\nbaggins')
+
+    def test_quick_edit_alt_text(self):
+        self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
+        request = HTTPRequest(self.get_url('/p/1/quick-edit-alt-text'), 'POST', {'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, "_xsrf=%s&alt_text=%s" % (self.xsrf, url_escape('A small person carrying a ring')))
+        self.http_client.fetch(request, self.stop)
+        response = self.wait()
+        j = json_decode(response.body)
+        self.assertEqual(j['alt_text_raw'], 'A small person carrying a ring')
 
     def test_quick_edit_source_url(self):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)

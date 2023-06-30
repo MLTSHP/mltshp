@@ -279,6 +279,12 @@ $(document).ready(function() {
       }
     });
 
+    function screen_reader_focus(el) {
+      el.setAttribute('tabindex', '0');
+      el.blur();
+      el.focus();
+    }
+
     $(".save-this").each(function() {
       var save_this_view = new SaveThisView(this);
     });
@@ -365,9 +371,15 @@ $(document).ready(function() {
       $.post(url, data, function (result){
         if ('description' in result && 'description_raw' in result) {
           var $description_container = $(that).closest('.description-edit');
-          $description_container.find('.the-description').html(result['description']).removeClass('the-description-blank').show();
           $description_container.find('textarea').val(result['description_raw']);
           $description_container.find('.description-edit-form').hide();
+          if (result['description']) {
+            $description_container.find('.the-description').html(result['description']).show();
+            $description_container.find('.the-description').removeClass('the-description-blank');
+          } else {
+            $description_container.find('.the-description').html('click here to edit description').show();
+            $description_container.find('.the-description').addClass('the-description-blank');
+          }
         }
       }, 'json');
       return false;
@@ -386,8 +398,10 @@ $(document).ready(function() {
       $.get(url, function(result) {
         if ('description_raw' in result) {
           $(that).hide();
-          $description_container.find('.description-edit-textarea').val(result['description_raw']);
+          let $textarea = $description_container.find('.description-edit-textarea');
+          $textarea.val(result['description_raw']);
           $(that).next(".description-edit-form").show();
+          screen_reader_focus($textarea[0]);
         }
       }, 'json');
     });
@@ -396,6 +410,64 @@ $(document).ready(function() {
       $(this).closest('.description-edit').find(".the-description").show();
       $(this).closest(".description-edit-form").hide();
       return false;
+    });
+
+    // Inline editing of the alt text.
+    $(".alt-text-edit-form").submit(function() {
+      var data = $(this).serialize();
+      var url = $(this).attr('action');
+      var that = this;
+      $.post(url, data, function (result){
+        if ('alt_text' in result && 'alt_text_raw' in result) {
+          var $alt_text_container = $(that).closest('.alt-text-edit');
+          if (result['alt_text']) {
+            $alt_text_container.removeClass('alt-text--blank');
+            $alt_text_container.find('.the-alt-text').html(result['alt_text']);
+          } else {
+            $alt_text_container.addClass('alt-text--blank');
+            $alt_text_container.find('.the-alt-text').html('add some alt text');
+          }
+          $alt_text_container.removeClass('alt-text--hidden');
+          $alt_text_container.removeClass('alt-text--editing');
+          $alt_text_container.find('textarea').val(result['alt_text_raw']);
+          screen_reader_focus($alt_text_container.find('.the-alt-text')[0]);
+        }
+      }, 'json');
+      return false;
+    });
+
+    $(".alt-text-edit .the-alt-text").hover(function() {
+      $(this).addClass('the-alt-text-hover');
+    }, function() {
+      $(this).removeClass('the-alt-text-hover');
+    });
+
+    $(".alt-text-edit .the-alt-text").click(function() {
+      var $alt_text_container = $(this).closest('.alt-text-edit');
+      var url = $alt_text_container.find('form').attr('action');
+      var that = this;
+      $.get(url, function(result) {
+        if ('alt_text_raw' in result) {
+          $(that).closest('.alt-text-edit').addClass('alt-text--editing');
+          let $textarea = $alt_text_container.find('.alt-text-edit-textarea');
+          $textarea.val(result['alt_text_raw']);
+          screen_reader_focus($textarea[0]);
+        }
+      }, 'json');
+    });
+
+    $(".alt-text-edit .cancel").click(function() {
+      $(this).closest('.alt-text-edit').removeClass('alt-text--hidden');
+      $(this).closest('.alt-text-edit').removeClass('alt-text--editing');
+      return false;
+    });
+
+    $(".alt-text-toggle").click(function() {
+      let $alt = $(this).closest('.alt-text');
+      $alt.toggleClass('alt-text--hidden');
+      if (!$alt.hasClass('alt-text--hidden')) {
+        screen_reader_focus($alt.find('.the-alt-text')[0]);
+      }
     });
 
     $(".delete-from-shakes-form").click(function() {

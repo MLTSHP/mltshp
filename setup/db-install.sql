@@ -6,6 +6,7 @@ CREATE TABLE `sharedfile` (
   `title` varchar(250) DEFAULT NULL,
   `source_url` text,
   `description` text,
+  `alt_text` text,
   `share_key` varchar(40) DEFAULT NULL,
   `content_type` varchar(128) DEFAULT NULL,
   `size` int(128) NOT NULL DEFAULT '0',
@@ -23,7 +24,7 @@ CREATE TABLE `sharedfile` (
   KEY `original_id_deleted_idx` (`original_id`,`deleted`) USING BTREE,
   KEY `parent_id_deleted_idx` (`parent_id`,`deleted`) USING BTREE,
   KEY `id_deleted_idx` (`id`, `deleted`) USING BTREE,
-  FULLTEXT KEY `titledesc_fulltext_idx` (`title`,`description`)
+  FULLTEXT KEY `titledesc_fulltext_idx` (`title`,`description`,`alt_text`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `sourcefile` (

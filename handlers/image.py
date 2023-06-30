@@ -463,6 +463,38 @@ class QuickEditDescriptionHandler(BaseHandler):
         return self.write(escape.json_encode(value))
 
 
+class QuickEditAltTextHandler(BaseHandler):
+    """
+    path: /p/{share_key}/quick-edit-alt-text
+
+    Called on the client side, returns JSON response with the description
+    and raw (unescaped) description.
+    """
+    @tornado.web.authenticated
+    @require_membership
+    def post(self, share_key):
+        sharedfile = Sharedfile.get_by_share_key(share_key)
+        user = self.get_current_user_object()
+        if sharedfile.can_edit(user):
+            alt_text = self.get_argument('alt_text', '')
+            if user.is_paid or not uses_a_banned_phrase(description):
+                sharedfile.alt_text = alt_text
+                sharedfile.save()
+        return self.redirect("/p/%s/quick-edit-alt-text" % share_key)
+
+    def get(self, share_key):
+        sharedfile = Sharedfile.get_by_share_key(share_key)
+        value = {
+            'alt_text' : sharedfile.get_alt_text(),
+            'alt_text_raw' : sharedfile.get_alt_text(raw=True)
+        }
+        # prevents IE from caching ajax requests.
+        self.set_header("Cache-Control","no-store, no-cache, must-revalidate");
+        self.set_header("Pragma","no-cache");
+        self.set_header("Expires", 0);
+        return self.write(escape.json_encode(value))
+
+
 class QuickEditSourceURLHandler(BaseHandler):
     """
     path: /p/{share_key}/quick-edit-source-url
@@ -760,4 +792,3 @@ class NSFWHandler(BaseHandler):
         user = self.get_current_user_object()
         sharedfile.set_nsfw(user)
         return self.redirect("/p/%s" % sharedfile.share_key)
-
