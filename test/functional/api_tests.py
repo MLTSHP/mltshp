@@ -555,10 +555,11 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         j_response = json_decode(response.body)
         self.assertEqual(j_response['user']['name'], 'admin')
         self.assertEqual(j_response['posted_at'], posted)
+        self.assertEqual(j_response['alt_text'], None)
 
     def test_can_update_own_sharedfile(self):
         user_b_file = self._post_to_shake(self.user_b)
-        message_body = "description=newdescription&title=newtitle"
+        message_body = "description=newdescription&title=newtitle&alt_text=newalttext"
         request = signed_request(self.access_token, self.get_url('/api/sharedfile/%s' % user_b_file.share_key), 'POST', {}, message_body)
         self.http_client.fetch(request, self.stop)
         response = self.wait()
@@ -566,10 +567,11 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         user_b_file = Sharedfile.get("id = %s", user_b_file.id)
         self.assertEqual('newdescription', user_b_file.description)
         self.assertEqual('newtitle', user_b_file.title)
+        self.assertEqual('newalttext', user_b_file.alt_text)
 
     def test_can_not_update_anothers_sharedfile(self):
         user_a_file = self._post_to_shake(self.user_a)
-        message_body = "description=newdescription&title=newtitle"
+        message_body = "description=newdescription&title=newtitle&alt_text=newalt"
         request = signed_request(self.access_token, self.get_url('/api/sharedfile/%s' % user_a_file.share_key), 'POST', {}, message_body)
         self.http_client.fetch(request, self.stop)
         response = self.wait()
@@ -577,6 +579,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         user_a_file = Sharedfile.get("id = %s", user_a_file.id)
         self.assertNotEqual('newdescription', user_a_file.description)
         self.assertNotEqual('newtitle', user_a_file.title)
+        self.assertNotEqual('newalt', user_a_file.alt_text)
 
     def test_query_user_name_resource(self):
         request = signed_request(self.access_token, self.get_url('/api/user_name/admin'))
@@ -738,9 +741,9 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(j_response['name'], '2.png')
         self.assertEqual(j_response['share_key'], '2')
 
-    def test_upload_file_with_title_description(self):
-        message = "file_name=%s&title=%s&description=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s" % \
-                ("2.png", "two", "a thing i wrote", self.test_file1_content_type, self.test_file1_sha1, 69, self.test_file1_path)
+    def test_upload_file_with_title_description_alt_text(self):
+        message = "file_name=%s&title=%s&description=%s&alt_text=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s" % \
+                ("2.png", "two", "a thing i wrote", "the number two", self.test_file1_content_type, self.test_file1_sha1, 69, self.test_file1_path)
         request = signed_request(self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
         self.http_client.fetch(request, self.stop)
         response = self.wait()
@@ -748,6 +751,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         sf = Sharedfile.get('share_key = %s', j_response['share_key'])
         self.assertEqual(sf.title, 'two')
         self.assertEqual(sf.description, 'a thing i wrote')
+        self.assertEqual(sf.alt_text, 'the number two')
 
     def test_magicfiles_resource(self):
         # Set up some more files.
