@@ -291,6 +291,9 @@ class SharedfileHandler(BaseHandler):
         if self.get_argument('description', None):
             sf.description = self.get_argument('description', None)
             sf.save()
+        if self.get_argument('alt_text', None):
+            sf.alt_text = self.get_argument('alt_text', None)
+            sf.save()
 
         return self.write(sf.as_json(user_context=user))
 
@@ -487,6 +490,9 @@ class FileUploadHandler(BaseHandler):
                     sf.save()
                 if self.get_argument('description', None):
                     sf.description = self.get_argument('description', None)
+                    sf.save()
+                if self.get_argument('alt_text', None):
+                    sf.alt_text = self.get_argument('alt_text', None)
                     sf.save()
             except:
                 obj = {'error':'Error processing file.'}

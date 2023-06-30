@@ -322,6 +322,7 @@ class Sharedfile(ModelQueryCache, Model):
             'height' : source.height,
             'title' : self.title,
             'description' : self.description,
+            'alt_text' : self.alt_text,
             'posted_at' : self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
             'permalink_page' : 'https://%s/p/%s' % (options.app_host, self.share_key)
         }
