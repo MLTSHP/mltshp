@@ -279,6 +279,12 @@ $(document).ready(function() {
       }
     });
 
+    function screen_reader_focus(el) {
+      el.setAttribute('tabindex', '0');
+      el.blur();
+      el.focus();
+    }
+
     $(".save-this").each(function() {
       var save_this_view = new SaveThisView(this);
     });
@@ -395,9 +401,7 @@ $(document).ready(function() {
           let $textarea = $description_container.find('.description-edit-textarea');
           $textarea.val(result['description_raw']);
           $(that).next(".description-edit-form").show();
-          $textarea[0].setAttribute('tabindex', '0');
-          $textarea[0].blur();
-          $textarea[0].focus();
+          screen_reader_focus($textarea[0]);
         }
       }, 'json');
     });
@@ -426,6 +430,7 @@ $(document).ready(function() {
           $alt_text_container.removeClass('alt-text--hidden');
           $alt_text_container.removeClass('alt-text--editing');
           $alt_text_container.find('textarea').val(result['alt_text_raw']);
+          screen_reader_focus($alt_text_container.find('.the-alt-text')[0]);
         }
       }, 'json');
       return false;
@@ -446,9 +451,7 @@ $(document).ready(function() {
           $(that).closest('.alt-text-edit').addClass('alt-text--editing');
           let $textarea = $alt_text_container.find('.alt-text-edit-textarea');
           $textarea.val(result['alt_text_raw']);
-          $textarea[0].setAttribute('tabindex', '0');
-          $textarea[0].blur();
-          $textarea[0].focus();
+          screen_reader_focus($textarea[0]);
         }
       }, 'json');
     });
@@ -463,10 +466,7 @@ $(document).ready(function() {
       let $alt = $(this).closest('.alt-text');
       $alt.toggleClass('alt-text--hidden');
       if (!$alt.hasClass('alt-text--hidden')) {
-        let altText = $alt.find('.the-alt-text')[0];
-        altText.setAttribute('tabindex', '0');
-        altText.blur();
-        altText.focus();
+        screen_reader_focus($alt.find('.the-alt-text')[0]);
       }
     });
 
