@@ -53,7 +53,7 @@
                 </div>
             {% else %}
                 {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
-                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}">
+                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}" aria-description="Video embed: {{escape(sharedfile.get_alt_text(raw=True) or 'No alt from user')}}">
                         {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
                         {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
                     </video>
@@ -83,7 +83,7 @@
     </div>
     <div id="image-content-footer-{{sharedfile.share_key}}" class="image-content-footer">
         <div class="alt-text {% if can_edit %}alt-text-edit{%end%}{% if not sharedfile.get_alt_text() %} alt-text--blank{%else%} alt-text--hidden{%end%}">
-            <div class="alt-text-toggle link link--primary" aria-hidden="true">alt text</div>
+            <div class="alt-text-toggle link link--primary">alt text</div>
             {% if can_edit and not site_is_readonly %}
                 {% if not sharedfile.get_alt_text() %}
                     <div class="the-alt-text">add some alt text</div>

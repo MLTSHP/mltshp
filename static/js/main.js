@@ -365,9 +365,15 @@ $(document).ready(function() {
       $.post(url, data, function (result){
         if ('description' in result && 'description_raw' in result) {
           var $description_container = $(that).closest('.description-edit');
-          $description_container.find('.the-description').html(result['description']).removeClass('the-description-blank').show();
           $description_container.find('textarea').val(result['description_raw']);
           $description_container.find('.description-edit-form').hide();
+          if (result['description']) {
+            $description_container.find('.the-description').html(result['description']).show();
+            $description_container.find('.the-description').removeClass('the-description-blank');
+          } else {
+            $description_container.find('.the-description').html('click here to edit description').show();
+            $description_container.find('.the-description').addClass('the-description-blank');
+          }
         }
       }, 'json');
       return false;
@@ -386,8 +392,12 @@ $(document).ready(function() {
       $.get(url, function(result) {
         if ('description_raw' in result) {
           $(that).hide();
-          $description_container.find('.description-edit-textarea').val(result['description_raw']);
+          let $textarea = $description_container.find('.description-edit-textarea');
+          $textarea.val(result['description_raw']);
           $(that).next(".description-edit-form").show();
+          $textarea[0].setAttribute('tabindex', '0');
+          $textarea[0].blur();
+          $textarea[0].focus();
         }
       }, 'json');
     });
@@ -434,7 +444,11 @@ $(document).ready(function() {
       $.get(url, function(result) {
         if ('alt_text_raw' in result) {
           $(that).closest('.alt-text-edit').addClass('alt-text--editing');
-          $alt_text_container.find('.alt-text-edit-textarea').val(result['alt_text_raw']);
+          let $textarea = $alt_text_container.find('.alt-text-edit-textarea');
+          $textarea.val(result['alt_text_raw']);
+          $textarea[0].setAttribute('tabindex', '0');
+          $textarea[0].blur();
+          $textarea[0].focus();
         }
       }, 'json');
     });
@@ -446,7 +460,14 @@ $(document).ready(function() {
     });
 
     $(".alt-text-toggle").click(function() {
-      $(this).closest('.alt-text').toggleClass('alt-text--hidden');
+      let $alt = $(this).closest('.alt-text');
+      $alt.toggleClass('alt-text--hidden');
+      if (!$alt.hasClass('alt-text--hidden')) {
+        let altText = $alt.find('.the-alt-text')[0];
+        altText.setAttribute('tabindex', '0');
+        altText.blur();
+        altText.focus();
+      }
     });
 
     $(".delete-from-shakes-form").click(function() {
