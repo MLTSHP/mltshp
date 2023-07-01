@@ -649,7 +649,7 @@ class Sharedfile(ModelQueryCache, Model):
 
         select_args = []
         if q is not None:
-            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
+            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description, sharedfile.alt_text) AGAINST (%s IN BOOLEAN MODE)"
             select_args.append(q)
 
         # We aren't joining on sharedfile using the deleted column since that
