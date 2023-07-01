@@ -232,6 +232,7 @@ class Sharedfile(ModelQueryCache, Model):
         new_sharedfile.source_id = self.source_id
         new_sharedfile.parent_id = self.id
         new_sharedfile.description = self.description
+        new_sharedfile.alt_text = self.alt_text
 
         if self.original_id == 0:
             new_sharedfile.original_id = self.id
