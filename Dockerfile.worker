@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:22.04
 LABEL maintainer "brad@bradchoate.com"
 ENV PYTHONUNBUFFERED 1
 
@@ -10,7 +10,7 @@ RUN apt-get -y update && \
     cron \
     libmysqlclient-dev \
     mysql-client \
-    python-dev \
+    python3-dev \
     libjpeg-dev \
     libcurl4-openssl-dev \
     curl \
@@ -22,14 +22,8 @@ RUN apt-get -y update && \
     libpcre3-dev \
     libssl-dev \
     libffi-dev \
-    python-pip && \
+    python3-pip && \
     rm -rf /var/lib/apt/lists/* && \
-    pip install -U 'pip==20.3.4' 'setuptools==44.0.0' distribute && \
-    # Fix for a really weird issue when installing postmark library
-    # distribute fails to run since it sees a setuptools with "0.7"
-    # in the name, even though ubuntu:16.04 has pre-installed "20.7.0"
-    # https://github.com/pypa/setuptools/issues/543
-    rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info && \
     groupadd ubuntu --gid=1010 && \
     useradd ubuntu --create-home --home-dir=/home/ubuntu \
         --uid=1010 --gid=1010 && \
