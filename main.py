@@ -3,12 +3,10 @@
 import os.path
 import sys
 
-import tornado.httpserver
-import tornado.ioloop
+import asyncio
 import tornado.web
 import tornado.options
-import torndb
-from tornado.options import define, options
+from tornado.options import options
 from tornado.httpclient import AsyncHTTPClient
 
 from lib.flyingcow import register_connection
@@ -54,21 +52,24 @@ class MltshpApplication(tornado.web.Application):
 
         super(MltshpApplication, self).__init__(*args, **settings)
 
-if __name__ == "__main__":
+
+async def main():
     mltshpoptions.parse_dictionary(settings)
     tornado.options.parse_command_line()
+
+    app_settings = MltshpApplication.app_settings()
 
     if options.dump_settings:
         from pprint import pprint
         pprint({'options': dict((k, opt.value())
-                                for k, opt in options.iteritems()),
+                                for k, opt in options.items()),
                 'app_settings': app_settings})
         sys.exit(0)
 
-    app_settings = MltshpApplication.app_settings()
     application = MltshpApplication(routes, autoescape=None, **app_settings)
-    http_server = tornado.httpserver.HTTPServer(application)
+    print("starting on port %s" % (options.on_port))
+    application.listen(int(options.on_port))
+    await asyncio.Event().wait()
 
-    print "starting on port %s" % (options.on_port)
-    http_server.listen(int(options.on_port))
-    tornado.ioloop.IOLoop.instance().start()
+if __name__ == "__main__":
+    asyncio.run(main())

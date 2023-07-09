@@ -25,7 +25,7 @@ class Bookmark(Model):
 
     def on_create(self):
         existing_previous_bookmark = Bookmark.where('user_id=%s and id < %s ORDER BY id desc LIMIT 1', self.user_id, self.id)
-        if existing_previous_bookmark and existing_previous_bookmark[0].sharedfile_id > 0:
+        if existing_previous_bookmark and existing_previous_bookmark[0] and (existing_previous_bookmark[0].sharedfile_id or 0) > 0:
             self.previous_sharedfile_id = existing_previous_bookmark[0].sharedfile_id
             self.save()
 
@@ -100,18 +100,19 @@ class Bookmark(Model):
         Sorts a list of bookmarks with a list of sharedfiles based on created_at.
         Bookmark will come before sharedfile if date is the same..
         """
-        def compare_created_at(x, y):
-            if x.created_at > y.created_at:
-                return -1
-            elif x.created_at < y.created_at:
-                return 1
-            else:
-                x_name = x.__class__.__name__
-                y_name = y.__class__.__name__
-                if x_name == 'Bookmark' and y_name == 'Sharedfile':
-                    return -1
-                return 0
+        def compare_created_at_key(x):
+            return str(x.created_at) + (x.__class__.__name__ == "Bookmark" and "1" or "0")
+            # if x.created_at > y.created_at:
+            #     return -1
+            # elif x.created_at < y.created_at:
+            #     return 1
+            # else:
+            #     x_name = x.__class__.__name__
+            #     y_name = y.__class__.__name__
+            #     if x_name == 'Bookmark' and y_name == 'Sharedfile':
+            #         return -1
+            #     return 0
 
         composite_list = sharedfiles + bookmarks
-        composite_list.sort(compare_created_at)
+        composite_list.sort(key=compare_created_at_key, reverse=True)
         return composite_list

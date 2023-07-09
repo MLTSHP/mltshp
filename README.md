@@ -4,6 +4,12 @@
 
 [![Build status](https://badge.buildkite.com/a86854c6272f21c9b46b8b6aafd3a4fb99bcfabe6e611bc370.svg)](https://buildkite.com/mltshp-inc/mltshp-web-service) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
 
+## Project Description
+
+This project is the codebase for running [mltshp.com](https://mltshp.com).
+It's a Python 3 application, utilizing a MySQL database, Amazon S3 for
+asset storage, and RabbitMQ for background jobs.
+
 ## Development Environment
 
 MLTSHP is a Dockerized application. This greatly simplifies running the
@@ -155,6 +161,6 @@ update from the pattern library.
 
 ## About
 
-MLTSHP is open-source software, ©2017 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.
+MLTSHP is open-source software, ©2023 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.
 
 [![Fastly logo](/static/images/fastly-logo.png)](https://www.fastly.com) MLTSHP is proudly powered by Fastly.

@@ -1,16 +1,16 @@
 from datetime import datetime
 import time
-from urllib import urlencode
-from urlparse import urlparse, urlunparse, urljoin
+from urllib.parse import urlencode
+from urllib.parse import urlparse, urlunparse
 from hashlib import sha1
 import hmac
 import base64
 import functools
 
 import tornado.web
-from tornado.options import define, options
+from tornado.options import options
 
-from base import BaseHandler
+from .base import BaseHandler
 from lib.utilities import normalize_string, base36decode
 from models import Accesstoken, Apihit, Apilog, App, Authorizationcode, \
     Favorite, Magicfile, Sharedfile, User, Shake, Comment
@@ -102,8 +102,8 @@ def oauth2authenticated(method):
                 parsed_url.path,
                 query_array)
 
-            digest = hmac.new(access_token.consumer_secret.encode('ascii'), normalized_string, sha1).digest()
-            signature = base64.encodestring(digest).strip()
+            digest = hmac.new(access_token.consumer_secret.encode('ascii'), normalized_string.encode('ascii'), sha1).digest()
+            signature = base64.encodebytes(digest).strip().decode('ascii')
 
             if signature == auth_items['signature']:
                 self.oauth2_user_id = access_token.user_id

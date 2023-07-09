@@ -27,5 +27,5 @@ class BaseTestCase(unittest.TestCase):
         return db
         
     def generate_string_of_len(self, length):
-        return ''.join(random.choice(string.letters) for i in xrange(length))
+        return ''.join(random.choice(string.ascii_letters) for i in range(length))
     

@@ -2,21 +2,16 @@ from contextlib import contextmanager
 import time
 from datetime import datetime, timedelta
 import random
-import string
-from urlparse import urlparse
+from urllib.parse import urlparse
 from hashlib import md5, sha1
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import hmac
 import base64
 import os
 
-from tornado.testing import AsyncHTTPTestCase
-from torndb import Connection
-from tornado.httpclient import HTTPRequest
 from tornado.escape import url_escape, json_decode
 from tornado.httputil import HTTPHeaders
 from tornado.options import options
-import handlers
 
 import test.base
 from models import Accesstoken, Apihit, App, Authorizationcode, Favorite, \
@@ -44,7 +39,7 @@ class APIAuthorizationTests(test.base.BaseAsyncTestCase):
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
 
         self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user_b.set_password('asdfasdf')
@@ -79,7 +74,7 @@ class APIAuthorizationTests(test.base.BaseAsyncTestCase):
         response = api_request(self, self.get_url(authorization_url), headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, unsigned=True)
         self.assertEqual(response.effective_url, self.get_url(authorization_url))
         self.assertEqual(response.code, 200)
-        self.assertTrue('http://client.example.com/return' in response.body)
+        self.assertIn('http://client.example.com/return', response.body)
 
     def test_authorization_code_request_accepts_matching_redirect(self):
         authorization_url = '/api/authorize?response_type=code&client_id=%s&redirect_uri=http://client.example.com/return' % (self.app.key())
@@ -87,7 +82,7 @@ class APIAuthorizationTests(test.base.BaseAsyncTestCase):
         response = api_request(self, self.get_url(authorization_url), headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, unsigned=True)
         self.assertEqual(response.effective_url, self.get_url(authorization_url))
         self.assertEqual(response.code, 200)
-        self.assertTrue('http://client.example.com/return' in response.body)
+        self.assertIn('http://client.example.com/return', response.body)
 
     def test_authorization_code_request_error_on_mismatched_redirect(self):
         authorization_url = '/api/authorize?response_type=code&client_id=%s&redirect_uri=http://othersite.example.com/path' % (self.app.key())
@@ -219,7 +214,7 @@ class APITokenTests(test.base.BaseAsyncTestCase):
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
 
 
         self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
@@ -339,7 +334,7 @@ class APIResourceOwnerPasswordCredentials(test.base.BaseAsyncTestCase):
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
 
 
         self.user_b = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
@@ -414,7 +409,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.user_a.set_password('asdfasdf')
         self.user_a.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
 
         self.test_file1_path = os.path.abspath("test/files/1.png")
         self.test_file1_sha1 = Sourcefile.get_sha1_file_key(self.test_file1_path)
@@ -448,10 +443,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.user_b.subscribe(self.user_a.shake())
 
     def test_bad_signature_denied(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1'))
-        request.headers['Authorization'] =  request.headers['Authorization'].replace('signature="', 'signature="asdf')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1'), signature=b"asdf")
         self.assertTrue(response.code, 401)
 
     def test_unsigned_resource_query_denied(self):
@@ -459,30 +451,23 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(response.code, 401)
 
     def test_duplicate_nonce(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1'), nonce="abcd")
 
         self.assertEqual(response.code, 200)
         self.assertTrue('Www-Authenticate' not in response.headers)
 
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1'), nonce="abcd")
 
         self.assertEqual(response.code, 401)
         self.assertTrue(response.headers['Www-Authenticate'].find("Duplicate nonce.") > 0)
 
     def test_rate_limit(self):
-        request = signed_request(self.ratelimited_access_token, self.get_url('/api/sharedfile/1'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.ratelimited_access_token, self.get_url('/api/sharedfile/1'))
 
         self.assertEqual(response.code, 200)
         self.assertEqual(response.headers['X-RateLimit-Remaining'], '1')
 
-        request = signed_request(self.ratelimited_access_token, self.get_url('/api/sharedfile/1'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.ratelimited_access_token, self.get_url('/api/sharedfile/1'))
 
         self.assertEqual(response.code, 400)
         self.assertEqual(response.headers['X-RateLimit-Remaining'], '0')
@@ -494,9 +479,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         f.sharedfile_id = 1
         f.save()
 
-        request = signed_request(self.access_token, self.get_url('/api/favorites'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/favorites'))
         j_response = json_decode(response.body)
 
         self.assertTrue('favorites' in j_response)
@@ -509,17 +492,13 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
             sf = self._post_to_shake(self.user_a)
             self.user_b.add_favorite(sf)
 
-        request = signed_request(self.access_token, self.get_url('/api/favorites'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/favorites'))
         original_favorites = json_decode(response.body)
         pivot_id = original_favorites['favorites'][5]['pivot_id']
         after_pivot_ids = [fav['sharekey'] for fav in original_favorites['favorites'][0:5]]
         before_pivot_ids = [fav['sharekey'] for fav in original_favorites['favorites'][6:]]
 
-        request = signed_request(self.access_token, self.get_url('/api/favorites/before/%s' % pivot_id))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/favorites/before/%s' % pivot_id))
         j_response = json_decode(response.body)
         self.assertTrue('favorites' in j_response)
         favs = j_response['favorites']
@@ -527,9 +506,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         pivot_ids = [fav['sharekey'] for fav in favs]
         self.assertEqual(before_pivot_ids, pivot_ids)
 
-        request = signed_request(self.access_token, self.get_url('/api/favorites/after/%s' % pivot_id))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/favorites/after/%s' % pivot_id))
         j_response = json_decode(response.body)
         self.assertTrue('favorites' in j_response)
         favs = j_response['favorites']
@@ -538,9 +515,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(after_pivot_ids, pivot_ids)
 
     def test_query_file_resource(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['name'], '1.png')
         self.assertEqual(j_response['user']['name'], 'admin')
@@ -549,9 +524,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         sf = Sharedfile.get('id=%s', 1)
         posted = sf.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z'
 
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['user']['name'], 'admin')
         self.assertEqual(j_response['posted_at'], posted)
@@ -560,9 +533,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
     def test_can_update_own_sharedfile(self):
         user_b_file = self._post_to_shake(self.user_b)
         message_body = "description=newdescription&title=newtitle&alt_text=newalttext"
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/%s' % user_b_file.share_key), 'POST', {}, message_body)
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/%s' % user_b_file.share_key), 'POST', {}, message_body)
         self.assertEqual(response.code, 200)
         user_b_file = Sharedfile.get("id = %s", user_b_file.id)
         self.assertEqual('newdescription', user_b_file.description)
@@ -572,9 +543,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
     def test_can_not_update_anothers_sharedfile(self):
         user_a_file = self._post_to_shake(self.user_a)
         message_body = "description=newdescription&title=newtitle&alt_text=newalt"
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/%s' % user_a_file.share_key), 'POST', {}, message_body)
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/%s' % user_a_file.share_key), 'POST', {}, message_body)
         self.assertEqual(response.code, 403)
         user_a_file = Sharedfile.get("id = %s", user_a_file.id)
         self.assertNotEqual('newdescription', user_a_file.description)
@@ -582,9 +551,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertNotEqual('newalt', user_a_file.alt_text)
 
     def test_query_user_name_resource(self):
-        request = signed_request(self.access_token, self.get_url('/api/user_name/admin'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/user_name/admin'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['name'], 'admin')
         self.assertEqual(j_response['profile_image_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
@@ -594,25 +561,19 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(2, len(j_response['shakes']))
 
     def test_query_user_id_resource(self):
-        request = signed_request(self.access_token, self.get_url('/api/user_id/1'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/user_id/1'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['name'], 'admin')
         self.assertEqual(j_response['id'], 1)
 
     def test_query_user_resource(self):
-        request = signed_request(self.access_token, self.get_url('/api/user'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/user'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['name'], 'user2')
         self.assertEqual(j_response['id'], 2)
 
     def test_query_usershakes_resource(self):
-        request = signed_request(self.access_token, self.get_url('/api/shakes'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/shakes'))
         j_response = json_decode(response.body)
         self.assertEqual(len(j_response['shakes']), 3)
         user_shake, group_shake, group_shake_2 = j_response['shakes']
@@ -641,9 +602,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(group_shake_2['owner'], {'name': 'admin', 'id': 1, 'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
 
     def test_query_friend_shake(self):
-        request = signed_request(self.access_token, self.get_url('/api/friends'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/friends'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['friend_shake'][0]['name'], '1.png')
         self.assertEqual(j_response['friend_shake'][0]['width'], 1)
@@ -654,9 +613,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         sf = Sharedfile.get('id=%s', 1)
         sf.set_nsfw(self.user_a)
 
-        request = signed_request(self.access_token, self.get_url('/api/friends'))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/friends'))
         j_response = json_decode(response.body)
         self.assertEqual(j_response['friend_shake'][0]['nsfw'], True)
 
@@ -682,24 +639,18 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
             sf.add_to_shake(self.user_a.shake())
             files.append(sf)
 
-        request = signed_request(self.access_token, self.get_url('/api/friends/before/%s' % files[3].share_key))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/friends/before/%s' % files[3].share_key))
         j_response = json_decode(response.body)
         self.assertEqual(4, len(j_response['friend_shake']))
 
-        request = signed_request(self.access_token, self.get_url('/api/friends/after/%s' % files[3].share_key))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/friends/after/%s' % files[3].share_key))
         j_response = json_decode(response.body)
         self.assertEqual(6, len(j_response['friend_shake']))
 
     def test_shake_stream(self):
         user_shake = self.user_a.shake()
         url = self.get_url("/api/shakes/%s" % user_shake.id)
-        request = signed_request(self.access_token, url, 'GET', {})
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, url, 'GET', {})
         j_response = json_decode(response.body)
         self.assertEqual(1, len(j_response['sharedfiles']))
 
@@ -710,9 +661,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         sharedfiles = user_shake.sharedfiles()
         self.assertEqual(3, len(sharedfiles))
         url = self.get_url("/api/shakes/%s/before/%s" % (user_shake.id, sharedfiles[1].share_key))
-        request = signed_request(self.access_token, url, 'GET', {})
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, url, 'GET', {})
         j_response = json_decode(response.body)
         self.assertEqual(1, len(j_response['sharedfiles']))
         self.assertEqual(sharedfiles[2].share_key, j_response['sharedfiles'][0]['sharekey'])
@@ -724,9 +673,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         sharedfiles = user_shake.sharedfiles()
         self.assertEqual(3, len(sharedfiles))
         url = self.get_url("/api/shakes/%s/after/%s" % (user_shake.id, sharedfiles[1].share_key))
-        request = signed_request(self.access_token, url, 'GET', {})
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, url, 'GET', {})
         j_response = json_decode(response.body)
         self.assertEqual(1, len(j_response['sharedfiles']))
         self.assertEqual(sharedfiles[0].share_key, j_response['sharedfiles'][0]['sharekey'])
@@ -734,9 +681,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
     def test_upload_file(self):
         message = "file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s" % \
                 ("2.png", self.test_file1_content_type, self.test_file1_sha1, 69, self.test_file1_path)
-        request = signed_request(self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
         j_response = json_decode(response.body)
         self.assertEqual(j_response['name'], '2.png')
         self.assertEqual(j_response['share_key'], '2')
@@ -744,9 +689,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
     def test_upload_file_with_title_description_alt_text(self):
         message = "file_name=%s&title=%s&description=%s&alt_text=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s" % \
                 ("2.png", "two", "a thing i wrote", "the number two", self.test_file1_content_type, self.test_file1_sha1, 69, self.test_file1_path)
-        request = signed_request(self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
         j_response = json_decode(response.body)
         sf = Sharedfile.get('share_key = %s', j_response['share_key'])
         self.assertEqual(sf.title, 'two')
@@ -767,7 +710,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         testfile_in_another_group = testfile_2.save_to_shake(self.user_a, self.group_shake_2)
 
         sid_b = self.sign_in('user2', 'asdfasdf')
-        xsrf_b = self.get_xsrf()
+        xsrf_b = self.get_xsrf().decode("ascii")
         response = self.upload_file(file_path=self.test_file1_path, sha1=self.test_file1_sha1,
             content_type=self.test_file1_content_type, user_id=2, sid=sid_b, xsrf=xsrf_b,
             shake_id=self.group_shake.id)
@@ -786,9 +729,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
                     calculate_likes(sf.id)
 
         # What's best?
-        request = signed_request(self.access_token, self.get_url('/api/magicfiles'), 'GET')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/magicfiles'), 'GET')
         j_response = json_decode(response.body)
 
         magicfiles = j_response['magicfiles']
@@ -798,22 +739,16 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(pivot_ids, ['2', '1'])
 
         # Pagination check.
-        request = signed_request(self.access_token, self.get_url('/api/magicfiles/before/2'), 'GET')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/magicfiles/before/2'), 'GET')
         j_response = json_decode(response.body)
         self.assertEqual('1', j_response['magicfiles'][0]['pivot_id'])
 
-        request = signed_request(self.access_token, self.get_url('/api/magicfiles/after/1'), 'GET')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/magicfiles/after/1'), 'GET')
         j_response = json_decode(response.body)
         self.assertEqual('2', j_response['magicfiles'][0]['pivot_id'])
 
     def test_like_resource(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1/like'), 'POST', {}, '')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1/like'), 'POST', {}, '')
         self.assertEqual(response.code, 200)
 
         j_response = json_decode(response.body)
@@ -823,14 +758,10 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(testfile.like_count, 1)
 
     def test_like_resource_already_liked(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1/like'), 'POST', {}, '')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1/like'), 'POST', {}, '')
         self.assertEqual(response.code, 200)
 
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1/like'), 'POST', {}, '')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1/like'), 'POST', {}, '')
         self.assertEqual(response.code, 400)
 
         j_response = json_decode(response.body)
@@ -841,17 +772,13 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(testfile.like_count, 1)
 
     def test_like_resource_not_found(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/444Z/like'), 'POST')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/444Z/like'), 'POST')
         self.assertEqual(response.code, 404)
         j_response = json_decode(response.body)
         self.assertTrue('error' in j_response)
 
     def test_save_sharedfile(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/1/save'), 'POST')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/1/save'), 'POST')
         self.assertEqual(response.code, 200)
         testfile = Sharedfile.get("id = %s", 1)
         self.assertEqual(1, testfile.save_count)
@@ -859,27 +786,21 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertTrue(1, j_response['saves'])
 
     def test_save_nonexistant_sharedfile(self):
-        request = signed_request(self.access_token, self.get_url('/api/sharedfile/50000/save'), 'POST')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, self.get_url('/api/sharedfile/50000/save'), 'POST')
         self.assertEqual(response.code, 404)
 
     def test_save_own_sharedfile(self):
         self._post_to_shake(self.user_b)
         sharedfile = self.user_b.shake().sharedfiles()[0]
         url = self.get_url('/api/sharedfile/%s/save' % sharedfile.share_key)
-        request = signed_request(self.access_token, url, 'POST', {}, '')
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, url, 'POST', {}, '')
         self.assertEqual(response.code, 400)
 
     def test_save_to_shake_with_valid_permissions(self):
         url = self.get_url('/api/sharedfile/1/save')
         body = "shake_id=%s" % self.group_shake.id
         self.assertEqual(0, len(self.group_shake.sharedfiles()))
-        request = signed_request(self.access_token, url, 'POST', body=body)
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, url, 'POST', body=body)
         self.assertEqual(response.code, 200)
         self.assertEqual(1, len(self.group_shake.sharedfiles()))
         j_response = json_decode(response.body)
@@ -890,9 +811,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         shake = self.user_a.shake()
         body = "shake_id=%s" % shake.id
         original_num_sharedfiles = len(shake.sharedfiles())
-        request = signed_request(self.access_token, url, 'POST', body=body)
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = signed_request(self, self.access_token, url, 'POST', body=body)
         self.assertEqual(original_num_sharedfiles, len(shake.sharedfiles()))
         self.assertEqual(response.code, 403)
 
@@ -999,19 +918,16 @@ def api_request(obj, url, unsigned=False, arguments={}, headers={}, method='GET'
     if method == 'GET':
         body = None
     elif arguments:
-        body = urllib.urlencode(arguments)
+        body = urllib.parse.urlencode(arguments)
     if unsigned:
-        request = HTTPRequest(url, method, headers, body)
+        return obj.fetch(url, method=method, headers=headers, body=body)
     else:
-        request = signed_request(obj.access_token, url, headers=headers, method=method, body=body)
-    obj.http_client.fetch(request, obj.stop)
-    response = obj.wait()
-    return response
+        return signed_request(obj, obj.access_token, url, headers=headers, method=method, body=body)
 
 
-def signed_request(access_token, url, method='GET', headers={}, body=''):
+def signed_request(obj, access_token, url, method='GET', headers={}, body='', signature=None, nonce=None):
     timestamp = int(time.mktime(datetime.utcnow().timetuple()))
-    nonce = md5("%s%s" % (str(timestamp), random.random())).hexdigest()
+    nonce = nonce or md5(("%s%s" % (str(timestamp), random.random())).encode("ascii")).hexdigest()
     parsed_url = urlparse(url)
     query_array = []
     if parsed_url.query:
@@ -1032,12 +948,12 @@ def signed_request(access_token, url, method='GET', headers={}, body=''):
         parsed_url.port,
         parsed_url.path,
         query_array)
-    digest = hmac.new(access_token.consumer_secret, normalized_string, sha1).digest()
-    signature = base64.encodestring(digest).strip()
-    authorization_string = 'MAC token="%s", timestamp="%s", nonce="%s", signature="%s"' % (access_token.consumer_key, str(int(timestamp)), nonce, signature)
+    digest = hmac.new(access_token.consumer_secret.encode("ascii"), normalized_string.encode("ascii"), sha1).digest()
+    signature = signature or base64.encodebytes(digest).strip()
+    authorization_string = 'MAC token="%s", timestamp="%s", nonce="%s", signature="%s"' % (access_token.consumer_key, str(int(timestamp)), nonce, signature.decode("ascii"))
     if headers:
         headers.add("Authorization", authorization_string)
     else:
         headers = HTTPHeaders({"Authorization": authorization_string})
 
-    return HTTPRequest(url, method, headers, body)
+    return obj.fetch(url, method=method, headers=headers, body=body)

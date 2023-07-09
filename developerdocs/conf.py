@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'docindex'
 
 # General information about the project.
-project = u'mltshp'
-copyright = u'2017 MLTSHP, Inc.'
+project = 'mltshp'
+copyright = '2023 MLTSHP, Inc.'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -180,8 +180,8 @@ htmlhelp_basename = 'mltshp-apidoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('docindex', 'mltshp-api.tex', u'mltshp-api Documentation',
-   u'MLTSHP, LLC', 'manual'),
+  ('docindex', 'mltshp-api.tex', 'mltshp-api Documentation',
+   'MLTSHP, LLC', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,6 +213,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('docindex', 'mltshp-api', u'mltshp-api Documentation',
-     [u'MLTSHP, LLC'], 1)
+    ('docindex', 'mltshp-api', 'mltshp-api Documentation',
+     ['MLTSHP, LLC'], 1)
 ]

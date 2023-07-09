@@ -1,7 +1,7 @@
 from lib.flyingcow import Model, Property
 from tornado.options import options
 from datetime import datetime, timedelta
-import authorizationcode
+from . import authorizationcode
 
 from hashlib import sha224
 from lib.utilities import base36encode
@@ -49,7 +49,7 @@ class Accesstoken(Model):
         """
         auth = authorizationcode.Authorizationcode.get('id=%s', authorization_id)
         consumer_key = uuid.uuid3(uuid.NAMESPACE_DNS, base36encode(auth.id) + '-' + base36encode(auth.app_id))
-        consumer_secret = sha224("%s%s" % (str(uuid.uuid1()), time.time())).hexdigest()
+        consumer_secret = sha224(("%s%s" % (str(uuid.uuid1()), time.time())).encode("ascii")).hexdigest()
 
         if auth.expires_at > datetime.utcnow():
             access_token = Accesstoken(user_id=auth.user_id, app_id=auth.app_id, consumer_key=str(consumer_key), consumer_secret=str(consumer_secret))

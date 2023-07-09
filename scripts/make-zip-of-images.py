@@ -51,7 +51,7 @@ def make_zip_file(for_user=None):
     sfs = models.Sharedfile.where("user_id = %s and deleted=0 order by id", user.id)
 
     if sfs:
-        print(len(sfs))
+        print((len(sfs)))
         for sf in sfs:
             source = sf.sourcefile()
             if source.type == 'link':
@@ -71,7 +71,7 @@ def make_zip_file(for_user=None):
                 extension = "png"
 
             if extension == "":
-                print(sf.content_type)
+                print((sf.content_type))
                 print("extension blank")
                 sys.exit()
 
@@ -86,6 +86,7 @@ def make_zip_file(for_user=None):
         k.set_contents_from_filename("/mnt/backups/users/{0}.zip".format(user.name), cb=percent_cb, num_cb=10)
 
         happy_url = k.generate_url(expires_in=72000)
+        k.close(fast=True)
         #email link to user email 8 hours
         pm = postmark.PMMail(api_key=options.postmark_api_key,
             sender="hello@mltshp.com", to=user.email,

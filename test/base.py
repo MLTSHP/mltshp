@@ -1,14 +1,11 @@
-import tornado.ioloop
-from tornado.testing import AsyncHTTPTestCase, LogTrapTestCase
-from tornado.httpclient import HTTPRequest
+from tornado.testing import AsyncHTTPTestCase, ExpectLog
 from tornado.options import options
-import Cookie
+import http.cookies
 from lib.flyingcow import db as _db
 from main import MltshpApplication
 from tornado.escape import json_encode
 from routes import routes
-import urllib
-import shutil
+import urllib.request, urllib.parse, urllib.error
 import os
 import time
 import base64
@@ -20,7 +17,7 @@ import uuid
 from models import User, Sourcefile
 
 
-class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
+class BaseAsyncTestCase(AsyncHTTPTestCase, ExpectLog):
     sid = ''
 
     def get_app(self):
@@ -32,14 +29,12 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
     def setUp(self):
         super(BaseAsyncTestCase, self).setUp()
         self.start_time = time.time()
-        self.io_loop.make_current() #### this line
 
     def get_httpserver_options(self):
         return {'no_keep_alive':False}
 
     def tearDown(self):
         super(BaseAsyncTestCase, self).tearDown()
-        diff = time.time() - self.start_time
         self.db.close()
 
     def sign_in(self, name, password):
@@ -59,14 +54,14 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         self.sid = None
 
     def get_sid(self, response):
-        cookie = Cookie.BaseCookie(response.headers['Set-Cookie'])
+        cookie = http.cookies.BaseCookie(response.headers['Set-Cookie'])
         return cookie['sid'].value
 
     def get_xsrf(self):
         return binascii.b2a_hex(uuid.uuid4().bytes)
 
     def create_database(self):
-        start_time = int(time.time())
+        # start_time = int(time.time())
         db = _db.connection()
 
         db.execute("DROP database IF EXISTS %s" % (options.database_name))
@@ -80,8 +75,8 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         for statement in statements:
             if statement.strip() != "":
                 db.execute(statement.strip())
-        end_time = int(time.time())
-        #print "Database reset took: %s" % (end_time - start_time)
+        # end_time = int(time.time())
+        # print "Database reset took: %s" % (end_time - start_time)
         return db
 
     def upload_file(self, file_path, sha1, content_type, user_id, sid, xsrf, shake_id=None):
@@ -94,10 +89,8 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         shake_string = ''
         if shake_id:
             shake_string="shake_id=%s" % (shake_id)
-        request = HTTPRequest(self.get_url('/upload?skip_s3=1'), 'POST', {'Cookie':"_xsrf=%s;sid=%s" % (xsrf, sid)},
-                "_xsrf=%s&file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s&%s" % (xsrf,file_name, content_type, sha1, file_size, file_path, shake_string))
-        self.http_client.fetch(request, self.stop)
-        return self.wait()
+        return self.fetch('/upload?skip_s3=1', method='POST', headers={'Cookie':"_xsrf=%s;sid=%s" % (xsrf, sid)},
+                body="_xsrf=%s&file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s&%s" % (xsrf, file_name, content_type, sha1, file_size, file_path, shake_string))
 
     def upload_test_file(self, shake_id=None):
         arguments = {}
@@ -113,14 +106,15 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
     def create_signed_value(self, name, value):
         ### HERE!@!
         timestamp = str(int(time.time()))
-        value = base64.b64encode(value)
+        value = base64.b64encode(value.encode(encoding="utf-8")).decode("ascii")
         signature = self.cookie_signature(name, value, timestamp)
         value = "|".join([value, timestamp, signature])
         return value
 
     def cookie_signature(self, *parts):
-        hash = hmac.new(options.cookie_secret, digestmod=hashlib.sha1)
-        for part in parts: hash.update(part)
+        hash = hmac.new(options.cookie_secret.encode(encoding="utf-8"), digestmod=hashlib.sha1)
+        for part in parts:
+            hash.update(type(part) == str and part.encode(encoding="utf-8") or part)
         return hash.hexdigest()
 
     def post_url(self, path, arguments={}, **kwargs):
@@ -128,7 +122,7 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         Posts the URL, if self.sign_in() is called and user is logged in,
         the user's authenticated cookie will be passed along.
         """
-        xsrf = self.get_xsrf()
+        xsrf = self.get_xsrf().decode("ascii")
         headers = {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, xsrf)}
         if 'headers' in kwargs:
             headers.update(kwargs['headers'])
@@ -136,7 +130,7 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         else:
             kwargs['headers'] = headers
         arguments['_xsrf'] = xsrf
-        body = urllib.urlencode(arguments)
+        body = urllib.parse.urlencode(arguments)
         return self.fetch(path, method="POST", body=body, **kwargs)
 
     def fetch_url(self, path, **kwargs):
@@ -144,7 +138,7 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         Gets the URL, if self.sign_in() is called and user is logged in,
         the user's authenticated cookie will be passed along.
         """
-        headers = {'Cookie':'sid=%s' % (self.sid)}
+        headers = {'Cookie': 'sid=%s' % self.sid}
         if 'headers' in kwargs:
             headers.update(kwargs['headers'])
             kwargs['headers'] = headers
@@ -152,8 +146,17 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
             kwargs['headers'] = headers
         return self.fetch(path, method='GET', **kwargs)
 
-    def assert_has_string(self, response, string_to_match):
-        self.assertTrue(response.body.find(string_to_match) > 0)
+    def assertNotIn(self, needle, haystack):
+        if isinstance(needle, str):
+            return super(BaseAsyncTestCase, self).assertNotIn(needle.encode("utf-8"), haystack)
+        else:
+            return super(BaseAsyncTestCase, self).assertNotIn(needle, haystack)
+
+    def assertIn(self, needle, haystack):
+        if isinstance(needle, str):
+            return super(BaseAsyncTestCase, self).assertIn(needle.encode("utf-8"), haystack)
+        else:
+            return super(BaseAsyncTestCase, self).assertIn(needle, haystack)
 
     def assert_redirect(self, response, url):
         self.assertEqual(302, response.code)

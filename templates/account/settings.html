@@ -161,7 +161,7 @@ $(document).ready(function() {
               {% end %}
 
               <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
-                {% if user.stripe_plan_id == "mltshp-double" and user.stripe_plan_rate > 24 %}
+                {% if user.stripe_plan_id == "mltshp-double" and user.stripe_plan_rate is not None and user.stripe_plan_rate > 24 %}
               <p>You subscribe at a custom rate of ${{ user.stripe_plan_rate }}/year.
                 <em>Thank you for your added support.</em></p>
                 {% end %}

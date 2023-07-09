@@ -2,9 +2,9 @@ import re
 import logging
 import time
 
-import error
-import db
-import properties
+from . import error
+from . import db
+from . import properties
 
 class MultipleRows(Exception):
     def __str__(self):
@@ -21,17 +21,16 @@ class BaseModel(type):
             return super(BaseModel, cls).__new__(cls, name, bases, attrs)
                 
         new_class = type.__new__(cls, name, bases, attrs)
-        for key, value in attrs.items():
+        for key, value in list(attrs.items()):
             if isinstance(value, properties.Property):
                 value.contribute_to_class(new_class, key)
         new_class.properties()
         return new_class
 
-class Model(object):
+class Model(object, metaclass=BaseModel):
     """
     The Model class that gets inherited to create table-specific Models.
     """
-    __metaclass__ = BaseModel
     
     def __init__(self, *args, **kwargs):
         self._id = None
@@ -225,7 +224,7 @@ class Model(object):
             return cls._properties_cache
 
         cls._properties_cache = []
-        for key in cls.__dict__.keys():
+        for key in list(cls.__dict__.keys()):
             if isinstance(cls.__dict__[key], properties.Property):
                 cls._properties_cache.append(key)
         return cls._properties_cache

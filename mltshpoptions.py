@@ -2,7 +2,7 @@ from tornado.options import define, options
 
 
 def parse_dictionary(settings):
-    for key, value in settings.iteritems():
+    for key, value in settings.items():
         if key in options:
             setattr(options, key, value)
 

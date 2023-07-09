@@ -5,10 +5,10 @@ import postmark
 
 import hashlib
 import time
-import user
+from . import user
 import datetime
 
-import promotion
+from . import promotion
 
 from lib.utilities import payment_notifications
 

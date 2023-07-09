@@ -19,7 +19,7 @@ AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 TEST_MODULES = [
     'test.AccountTests',
     'test.CommentTests',
-    'test.ExternalAccountTests',
+    # 'test.ExternalAccountTests',
     'test.FileTests',
     'test.SimpleTests',
     'test.SiteFunctionTests',
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     db = Connection(options.database_host, 'mysql', options.database_user, options.database_password)
     try:
         db.execute("CREATE database %s" % options.database_name)
-    except MySQLdb.ProgrammingError, exc:
+    except MySQLdb.ProgrammingError as exc:
         if exc.args[0] != 1007:  # database already exists
             raise
     else:

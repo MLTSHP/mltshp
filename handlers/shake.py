@@ -4,7 +4,7 @@ from tornado import escape
 import torndb
 from tornado.options import options
 
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 from models import Shake, User, Notification, ShakeManager, MigrationState
 from lib.utilities import base36decode
 
@@ -101,6 +101,10 @@ class ShakeHandler(BaseHandler):
             older_link=older_link,newer_link=newer_link,
             shake_editor=shake.owner(), managers=managers,
             is_shake_manager=is_shake_manager, followers=followers[:10],
+            base36_id=base36_id,
+            sharedfile_id=sharedfile_id,
+            since_id=since_id,
+            max_id=max_id,
             follower_count=follower_count)
 
 
@@ -137,7 +141,7 @@ class CreateShakeHandler(BaseHandler):
             new_shake = Shake(name=name, title=title, description=description, user_id=user_object.id, type='group')
             try:
                 if new_shake.save():
-                    return self.redirect('/%s' % (new_shake.name))
+                    return self.redirect('/%s' % new_shake.name)
             except torndb.IntegrityError:
                 # This is a rare edge case, so we handle it lazily -- IK.
                 pass
@@ -187,7 +191,7 @@ class QuickDetailsHandler(BaseHandler):
             shake_to_update.description = new_description
         shake_to_update.save()
 
-        return self.redirect('/shake/' + shake_to_update.name + '/quick-details')
+        return self.redirect('/shake/%s/quick-details' % shake_to_update.name)
 
 
 class UpdateShakeHandler(BaseHandler):
@@ -234,7 +238,7 @@ class UpdateShakeHandler(BaseHandler):
         if json:
             return self.write({'ok':'Saved it!'})
         else:
-            return self.redirect("/%s" % (shake_name))
+            return self.redirect("/%s" % shake_name)
 
 
 class SubscribeShakeHandler(BaseHandler):
@@ -313,13 +317,13 @@ class InviteMemberHandler(BaseHandler):
             if is_json:
                 return self.write({'error':'error'})
             else:
-                return self.redirect('/%s' % (shake_name))
+                return self.redirect('/%s' % shake_name)
         Notification.new_invitation(sender, receiver, shake.id)
 
         if is_json:
             return self.write({'invitation_status':True})
         else:
-            return self.redirect('/%s' % (shake_name))
+            return self.redirect('/%s' % shake_name)
 
 
 class AcceptInvitationHandler(BaseHandler):
@@ -368,7 +372,7 @@ class AcceptInvitationHandler(BaseHandler):
             return self.write({'response' : 'ok',
                                 'count' : remaining_notifications_count})
         else:
-            return self.redirect("/%s", shake_object.name)
+            return self.redirect("/%s" % shake_object.name)
 
 
 class RequestInvitationHandler(BaseHandler):
@@ -389,7 +393,7 @@ class RequestInvitationHandler(BaseHandler):
             if self.get_argument('json', None):
                 return self.write({'status':'ok'})
             else:
-                return self.redirect('/%s' % (shake.name))
+                return self.redirect('/%s' % shake.name)
         else:
             if self.get_argument('json', None):
                 return self.write({'status':'error', 'message':'not allowed'})
@@ -415,7 +419,7 @@ class ApproveInvitationHandler(BaseHandler):
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
             else:
-                return self.redirect('/%s' % (shake.name))
+                return self.redirect('/%s' % shake.name)
 
         no = Notification.get('sender_id = %s and receiver_id = %s and action_id = %s and deleted = 0', requestor.id, current_user_object.id, shake.id)
 
@@ -423,7 +427,7 @@ class ApproveInvitationHandler(BaseHandler):
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
             else:
-                return self.redirect('/%s' % (shake.name))
+                return self.redirect('/%s' % shake.name)
 
         if shake.add_manager(user_to_add=requestor):
             no.delete()
@@ -432,12 +436,12 @@ class ApproveInvitationHandler(BaseHandler):
             if self.get_argument('json', None):
                 return self.write({'status':'ok', 'count' : Notification.count_for_user_by_type(current_user_object.id, 'invitation_request')})
             else:
-                return self.redirect('/%s' % (shake.name))
+                return self.redirect('/%s' % shake.name)
         else:
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
             else:
-                return self.redirect('/%s' % (shake.name))
+                return self.redirect('/%s' % shake.name)
 
 
 class DeclineInvitationHandler(BaseHandler):
@@ -458,7 +462,7 @@ class DeclineInvitationHandler(BaseHandler):
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
             else:
-                return self.redirect('/%s', shake.name)
+                return self.redirect('/%s' % shake.name)
 
         no = Notification.get('sender_id = %s and receiver_id = %s and action_id = %s and deleted = 0', requestor.id, current_user_object.id, shake.id)
 
@@ -466,14 +470,14 @@ class DeclineInvitationHandler(BaseHandler):
             if self.get_argument('json', None):
                 return self.write({'status':'error'})
             else:
-                return self.redirect('/%s' % (shake.name))
+                return self.redirect('/%s' % shake.name)
 
         no.delete()
 
         if self.get_argument('json', None):
             return self.write({'status':'ok', 'count' : Notification.count_for_user_by_type(current_user_object.id, 'invitation_request')})
         else:
-            return self.redirect('/%s' % (shake.name))
+            return self.redirect('/%s' % shake.name)
 
 
 class RSSFeedHandler(BaseHandler):

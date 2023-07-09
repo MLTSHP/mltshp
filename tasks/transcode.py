@@ -74,6 +74,7 @@ def gif_to_video(sourcefile_id, file_key, input_file, format):
 
         logger.info("uploading transcoded video: %s" % file_key)
         key.set_contents_from_filename(output_file)
+        key.close(fast=True)
         logger.info("-- upload complete")
         db = db_connect()
         db.execute(
@@ -125,6 +126,7 @@ def transcode_sharedfile(sharedfile_id):
     key.key = "originals/%s" % sourcefile["file_key"]
     logger.info("Downloading original GIF from S3 for sourcefile %s..." % sharedfile["source_id"])
     key.get_contents_to_filename(input_file)
+    key.close(fast=True)
 
     # Test to see if GIF is animated or not
     animated = False
@@ -134,6 +136,7 @@ def transcode_sharedfile(sharedfile_id):
         animated = True
     except EOFError:
         pass
+    im.close()
 
     if not animated:
         os.unlink(input_file)

@@ -103,7 +103,7 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         self._errors[key] = message
 
     def add_errors(self, errors_dict):
-        for error_key in errors_dict.keys():
+        for error_key in list(errors_dict.keys()):
             self.add_error(error_key, errors_dict[error_key])
 
     def log_user_in(self, user):

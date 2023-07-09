@@ -1,6 +1,6 @@
 import tornado.web
 
-from base import BaseHandler
+from .base import BaseHandler
 
 from models import App
 

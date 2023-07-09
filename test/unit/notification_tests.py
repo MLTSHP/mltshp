@@ -1,5 +1,5 @@
 from models import Notification, User, Sourcefile, Sharedfile, Comment, Subscription
-from base import BaseTestCase
+from .base import BaseTestCase
 from settings import test_settings as settings
 
 class NotificationModelTests(BaseTestCase):

@@ -19,7 +19,7 @@ services:
         aliases:
           - mltshp.dev
   mysql:
-    image: mysql:5
+    image: mysql:latest
     ports:
       - "3306:3306"
     environment:

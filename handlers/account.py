@@ -1,7 +1,7 @@
 import datetime
 import re
 import json
-from urllib import urlencode
+from urllib.parse import urlencode
 import logging
 
 import tornado.httpclient
@@ -12,7 +12,7 @@ import torndb
 import postmark
 import requests
 
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
     App, PaymentLog, Voucher, Promotion, MigrationState
 from lib.utilities import email_re, base36decode, is_valid_voucher_key,\
@@ -348,9 +348,9 @@ class SettingsConnectionsHandler(BaseHandler):
         user = self.get_current_user_object()
         app = App.get("id = %s", app_id)
         if not app:
-            return {'error' : 'Invalid request.'}
+            return self.write({'error' : 'Invalid request.'})
         app.disconnect_for_user(user)
-        return {'result' : 'ok'}
+        return self.write({'result' : 'ok'})
 
 
 class ForgotPasswordHandler(BaseHandler):
@@ -843,7 +843,7 @@ class AnnouncementHandler(BaseHandler):
         """
         current_user_obj = self.get_current_user_object()
 
-        if self.get_arguments('agree', None):
+        if self.get_argument('agree', None):
             current_user_obj.tou_agreed = True
             current_user_obj.save()
             return self.redirect("/")
@@ -929,7 +929,7 @@ class MembershipHandler(BaseHandler):
         if plan_id == "mltshp-double":
             quantity = int(float(self.get_argument("quantity")))
             if quantity < 24 or quantity > 500:
-                raise "Invalid request"
+                raise Exception("Invalid request")
 
         customer = None
         sub = None
@@ -946,7 +946,7 @@ class MembershipHandler(BaseHandler):
             if customer is None:
                 if token_id is None:
                     # FIXME: handle this more gracefully...
-                    raise "Invalid request"
+                    raise Exception("Invalid request")
 
                 # create a new customer object for this subscription
                 customer = stripe.Customer.create(

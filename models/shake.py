@@ -1,7 +1,7 @@
 import re
-import cStringIO
+import io
 from datetime import datetime
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from tornado.options import options
 from lib.s3 import S3Bucket
@@ -13,7 +13,7 @@ from lib.flyingcow.cache import ModelQueryCache
 from lib.reservedshakenames import reserved_names
 from lib.utilities import transform_to_square_thumbnail, s3_url
 
-import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
+from . import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
 
 class Shake(ModelQueryCache, Model):
     user_id     = Property(name='user_id')
@@ -195,7 +195,7 @@ class Shake(ModelQueryCache, Model):
                    WHERE shake_id = %s
                        AND subscription.deleted = 0
                    ORDER BY subscription.id """
-        if page > 0:
+        if page is not None and page > 0:
             limit_start = (page-1) * 20
             sql = "%s LIMIT %s, %s" % (sql, limit_start, 20)
         return user.User.object_query(sql, self.id)
@@ -317,8 +317,8 @@ class Shake(ModelQueryCache, Model):
         return self.is_owner(user)
 
     def set_page_image(self, file_path=None, sha1_value=None):
-        thumb_cstr =  cStringIO.StringIO()
-        image_cstr =  cStringIO.StringIO()
+        thumb_cstr = io.BytesIO()
+        image_cstr = io.BytesIO()
 
         if not file_path or not sha1_value:
             return False
@@ -340,6 +340,7 @@ class Shake(ModelQueryCache, Model):
             k.set_metadata('Cache-Control', 'max-age=86400')
             k.set_contents_from_string(thumb_cstr.getvalue())
             k.set_acl('public-read')
+            k.close(fast=True)
 
             #save small
             k = Key(bucket)
@@ -348,6 +349,7 @@ class Shake(ModelQueryCache, Model):
             k.set_metadata('Cache-Control', 'max-age=86400')
             k.set_contents_from_string(image_cstr.getvalue())
             k.set_acl('public-read')
+            k.close(fast=True)
 
             self.image = 1
             self.save()

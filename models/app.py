@@ -2,14 +2,14 @@ from datetime import datetime
 import time
 import uuid
 import hashlib
-from urlparse import urlparse
+from urllib.parse import urlparse
 from tornado.options import options
 
 from lib.flyingcow import Model, Property
 from lib.utilities import base36encode, base36decode
 
-import user
-import accesstoken
+from . import user
+from . import accesstoken
 
 
 class App(Model):
@@ -72,7 +72,7 @@ class App(Model):
     def on_create(self):
         """Set the secret"""
 
-        self.secret = hashlib.sha224("%s%s" % (str(uuid.uuid1()), time.time())).hexdigest()
+        self.secret = hashlib.sha224(("%s%s" % (str(uuid.uuid1()), time.time())).encode('ascii')).hexdigest()
         self.save()
         
     def key(self):

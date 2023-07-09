@@ -1,6 +1,6 @@
 import random
 import mock
-import cStringIO
+import io
 from datetime import datetime, timedelta
 import tornado.httpclient
 
@@ -49,7 +49,7 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         self.sign_out()
         response = self.fetch_url("/create-account")
         self.assertEqual(200, response.code)
-        self.assertTrue(response.body.find("Discount code:") > -1)
+        self.assertIn("Discount code:", response.body)
 
     def test_create_account_with_bad_voucher(self):
         """
@@ -60,7 +60,7 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         arguments["key"] = "ABCDEFGHIJKL"
         response = self.post_url("/create-account", arguments=arguments)
         self.assertEqual(200, response.code)
-        self.assertTrue(response.body.find("Invalid discount code") > -1)
+        self.assertIn("Invalid discount code", response.body)
 
     def test_create_account_with_unrecognized_voucher(self):
         """
@@ -71,7 +71,7 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         arguments["key"] = "foobar"
         response = self.post_url("/create-account", arguments=arguments)
         self.assertEqual(200, response.code)
-        self.assertTrue(response.body.find("Invalid discount code") > -1)
+        self.assertIn("Invalid discount code", response.body)
 
     def test_create_account_with_good_voucher(self):
         """
@@ -87,10 +87,10 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         self.post_url("/create-account", arguments=arguments)
         self.sign_in(arguments["name"], arguments["password"])
         response = self.fetch_url("/confirm-account")
-        self.assertTrue(response.body.find(
-            "Hello, <span class=\"user-name\">%s</span>!" % arguments["name"]) > -1)
+        self.assertIn(
+            ("Hello, <span class=\"user-name\">%s</span>!" % arguments["name"]), response.body)
         response = self.fetch_url("/account/settings")
-        self.assertTrue(response.body.find("5 Years") > -1)
+        self.assertIn("5 Years", response.body)
 
     def test_settings_page_with_credit(self):
         """
@@ -98,14 +98,14 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         credit on their account settings.
         """
         response = self.fetch_url("/account/settings")
-        self.assertTrue(response.body.find("5 Years") > -1)
+        self.assertIn("5 Years", response.body)
 
     def test_redeem_page_with_pro_user(self):
         """
         A pro member shouldn't have access to the redeem page.
         """
         response = self.fetch_url("/account/redeem")
-        self.assertTrue(response.body.find("Redeem a Coupon") == -1)
+        self.assertNotIn("Redeem a Coupon", response.body)
 
     def test_redeem_voucher_with_bad_voucher(self):
         self.sign_out()
@@ -113,13 +113,13 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         self.sign_in(user.name, "password")
         response = self.fetch_url("/account/settings")
         # verify this account is currently free
-        self.assertTrue(response.body.find("You are currently using a free account.") > -1)
+        self.assertIn("You are currently using a free account.", response.body)
 
         arguments = {
             "key": "abc123"
         }
         response = self.post_url("/account/redeem", arguments)
-        self.assertTrue(response.body.find("Invalid") > -1)
+        self.assertIn("Invalid", response.body)
 
     def test_redeem_voucher_with_good_voucher(self):
         self.sign_out()
@@ -129,7 +129,7 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         self.sign_in(user.name, "password")
         response = self.fetch_url("/account/settings")
         # verify this account is currently free
-        self.assertTrue(response.body.find("You are currently using a free account.") > -1)
+        self.assertIn("You are currently using a free account.", response.body)
 
         arguments = {
             "key": "unclaimed"
@@ -137,22 +137,22 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         # this will post and redirect to the settings page which should
         # then reflect that we are a paid user with 5 years of credit
         response = self.post_url("/account/redeem", arguments)
-        self.assertTrue(response.body.find("5 Years") > -1)
+        self.assertIn("5 Years", response.body)
 
         payments = PaymentLog.where("user_id=%s", user.id)
-        self.assertEquals(len(payments), 1)
-        self.assertEquals(payments[0].operation, "redeem")
-        self.assertEquals(payments[0].status, "credit")
-        self.assertEquals(payments[0].reference_id, str(self.promotion.id))
-        self.assertEquals(payments[0].transaction_id, arguments['key'])
-        self.assertEquals(payments[0].buyer_email, user.email)
-        self.assertEquals(payments[0].buyer_name, user.name)
-        # self.assertEquals(payments[0].next_transaction_date, )
+        self.assertEqual(len(payments), 1)
+        self.assertEqual(payments[0].operation, "redeem")
+        self.assertEqual(payments[0].status, "credit")
+        self.assertEqual(payments[0].reference_id, str(self.promotion.id))
+        self.assertEqual(payments[0].transaction_id, arguments['key'])
+        self.assertEqual(payments[0].buyer_email, user.email)
+        self.assertEqual(payments[0].buyer_name, user.name)
+        # self.assertEqual(payments[0].next_transaction_date, )
 
         voucher = Voucher.get("claimed_by_user_id=%s", user.id)
-        self.assertEquals(voucher.promotion_id, self.promotion.id)
-        self.assertEquals(voucher.claimed_by_user_id, user.id)
-        self.assertEquals(voucher.offered_by_user_id, self.admin.id)
+        self.assertEqual(voucher.promotion_id, self.promotion.id)
+        self.assertEqual(voucher.claimed_by_user_id, user.id)
+        self.assertEqual(voucher.offered_by_user_id, self.admin.id)
 
     def test_active_promotion_list(self):
         promotions = Promotion.active()

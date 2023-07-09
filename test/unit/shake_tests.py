@@ -1,7 +1,7 @@
 from tornado.options import options
 
 from models import User, Shake, Sourcefile, Sharedfile, ShakeManager
-from base import BaseTestCase
+from .base import BaseTestCase
 
 
 class ShakeModelTests(BaseTestCase):

@@ -1,8 +1,8 @@
 import hashlib
-import cStringIO
+import io
 from os import path
 from datetime import datetime
-from urlparse import urlparse
+from urllib.parse import urlparse
 import re
 
 from tornado.escape import url_escape, json_decode, json_encode
@@ -101,14 +101,20 @@ class Sourcefile(ModelQueryCache, Model):
             except Exception as e:
                 return None
         else:
-            h.update(file_data)
+            # test if file_data is a string
+            if isinstance(file_data, str):
+                h.update(file_data.encode("UTF-8"))
+            elif isinstance(file_data, bytes):
+                h.update(file_data)
+            else:
+                raise Exception("file_data must be a string or bytes")
         return h.hexdigest()
 
     @staticmethod
     def get_from_file(file_path, sha1_value, type='image', skip_s3=None):
         existing_source_file = Sourcefile.get("file_key = %s", sha1_value)
-        thumb_cstr =  cStringIO.StringIO()
-        small_cstr =  cStringIO.StringIO()
+        thumb_cstr = io.BytesIO()
+        small_cstr = io.BytesIO()
         if existing_source_file:
             return existing_source_file
         try:
@@ -120,14 +126,16 @@ class Sourcefile(ModelQueryCache, Model):
             return None
 
         if img.mode != "RGB":
-            img = img.convert("RGB")
+            img2 = img.convert("RGB")
+            img.close()
+            img = img2
 
         #generate smaller versions
         thumb = img.copy()
         small = img.copy()
 
-        thumb.thumbnail((100,100), Image.ANTIALIAS)
-        small.thumbnail((240,184), Image.ANTIALIAS)
+        thumb.thumbnail((100,100), Image.Resampling.LANCZOS)
+        small.thumbnail((240,184), Image.Resampling.LANCZOS)
 
         thumb.save(thumb_cstr, format="JPEG")
         small.save(small_cstr, format="JPEG")
@@ -140,8 +148,10 @@ class Sourcefile(ModelQueryCache, Model):
         if type != 'link':
             if not skip_s3:
                 k = Key(bucket)
-                k.key = "originals/%s" % (sha1_value)
+                k.key = "originals/%s" % sha1_value
                 k.set_contents_from_filename(file_path)
+                k.close(fast=True)
+        img.close()
 
         #save thumbnail
         thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
@@ -149,6 +159,8 @@ class Sourcefile(ModelQueryCache, Model):
             k = Key(bucket)
             k.key = "thumbnails/%s" % thumbnail_file_key
             k.set_contents_from_string(thumb_cstr.getvalue())
+            k.close(fast=True)
+        thumb.close()
 
         #save small
         small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
@@ -156,6 +168,8 @@ class Sourcefile(ModelQueryCache, Model):
             k = Key(bucket)
             k.key = "smalls/%s" % small_file_key
             k.set_contents_from_string(small_cstr.getvalue())
+            k.close(fast=True)
+        small.close()
 
         #save source file
         sf = Sourcefile(width=original_width, height=original_height, file_key=sha1_value, thumb_key=thumbnail_file_key, small_key=small_file_key, type=type)
