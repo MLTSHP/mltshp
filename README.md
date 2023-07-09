@@ -65,7 +65,7 @@ When you run the application, it launches it into a background process.
 But if you want to watch the realtime logs emitted by each service,
 just use this command:
 
-    $ docker-compose logs -f
+    $ docker compose logs -f
 
 In addition to that, the web app produces some log files that are
 captured under the "mounts/logs" folder of your git repository.
@@ -147,7 +147,7 @@ containers, just use this command:
 If you just wish to rebuild the Docker container, use the Docker
 compose command:
 
-    $ docker-compose down
+    $ docker compose down
 
 Then, run another `make run`.
 
