@@ -40,6 +40,21 @@
           </div>
         </div>
 
+        <div class="field field-textarea">
+          <div class="field-input">
+            <div class="field-input-inner">
+              <textarea id="alt-text-field" name="alt_text">{% if alt_text %}{{alt_text}}{% end %}</textarea>
+              {% if errors.alt_text %}
+              <div class="error">
+                <span class="error-text">
+                  {{errors.alt_text }}
+                </span>
+              </div>
+              {% end %}
+            </div>
+          </div>
+        </div>
+
         {% if len(shakes) > 1 %}
           <div class="field tools-field-title">
             <div class="field-input">
