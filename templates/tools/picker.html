@@ -25,7 +25,14 @@
           </div>
         </div>
 
-        <div class="field field-textarea">
+        <div class="textarea-navigation">
+          <ul>
+            <li class="selected"><span class="tab" data-tab="description">Description</a></li>
+            <li><span class="tab" data-tab="alt-text">Alt Text</span></li>
+          </ul>
+        </div>
+
+        <div id="description" class="field field-textarea field-textarea--selected">
           <div class="field-input">
             <div class="field-input-inner">
               <textarea id="description-field" name="description" value="{{escape(description)}}">{% if source_url %}source: {{source_url}}{% end %}</textarea>
@@ -33,6 +40,21 @@
               <div class="error">
                 <span class="error-text">
                   {{errors.description }}
+                </span>
+              </div>
+              {% end %}
+            </div>
+          </div>
+        </div>
+
+        <div id="alt-text" class="field field-textarea">
+          <div class="field-input">
+            <div class="field-input-inner">
+              <textarea id="alt-text-field" name="alt_text">{% if alt_text %}{{alt_text}}{% end %}</textarea>
+              {% if errors.alt_text %}
+              <div class="error">
+                <span class="error-text">
+                  {{errors.alt_text }}
                 </span>
               </div>
               {% end %}
