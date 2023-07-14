@@ -345,6 +345,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.url = 'http://notes.torrez.org/images/categories/television.png?x=1'
         self.source_url = url_escape('http://notes.torrez.org/')
         self.description = "This is a multi-\nline\ndescription"
+        self.alt_text = "This is some alt text\nit spans two lines."
 
     def get_new_ioloop(self):
         return tornado.ioloop.IOLoop.instance()
@@ -409,6 +410,14 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertTrue(response.body.find("ERROR") == -1)
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.description, self.description)
+
+    def test_picker_stores_alt_text(self):
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
+        self.http_client.fetch(request, self.stop)
+        response = self.wait()
+        self.assertTrue(response.body.find("ERROR") == -1)
+        sf = Sharedfile.get("id=1")
+        self.assertEqual(sf.alt_text, self.alt_text)
 
     def test_picker_doesnt_see_filepile(self):
         request = HTTPRequest(self.get_url('/tools/p?url=%s' % (url_escape("http://www.filepile.org/something/something"))), 'GET', {"Cookie":"sid=%s" % (self.sid)})
