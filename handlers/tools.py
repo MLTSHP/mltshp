@@ -20,7 +20,6 @@ class PickerPopupHandler(BaseHandler):
     def get(self):
         url = self.get_argument('url', None)
         source_url = self.get_argument('source_url', '')
-        alt_text = self.get_argument('alt', '')
         file_name = self.get_argument('title', '')
         current_user = self.get_current_user_object()
 
@@ -72,7 +71,7 @@ class PickerPopupHandler(BaseHandler):
         #replace plus signs with %20's
         return self.render("tools/picker.html", file_name=file_name, width="", height="", \
             url=parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path + parsed_url_query, \
-            source_url=source_url, description='', alt_text=alt_text, is_video=is_video, shakes=shakes,
+            source_url=source_url, description='', is_video=is_video, shakes=shakes,
             can_upload_this_month=can_upload_this_month)
 
     @tornado.web.authenticated
@@ -103,7 +102,6 @@ class PickerPopupHandler(BaseHandler):
         title = self.get_argument("title", None)
         source_url = self.get_argument('source_url', None)
         description = self.get_argument('description', None)
-        alt_text = self.get_argument('alt_text', None)
         shake_id = self.get_argument('shake_id', None)
 
         if title == file_name:
@@ -137,7 +135,6 @@ class PickerPopupHandler(BaseHandler):
                 shake_id = shake_id)
         sf.source_url = source_url
         sf.description = description
-        sf.alt_text = alt_text
         sf.save()
         if not options.debug:
             # file cleanup
