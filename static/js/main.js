@@ -1175,8 +1175,10 @@ $(document).ready(function() {
       });
     });
 
-    /* Action Button in a Fun Form, should submit the form */
-    $(".field-submit .btn").click(function() {
+    /* Action Button in a Fun Form, should submit the form (exception here
+       for a button with a g-recaptcha class which has a separate event
+       handler). */
+    $(".field-submit .btn:not(.g-recaptcha)").click(function() {
       $(this).closest("form").submit();
       return false;
     })
