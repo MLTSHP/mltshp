@@ -1,6 +1,6 @@
 services:
   mltshp:
-    build: .
+    build: ..
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py
       - ../.git:/srv/mltshp.com/mltshp/.git
