@@ -1,7 +1,8 @@
-version: "2"
 services:
   mltshp:
-    image: mltshp/mltshp-web:latest
+    build: .
+    env_file:
+      - ../.env
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py
       - ../.git:/srv/mltshp.com/mltshp/.git
@@ -29,10 +30,12 @@ services:
     networks:
       - app_net
   fakes3:
-    image: ourtownrentals/fake-s3
-    entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 8000
+    build: ./setup/dev/fakes3
+    env_file:
+      - ../.env
+    entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 4567
     ports:
-      - "8000:8000"
+      - "4567:4567"
     networks:
       app_net:
         aliases:
