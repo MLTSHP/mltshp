@@ -1,8 +1,6 @@
 services:
   mltshp:
     build: .
-    env_file:
-      - ../.env
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py
       - ../.git:/srv/mltshp.com/mltshp/.git
@@ -31,8 +29,6 @@ services:
       - app_net
   fakes3:
     build: ./setup/dev/fakes3
-    env_file:
-      - ../.env
     entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 4567
     ports:
       - "4567:4567"
