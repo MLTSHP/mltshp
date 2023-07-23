@@ -8,7 +8,6 @@ import urllib.parse
 from datetime import datetime
 
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 import postmark
 from tornado.options import define, options
 
@@ -238,13 +237,13 @@ hello@mltshp.com
             return False
 
         bucket = S3Bucket()
-        k = Key(bucket)
-        k.key = "account/%s/profile.jpg" % self.id
-        k.set_metadata('Content-Type', 'image/jpeg')
-        k.set_metadata('Cache-Control', 'max-age=86400')
-        k.set_contents_from_string(destination.getvalue())
-        k.set_acl('public-read')
-        k.close(fast=True)
+        bucket.put_object(
+            destination.getvalue(),
+            "account/%s/profile.jpg" % self.id,
+            ContentType="image/jpeg",
+            CacheControl="max-age=86400",
+            ACL="public-read"
+        )
         self.profile_image = 1
         self.save()
         return True

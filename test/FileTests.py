@@ -40,7 +40,7 @@ class FileDeleteTests(BaseAsyncTestCase):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
 
     def test_deleting_file_sets_to_true(self):
-        response = self.fetch("/p/1/delete", method='POST', headers={'Cookie': "_xsrf=%s;sid=%s" % (self.xsrf, self.sid)}, body="_xsrf=%s" % self.xsrf)
+        response = self.post_url("/p/1/delete")
 
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.deleted, 1)
@@ -64,7 +64,7 @@ class FileDeleteTests(BaseAsyncTestCase):
         bill.save()
         sid = self.sign_in("bill", "asdfasdf")
 
-        response = self.fetch("/p/1/delete", method='POST', headers={'Cookie': "_xsrf=%s;sid=%s" % (self.xsrf, sid)}, body="_xsrf=%s" % self.xsrf)
+        response = self.post_url("/p/1/delete")
 
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.deleted, 0)
@@ -226,25 +226,25 @@ class SharedFileTests(BaseAsyncTestCase):
 
     def test_quick_edit_title(self):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        response = self.fetch('/p/1/quick-edit-title', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="_xsrf=%s&title=%s" % (self.xsrf, url_escape("Monkey Business")))
+        response = self.post_url('/p/1/quick-edit-title', arguments={"title": "Monkey Business"})
         j = json_decode(response.body)
         self.assertEqual(j['title'], 'Monkey Business')
 
     def test_quick_edit_description(self):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        response = self.fetch('/p/1/quick-edit-description', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="_xsrf=%s&description=%s" % (self.xsrf, url_escape('Bilbo\nbaggins')))
+        response = self.post_url('/p/1/quick-edit-description', arguments={"description": "Bilbo\nbaggins"})
         j = json_decode(response.body)
         self.assertEqual(j['description_raw'], 'Bilbo\nbaggins')
 
     def test_quick_edit_alt_text(self):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        response = self.fetch('/p/1/quick-edit-alt-text', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="_xsrf=%s&alt_text=%s" % (self.xsrf, url_escape('A small person carrying a ring')))
+        response = self.post_url('/p/1/quick-edit-alt-text', arguments={"alt_text": 'A small person carrying a ring'})
         j = json_decode(response.body)
         self.assertEqual(j['alt_text_raw'], 'A small person carrying a ring')
 
     def test_quick_edit_source_url(self):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-        response = self.fetch('/p/1/quick-edit-source-url', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="_xsrf=%s&source_url=%s" % (self.xsrf, url_escape('http://www.example.com/')))
+        response = self.post_url('/p/1/quick-edit-source-url', arguments={"source_url": 'http://www.example.com/'})
         j = json_decode(response.body)
         self.assertEqual(j['source_url'], 'http://www.example.com/')
 
@@ -283,7 +283,7 @@ class VideoPickerTests(BaseAsyncTestCase):
         user2.subscribe(self.user.shake())
 
         url = 'https://vimeo.com/20379529'
-        response = self.fetch('/tools/save-video', method='POST', headers={"Cookie":"sid=%s;_xsrf=%s" % (self.sid, self.xsrf)}, body="url=%s&_xsrf=%s" % (url_escape(url), self.xsrf))
+        response = self.post_url('/tools/save-video', arguments={"url": url})
         sfs = Sharedfile.from_subscriptions(user2.id)
         self.assertTrue(len(sfs) > 0)
         self.assertEqual(sfs[0].name , url)
@@ -300,7 +300,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.xsrf = self.get_xsrf().decode("ascii")
 
         self.url = 'http://notes.torrez.org/images/categories/television.png?x=1'
-        self.source_url = url_escape('http://notes.torrez.org/')
+        self.source_url = 'http://notes.torrez.org/'
         self.description = "This is a multi-\nline\ndescription"
 
     def test_picker_not_authed_displays_sign_in(self):
@@ -312,7 +312,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertIn('hidden" name="url" value="%s"' % self.url, response.body)
 
     def test_picker_authenticated_stores_image(self):
-        response = self.fetch('/tools/p', method='POST', headers={"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, body="_xsrf=%s&url=%s&title=boatmoatgoat" % (self.xsrf, self.url))
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat"}, raise_error=True)
         self.assertNotIn("ERROR", response.body)
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.name, "television.png")
@@ -336,17 +336,17 @@ class FilePickerTests(BaseAsyncTestCase):
             self.assertTrue(response.error)
 
     def test_picker_stores_image_and_shakesharedfile(self):
-        response = self.fetch('/tools/p', method='POST', headers={"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, body="_xsrf=%s&url=%s&title=boatmoatgoat" % (self.xsrf, self.url))
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat"})
         ssf = Shakesharedfile.get("sharedfile_id=1 and shake_id=%s", self.user_shake.id)
         self.assertTrue(ssf)
 
     def test_picker_stores_source_url(self):
-        response = self.fetch('/tools/p', method='POST', headers={"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, body="_xsrf=%s&url=%s&title=boatmoatgoat&source_url=%s" % (self.xsrf, self.url, self.source_url))
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "source_url": self.source_url})
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.source_url, 'http://notes.torrez.org/')
 
     def test_picker_stores_description(self):
-        response = self.fetch('/tools/p', method='POST', headers={"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, body="_xsrf=%s&url=%s&title=boatmoatgoat&description=%s" % (self.xsrf, url_escape(self.url), url_escape(self.description)))
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "description": self.description})
         self.assertNotIn("ERROR", response.body)
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.description, self.description)

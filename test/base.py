@@ -1,8 +1,8 @@
 from tornado.testing import AsyncHTTPTestCase, ExpectLog
 from tornado.options import options
 import http.cookies
-from lib.flyingcow import db as _db
 from main import MltshpApplication
+from lib.flyingcow import register_connection
 from tornado.escape import json_encode
 from routes import routes
 import urllib.request, urllib.parse, urllib.error
@@ -13,29 +13,40 @@ import hmac
 import hashlib
 import binascii
 import uuid
+import logging
 
 from models import User, Sourcefile
 
 
+logger = logging.getLogger('mltshp.test')
+logger.setLevel(logging.INFO)
+
 class BaseAsyncTestCase(AsyncHTTPTestCase, ExpectLog):
     sid = ''
 
+    def __init__(self, *args, **kwargs):
+        self.db = register_connection(
+            host=options.database_host,
+            name=options.database_name,
+            user=options.database_user,
+            password=options.database_password,
+            charset="utf8mb4")
+        super(BaseAsyncTestCase, self).__init__(*args, **kwargs)
+
     def get_app(self):
         app_settings = MltshpApplication.app_settings()
-        application = MltshpApplication(routes, autoescape=None, autoreload=False, **app_settings)
-        self.db = self.create_database()
-        return application
+        return MltshpApplication(routes, autoescape=None, autoreload=False,
+                                 db=self.db, **app_settings)
 
     def setUp(self):
         super(BaseAsyncTestCase, self).setUp()
         self.start_time = time.time()
+        if options.database_name != "mltshp_testing":
+            raise Exception("Invalid database name for unit tests")
+        self.create_database()
 
     def get_httpserver_options(self):
         return {'no_keep_alive':False}
-
-    def tearDown(self):
-        super(BaseAsyncTestCase, self).tearDown()
-        self.db.close()
 
     def sign_in(self, name, password):
         """
@@ -62,11 +73,11 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, ExpectLog):
 
     def create_database(self):
         # start_time = int(time.time())
-        db = _db.connection()
 
-        db.execute("DROP database IF EXISTS %s" % (options.database_name))
-        db.execute("CREATE database %s" % (options.database_name))
-        db.execute("USE %s" % (options.database_name))
+        # logger.info("Creating database from BaseAsyncTestCase...")
+        self.db.execute("DROP database IF EXISTS %s" % (options.database_name))
+        self.db.execute("CREATE database %s" % (options.database_name))
+        self.db.execute("USE %s" % (options.database_name))
         f = open("setup/db-install.sql")
         load_query = f.read()
         f.close()
@@ -74,10 +85,9 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, ExpectLog):
         statements = load_query.split(";")
         for statement in statements:
             if statement.strip() != "":
-                db.execute(statement.strip())
+                self.db.execute(statement.strip())
         # end_time = int(time.time())
         # print "Database reset took: %s" % (end_time - start_time)
-        return db
 
     def upload_file(self, file_path, sha1, content_type, user_id, sid, xsrf, shake_id=None):
         """

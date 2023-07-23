@@ -5,7 +5,6 @@ from urllib.parse import urljoin
 
 from tornado.options import options
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 from PIL import Image
 
 from lib.flyingcow import Model, Property
@@ -334,22 +333,22 @@ class Shake(ModelQueryCache, Model):
 
         try:
             #save thumbnail
-            k = Key(bucket)
-            k.key = "account/%s/shake_%s_small.jpg" % (self.user_id, self.name)
-            k.set_metadata('Content-Type', 'image/jpeg')
-            k.set_metadata('Cache-Control', 'max-age=86400')
-            k.set_contents_from_string(thumb_cstr.getvalue())
-            k.set_acl('public-read')
-            k.close(fast=True)
+            bucket.put_object(
+                thumb_cstr.getvalue(),
+                "account/%s/shake_%s_small.jpg" % (self.user_id, self.name),
+                ContentType="image/jpeg",
+                CacheControl="max-age=86400",
+                ACL="public-read",
+            )
 
             #save small
-            k = Key(bucket)
-            k.key = "account/%s/shake_%s.jpg" % (self.user_id, self.name)
-            k.set_metadata('Content-Type', 'image/jpeg')
-            k.set_metadata('Cache-Control', 'max-age=86400')
-            k.set_contents_from_string(image_cstr.getvalue())
-            k.set_acl('public-read')
-            k.close(fast=True)
+            bucket.put_object(
+                image_cstr.getvalue(),
+                "account/%s/shake_%s.jpg" % (self.user_id, self.name),
+                ContentType="image/jpeg",
+                CacheControl="max-age=86400",
+                ACL="public-read",
+            )
 
             self.image = 1
             self.save()

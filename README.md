@@ -26,6 +26,11 @@ should be okay):
 
     $ make init-dev
 
+Check the process limits for your computer using the `ulimit -a` command. Increase
+the file descriptor limit if it's not at least 1000, using `ulimit -n 1000` (or
+some suitably higher value). You can add this to your shell startup script to
+make it permanent.
+
 You should be able to start the app itself using:
 
     $ make run
@@ -92,8 +97,7 @@ if you have a MySQL database you use locally for development and
 testing and keep it versus using the `destroy` and `init-dev`
 commands to make a new one. To update your database, just do this:
 
-    $ make shell
-    docker-shell$ cd /srv/mltshp.com/mltshp; python migrate.py
+    $ make migrate
 
 That should do it.
 
@@ -110,20 +114,16 @@ of the project:
 
     FAKES3_LICENSE_KEY=your-license-key-here
 
-Some of the unit tests actually test against Twitter itself, so you'll
-want to generate a custom Twitter app with your own set of keys.
-Configure the `test_settings` in your `settings.py` file appropriately:
-
-    "twitter_consumer_key" : "twitter_consumer_key_here",
-    "twitter_consumer_secret" : "twitter_consumer_secret_key_here",
-    "twitter_access_key" : "twitter_access_key_here",
-    "twitter_access_secret" : "twitter_access_secret_here",
-
 Then, just run:
 
     $ make test
 
 Which will invoke a Docker process to run the unit test suite.
+
+You can also run a specific unit test by setting a TEST environment
+variable (you can find the unit test names in `test.py`):
+
+    $ TEST=test.unit.shake_tests make test
 
 ## Connecting to the MLTSHP shell
 
@@ -137,6 +137,14 @@ This should place you in the /srv/mltshp.com/mltshp directory as the
 root user. You can use `apt-get` commands to install utilities you
 may need.
 
+## Connecting to the MLTSHP MySQL database
+
+You can also access the MySQL shell using:
+
+    $ make mysql
+
+Useful for inspecting the database for your local directly.
+
 ## Cleanup
 
 If you ever want to _wipe your local data_ and rebuild your Docker
@@ -147,7 +155,7 @@ containers, just use this command:
 If you just wish to rebuild the Docker container, use the Docker
 compose command:
 
-    $ docker compose down
+    $ make stop
 
 Then, run another `make run`.
 

@@ -19,7 +19,7 @@ class BaseModel(type):
     def __new__(cls, name, bases, attrs):
         if name == 'Model':
             return super(BaseModel, cls).__new__(cls, name, bases, attrs)
-                
+  
         new_class = type.__new__(cls, name, bases, attrs)
         for key, value in list(attrs.items()):
             if isinstance(value, properties.Property):
@@ -31,7 +31,7 @@ class Model(object, metaclass=BaseModel):
     """
     The Model class that gets inherited to create table-specific Models.
     """
-    
+
     def __init__(self, *args, **kwargs):
         self._id = None
         self.connection = db.connection()
@@ -50,7 +50,7 @@ class Model(object, metaclass=BaseModel):
         that an instance is tied to a DB record.
         """
         return self._id
-    
+
     def saved(self):
         """
         A way to check if object has been saved.
@@ -64,19 +64,19 @@ class Model(object, metaclass=BaseModel):
         """
         A hook for subclasses to override model initialization.
         """
-    
+
     def add_error(self, property_name, error_message):
         """
         Used to add any errors while validating an object.
         """
         self.errors[property_name] = error_message
-    
+
     def on_create(self):
         pass
-        
+
     def on_update(self):
         pass
-        
+
     def save(self):
         """
         Builds the query to save all of the object's db attributes.
@@ -114,7 +114,7 @@ class Model(object, metaclass=BaseModel):
         sql = "UPDATE %s SET %s = %s where id = %s" % (self._table_name(), name, "%s", "%s")
         self.execute(sql, value, self.id)
         return True
-    
+
     def _populate_properties(self, include_id, **kwargs):
         """
         Populates the properties with values, if include_id is passed in,
@@ -180,7 +180,7 @@ class Model(object, metaclass=BaseModel):
         for result in cls.query(query, *args):
             results.append(cls._make_instance(result))
         return results
-    
+
     @classmethod
     def query(cls, query, *args):
         """

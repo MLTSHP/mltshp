@@ -7,7 +7,6 @@ an account, zip into a file on S3, and email notification to them.
 import models
 import sys
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 from tornado.options import options
 import json
 import os
@@ -27,7 +26,7 @@ def main():
     }
     return json.dumps(results)
 
-def percent_cb(complete, total):
+def percent_cb(bytes_amount):
     sys.stdout.write('.')
     sys.stdout.flush()
 
@@ -61,7 +60,6 @@ def make_zip_file(for_user=None):
             else:
                 sys.stdout.write('.')
                 sys.stdout.flush()
-            file_object = s3_bucket.get_key("originals/{0}".format(source.file_key))
             extension = ""
             if sf.content_type == 'image/gif':
                 extension = "gif"
@@ -75,18 +73,18 @@ def make_zip_file(for_user=None):
                 print("extension blank")
                 sys.exit()
 
-            file_object.get_contents_to_filename("/mnt/backups/users/{0}/{1}.{2}".format(user.name, sf.share_key, extension))
+            file_name = "/mnt/backups/users/{0}/{1}.{2}".format(user.name, sf.share_key, extension)
+            s3_bucket.download_file(file_name, "originals/{0}".format(source.file_key))
 
         #zip contents of directory and save to /users/id-name.zip
-        subprocess.call(["zip", "-r", "/mnt/backups/users/{0}.zip".format(user.name), "/mnt/backups/users/{0}/".format(user.name)])
+        zip_file = "/mnt/backups/users/{0}.zip".format(user.name)
+        subprocess.call(["zip", "-r", zip_file, "/mnt/backups/users/{0}/".format(user.name)])
 
         #upload to s3 as /bucket-name/account/id/images.zip
-        k = Key(s3_bucket)
-        k.key = "account/{0}/images.zip".format(user.id)
-        k.set_contents_from_filename("/mnt/backups/users/{0}.zip".format(user.name), cb=percent_cb, num_cb=10)
+        key = "account/{0}/images.zip".format(user.id)
+        s3_bucket.upload_file(zip_file, key, Callback=percent_cb, ExtraArgs={"ContentType": "application/zip"})
 
-        happy_url = k.generate_url(expires_in=72000)
-        k.close(fast=True)
+        happy_url = s3_bucket.generate_url(key, ExpiresIn=72000)
         #email link to user email 8 hours
         pm = postmark.PMMail(api_key=options.postmark_api_key,
             sender="hello@mltshp.com", to=user.email,

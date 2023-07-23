@@ -2,7 +2,7 @@ beautifulsoup4==4.12.2
 mysqlclient==2.1.1
 Pillow==10.0.0
 amqplib==1.0.2
-boto==2.49.0
+boto3==1.28.9
 celery==5.3.1
 kombu==5.3.1
 pycurl==7.45.2

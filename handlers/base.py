@@ -5,7 +5,6 @@ import tornado.web
 from tornado.options import define, options
 
 from lib.flyingcow.cache import RequestHandlerQueryCache
-from lib.s3 import S3Connection
 import models
 
 SESSION_COOKIE = "sid"
@@ -59,9 +58,6 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         proc_time = round((time.time() - self.start_time) * 1000, 2)
         self.set_header('x-proc-time',"%s" % (proc_time))
         super(BaseHandler, self).finish(chunk)
-
-    def get_s3_connection(self):
-        return S3Connection()
 
     def get_current_user(self):
         sid = self.get_secure_cookie(SESSION_COOKIE)

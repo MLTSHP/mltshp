@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import unittest
+import logging
+
 from torndb import Connection
 from tornado.options import options
 from tornado.httpclient import AsyncHTTPClient
+from tornado.options import options
 
 import MySQLdb
 
@@ -70,6 +73,11 @@ def all():
 if __name__ == '__main__':
 
     mltshpoptions.parse_dictionary(test_settings)
+    if not options.tornado_logging:
+        options.logging = None
+        logging.getLogger("tornado.access").disabled = True
+        logging.getLogger("tornado.application").disabled = True
+        logging.getLogger("tornado.general").disabled = True
 
     import tornado.testing
     db = Connection(options.database_host, 'mysql', options.database_user, options.database_password)

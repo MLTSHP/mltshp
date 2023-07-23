@@ -13,6 +13,9 @@ from models import Externalservice, User, Sourcefile, Sharedfile, Shake, ShakeCa
 from .base import BaseHandler, require_membership
 from lib.utilities import base36encode
 
+import logging
+logger = logging.getLogger("mltshp")
+
 
 class PickerPopupHandler(BaseHandler):
     @tornado.web.authenticated
@@ -91,12 +94,15 @@ class PickerPopupHandler(BaseHandler):
 
         http = tornado.httpclient.AsyncHTTPClient()
 
+        logger.debug("Fetching %s" % (self.url))
         request = HTTPRequest(self.url, header_callback=self.on_header)
         fut = http.fetch(request)
         response = await fut
+        logger.debug("Got response for %s" % (self.url))
         self.on_response(response)
 
     def on_response(self, response):
+        logger.debug("Parsing response for %s" % (self.url))
         url_parts = urlparse(response.request.url)
         file_name = os.path.basename(url_parts.path)
         title = self.get_argument("title", None)
@@ -119,12 +125,15 @@ class PickerPopupHandler(BaseHandler):
         sha1_file_key = Sourcefile.get_sha1_file_key(file_data=response.body)
         user = self.get_current_user()
         try:
+            logger.debug("Writing file %s/%s" % (options.uploaded_files, sha1_file_key))
             fh = open("%s/%s" % (options.uploaded_files, sha1_file_key), 'wb')
             fh.write(response.body)
             fh.close()
         except Exception as e:
+            logger.error("Error saving file %s/%s" % (options.uploaded_files, sha1_file_key))
             raise tornado.web.HTTPError(500)
 
+        logger.debug("Creating sharedfile")
         sf = Sharedfile.create_from_file(
                 file_path = "%s/%s" % (options.uploaded_files, sha1_file_key),
                 file_name = file_name,
@@ -135,6 +144,7 @@ class PickerPopupHandler(BaseHandler):
                 shake_id = shake_id)
         sf.source_url = source_url
         sf.description = description
+        logger.debug("Saving to database")
         sf.save()
         if not options.debug:
             # file cleanup
@@ -142,12 +152,13 @@ class PickerPopupHandler(BaseHandler):
                 os.remove("%s/%s" % (options.uploaded_files, sha1_file_key))
             except:
                 pass
+        logger.debug("Rendering picker-success.html")
         self.render("tools/picker-success.html", sf=sf)
 
     def on_header(self, header):
         if header.lower().startswith("content-length:"):
             content_length = re.search("content-length: (.*)", header, re.IGNORECASE)
-            if int(content_length.group(1).rstrip()) > 10000000: #this is not hte correct size to error on
+            if int(content_length.group(1).rstrip()) > 10000000: #this is not the correct size to error on
                 raise tornado.web.HTTPError(413)
         elif header.lower().startswith("content-type:"):
             ct = re.search("content-type: (.*)", header, re.IGNORECASE)

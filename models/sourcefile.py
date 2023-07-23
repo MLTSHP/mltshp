@@ -9,10 +9,12 @@ from tornado.escape import url_escape, json_decode, json_encode
 from tornado.options import options
 from PIL import Image
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
+
+import logging
+logger = logging.getLogger('mltshp')
 
 
 class Sourcefile(ModelQueryCache, Model):
@@ -118,6 +120,7 @@ class Sourcefile(ModelQueryCache, Model):
         if existing_source_file:
             return existing_source_file
         try:
+            logger.debug("creating %s" % file_path)
             img = Image.open(file_path)
             original_width = img.size[0]
             original_height= img.size[1]
@@ -126,6 +129,7 @@ class Sourcefile(ModelQueryCache, Model):
             return None
 
         if img.mode != "RGB":
+            logger.debug("converting to RGB")
             img2 = img.convert("RGB")
             img.close()
             img = img2
@@ -142,36 +146,43 @@ class Sourcefile(ModelQueryCache, Model):
 
         bucket = None
         if not skip_s3:
+            logger.debug("making S3 bucket")
             bucket = S3Bucket()
 
         #save original file
         if type != 'link':
             if not skip_s3:
-                k = Key(bucket)
-                k.key = "originals/%s" % sha1_value
-                k.set_contents_from_filename(file_path)
-                k.close(fast=True)
+                logger.debug("putting object originals/%s" % sha1_value)
+                bucket.upload_file(
+                    file_path,
+                    "originals/%s" % sha1_value,
+                )
         img.close()
 
         #save thumbnail
         thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
         if not skip_s3:
-            k = Key(bucket)
-            k.key = "thumbnails/%s" % thumbnail_file_key
-            k.set_contents_from_string(thumb_cstr.getvalue())
-            k.close(fast=True)
+            thumb_bytes = thumb_cstr.getvalue()
+            logger.debug("putting object thumbnails/%s (length %d)" % (thumbnail_file_key, len(thumb_bytes)))
+            bucket.put_object(
+                thumb_bytes,
+                "thumbnails/%s" % thumbnail_file_key,
+            )
         thumb.close()
 
         #save small
         small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
         if not skip_s3:
-            k = Key(bucket)
-            k.key = "smalls/%s" % small_file_key
-            k.set_contents_from_string(small_cstr.getvalue())
-            k.close(fast=True)
+            small_bytes = small_cstr.getvalue()
+            logger.debug("putting object smalls/%s (length %d)" % (small_file_key, len(small_bytes)))
+            bucket.put_object(
+                small_bytes,
+                "smalls/%s" % small_file_key,
+            )
         small.close()
 
         #save source file
+        logger.debug("saving sourcefile")
         sf = Sourcefile(width=original_width, height=original_height, file_key=sha1_value, thumb_key=thumbnail_file_key, small_key=small_file_key, type=type)
         sf.save()
         return sf
