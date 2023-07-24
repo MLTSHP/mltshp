@@ -11,7 +11,7 @@ docker pull mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
 docker tag mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER} mltshp/mltshp-web:latest
 
 # launch fakes3/mysql/web app
-docker compose -f .buildkite/docker-compose.yml up -d
+docker compose -f .buildkite/docker-compose.yml up -d --build
 
 # let's wait and allow mysql/fakes3 to spin up
 #wait_for localhost 3306

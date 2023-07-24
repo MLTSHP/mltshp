@@ -23,9 +23,7 @@ Updated for Python 3 by Brad Choate, for MLTSHP. ❤️
 
 """
 
-import copy
 import logging
-import os
 import time
 
 import MySQLdb.constants
