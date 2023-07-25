@@ -8,25 +8,15 @@ services:
     ports:
       - "8001:80"
     depends_on:
-      - fakes3
       - mysql
+      - fakes3
     links:
-      - fakes3
       - mysql
+      - fakes3
     networks:
       app_net:
         aliases:
           - mltshp.dev
-  mysql:
-    image: mysql:latest
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: "mltshp_testing"
-      MYSQL_USER: "mltshp"
-    networks:
-      - app_net
   fakes3:
     build: ../setup/dev/fakes3
     entrypoint: fakes3 --root /srv --license ${FAKES3_LICENSE_KEY} --port 4567
@@ -37,6 +27,16 @@ services:
         aliases:
           - mltshp-testing.fakes3
           - mltshp-dev.fakes3
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "mltshp_testing"
+      MYSQL_USER: "mltshp"
+    networks:
+      - app_net
 
 networks:
   app_net:
