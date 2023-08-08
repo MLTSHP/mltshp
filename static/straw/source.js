@@ -110,7 +110,7 @@ java -jar ./tools/compiler.jar --js static/straw/source.js --js_output_file stat
     if (width > 300 && height > 100) {
       var left_margin = (width - 240) / 2,
           top_margin = (height - 45) / 2;
-      html = '<span class="mltshp-sf-overlay-text" style="';
+      var html = '<span class="mltshp-sf-overlay-text" style="';
       html = html + 'margin-top:' + top_margin + 'px;';
       html = html + 'margin-left:' + left_margin + 'px;';
       html = html + '">Save on MLTSHP</span>';
@@ -129,8 +129,8 @@ java -jar ./tools/compiler.jar --js static/straw/source.js --js_output_file stat
       ev.cancelBubble = true;
     }
     
-    left_location = screen.width/2-450;
-    top_location = screen.height/2-300;
+    var left_location = screen.width/2-450;
+    var top_location = screen.height/2-300;
     var window_attributes = "width=850,height=650,menubar=yes,toolbar=yes,scrollbars=yes,resizable=yes,left=" + left_location + ",top=" + top_location + "screenX=" + left_location + ",screenY=" + top_location;
     global.open('https://mltshp.com/tools/p?url=' + encodeURI(this.asset) + '&title=' + encodeURI(global.document.title) + '&source_url=' + encodeURI(global.location.href), 'save_image', window_attributes);
   };
@@ -221,8 +221,8 @@ java -jar ./tools/compiler.jar --js static/straw/source.js --js_output_file stat
     find_assets: function() {
       var images = AssetFinder.images(),
           images_length = images.length,
-          videos = AssetFinder.videos(),
-          videos_length = videos.length,
+          //videos = AssetFinder.videos(),
+          //videos_length = videos.length,
           found = []
     
       for (var i = 0; i < images_length; i++) {

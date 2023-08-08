@@ -149,7 +149,6 @@ $(document).ready(function() {
         submit_post_video: function() {
           var url = $post_video_form.attr('action');
           var data = $post_video_form.serialize();
-          var that = this;
           $post_video_form_button.unbind('click').find('span').html('Posting...');
           $.post(url, data, function(response) {
             document.location = document.location.protocol + '//' + document.location.host + response['path'];
@@ -162,12 +161,12 @@ $(document).ready(function() {
           init_dom();
           init_events();
         }
-      }
+      };
     }();
 
     var to_text = function(num, base) {
       return (num == 1) ? num + ' ' + "<span>" + base + "</span>" : num + ' ' + "<span>" + base + 's' + "</span>";
-    }
+    };
 
     var ShakesCache = {
       fetch: function() {
@@ -286,13 +285,13 @@ $(document).ready(function() {
     }
 
     $(".save-this").each(function() {
-      var save_this_view = new SaveThisView(this);
+      SaveThisView(this);
     });
 
     // when we hit enter on a form, we want to submit it
     // even though we don't have an type="submit" input
     // available, since we're using a styled button.
-    $sign_in_form = $("#sign-in-form");
+    var $sign_in_form = $("#sign-in-form");
     $("input", $sign_in_form).keydown(function(e) {
       if (e.keyCode == 13) {
         $sign_in_form.submit();
@@ -511,7 +510,7 @@ $(document).ready(function() {
         save_count: 0,
         like_count: 0
       }
-    }
+    };
 
     var SidebarStatsView = function(scope) {
       // if we aren't on a permalink page, just expose a dummy public API
@@ -524,8 +523,8 @@ $(document).ready(function() {
       }
 
       var image_stats = new ImageStats();
-      $save_count = $('.save-count', scope);
-      $like_count = $('.like-count', scope);
+      var $save_count = $('.save-count', scope);
+      var $like_count = $('.like-count', scope);
       image_stats.save_count = parseInt($save_count.html(), 10);
       image_stats.like_count = parseInt($like_count.html(), 10);
 
@@ -552,7 +551,7 @@ $(document).ready(function() {
         },
 
         refresh_likes: function() {
-          $like_count = $('.like-count', scope);
+          var $like_count = $('.like-count', scope);
           image_stats.like_count = parseInt($like_count.html(), 10);
           if (likes_expanded) {
             this.get_likes();
@@ -566,7 +565,7 @@ $(document).ready(function() {
         },
 
         refresh_saves: function() {
-          $save_count = $('.save-count', scope);
+          var $save_count = $('.save-count', scope);
           image_stats.save_count = parseInt($save_count.html(), 10);
           if (saves_expanded) {
             this.get_saves();
@@ -691,7 +690,7 @@ $(document).ready(function() {
           $content.removeClass('loading').html(html);
         }
 
-      }
+      };
     }("#sidebar-stats");
     SidebarStatsView.init();
 
@@ -898,13 +897,13 @@ $(document).ready(function() {
         this.files_on_page[view.share_key] = view;
       },
       refresh_likes: function(share_key) {
-        view = this.get_view(share_key);
+        var view = this.get_view(share_key);
         if (view !== undefined) {
           view.refresh_likes();
         }
       },
       refresh_saves: function(share_key) {
-        view = this.get_view(share_key);
+        var view = this.get_view(share_key);
         if (view !== undefined) {
           view.refresh_saves();
         }
@@ -912,14 +911,14 @@ $(document).ready(function() {
       get_view: function(share_key) {
         return this.files_on_page[share_key];
       }
-    }
+    };
 
     function apply_hover_for_video(sel) {
       sel.hover(function () {
         if (this.hasAttribute("controls")) {
-          this.removeAttribute("controls")
+          this.removeAttribute("controls");
         } else {
-          this.setAttribute("controls", "controls")
+          this.setAttribute("controls", "controls");
         }
       });
     }
@@ -927,7 +926,7 @@ $(document).ready(function() {
     var NSFWCover = function($root) {
       this.$root = $root;
       this.init();
-    }
+    };
 
     $.extend(NSFWCover.prototype, {
       init: function() {
@@ -938,7 +937,7 @@ $(document).ready(function() {
         var location = document.location,
             host = location.host,
             protocol = location.protocol,
-            base_path = location.protocol + "//" + location.host,
+            base_path = protocol + "//" + host,
             file_path = $(ev.target).attr('href');
         $.get(base_path + "/services/oembed?include_embed=1&url=" + escape(base_path + file_path), $.proxy(this.load_image, this), 'json');
         return false;
@@ -965,7 +964,7 @@ $(document).ready(function() {
           $nsfw_cover = $image_content.find(".nsfw-cover");
       var stream_stats_view = new StreamStatsView($image_footer);
       StreamStatsViewRegistry.register(stream_stats_view);
-      var nsfw_cover = new NSFWCover($nsfw_cover);
+      NSFWCover($nsfw_cover);
     });
 
     apply_hover_for_video($('.image-content video.autoplay'));
@@ -1069,7 +1068,6 @@ $(document).ready(function() {
       var $block = $(this).parents('.notification');
       var $header = $("#notifcation-block-shakeinvitation .notification-block-hd");
 
-      var that = this;
       $.post(url, data, function(response) {
         if (!response['error']) {
           $block.remove();
@@ -1099,7 +1097,7 @@ $(document).ready(function() {
         this.on_shake_page = this.$hd.hasClass('on-shake-page');
         var that = this;
         this.$root.find('.notification').each(function() {
-          var new_invitation_request = new NotificationInvitationRequest($(this), that);
+          NotificationInvitationRequest($(this), that);
         });
       },
 
@@ -1159,11 +1157,11 @@ $(document).ready(function() {
     });
 
     var init_notification_invitation_request = function() {
-      $notification_invitation_request = $("#notification-block-invitation-request");
+      var $notification_invitation_request = $("#notification-block-invitation-request");
       if ($notification_invitation_request.length > 0) {
-        var invitation_requests = new NotificationInvitationContainer($notification_invitation_request);
+        NotificationInvitationContainer($notification_invitation_request);
       }
-    }
+    };
     init_notification_invitation_request();
 
     // Expand all notifications.
@@ -1181,7 +1179,7 @@ $(document).ready(function() {
     $(".field-submit .btn:not(.g-recaptcha)").click(function() {
       $(this).closest("form").submit();
       return false;
-    })
+    });
 
     /* Site Nav dropdown */
     $site_nav = $("#site-nav");
@@ -1245,8 +1243,8 @@ $(document).ready(function() {
     // http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity
     function setCaret(el)
     {
-        ctrl = el;
-        pos = ctrl.value.length;
+        var ctrl = el;
+        var pos = ctrl.value.length;
         if(ctrl.setSelectionRange)
         {
             ctrl.focus();
@@ -1300,7 +1298,7 @@ $(document).ready(function() {
 
     var $image_comments_permalink = $("#image-comments-permalink");
     if ($image_comments_permalink.length > 0) {
-      var new_comment = new PermalinkCommentsView($image_comments_permalink);
+      PermalinkCommentsView($image_comments_permalink);
     }
 
     $("#nsfw-filter-button a").click(function() {
@@ -1374,7 +1372,7 @@ $(document).ready(function() {
 
 
       $("#shake-categories .shake-category").each(function() {
-        var new_category = new RecommendedShakeCategory(this)
+        RecommendedShakeCategory(this)
       });
     }
 
@@ -1665,7 +1663,7 @@ $(document).ready(function() {
           this.clear_input();
           this.clear_results();
         }
-      }
+      };
     }();
 
 
@@ -1684,7 +1682,7 @@ $(document).ready(function() {
         var $target = $(ev.target),
             $li = $target.parents("li"),
             $form = $target.next(),
-            url = $form.attr('action');
+            url = $form.attr('action'),
             data = $form.serialize();
 
         if (confirm("Are you sure you want to remove this user from a shake? If they have notifications on an email will be sent informing them of the change.")) {
@@ -1700,7 +1698,7 @@ $(document).ready(function() {
 
     var $shake_member_list = $("#shake-members-list");
     if ($shake_member_list.length > 0) {
-      var shake_member_list = new ShakeMemberList($shake_member_list);
+      ShakeMemberList($shake_member_list);
     }
 
     // support for dismissable "Vote 2020" banner; cookie naturally expires on Nov 4th

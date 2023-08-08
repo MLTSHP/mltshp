@@ -184,7 +184,7 @@ var pagingKeys = (function() {
             return a.y - b.y;
         });
 
-        var last = item_map.length - 1;
+        //var last = item_map.length - 1;
         if (getEl(config.nextPageSelector)[0]) {
             if (getEl(config.nextPageSelector)[0].href)
                 item_map.push({ id: "next", y: document.body.scrollHeight });
@@ -284,7 +284,7 @@ var pagingKeys = (function() {
         else if (
             getWindowBounds().h + getScrollTop() ==
                 document.body.scrollHeight &&
-            0 < delta
+            0 < delta  // is this always false?
         )
             p++;
 

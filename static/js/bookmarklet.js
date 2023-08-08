@@ -42,11 +42,12 @@ function straw() {
       
         // then they came for the youtube videos
         //if (document.domain == "youtube.com" || document.domain == "localhost" || document.domain == "www.youtube.com"){
+        /*
         if (false){
             player_holder = document.getElementById('watch-player');
             nodes = player_holder.childNodes;
             for(var k=0;k<nodes.length;k++){
-                this_node = nodes[k]
+                this_node = nodes[k];
                 if((this_node.nodeName) === "IFRAME"){
                     var width = this_node.offsetWidth;
                     var height = this_node.offsetHeight;
@@ -57,9 +58,10 @@ function straw() {
                 }
             }
         }
-        
+        */
         // then they came for the vimeo videos
         //if (document.domain == "vimeo.com" || document.domain == "localhost" || document.domain == "www.vimeo.com"){
+        /*
         if (false){
             possible_players = document.getElementsByTagName('div');
 
@@ -76,6 +78,7 @@ function straw() {
             }
             
         }
+        */
     }
   
     this.create_overlay = function(type, width, height, pos, obj_id, url){
@@ -116,8 +119,8 @@ function straw() {
     this.select_image = function(image_url){
         //open a new window
         //location is 
-        left_location = screen.width/2-450;
-        top_location = screen.height/2-300;
+        var left_location = screen.width/2-450;
+        var top_location = screen.height/2-300;
         var window_attributes = "width=850,height=650,menubar=yes,toolbar=yes,scrollbars=yes,resizable=yes,left=" + left_location + ",top=" + top_location + "screenX=" + left_location + ",screenY=" + top_location;
         window.open('https://mltshp.com/tools/p?url=' + escape(image_url) + '&source_url=' + escape(location.href) ,'save image',window_attributes);
     }
