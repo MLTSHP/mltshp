@@ -207,7 +207,7 @@ class SharedFileTests(BaseAsyncTestCase):
             self.assertEqual(j['height'], 1)
             self.assertEqual(j['title'], '1.png')
             # pattern from oembed.json is...
-            #    http://{{ cdn_host }}/r/{{sharedfile.share_key}}
+            #    https://{{ cdn_host }}/r/{{sharedfile.share_key}}
             self.assertEqual(j['url'], 'https://cdn-service.com/r/1')
 
         #test jsonp callback works
@@ -342,8 +342,8 @@ class FilePickerTests(BaseAsyncTestCase):
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
 
-        self.url = 'https://notes.torrez.org/images/categories/television.png?x=1'
-        self.source_url = url_escape('https://notes.torrez.org/')
+        self.url = 'https://example.com/images/television.png?x=1'
+        self.source_url = url_escape('https://example.com/')
         self.description = "This is a multi-\nline\ndescription"
         self.alt_text = "This is some alt text\nit spans two lines."
 
@@ -362,7 +362,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertTrue(response.body.find('hidden" name="url" value="%s"' % (self.url)) > 0)
 
     def test_picker_authenticated_stores_image(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat" % (self.xsrf, self.url))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&unittest=1" % (self.xsrf, self.url))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("ERROR") == -1)
@@ -390,21 +390,21 @@ class FilePickerTests(BaseAsyncTestCase):
             self.assertTrue(response.error)
 
     def test_picker_stores_image_and_shakesharedfile(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat" % (self.xsrf, self.url))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&unittest=1" % (self.xsrf, self.url))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         ssf = Shakesharedfile.get("sharedfile_id=1 and shake_id=%s", self.user_shake.id)
         self.assertTrue(ssf)
 
     def test_picker_stores_source_url(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&source_url=%s" % (self.xsrf, self.url, self.source_url))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&source_url=%s&unittest=1" % (self.xsrf, self.url, self.source_url))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         sf = Sharedfile.get("id=1")
-        self.assertEqual(sf.source_url, 'https://notes.torrez.org/')
+        self.assertEqual(sf.source_url, 'https://example.com/')
 
     def test_picker_stores_description(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s" % (self.xsrf, url_escape(self.url), url_escape(self.description)))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&unittest=1" % (self.xsrf, url_escape(self.url), url_escape(self.description)))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("ERROR") == -1)
@@ -412,7 +412,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertEqual(sf.description, self.description)
 
     def test_picker_stores_alt_text(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s&unittest=1" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("ERROR") == -1)

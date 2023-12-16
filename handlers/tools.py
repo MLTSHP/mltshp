@@ -3,6 +3,7 @@ import os
 import re
 import random
 import json
+import io
 
 from tornado.httpclient import HTTPRequest
 import tornado.auth
@@ -106,8 +107,17 @@ class PickerPopupHandler(BaseHandler):
                 self.url = self.url.replace(char, url_escape(char))
 
             fp_cookie = {'Cookie':'_filepile_session=4c2eff30dd27e679d38fbc030b204488'}
+
         request = HTTPRequest(self.url, headers=fp_cookie, header_callback=self.on_header)
-        http.fetch(request, self.on_response)
+        if self.get_argument('unittest', None) == '1':
+            self.content_type = 'image/png'
+            dummy_buffer = io.BytesIO()
+            with open(os.path.join(os.path.dirname(__file__), '../test/files/1.png'), 'rb') as f:
+                dummy_buffer.write(f.read())
+            dummy_response = tornado.httpclient.HTTPResponse(request, 200, buffer=dummy_buffer)
+            self.on_response(dummy_response)
+        else:
+            http.fetch(request, self.on_response)
 
     def on_response(self, response):
         url_parts = urlparse(response.request.url)
@@ -162,7 +172,7 @@ class PickerPopupHandler(BaseHandler):
     def on_header(self, header):
         if header.startswith("Content-Length:"):
             content_length = re.search("Content-Length: (.*)", header)
-            if int(content_length.group(1).rstrip()) > 10000000: #this is not hte correct size to error on
+            if int(content_length.group(1).rstrip()) > 10000000: #this is not the correct size to error on
                 raise tornado.web.HTTPError(413)
         elif header.startswith("Content-Type:"):
             ct = re.search("Content-Type: (.*)", header)
