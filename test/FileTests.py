@@ -342,8 +342,8 @@ class FilePickerTests(BaseAsyncTestCase):
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf()
 
-        self.url = 'http://notes.torrez.org/images/categories/television.png?x=1'
-        self.source_url = url_escape('http://notes.torrez.org/')
+        self.url = 'https://notes.torrez.org/images/categories/television.png?x=1'
+        self.source_url = url_escape('https://notes.torrez.org/')
         self.description = "This is a multi-\nline\ndescription"
         self.alt_text = "This is some alt text\nit spans two lines."
 
@@ -401,7 +401,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         sf = Sharedfile.get("id=1")
-        self.assertEqual(sf.source_url, 'http://notes.torrez.org/')
+        self.assertEqual(sf.source_url, 'https://notes.torrez.org/')
 
     def test_picker_stores_description(self):
         request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s" % (self.xsrf, url_escape(self.url), url_escape(self.description)))
