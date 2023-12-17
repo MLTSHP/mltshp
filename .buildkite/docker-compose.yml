@@ -9,10 +9,8 @@ services:
     ports:
       - "8001:80"
     depends_on:
-      - fakes3
       - mysql
     links:
-      - fakes3
       - mysql
     networks:
       app_net:
@@ -28,16 +26,6 @@ services:
       MYSQL_USER: "mltshp"
     networks:
       - app_net
-  fakes3:
-    image: ourtownrentals/fake-s3
-    entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 8000
-    ports:
-      - "8000:8000"
-    networks:
-      app_net:
-        aliases:
-          - mltshp-testing.fakes3
-          - mltshp-dev.fakes3
 
 networks:
   app_net:

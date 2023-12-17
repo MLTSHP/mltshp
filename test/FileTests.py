@@ -324,7 +324,7 @@ class VideoPickerTests(BaseAsyncTestCase):
         user2.subscribe(self.user.shake())
 
         url = 'https://vimeo.com/20379529'
-        request = HTTPRequest(self.get_url('/tools/save-video'), 'POST', {"Cookie":"sid=%s;_xsrf=%s" % (self.sid, self.xsrf)}, "url=%s&_xsrf=%s" % (url_escape(url), self.xsrf))
+        request = HTTPRequest(self.get_url('/tools/save-video'), 'POST', {"Cookie":"sid=%s;_xsrf=%s" % (self.sid, self.xsrf)}, "url=%s&_xsrf=%s&skip_s3=1" % (url_escape(url), self.xsrf))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         sfs = Sharedfile.from_subscriptions(user2.id)
@@ -362,7 +362,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertTrue(response.body.find('hidden" name="url" value="%s"' % (self.url)) > 0)
 
     def test_picker_authenticated_stores_image(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&unittest=1" % (self.xsrf, self.url))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&skip_s3=1" % (self.xsrf, self.url))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("ERROR") == -1)
@@ -390,21 +390,21 @@ class FilePickerTests(BaseAsyncTestCase):
             self.assertTrue(response.error)
 
     def test_picker_stores_image_and_shakesharedfile(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&unittest=1" % (self.xsrf, self.url))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&skip_s3=1" % (self.xsrf, self.url))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         ssf = Shakesharedfile.get("sharedfile_id=1 and shake_id=%s", self.user_shake.id)
         self.assertTrue(ssf)
 
     def test_picker_stores_source_url(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&source_url=%s&unittest=1" % (self.xsrf, self.url, self.source_url))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&source_url=%s&skip_s3=1" % (self.xsrf, self.url, self.source_url))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.source_url, 'https://example.com/')
 
     def test_picker_stores_description(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&unittest=1" % (self.xsrf, url_escape(self.url), url_escape(self.description)))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&skip_s3=1" % (self.xsrf, url_escape(self.url), url_escape(self.description)))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("ERROR") == -1)
@@ -412,7 +412,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertEqual(sf.description, self.description)
 
     def test_picker_stores_alt_text(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s&unittest=1" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s&skip_s3=1" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
         self.http_client.fetch(request, self.stop)
         response = self.wait()
         self.assertTrue(response.body.find("ERROR") == -1)

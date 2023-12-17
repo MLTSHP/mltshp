@@ -428,7 +428,8 @@ class UserModelTests(BaseTestCase):
             file_name = file_name,
             sha1_value = file_sha1,
             content_type = file_content_type,
-            user_id = self.user.id)
+            user_id = self.user.id,
+            skip_s3 = True)
         sf.size = 410000000
         sf.save()
 
@@ -452,7 +453,8 @@ class UserModelTests(BaseTestCase):
             file_name = file_name,
             sha1_value = file_sha1,
             content_type = file_content_type,
-            user_id = self.user.id)
+            user_id = self.user.id,
+            skip_s3 = True)
         sf.size = 310000000
         sf.save()
 
@@ -474,7 +476,8 @@ class UserModelTests(BaseTestCase):
                 file_name = file_name,
                 sha1_value = file_sha1,
                 content_type = file_content_type,
-                user_id = self.user.id)
+                user_id = self.user.id,
+                skip_s3 = True)
 
         month_days = calendar.monthrange(datetime.utcnow().year,datetime.utcnow().month)
         start_time = datetime.utcnow().strftime("%Y-%m-01")

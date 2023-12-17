@@ -109,7 +109,9 @@ class PickerPopupHandler(BaseHandler):
             fp_cookie = {'Cookie':'_filepile_session=4c2eff30dd27e679d38fbc030b204488'}
 
         request = HTTPRequest(self.url, headers=fp_cookie, header_callback=self.on_header)
-        if self.get_argument('unittest', None) == '1':
+        if self.get_argument('skip_s3', None):
+            # This parameter is used specifically for unit testing, so mock the file being
+            # served as well.
             self.content_type = 'image/png'
             dummy_buffer = io.BytesIO()
             with open(os.path.join(os.path.dirname(__file__), '../test/files/1.png'), 'rb') as f:
@@ -127,7 +129,7 @@ class PickerPopupHandler(BaseHandler):
         description = self.get_argument('description', None)
         alt_text = self.get_argument('alt_text', None)
         shake_id = self.get_argument('shake_id', None)
-        skip_s3 = self.get_argument('unittest', None) == '1'
+        skip_s3 = self.get_argument('skip_s3', None)
 
         if title == file_name:
             title = None
@@ -354,7 +356,9 @@ class SaveVideoHandler(BaseHandler):
         fh = open(thumbnail_path, 'wb')
         fh.write(response.body)
         fh.close()
-        source_file = Sourcefile.create_from_json_oembed(link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path)
+        source_file = Sourcefile.create_from_json_oembed(
+            link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path,
+            skip_s3=self.get_argument('skip_s3', None))
         #cleanup
         if not options.debug:
             try:
