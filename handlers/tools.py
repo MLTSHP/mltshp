@@ -127,6 +127,7 @@ class PickerPopupHandler(BaseHandler):
         description = self.get_argument('description', None)
         alt_text = self.get_argument('alt_text', None)
         shake_id = self.get_argument('shake_id', None)
+        skip_s3 = self.get_argument('unittest', None) == '1'
 
         if title == file_name:
             title = None
@@ -156,7 +157,8 @@ class PickerPopupHandler(BaseHandler):
                 content_type = self.content_type,
                 user_id = user['id'],
                 title = title,
-                shake_id = shake_id)
+                shake_id = shake_id,
+                skip_s3 = skip_s3)
         sf.source_url = source_url
         sf.description = description
         sf.alt_text = alt_text
