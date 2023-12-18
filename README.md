@@ -78,6 +78,34 @@ The directory structure looks like this:
         mysql/
             (mysql data files)
 
+## AWS S3 Storage
+
+MLTSHP utilizes AWS S3 for storing uploaded images. The development
+environment provides a dummy S3 server for local operation. But it requires
+a license key in order to use it. Visit [this page](https://supso.org/projects/fake-s3)
+to obtain a license key. For individual developers and small organizations,
+there is no cost. Add the following to a local `.env` file in the root
+of the project:
+
+    FAKES3_LICENSE_KEY=your-license-key-here
+
+You will find any uploaded files under the `mounts/fakes3' directory.
+
+**Note:** As of this time, the Docker image for the fake S3 server is
+incompatible with Apple Silicon CPU architectures. If you are using a
+computer with an Apple ARM CPU, you will need to use a real S3 bucket
+(see below).
+
+If you would rather use a real S3 bucket, you can do that too. Create
+one and then assign these in your local settings.py file:
+
+    "aws_bucket": "your-mltshp-bucket-name",
+    "aws_key": "your-aws-key",
+    "aws_secret": "your-aws-secret",
+    ## Comment these entries out:
+    ##"aws_host": "fakes3",
+    ##"aws_port": 8000,
+
 ## Database Migrations
 
 Occassionally, a database migration will need to be performed to
@@ -94,15 +122,6 @@ That should do it.
 ## Tests
 
 With your copy of MLTSHP running, you may want to run unit tests.
-
-Some tests rely on accessing AWS S3. We have a dummy S3 server in
-place to mock those API requests. But it requires a license key
-in order to use it. Visit [this page](https://supso.org/projects/fake-s3)
-to obtain a license key. For individual developers and small organizations,
-there is no cost. Add the following to a local `.env` file in the root
-of the project:
-
-    FAKES3_LICENSE_KEY=your-license-key-here
 
 Some of the unit tests actually test against Twitter itself, so you'll
 want to generate a custom Twitter app with your own set of keys.

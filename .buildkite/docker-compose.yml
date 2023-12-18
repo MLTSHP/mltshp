@@ -2,6 +2,9 @@ version: "2"
 services:
   mltshp:
     image: mltshp/mltshp-web:latest
+    build:
+      context: ..
+      dockerfile: Dockerfile
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py
       - ../.git:/srv/mltshp.com/mltshp/.git
@@ -9,17 +12,15 @@ services:
     ports:
       - "8001:80"
     depends_on:
-      - fakes3
       - mysql
     links:
-      - fakes3
       - mysql
     networks:
       app_net:
         aliases:
           - mltshp.dev
   mysql:
-    image: mysql:5
+    image: mysql:latest
     ports:
       - "3306:3306"
     environment:
@@ -28,16 +29,6 @@ services:
       MYSQL_USER: "mltshp"
     networks:
       - app_net
-  fakes3:
-    image: ourtownrentals/fake-s3
-    entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 8000
-    ports:
-      - "8000:8000"
-    networks:
-      app_net:
-        aliases:
-          - mltshp-testing.fakes3
-          - mltshp-dev.fakes3
 
 networks:
   app_net:

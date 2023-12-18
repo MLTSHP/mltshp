@@ -212,6 +212,7 @@ class UpdateShakeHandler(BaseHandler):
         file_name = self.get_argument("file_name", None)
         sha1_value = self.get_argument("file_sha1", None)
         content_type = self.get_argument("file_content_type", None)
+        skip_s3 = self.get_argument("skip_s3", None)
         json_response = {}
 
         if not shake_to_update:
@@ -226,7 +227,7 @@ class UpdateShakeHandler(BaseHandler):
         if new_description:
             shake_to_update.description = new_description
 
-        if file_name:
+        if file_name and not skip_s3:
             shake_to_update.set_page_image(file_path, sha1_value)
 
         shake_to_update.save()
