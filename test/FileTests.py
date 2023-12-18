@@ -300,7 +300,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.xsrf = self.get_xsrf().decode("ascii")
 
         self.url = 'https://example.com/images/television.png?x=1'
-        self.source_url = url_escape('https://example.com/')
+        self.source_url = 'https://example.com/'
         self.description = "This is a multi-\nline\ndescription"
         self.alt_text = "This is some alt text\nit spans two lines."
 
@@ -353,10 +353,8 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertEqual(sf.description, self.description)
 
     def test_picker_stores_alt_text(self):
-        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s&skip_s3=1" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-        self.assertTrue(response.body.find("ERROR") == -1)
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "description": self.description, "alt_text": self.alt_text, "skip_s3": "1"})
+        self.assertNotIn("ERROR", response.body)
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.alt_text, self.alt_text)
 
