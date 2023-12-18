@@ -314,7 +314,9 @@ class SettingsProfileHandler(BaseHandler):
 
         profile_image_saved = True
         if photo_content_type and photo_path:
-            profile_image_saved = user.set_profile_image(photo_path, photo_name, photo_content_type)
+            profile_image_saved = user.set_profile_image(
+                photo_path, photo_name, photo_content_type,
+                skip_s3=self.get_argument('skip_s3', None))
 
         if user.is_paid or not uses_a_banned_phrase(full_name):
             user.full_name = full_name
