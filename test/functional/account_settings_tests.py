@@ -168,7 +168,8 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
             'photo_path': photo_path,
             'photo_content_type': "image/png",
             'photo_name': os.path.basename(photo_path),
-            'photo_size': os.path.getsize(photo_path)
+            'photo_size': os.path.getsize(photo_path),
+            'skip_s3': '1',
         }
         response = self.post_url('/account/settings/profile', arguments=arguments)
         user_reloaded = User.get('id = %s', self.user.id)

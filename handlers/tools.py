@@ -3,6 +3,7 @@ import os
 import re
 import random
 import json
+import io
 
 from tornado.httpclient import HTTPRequest
 import tornado.auth
@@ -106,8 +107,19 @@ class PickerPopupHandler(BaseHandler):
                 self.url = self.url.replace(char, url_escape(char))
 
             fp_cookie = {'Cookie':'_filepile_session=4c2eff30dd27e679d38fbc030b204488'}
+
         request = HTTPRequest(self.url, headers=fp_cookie, header_callback=self.on_header)
-        http.fetch(request, self.on_response)
+        if self.get_argument('skip_s3', None):
+            # This parameter is used specifically for unit testing, so mock the file being
+            # served as well.
+            self.content_type = 'image/png'
+            dummy_buffer = io.BytesIO()
+            with open(os.path.join(os.path.dirname(__file__), '../test/files/1.png'), 'rb') as f:
+                dummy_buffer.write(f.read())
+            dummy_response = tornado.httpclient.HTTPResponse(request, 200, buffer=dummy_buffer)
+            self.on_response(dummy_response)
+        else:
+            http.fetch(request, self.on_response)
 
     def on_response(self, response):
         url_parts = urlparse(response.request.url)
@@ -117,6 +129,7 @@ class PickerPopupHandler(BaseHandler):
         description = self.get_argument('description', None)
         alt_text = self.get_argument('alt_text', None)
         shake_id = self.get_argument('shake_id', None)
+        skip_s3 = self.get_argument('skip_s3', None)
 
         if title == file_name:
             title = None
@@ -146,7 +159,8 @@ class PickerPopupHandler(BaseHandler):
                 content_type = self.content_type,
                 user_id = user['id'],
                 title = title,
-                shake_id = shake_id)
+                shake_id = shake_id,
+                skip_s3 = skip_s3)
         sf.source_url = source_url
         sf.description = description
         sf.alt_text = alt_text
@@ -162,7 +176,7 @@ class PickerPopupHandler(BaseHandler):
     def on_header(self, header):
         if header.startswith("Content-Length:"):
             content_length = re.search("Content-Length: (.*)", header)
-            if int(content_length.group(1).rstrip()) > 10000000: #this is not hte correct size to error on
+            if int(content_length.group(1).rstrip()) > 10000000: #this is not the correct size to error on
                 raise tornado.web.HTTPError(413)
         elif header.startswith("Content-Type:"):
             ct = re.search("Content-Type: (.*)", header)
@@ -342,7 +356,9 @@ class SaveVideoHandler(BaseHandler):
         fh = open(thumbnail_path, 'wb')
         fh.write(response.body)
         fh.close()
-        source_file = Sourcefile.create_from_json_oembed(link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path)
+        source_file = Sourcefile.create_from_json_oembed(
+            link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path,
+            skip_s3=self.get_argument('skip_s3', None))
         #cleanup
         if not options.debug:
             try:

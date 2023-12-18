@@ -94,8 +94,8 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         shake_string = ''
         if shake_id:
             shake_string="shake_id=%s" % (shake_id)
-        request = HTTPRequest(self.get_url('/upload?skip_s3=1'), 'POST', {'Cookie':"_xsrf=%s;sid=%s" % (xsrf, sid)},
-                "_xsrf=%s&file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s&%s" % (xsrf,file_name, content_type, sha1, file_size, file_path, shake_string))
+        request = HTTPRequest(self.get_url('/upload'), 'POST', {'Cookie':"_xsrf=%s;sid=%s" % (xsrf, sid)},
+                "_xsrf=%s&file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s&skip_s3=1&%s" % (xsrf,file_name, content_type, sha1, file_size, file_path, shake_string))
         self.http_client.fetch(request, self.stop)
         return self.wait()
 
@@ -108,7 +108,8 @@ class BaseAsyncTestCase(AsyncHTTPTestCase, LogTrapTestCase):
         arguments['file_path'] = os.path.abspath("test/files/love.gif")
         arguments['file_sha1'] = Sourcefile.get_sha1_file_key(arguments['file_path'])
         arguments['file_size'] = os.path.getsize(arguments['file_path'])
-        return self.post_url('/upload?skip_s3=1', arguments)
+        arguments['skip_s3'] = "1"
+        return self.post_url('/upload', arguments)
 
     def create_signed_value(self, name, value):
         ### HERE!@!

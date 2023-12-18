@@ -21,8 +21,6 @@ test_settings = {
     "database_password" : "",
     "database_host": "mysql",
     "aws_bucket": "mltshp-testing",
-    "aws_host": "fakes3",
-    "aws_port": 8000,
     "aws_key": "dummy-key",
     "aws_secret": "dummy-secret",
     "max_mb_per_month" : 300,
