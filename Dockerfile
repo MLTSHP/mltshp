@@ -7,9 +7,9 @@ ENV PYTHONUNBUFFERED 1
 # whole layer and steps to build it should be cached.
 RUN apt-get -y update && apt-get install -y \
         supervisor \
+        python3-dev \
         libmysqlclient-dev \
         mysql-client \
-        python3-dev \
         libjpeg-dev \
         libcurl4-openssl-dev \
         curl \
@@ -25,9 +25,9 @@ RUN apt-get -y update && apt-get install -y \
     # install nginx + upload module
     mkdir -p /tmp/install && \
     cd /tmp/install && \
-    wget http://nginx.org/download/nginx-1.25.1.tar.gz && tar zxf nginx-1.25.1.tar.gz && \
+    wget http://nginx.org/download/nginx-1.25.3.tar.gz && tar zxf nginx-1.25.3.tar.gz && \
     wget https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz && tar zxf 2.3.0.tar.gz && \
-    cd /tmp/install/nginx-1.25.1 && \
+    cd /tmp/install/nginx-1.25.3 && \
     ./configure \
         --with-http_ssl_module \
         --with-http_stub_status_module \
