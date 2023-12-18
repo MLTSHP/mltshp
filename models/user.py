@@ -222,7 +222,7 @@ hello@mltshp.com
             image['thumbnail_url'] = authenticated_url
         return images
 
-    def set_profile_image(self, file_path, file_name, content_type):
+    def set_profile_image(self, file_path, file_name, content_type, skip_s3=False):
         """
         Takes a local path, name and content-type, which are parameters passed in by
         nginx upload module.  Converts to RGB, resizes to thumbnail and uploads to S3.
@@ -237,13 +237,14 @@ hello@mltshp.com
         if not transform_to_square_thumbnail(file_path, 100*2, destination):
             return False
 
-        bucket = S3Bucket()
-        k = Key(bucket)
-        k.key = "account/%s/profile.jpg" % (self.id)
-        k.set_metadata('Content-Type', 'image/jpeg')
-        k.set_metadata('Cache-Control', 'max-age=86400')
-        k.set_contents_from_string(destination.getvalue())
-        k.set_acl('public-read')
+        if not skip_s3:
+            bucket = S3Bucket()
+            k = Key(bucket)
+            k.key = "account/%s/profile.jpg" % (self.id)
+            k.set_metadata('Content-Type', 'image/jpeg')
+            k.set_metadata('Cache-Control', 'max-age=86400')
+            k.set_contents_from_string(destination.getvalue())
+            k.set_acl('public-read')
         self.profile_image = 1
         self.save()
         return True
