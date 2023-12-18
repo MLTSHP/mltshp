@@ -2,6 +2,8 @@ from urllib.parse import urlparse, parse_qs
 import os
 import re
 import random
+import json
+import io
 
 from tornado.httpclient import HTTPRequest
 import tornado.auth
@@ -23,6 +25,7 @@ class PickerPopupHandler(BaseHandler):
     def get(self):
         url = self.get_argument('url', None)
         source_url = self.get_argument('source_url', '')
+        alt_text = self.get_argument('alt', '')
         file_name = self.get_argument('title', '')
         current_user = self.get_current_user_object()
 
@@ -74,7 +77,7 @@ class PickerPopupHandler(BaseHandler):
         #replace plus signs with %20's
         return self.render("tools/picker.html", file_name=file_name, width="", height="", \
             url=parsed_url.scheme + "://" + parsed_url.netloc + parsed_url.path + parsed_url_query, \
-            source_url=source_url, description='', is_video=is_video, shakes=shakes,
+            source_url=source_url, description='', alt_text=alt_text, is_video=is_video, shakes=shakes,
             can_upload_this_month=can_upload_this_month)
 
     @tornado.web.authenticated
@@ -96,10 +99,21 @@ class PickerPopupHandler(BaseHandler):
 
         logger.debug("Fetching %s" % (self.url))
         request = HTTPRequest(self.url, header_callback=self.on_header)
-        fut = http.fetch(request)
-        response = await fut
-        logger.debug("Got response for %s" % (self.url))
-        self.on_response(response)
+
+        if self.get_argument('skip_s3', None):
+            # This parameter is used specifically for unit testing, so mock the file being
+            # served as well.
+            self.content_type = 'image/png'
+            dummy_buffer = io.BytesIO()
+            with open(os.path.join(os.path.dirname(__file__), '../test/files/1.png'), 'rb') as f:
+                dummy_buffer.write(f.read())
+            dummy_response = tornado.httpclient.HTTPResponse(request, 200, buffer=dummy_buffer)
+            self.on_response(dummy_response)
+        else:
+            fut = http.fetch(request)
+            response = await fut
+            logger.debug("Got response for %s" % (self.url))
+            self.on_response(response)
 
     def on_response(self, response):
         logger.debug("Parsing response for %s" % (self.url))
@@ -108,7 +122,9 @@ class PickerPopupHandler(BaseHandler):
         title = self.get_argument("title", None)
         source_url = self.get_argument('source_url', None)
         description = self.get_argument('description', None)
+        alt_text = self.get_argument('alt_text', None)
         shake_id = self.get_argument('shake_id', None)
+        skip_s3 = self.get_argument('skip_s3', None)
 
         if title == file_name:
             title = None
@@ -141,9 +157,11 @@ class PickerPopupHandler(BaseHandler):
                 content_type = self.content_type,
                 user_id = user['id'],
                 title = title,
-                shake_id = shake_id)
+                shake_id = shake_id,
+                skip_s3 = skip_s3)
         sf.source_url = source_url
         sf.description = description
+        sf.alt_text = alt_text
         logger.debug("Saving to database")
         sf.save()
         if not options.debug:
@@ -340,7 +358,9 @@ class SaveVideoHandler(BaseHandler):
         fh = open(thumbnail_path, 'wb')
         fh.write(response.body)
         fh.close()
-        source_file = Sourcefile.create_from_json_oembed(link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path)
+        source_file = Sourcefile.create_from_json_oembed(
+            link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path,
+            skip_s3=self.get_argument('skip_s3', None))
         #cleanup
         if not options.debug:
             try:

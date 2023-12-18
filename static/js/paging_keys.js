@@ -5,8 +5,8 @@ function HotKey(element) {
     this._keyfunc = {};
     this.init();
 }
-HotKey.kc2char = function(kc) {
-    var between = function(a, b) {
+HotKey.kc2char = function (kc) {
+    var between = function (a, b) {
         return a <= kc && kc <= b;
     };
     var _32_40 = "space pageup pagedown end home left up right down".split(" ");
@@ -16,7 +16,7 @@ HotKey.kc2char = function(kc) {
         13: "enter",
         16: "shift",
         17: "ctrl",
-        46: "delete"
+        46: "delete",
     };
     return between(65, 90)
         ? String.fromCharCode(kc + 32) // a-z
@@ -31,9 +31,9 @@ HotKey.kc2char = function(kc) {
         : null;
 };
 HotKey.prototype.ignore = /input|textarea/i;
-HotKey.prototype.init = function() {
+HotKey.prototype.init = function () {
     var self = this;
-    var listener = function(e) {
+    var listener = function (e) {
         self.onkeydown(e);
     };
     if (this.target.addEventListener) {
@@ -42,7 +42,7 @@ HotKey.prototype.init = function() {
         this.target.attachEvent("onkeydown", listener);
     }
 };
-HotKey.prototype.onkeydown = function(e) {
+HotKey.prototype.onkeydown = function (e) {
     var tag = (e.target || e.srcElement).tagName;
     if (this.ignore.test(tag)) return;
     if (e.metaKey) return;
@@ -58,29 +58,29 @@ HotKey.prototype.onkeydown = function(e) {
         this._keyfunc[input].call(this, e);
     }
 };
-HotKey.prototype.sendKey = function(key) {
+HotKey.prototype.sendKey = function (key) {
     this._keyfunc[key] && this._keyfunc[key]();
 };
-HotKey.prototype.add = function(key, func) {
+HotKey.prototype.add = function (key, func) {
     if (key.constructor == Array) {
         for (var i = 0; i < key.length; i++) this._keyfunc[key[i]] = func;
     } else {
         this._keyfunc[key] = func;
     }
 };
-HotKey.prototype.remove = function(key) {
+HotKey.prototype.remove = function (key) {
     if (key.constructor == Array) {
         for (var i = 0; i < key.length; i++)
-            this._keyfunc[key[i]] = function() {};
+            this._keyfunc[key[i]] = function () {};
     } else {
-        this._keyfunc[key] = function() {};
+        this._keyfunc[key] = function () {};
     }
 };
 
 /* https://github.com/matthutchinson/paging_keys_js - inspired by navigation on ffffound.com UI */
 /* by Matthew Hutchinson - matthutchinson.net */
 
-var pagingKeys = (function() {
+var pagingKeys = (function () {
     // settings
     var config = {
         nodeSelector: ".image-title", // used to select each item on the page and place in the map (must be a link)
@@ -93,7 +93,7 @@ var pagingKeys = (function() {
         keyPrevPage: "l",
         keyRefresh: "r",
         additionalBodyClass: "paging-keys", // this class is assigned to the page body on load
-        bottomAnchor: "bottom" // the name of the anchor (without #) at end of page, e.g. set on last post on the page
+        bottomAnchor: "bottom", // the name of the anchor (without #) at end of page, e.g. set on last post on the page
     };
 
     var item_map = [];
@@ -105,7 +105,7 @@ var pagingKeys = (function() {
     // jquery
 
     function windowScrollInit() {
-        $(window).scroll(function() {
+        $(window).scroll(function () {
             positionNav();
         });
     }
@@ -115,7 +115,7 @@ var pagingKeys = (function() {
             w: $(window).width(),
             h: $(window).height(),
             x: $(window).scrollLeft(),
-            y: $(window).scrollTop()
+            y: $(window).scrollTop(),
         };
     }
 
@@ -132,7 +132,7 @@ var pagingKeys = (function() {
         $("#" + config.pagingNavId).css({
             position: "absolute",
             right: "10px",
-            top: getScrollTop() + 10 + "px"
+            top: getScrollTop() + 10 + "px",
         });
     }
 
@@ -180,7 +180,7 @@ var pagingKeys = (function() {
             addItemToMap(nodes[i]);
         }
         // sort based on page Y postion
-        item_map.sort(function(a, b) {
+        item_map.sort(function (a, b) {
             return a.y - b.y;
         });
 
@@ -203,24 +203,24 @@ var pagingKeys = (function() {
             hot_key = new HotKey();
         } catch (e) {
             alert(
-                "Oops, paging_keys requires HotKeys.js (http://la.ma.la/blog/diary_200511041713.htm)"
+                "Oops, paging_keys requires HotKeys.js (http://la.ma.la/blog/diary_200511041713.htm)",
             );
             alert(e);
         }
         if (hot_key) {
-            hot_key.add(config.keyNext, function() {
+            hot_key.add(config.keyNext, function () {
                 moveToItem(1);
             });
-            hot_key.add(config.keyPrev, function() {
+            hot_key.add(config.keyPrev, function () {
                 moveToItem(-1);
             });
-            hot_key.add(config.keyNextPage, function() {
+            hot_key.add(config.keyNextPage, function () {
                 movePage(1);
             });
-            hot_key.add(config.keyPrevPage, function() {
+            hot_key.add(config.keyPrevPage, function () {
                 movePage(-1);
             });
-            hot_key.add(config.keyRefresh, function() {
+            hot_key.add(config.keyRefresh, function () {
                 location.reload();
             });
         }
@@ -308,7 +308,7 @@ var pagingKeys = (function() {
             height: sh,
             clientHeight: ch,
             is_at_top: st == 0 && sl == 0,
-            is_at_last: st + ch == sh && sl == 0
+            is_at_last: st + ch == sh && sl == 0,
         };
     }
 
@@ -341,7 +341,7 @@ var pagingKeys = (function() {
                 redirect(
                     getEl(config.prevPageSelector)[0].href +
                         "#" +
-                        config.bottomAnchor
+                        config.bottomAnchor,
                 );
                 disableHotKeys();
                 return true;
@@ -358,7 +358,7 @@ var pagingKeys = (function() {
         movePage: movePage,
         currentItem: currentItem,
         config: config,
-        item_map: item_map
+        item_map: item_map,
     };
 })();
 

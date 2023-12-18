@@ -211,7 +211,7 @@ class Sourcefile(ModelQueryCache, Model):
         return oembed_url
 
     @staticmethod
-    def create_from_json_oembed(link=None, oembed_doc=None, thumbnail_file_path=None):
+    def create_from_json_oembed(link=None, oembed_doc=None, thumbnail_file_path=None, skip_s3=False):
         """
         Ideally this is a link right now. Specificallly a video link.
 
@@ -224,7 +224,7 @@ class Sourcefile(ModelQueryCache, Model):
             A source file should be created and returned.
         """
         sha1_key = Sourcefile.get_sha1_file_key(file_path=None, file_data=link)
-        sf = Sourcefile.get_from_file(thumbnail_file_path, sha1_key, type='link')
+        sf = Sourcefile.get_from_file(thumbnail_file_path, sha1_key, type='link', skip_s3=skip_s3)
         if sf:
             sf.data = json_encode(oembed_doc)
             sf.save()

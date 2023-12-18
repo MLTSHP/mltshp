@@ -109,7 +109,8 @@ class UploadHandler(BaseHandler):
                 sha1_value = self.get_argument("media_sha1"),
                 content_type = self.get_argument("media_content_type"),
                 user_id = external_service.user_id,
-                title = title
+                title = title,
+                skip_s3 = self.get_argument('skip_s3', None)
                 )
             media_type = self.get_argument("media_content_type").split('/')[1]
             media_type = tornado.escape.xhtml_escape(media_type)

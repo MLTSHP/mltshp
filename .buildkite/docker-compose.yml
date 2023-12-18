@@ -9,24 +9,12 @@ services:
       - "8001:80"
     depends_on:
       - mysql
-      - fakes3
     links:
       - mysql
-      - fakes3
     networks:
       app_net:
         aliases:
           - mltshp.dev
-  fakes3:
-    build: ../setup/dev/fakes3
-    entrypoint: fakes3 --root /srv --license ${FAKES3_LICENSE_KEY} --port 4567
-    ports:
-      - "4567:4567"
-    networks:
-      app_net:
-        aliases:
-          - mltshp-testing.fakes3
-          - mltshp-dev.fakes3
   mysql:
     image: mysql:latest
     ports:

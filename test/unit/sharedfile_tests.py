@@ -34,7 +34,8 @@ class SharedfileModelTests(BaseTestCase):
             file_name = file_name,
             sha1_value = file_sha1,
             content_type = file_content_type,
-            user_id = self.user.id)
+            user_id = self.user.id,
+            skip_s3=True)
         self.assertEqual(sf.size, 69)
 
     def test_file_size_is_not_saved_in_a_simple_share(self):
@@ -354,8 +355,10 @@ class SharedfileModelTests(BaseTestCase):
         file_key = Sourcefile.get_sha1_file_key(test_files + "/1.png")
         shutil.copyfile("%s/1.png" % (test_files), "/tmp/%s" % (file_key))
 
-        shared_file1 = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id)
-        shared_file2 = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id)
+        shared_file1 = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id,
+                                                   skip_s3=True)
+        shared_file2 = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id,
+                                                   skip_s3=True)
 
         self.assertEqual(shared_file1.source_id, shared_file2.source_id)
 
@@ -363,7 +366,7 @@ class SharedfileModelTests(BaseTestCase):
         test_files = os.path.join(os.path.dirname(os.path.dirname(__file__)), "files")
         file_key = Sourcefile.get_sha1_file_key(test_files + "/1.png")
         shutil.copyfile("%s/1.png" % (test_files), "/tmp/%s" % (file_key))
-        shared_file = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id)
+        shared_file = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id, skip_s3=True)
         self.assertEqual(shared_file.id, 2)
         self.assertEqual(shared_file.source_id, 2)
 
@@ -469,7 +472,8 @@ class SharedfileModelTests(BaseTestCase):
         group_shake = Shake(user_id=self.user.id, type='group', title='asdf', name='asdf')
         group_shake.save()
 
-        a_shared_file = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id, group_shake.id)
+        a_shared_file = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id, group_shake.id,
+                                                    skip_s3=True)
         self.assertTrue(group_shake.can_update(self.user.id))
 
         a_shared_file.add_to_shake(self.user.shake())

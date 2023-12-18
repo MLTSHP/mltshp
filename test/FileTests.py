@@ -184,7 +184,7 @@ class SharedFileTests(BaseAsyncTestCase):
             self.assertEqual(j['height'], 1)
             self.assertEqual(j['title'], '1.png')
             # pattern from oembed.json is...
-            #    http://{{ cdn_host }}/r/{{sharedfile.share_key}}
+            #    https://{{ cdn_host }}/r/{{sharedfile.share_key}}
             self.assertEqual(j['url'], 'https://cdn-service.com/r/1')
 
         #test jsonp callback works
@@ -283,7 +283,7 @@ class VideoPickerTests(BaseAsyncTestCase):
         user2.subscribe(self.user.shake())
 
         url = 'https://vimeo.com/20379529'
-        response = self.post_url('/tools/save-video', arguments={"url": url})
+        response = self.post_url('/tools/save-video', arguments={"url": url, "skip_s3": "1"})
         sfs = Sharedfile.from_subscriptions(user2.id)
         self.assertTrue(len(sfs) > 0)
         self.assertEqual(sfs[0].name , url)
@@ -299,9 +299,10 @@ class FilePickerTests(BaseAsyncTestCase):
         self.sid = self.sign_in('admin', 'asdfasdf')
         self.xsrf = self.get_xsrf().decode("ascii")
 
-        self.url = 'http://notes.torrez.org/images/categories/television.png?x=1'
-        self.source_url = 'http://notes.torrez.org/'
+        self.url = 'https://example.com/images/television.png?x=1'
+        self.source_url = url_escape('https://example.com/')
         self.description = "This is a multi-\nline\ndescription"
+        self.alt_text = "This is some alt text\nit spans two lines."
 
     def test_picker_not_authed_displays_sign_in(self):
         response = self.fetch('/tools/p?url=%s' % self.url)
@@ -312,7 +313,7 @@ class FilePickerTests(BaseAsyncTestCase):
         self.assertIn('hidden" name="url" value="%s"' % self.url, response.body)
 
     def test_picker_authenticated_stores_image(self):
-        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat"}, raise_error=True)
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "skip_s3": "1"}, raise_error=True)
         self.assertNotIn("ERROR", response.body)
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.name, "television.png")
@@ -336,20 +337,28 @@ class FilePickerTests(BaseAsyncTestCase):
             self.assertTrue(response.error)
 
     def test_picker_stores_image_and_shakesharedfile(self):
-        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat"})
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "skip_s3": "1"})
         ssf = Shakesharedfile.get("sharedfile_id=1 and shake_id=%s", self.user_shake.id)
         self.assertTrue(ssf)
 
     def test_picker_stores_source_url(self):
-        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "source_url": self.source_url})
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "source_url": self.source_url, "skip_s3": "1"})
         sf = Sharedfile.get("id=1")
-        self.assertEqual(sf.source_url, 'http://notes.torrez.org/')
+        self.assertEqual(sf.source_url, 'https://example.com/')
 
     def test_picker_stores_description(self):
-        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "description": self.description})
+        response = self.post_url('/tools/p', arguments={"url": self.url, "title": "boatmoatgoat", "description": self.description, "skip_s3": "1"})
         self.assertNotIn("ERROR", response.body)
         sf = Sharedfile.get("id=1")
         self.assertEqual(sf.description, self.description)
+
+    def test_picker_stores_alt_text(self):
+        request = HTTPRequest(self.get_url('/tools/p'), 'POST', {"Cookie":"_xsrf=%s;sid=%s" % (self.xsrf,self.sid)}, "_xsrf=%s&url=%s&title=boatmoatgoat&description=%s&alt_text=%s&skip_s3=1" % (self.xsrf, url_escape(self.url), url_escape(self.description), url_escape(self.alt_text)))
+        self.http_client.fetch(request, self.stop)
+        response = self.wait()
+        self.assertTrue(response.body.find("ERROR") == -1)
+        sf = Sharedfile.get("id=1")
+        self.assertEqual(sf.alt_text, self.alt_text)
 
     def test_picker_doesnt_see_filepile(self):
         response = self.fetch('/tools/p?url=%s' % url_escape("http://www.filepile.org/something/something"), method='GET', headers={"Cookie":"sid=%s" % self.sid})

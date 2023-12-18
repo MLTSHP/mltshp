@@ -92,6 +92,10 @@ if __name__ == '__main__':
         db.execute("USE %s" % options.database_name)
         statements = load_query.split(";")
         for statement in statements:
-            if statement.strip() != "":
-                db.execute(statement.strip())
+            # Utilize in-memory tables for faster tests.
+            # Note there are some differences here with InnoDB, but
+            # they shouldn't materially affect our tests.
+            cmd = statement.replace("InnoDB", "MEMORY").strip()
+            if cmd != "":
+                db.execute(cmd)
     tornado.testing.main()

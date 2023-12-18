@@ -58,7 +58,7 @@
         
 #         file_name = os.path.basename(file_path)
 #         file_size = os.path.getsize(file_path)
-#         body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s" % (file_name, content_type, sha1, file_size, file_path)
+#         body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s&skip_s3=1" % (file_name, content_type, sha1, file_size, file_path)
 
 #         response = self.fetch(
 #             '/upload', 
@@ -85,7 +85,7 @@
         
 #         file_name = os.path.basename(file_path)
 #         file_size = os.path.getsize(file_path)
-#         body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s" % (file_name, content_type, sha1, file_size, file_path)
+#         body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s&skip_s3=1" % (file_name, content_type, sha1, file_size, file_path)
 
 #         response = self.fetch(
 #             '/upload', 
@@ -109,7 +109,7 @@
 #         file_name = os.path.basename(file_path)
 #         file_size = os.path.getsize(file_path)
 #         message = "hey look\r\n at me!\r\n"
-#         body = "message=%s&media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s" % (message, file_name, content_type, sha1, file_size, file_path)
+#         body = "message=%s&media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s&skip_s3=1" % (message, file_name, content_type, sha1, file_size, file_path)
 
 #         response = self.fetch(
 #             '/upload',
