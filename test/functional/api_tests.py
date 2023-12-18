@@ -732,7 +732,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(sharedfiles[0].share_key, j_response['sharedfiles'][0]['sharekey'])
 
     def test_upload_file(self):
-        message = "file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s" % \
+        message = "file_name=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s&skip_s3=1" % \
                 ("2.png", self.test_file1_content_type, self.test_file1_sha1, 69, self.test_file1_path)
         request = signed_request(self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
         self.http_client.fetch(request, self.stop)
@@ -742,7 +742,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(j_response['share_key'], '2')
 
     def test_upload_file_with_title_description_alt_text(self):
-        message = "file_name=%s&title=%s&description=%s&alt_text=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s" % \
+        message = "file_name=%s&title=%s&description=%s&alt_text=%s&file_content_type=%s&file_sha1=%s&file_size=%s&file_path=%s&skip_s3=1" % \
                 ("2.png", "two", "a thing i wrote", "the number two", self.test_file1_content_type, self.test_file1_sha1, 69, self.test_file1_path)
         request = signed_request(self.access_token, self.get_url('/api/upload'), 'POST', {}, message)
         self.http_client.fetch(request, self.stop)

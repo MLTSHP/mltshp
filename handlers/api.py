@@ -482,7 +482,8 @@ class FileUploadHandler(BaseHandler):
                     sha1_value = self.get_argument("file_sha1"),
                     content_type = self.get_argument("file_content_type"),
                     user_id = self.oauth2_user_id,
-                    shake_id = self.get_argument('shake_id', None))
+                    shake_id = self.get_argument('shake_id', None),
+                    skip_s3 = self.get_argument('skip_s3', None))
                 obj['name'] = sf.name
                 obj['share_key'] = sf.share_key
                 if self.get_argument('title', None):
