@@ -16,7 +16,7 @@ def main():
     for name in names:
         user = User.get("name=%s and deleted=2", name)
         if user is not None:
-            print "Migrating %s..." % name
+            print("Migrating %s..." % name)
             migrate_for_user.delay_or_run(user.id)
         else:
-            print "Could not find user named: %s" % name
+            print("Could not find user named: %s" % name)

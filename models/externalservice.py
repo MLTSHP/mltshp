@@ -2,7 +2,7 @@ from lib.flyingcow import Model, Property
 from datetime import datetime
 from tornado.options import options
 
-import user
+from . import user
 
 
 class Externalservice(Model):

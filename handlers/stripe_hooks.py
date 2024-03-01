@@ -2,12 +2,13 @@ import datetime
 
 from tornado.options import options
 
-from base import BaseHandler
+from .base import BaseHandler
 from models import User, PaymentLog
 
 import json
 import postmark
 import stripe
+import stripe.util
 
 
 class StripeWebhook(BaseHandler):
@@ -17,7 +18,6 @@ class StripeWebhook(BaseHandler):
     def post(self):
         # type of message is passed through "type" parameter
         json_response = json.loads(self.request.body)
-        body_str = json.dumps(json_response).replace("\n","\\n")
 
         stripe_customer_id = None
         period_start = None
@@ -30,7 +30,7 @@ class StripeWebhook(BaseHandler):
         amount = 0
         operation = None
 
-        evt = stripe.convert_to_stripe_object(json_response,
+        evt = stripe.util.convert_to_stripe_object(json_response,
             options.stripe_secret_key, None)
 
         if evt.type == 'invoice.payment_failed':

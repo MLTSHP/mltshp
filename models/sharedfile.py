@@ -11,15 +11,15 @@ from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
 from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url
 
-import user
-import sourcefile
-import fileview
-import favorite
-import shakesharedfile
-import shake
-import comment
-import notification
-import conversation
+from . import user
+from . import sourcefile
+from . import fileview
+from . import favorite
+from . import shakesharedfile
+from . import shake
+from . import comment
+from . import notification
+from . import conversation
 import models.post
 import models.nsfw_log
 import models.tag
@@ -780,7 +780,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         TODO: Must only accept acceptable content-types after consulting a list.
         """
-        if len(sha1_value) <> 40:
+        if len(sha1_value) != 40:
             return None
 
         if user_id == None:

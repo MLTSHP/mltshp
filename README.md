@@ -4,6 +4,12 @@
 
 [![Build status](https://badge.buildkite.com/a86854c6272f21c9b46b8b6aafd3a4fb99bcfabe6e611bc370.svg)](https://buildkite.com/mltshp-inc/mltshp-web-service) [![Coverage Status](https://coveralls.io/repos/github/MLTSHP/mltshp/badge.svg?branch=master)](https://coveralls.io/github/MLTSHP/mltshp?branch=master)
 
+## Project Description
+
+This project is the codebase for running [mltshp.com](https://mltshp.com).
+It's a Python 3 application, utilizing a MySQL database, Amazon S3 for
+asset storage, and RabbitMQ for background jobs.
+
 ## Development Environment
 
 MLTSHP is a Dockerized application. This greatly simplifies running the
@@ -19,6 +25,11 @@ file suitable for local development (edit these as needed, but the defaults
 should be okay):
 
     $ make init-dev
+
+Check the process limits for your computer using the `ulimit -a` command. Increase
+the file descriptor limit if it's not at least 1000, using `ulimit -n 1000` (or
+some suitably higher value). You can add this to your shell startup script to
+make it permanent.
 
 You should be able to start the app itself using:
 
@@ -59,7 +70,7 @@ When you run the application, it launches it into a background process.
 But if you want to watch the realtime logs emitted by each service,
 just use this command:
 
-    $ docker-compose logs -f
+    $ docker compose logs -f
 
 In addition to that, the web app produces some log files that are
 captured under the "mounts/logs" folder of your git repository.
@@ -114,8 +125,7 @@ if you have a MySQL database you use locally for development and
 testing and keep it versus using the `destroy` and `init-dev`
 commands to make a new one. To update your database, just do this:
 
-    $ make shell
-    docker-shell$ cd /srv/mltshp.com/mltshp; python migrate.py
+    $ make migrate
 
 That should do it.
 
@@ -138,6 +148,11 @@ Then, just run:
 
 Which will invoke a Docker process to run the unit test suite.
 
+You can also run a specific unit test by setting a TEST environment
+variable (you can find the unit test names in `test.py`):
+
+    $ TEST=test.unit.shake_tests make test
+
 ## Connecting to the MLTSHP shell
 
 If you ever need to access the Docker image running the application,
@@ -150,6 +165,14 @@ This should place you in the /srv/mltshp.com/mltshp directory as the
 root user. You can use `apt-get` commands to install utilities you
 may need.
 
+## Connecting to the MLTSHP MySQL database
+
+You can also access the MySQL shell using:
+
+    $ make mysql
+
+Useful for inspecting the database for your local directly.
+
 ## Cleanup
 
 If you ever want to _wipe your local data_ and rebuild your Docker
@@ -160,7 +183,7 @@ containers, just use this command:
 If you just wish to rebuild the Docker container, use the Docker
 compose command:
 
-    $ docker-compose down
+    $ make stop
 
 Then, run another `make run`.
 
@@ -174,6 +197,6 @@ update from the pattern library.
 
 ## About
 
-MLTSHP is open-source software, ©2017 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.
+MLTSHP is open-source software, ©2023 the MLTSHP team and released to the public under the terms of the Mozilla Public License. A copy of the MPL can be found in the LICENSE file.
 
 [![Fastly logo](/static/images/fastly-logo.png)](https://www.fastly.com) MLTSHP is proudly powered by Fastly.

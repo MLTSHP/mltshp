@@ -3,7 +3,7 @@ from datetime import timedelta
 
 import tornado.web
 from tornado.options import options
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 
 from models import sharedfile, notification, user
 
