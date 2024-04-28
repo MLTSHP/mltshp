@@ -65,12 +65,12 @@
       </div>
     </div>
       {% else %}
-    <div class="find-shakes-block">
+   <!-- <div class="find-shakes-block">
       <h3>Find More Shakes</h3>
       <div class="find-shakes-block-content">
         <p>Check out our <a href="/tools/find-shakes">featured shakes</a>, and <a href="/tools/twitter">connect to Twitter</a> to find people you already know.</p>
       </div>
-    </div>
+    </div> -->
       {% end %}
     {% end %}
     {% if not current_user_obj.is_member() %}
@@ -100,9 +100,9 @@
         <li class="chrome"><a href="https://chrome.google.com/webstore/detail/mltshp/dpkfhblfcdhcdekliknbpekjcppgihcd">Chrome Extension</a></li>
 
       </ul>
-      {% if not site_is_readonly %}
+     <!--  {% if not site_is_readonly %}
       <a class="twitter-setup" href="/tools/twitter">Set up your phone for Twitter</a>
-      {% end %}
+      {% end %} -->
     </div>
   </div>
   <div class="body">
@@ -178,8 +178,8 @@
             <p>
               <a href="/tools/plugins">Get a browser plugin to save images with a right-click.</a>
               {% if not site_is_readonly %}
-              <br>
-              <a href="/tools/twitter">Set up Twitter to post images from your phone.</a>
+             <!-- <br>
+              <a href="/tools/twitter">Set up Twitter to post images from your phone.</a> -->
               {% end %}
             </p>
             <p>&nbsp;</p>
