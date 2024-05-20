@@ -59,7 +59,7 @@ class TwitterTests(BaseAsyncTestCase):
         
         file_name = os.path.basename(file_path)
         file_size = os.path.getsize(file_path)
-        body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s" % (file_name, content_type, sha1, file_size, file_path)
+        body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s&skip_s3=1" % (file_name, content_type, sha1, file_size, file_path)
 
         request = HTTPRequest(
             url=self.get_url('/upload'), 
@@ -77,7 +77,7 @@ class TwitterTests(BaseAsyncTestCase):
         self.assertEqual(sf.user_id, self.user.id)
         
     def test_posting_fails_when_provider_is_not_localhost(self):
-        provider = "http://notes.torrez.org"
+        provider = "https://example.com"
         """
         Copies a file to the file-system, then POSTs the location and details to the upload method
         for processing
@@ -88,7 +88,7 @@ class TwitterTests(BaseAsyncTestCase):
         
         file_name = os.path.basename(file_path)
         file_size = os.path.getsize(file_path)
-        body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s" % (file_name, content_type, sha1, file_size, file_path)
+        body = "media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s&skip_s3=1" % (file_name, content_type, sha1, file_size, file_path)
 
         request = HTTPRequest(
             url=self.get_url('/upload'), 
@@ -114,10 +114,10 @@ class TwitterTests(BaseAsyncTestCase):
         file_name = os.path.basename(file_path)
         file_size = os.path.getsize(file_path)
         message = "hey look\r\n at me!\r\n"
-        body = "message=%s&media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s" % (message, file_name, content_type, sha1, file_size, file_path)
+        body = "message=%s&media_name=%s&media_content_type=%s&media_sha1=%s&media_size=%s&media_path=%s&skip_s3=1" % (message, file_name, content_type, sha1, file_size, file_path)
 
         request = HTTPRequest(
-            url=self.get_url('/upload'), 
+            url=self.get_url('/upload'),
             method='POST',
             headers={'X-Auth-Service-Provider':provider, 'X-Verify-Credentials-Authorization': 'OAuth oauth_timestamp="1290404453", oauth_version="1.0", oauth_consumer_key="IQKbtAYlXLripLGPWd0HUA", oauth_token="37458155-JCG7c8oejM6N4TK4HJbXVC5VGq1gtaSUPt90wxFI", oauth_signature="9QxkJqBAJfZ83sbz6SCJKSaPn9U%3D", oauth_nonce="C7AB0CBC-9193-44EE-AFC1-6FE3BA51F048", oauth_signature_method="HMAC-SHA1"'},
             body=body,
