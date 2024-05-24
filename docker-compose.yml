@@ -20,7 +20,8 @@ services:
         aliases:
           - mltshp.localhost
   fakes3:
-    image: ourtownrentals/fake-s3
+    build:
+      context: fakes3
     entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 8000
     volumes:
       - ./mounts/fakes3:/srv
