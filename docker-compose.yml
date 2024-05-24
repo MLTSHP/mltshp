@@ -1,4 +1,3 @@
-version: "2"
 services:
   mltshp:
     image: mltshp/mltshp-web
