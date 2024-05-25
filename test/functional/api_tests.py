@@ -627,18 +627,19 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertTrue('created_at' in user_shake)
         self.assertTrue('updated_at' in user_shake)
 
-        self.assertEqual(group_shake['id'], 3)
-        self.assertEqual(group_shake['type'], 'group')
-        self.assertEqual(group_shake['name'], 'Group Shake')
-        self.assertEqual(group_shake['owner'], {'name': 'user2', 'id': 2,  'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
-        self.assertEqual(group_shake['thumbnail_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
-        self.assertEqual(group_shake['url'], 'https://mltshp.com/groupshake')
-        self.assertEqual(group_shake['description'], 'This is a group shake.')
-        self.assertTrue('created_at' in group_shake)
-        self.assertTrue('updated_at' in group_shake)
+        # Group shakes now sorted alphabetically - https://github.com/MLTSHP/mltshp/issues/460
+        self.assertEqual(group_shake['id'], 4)
+        self.assertEqual(group_shake['owner'], {'name': 'admin', 'id': 1, 'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
 
-        self.assertEqual(group_shake_2['id'], 4)
-        self.assertEqual(group_shake_2['owner'], {'name': 'admin', 'id': 1, 'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
+        self.assertEqual(group_shake_2['id'], 3)
+        self.assertEqual(group_shake_2['type'], 'group')
+        self.assertEqual(group_shake_2['name'], 'Group Shake')
+        self.assertEqual(group_shake_2['owner'], {'name': 'user2', 'id': 2,  'profile_image_url': "https://mltshp-cdn.com/static/images/default-icon-venti.svg"})
+        self.assertEqual(group_shake_2['thumbnail_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
+        self.assertEqual(group_shake_2['url'], 'https://mltshp.com/groupshake')
+        self.assertEqual(group_shake_2['description'], 'This is a group shake.')
+        self.assertTrue('created_at' in group_shake_2)
+        self.assertTrue('updated_at' in group_shake_2)
 
     def test_query_friend_shake(self):
         request = signed_request(self.access_token, self.get_url('/api/friends'))
