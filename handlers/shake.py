@@ -491,6 +491,11 @@ class RSSFeedHandler(BaseHandler):
         if sharedfiles:
             build_date = sharedfiles[0].feed_date()
 
+        # If this is the "mltshp" RSS feed, use original files so that links
+        # won't go to the seemingly "unpopular" copy.
+        if shake_name == "mltshp":
+            sharedfiles = map(lambda sf: sf.original(), sharedfiles)
+
         self.set_header("Content-Type", "application/xml")
         return self.render("shakes/rss.html",
             app_host=options.app_host, shake=shake,
