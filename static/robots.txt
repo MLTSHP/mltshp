@@ -70,3 +70,9 @@ Disallow: /
 
 User-agent: cohere-ai
 Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/applebot-extended
+
+User-agent: Applebot-Extended
+Disallow: /
