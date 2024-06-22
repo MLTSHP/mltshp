@@ -493,7 +493,7 @@ class RSSFeedHandler(BaseHandler):
 
         # If this is the "mltshp" RSS feed, use original files so that links
         # won't go to the seemingly "unpopular" copy.
-        if shake_name == "mltshp":
+        if shake_name == options.best_of_user_name:
             sharedfiles = map(lambda sf: sf.original(), sharedfiles)
 
         self.set_header("Content-Type", "application/xml")
