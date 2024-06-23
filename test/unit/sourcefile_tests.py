@@ -1,5 +1,5 @@
 from models import Sharedfile, Sourcefile, User
-from base import BaseTestCase
+from .base import BaseTestCase
 import os
 from tornado.escape import json_decode
 import re

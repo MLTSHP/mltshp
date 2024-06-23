@@ -33,7 +33,7 @@ class Pagination(UIModule):
 
     def chunk_pages(self, num_pages=1, current_page=1, adjacent=2):
         max_pages_display = (adjacent * 2) + 1 + 4
-        mylist = range(1,num_pages+1)
+        mylist = list(range(1,num_pages+1))
         if num_pages < max_pages_display:
             return mylist
 

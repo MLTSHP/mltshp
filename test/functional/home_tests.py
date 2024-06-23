@@ -21,7 +21,7 @@ class HomeTests(test.base.BaseAsyncTestCase):
         self.sign_out()
         response = self.fetch_url('/')
         self.assertEqual(200, response.code)
-        self.assertTrue(response.body.find('Save, Share &amp;&nbsp;Discover') > -1)
+        self.assertIn('Save, Share &amp;&nbsp;Discover', response.body)
 
     def test_home_page_no_sharedfiles(self):
         """
@@ -62,7 +62,6 @@ class HomeTests(test.base.BaseAsyncTestCase):
         self.assertEqual(response.code, 200)
         self.assertEqual(1, len(Bookmark.all()))
 
-
     def test_paginating_home_stream(self):
         """
         Test going back and forward in the timeline using /before/{share_key}
@@ -79,26 +78,31 @@ class HomeTests(test.base.BaseAsyncTestCase):
 
         saved_files = []
         for x in range(15):
-            sf = test.factories.sharedfile(user)
+            sf = test.factories.sharedfile(user, name=f"sharedfile_{x}.png")
             sf.add_to_shake(user.shake())
             saved_files.append(sf)
 
         response = self.fetch_url('/before/%s' % saved_files[5].share_key)
         self.assertEqual(response.code, 200)
-        self.assertTrue(response.body.find('sharedfile_0.png'))
-        self.assertTrue(response.body.find('sharedfile_1.png'))
-        self.assertTrue(response.body.find('sharedfile_2.png'))
-        self.assertTrue(response.body.find('sharedfile_3.png'))
-        self.assertTrue(response.body.find('sharedfile_4.png'))
-        self.assertTrue(response.body.find('sharedfile_5.png'))
-        self.assertEqual(-1, response.body.find('sharedfile_6.png'))
-        response = self.fetch_url('/after/%s' % saved_files[10].share_key)
+        self.assertIn('sharedfile_0.png', response.body)
+        self.assertIn('sharedfile_1.png', response.body)
+        self.assertIn('sharedfile_2.png', response.body)
+        self.assertIn('sharedfile_3.png', response.body)
+        self.assertIn('sharedfile_4.png', response.body)
+        self.assertNotIn('sharedfile_5.png', response.body)
+        response = self.fetch_url('/after/%s' % saved_files[4].share_key)
         self.assertEqual(response.code, 200)
-        self.assertTrue(response.body.find('sharedfile_11.png'))
-        self.assertTrue(response.body.find('sharedfile_12.png'))
-        self.assertTrue(response.body.find('sharedfile_13.png'))
-        self.assertTrue(response.body.find('sharedfile_14.png'))
-        self.assertEqual(-1, response.body.find('sharedfile_10.png'))
+        self.assertIn('sharedfile_5.png', response.body)
+        self.assertIn('sharedfile_6.png', response.body)
+        self.assertIn('sharedfile_7.png', response.body)
+        self.assertIn('sharedfile_8.png', response.body)
+        self.assertIn('sharedfile_9.png', response.body)
+        self.assertIn('sharedfile_10.png', response.body)
+        self.assertIn('sharedfile_11.png', response.body)
+        self.assertIn('sharedfile_12.png', response.body)
+        self.assertIn('sharedfile_13.png', response.body)
+        self.assertIn('sharedfile_14.png', response.body)
+        self.assertNotIn('sharedfile_4.png', response.body)
 
     def test_home_page_non_user_request(self):
         """
@@ -132,6 +136,3 @@ class HomeTests(test.base.BaseAsyncTestCase):
         response = self.fetch_url('/friends', )
         self.assertEqual(response.code, 200)
         self.assertEqual(1, len(Bookmark.all()))
-
-
-

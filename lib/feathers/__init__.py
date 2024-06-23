@@ -1,6 +1,6 @@
 import sys
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import hmac
 import hashlib
 import binascii
@@ -71,10 +71,10 @@ class Feathers(object):
         return self.endpoint + self.api_version + method + '.' + self.format
     
     def _build_url(self, base_url, params):
-        query = '' if not params else '?' + urllib.urlencode(params)
+        query = '' if not params else '?' + urllib.parse.urlencode(params)
         return base_url + query
     
-    def _fetch(self, url, headers={}, callback=None):
+    async def _fetch(self, url, headers={}, callback=None):
         """
         Make the request. If an IOloop is available make request asynchronous and use the
         passed in callback if it's provided.
@@ -82,7 +82,9 @@ class Feathers(object):
         request = tornado.httpclient.HTTPRequest(url=url, method="GET", headers=headers)
         if tornado.ioloop.IOLoop.initialized():
             http = tornado.httpclient.AsyncHTTPClient()
-            http.fetch(request, callback)
+            fut = http.fetch(request)
+            response = await fut
+            callback(response)
         else:
             http = tornado.httpclient.HTTPClient()
             return http.fetch(request)
@@ -96,7 +98,7 @@ class Feathers(object):
 
         See http://oauth.net/core/1.0/#signing_process
         """
-        parts = urlparse.urlparse(url)
+        parts = urllib.parse.urlparse(url)
         scheme, netloc, path = parts[:3]
         normalized_url = scheme.lower() + "://" + netloc.lower() + path
 
@@ -111,7 +113,7 @@ class Feathers(object):
         key_elems.append(token_secret if token_secret else "")
         key = "&".join(key_elems)
         
-        hash = hmac.new(key, base_string, hashlib.sha1)
+        hash = hmac.new(key.encode("ascii"), base_string.encode("ascii"), hashlib.sha1)
         return binascii.b2a_base64(hash.digest())[:-1]
     
     @classmethod
@@ -119,6 +121,6 @@ class Feathers(object):
         """
         From tornado.auth
         """
-        if isinstance(val, unicode):
+        if isinstance(val, str):
             val = val.encode("utf-8")
-        return urllib.quote(val, safe="~")
+        return urllib.parse.quote(val, safe="~")
