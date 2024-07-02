@@ -5,7 +5,7 @@ import postmark
 
 import hashlib
 import time
-import user
+from . import user
 from datetime import datetime
 
 
@@ -52,8 +52,8 @@ class Invitation(Model):
         Creates an invitation for an email address.
         """
         h = hashlib.sha1()
-        h.update("%s" % (time.time()))
-        h.update("%s" % (email))
+        h.update(("%s" % (time.time())).encode('ascii'))
+        h.update(("%s" % (email)).encode('ascii'))
         invitation_key = h.hexdigest()
         sending_user = user.User.get('id = %s', user_id)
         invitation = Invitation(user_id=user_id, invitation_key=invitation_key, email_address=email, claimed_by_user_id=0)

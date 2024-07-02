@@ -1,4 +1,4 @@
-from base import BaseHandler
+from .base import BaseHandler
 
 import postmark
 

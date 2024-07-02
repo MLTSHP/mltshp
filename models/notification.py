@@ -3,12 +3,12 @@ from tornado.options import options
 from datetime import datetime, timedelta
 import postmark
 
-import sharedfile
-import user
-import comment
-import shake
-import invitation
-import subscription
+from . import sharedfile
+from . import user
+from . import comment
+from . import shake
+from . import invitation
+from . import subscription
 
 
 class Notification(Model):
@@ -127,7 +127,7 @@ class Notification(Model):
             _notification = {'sender' : sender, 'related_object' : related_object, 'id' : notification.id}
             
             if notification.type == 'favorite':
-                if not notifications['like']['items'].has_key(related_object.id):
+                if related_object.id not in notifications['like']['items']:
                     notifications['like']['items'][related_object.id] = []
                 notifications['like']['items'][related_object.id].append(_notification)
                 notifications['like']['count'] += 1
@@ -137,7 +137,7 @@ class Notification(Model):
                 notifications['follow'].append(_notification)
                 
             elif notification.type == 'save':
-                if not notifications['save']['items'].has_key(related_object.id):
+                if related_object.id not in notifications['save']['items']:
                     notifications['save']['items'][related_object.id] = []
                 notifications['save']['items'][related_object.id].append(_notification)
                 notifications['save']['count'] += 1

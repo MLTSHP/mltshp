@@ -1,7 +1,7 @@
 from lib.flyingcow import Model, Property
 from datetime import datetime
 from lib.utilities import pretty_date
-import user, notification
+from . import user, notification
 from tornado.options import options
 
 

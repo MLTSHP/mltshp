@@ -2,7 +2,7 @@ import time
 from datetime import datetime, timedelta
 
 import models
-from base import BaseTestCase
+from .base import BaseTestCase
 
 class BookmarkTests(BaseTestCase):
     def setUp(self):
