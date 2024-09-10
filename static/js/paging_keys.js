@@ -149,7 +149,7 @@ var pagingKeys = (function () {
     }
 
     function init() {
-        $(window).load(setupPagingKeys);
+        $(window).on("load", setupPagingKeys);
         windowScrollInit();
     }
 
