@@ -1,7 +1,7 @@
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from datetime import datetime
-import sharedfile
+from . import sharedfile
 from tornado.options import options
 
 

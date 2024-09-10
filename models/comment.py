@@ -5,12 +5,12 @@ from tornado import escape
 from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.utilities import pretty_date
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
-import user
-import notification
-import sharedfile
-import conversation
+from . import user
+from . import notification
+from . import sharedfile
+from . import conversation
 
 
 class Comment(Model):
@@ -73,7 +73,7 @@ class Comment(Model):
         """
         Returns a comment that has its HTML removed, shortened to 15 words, and if it doesn't end in a period, add ...
         """
-        new_body  = ''.join(BeautifulSoup(self.body).findAll(text=True))
+        new_body  = ''.join(BeautifulSoup(self.body, features="html.parser").findAll(string=True))
         new_body = new_body.replace('\n', '')
         body_parts = new_body.split(' ')
         new_body = body_parts[:12]

@@ -28,6 +28,7 @@ test_settings = {
     "use_workers": False,
     "debug_workers": True,
     "superuser_list": "admin",
+    "tornado_logging": False,
     # these must be set for testing test/unit/externalservice_tests.py
     # "twitter_consumer_key" : "twitter_consumer_key_here",
     # "twitter_consumer_secret" : "twitter_consumer_secret_key_here",

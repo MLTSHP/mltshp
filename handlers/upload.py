@@ -1,10 +1,9 @@
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 
 import tornado.httpclient
 from tornado.httpclient import HTTPRequest
 import tornado.web
-import postmark
-from tornado.options import define, options
+from tornado.options import options
 import tornado.escape
 
 from models import Sharedfile, Externalservice
@@ -15,14 +14,13 @@ class UploadHandler(BaseHandler):
     """
     def check_xsrf_cookie(self): 
         user = self.get_current_user()
-        if self.request.headers.has_key('X-Verify-Credentials-Authorization') and not user:
+        if 'X-Verify-Credentials-Authorization' in self.request.headers and not user:
             return
         else:
             super(UploadHandler, self).check_xsrf_cookie()
     
-    @tornado.web.asynchronous
     @require_membership
-    def post(self):
+    async def post(self):
         """
         {
             "file_name": ["before.png"], 
@@ -64,7 +62,7 @@ class UploadHandler(BaseHandler):
                     raise tornado.web.HTTPError(403)
             else:
                 return self.redirect("/")
-        elif self.request.headers.has_key('X-Verify-Credentials-Authorization') and self.request.headers.has_key('X-Auth-Service-Provider'):
+        elif 'X-Verify-Credentials-Authorization' in self.request.headers and 'X-Auth-Service-Provider' in self.request.headers:
             #pm = postmark.PMMail(api_key=options.postmark_api_key,
             #    sender="hello@mltshp.com", to="notifications@mltshp.com", 
             #    subject="TWITTER REQUEST",
@@ -73,14 +71,16 @@ class UploadHandler(BaseHandler):
 
             if self.request.headers['X-Auth-Service-Provider'].startswith("https://api.twitter.com/1.1/account/verify_credentials.json") or self.request.headers['X-Auth-Service-Provider'].startswith("http://localhost:"):
                 http = tornado.httpclient.AsyncHTTPClient()
-                http.fetch(
+                fut = http.fetch(
                     HTTPRequest(
                         url=self.request.headers['X-Auth-Service-Provider'], 
                         method='GET',
                         headers={'Authorization':self.request.headers['X-Verify-Credentials-Authorization']},
                         body=None #"asdf=asdf" -- GET requests can't have a body
                     ),
-                    callback=self.on_response)
+                )
+                response = await fut
+                self.on_response(response)
             else:
                 raise tornado.web.HTTPError(403)
         else:

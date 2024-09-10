@@ -43,7 +43,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         }
         response = self.post_url('/shake/create', arguments=arguments)
         self.assertEqual(response.effective_url, self.get_url('/shake/create'))
-        self.assertTrue(response.body.find('That URL is not valid.') > -1)
+        self.assertIn('That URL is not valid.', response.body)
 
     def test_shake_create_error_on_title(self):
         """
@@ -58,7 +58,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         }
         response = self.post_url('/shake/create', arguments=arguments)
         self.assertEqual(response.effective_url, self.get_url('/shake/create'))
-        self.assertTrue(response.body.find("Title can't be blank.") > -1)
+        self.assertIn("Title can't be blank.", response.body)
 
 
     def test_shake_update_description(self):
@@ -99,7 +99,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
             'title' : 'got one'
         }
         response = self.post_url('/shake/create', arguments=arguments)
-        self.assertTrue(response.body.find('That URL is already taken.') > -1)
+        self.assertIn('That URL is already taken.', response.body)
 
     def test_subscribe_unsubscribe_works(self):
         user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1, is_paid=1, stripe_plan_id="mltshp-double")
@@ -142,7 +142,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
             'title' : 'Shake Test',
         }
         response = self.post_url('/shake/create', arguments=arguments)
-        self.assertTrue(response.body.find('Create up to 100 group shakes') > -1)
+        self.assertIn('Create up to 100 group shakes', response.body)
 
     def test_create_shake_page_works_for_plus_members(self):
         user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1,
