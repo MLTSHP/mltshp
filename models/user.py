@@ -585,19 +585,33 @@ hello@mltshp.com
         it will not return any 'user' shakes that the user owns.
         """
         managed_shakes = []
-        if include_managed:
-            sql = """SELECT shake.* from shake, shake_manager
-                        WHERE shake_manager.user_id = %s
-                            AND shake.id = shake_manager.shake_id
-                            AND shake.deleted = 0
-                            AND shake_manager.deleted = 0
-                        ORDER BY shake_manager.shake_id
-            """
-            managed_shakes = shake.Shake.object_query(sql, self.id)
-        user_shakes_sql = 'user_id=%s ORDER BY id'
+        params = [self.id] # Guaranteed will need to substitute at least user_id value.
+        user_where_clause = 'user_id = %s '
         if include_only_group_shakes:
-            user_shakes_sql = "user_id=%s and type='group' and deleted=0 ORDER BY id"
-        return shake.Shake.where(user_shakes_sql, self.id) + managed_shakes
+            user_where_clause += "AND type = 'group' AND deleted = 0"
+        shakes_sql = """
+            SELECT shake.*
+            FROM shake
+            WHERE %s
+        """ % user_where_clause
+        if include_managed:
+            shakes_sql += """
+                UNION
+                SELECT shake.*
+                FROM shake, shake_manager
+                WHERE shake_manager.user_id = %s
+                AND shake.id = shake_manager.shake_id
+                AND shake.deleted = 0
+                AND shake_manager.deleted = 0
+            """
+            # Only include the second user_id param if we include managed shakes clause.
+            params.append(self.id)
+
+        # Order the whole lot by name.
+        shakes_sql += """
+            ORDER BY title
+        """
+        return shake.Shake.object_query(shakes_sql, *params)
 
     _has_multiple_shakes = None
     def has_multiple_shakes(self):
@@ -630,17 +644,21 @@ hello@mltshp.com
         """
         This needs to be refactored, but it would be so slow if we
         were grabbing user objects for each user on 1,000 users.
+        Sorting by title puts all user shakes first (because title is null)
+        with the rest of the group shakes following in correct order (title
+        is whatever), then by name to "tie-break" the user shakes. 
         """
         select = """
-          SELECT user.id as user_id, user.name as user_name, user.profile_image as user_image,
-                    shake.name as shake_name, shake.type as shake_type , shake.image as shake_image,
-                    shake.id as shake_id
+            SELECT user.id as user_id, user.name as user_name, user.profile_image as user_image,
+                shake.name as shake_name, shake.type as shake_type, shake.image as shake_image,
+                shake.id as shake_id, shake.title
             FROM subscription, user, shake
-              WHERE subscription.user_id = %s
-              AND subscription.shake_id = shake.id
-              AND user.id = shake.user_id
-              AND shake.deleted = 0
-              AND subscription.deleted = 0
+            WHERE subscription.user_id = %s
+            AND subscription.shake_id = shake.id
+            AND user.id = shake.user_id
+            AND shake.deleted = 0
+            AND subscription.deleted = 0
+            ORDER BY shake.title, shake.name
         """ % self.id
 
         if page > 0:
