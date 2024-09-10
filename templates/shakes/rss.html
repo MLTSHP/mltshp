@@ -38,6 +38,9 @@
 ]]>
 </description>
 <pubDate>{{sf.feed_date()}}</pubDate>
+{% if sf.sourcefile().nsfw %}
+<category>nsfw</category>
+{% end %}
 </item>
 {% end %}
 </channel>

@@ -52,3 +52,33 @@ Disallow: /
 
 User-agent: omgili
 Disallow: /
+
+# Undocumented AI Agent
+# https://darkvisitors.com/agents/claude-web
+
+User-agent: Claude-Web
+Disallow: /
+
+# Undocumented AI Agent
+# https://darkvisitors.com/agents/claudebot
+
+User-agent: ClaudeBot
+Disallow: /
+
+# Undocumented AI Agent
+# https://darkvisitors.com/agents/cohere-ai
+
+User-agent: cohere-ai
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/applebot-extended
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/meta-externalagent
+
+User-agent: Meta-ExternalAgent
+Disallow: /

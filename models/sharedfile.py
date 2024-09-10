@@ -276,8 +276,11 @@ class Sharedfile(ModelQueryCache, Model):
 
         # Enable sandbox; only permit scripting (most rich embeds will need this)
         # allow-popups is needed for opening links to original content (ie, YouTube embeds)
+        # allow-popups-to-escape-sandbox frees the popped up window from any
+        # restrictions mltshp decides to enforce.
+        # Related: https://github.com/MLTSHP/mltshp/issues/746
         if 'sandbox=' not in html:
-            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups"'
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"'
 
         # Prevent referrer leaks to third parties
         if 'referrerpolicy=' not in html:
