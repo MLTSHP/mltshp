@@ -2097,10 +2097,11 @@ $(document).ready(function () {
         var shake_member_list = new ShakeMemberList($shake_member_list);
     }
 
-    // support for dismissable "Vote" banner; cookie naturally expires on Nov 4th
+    // support for dismissable "Vote" banner;
+    // cookie naturally expires the day after the election
     var alertVote = $("#alert-vote");
     var alertVoteCookieVal = "dismiss-alert-vote=1";
-    var alertVoteExpires = new Date("2024-11-04T00:00:00");
+    var alertVoteExpires = new Date("2024-11-06T00:00:00");
     if (
         document.cookie.indexOf(alertVoteCookieVal) === -1 &&
         new Date() < alertVoteExpires
