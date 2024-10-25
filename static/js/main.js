@@ -24,11 +24,11 @@ $(document).ready(function () {
             // video preview screen
             $save_video_form = $("#new-post-panel .save-video-form");
             $save_video_form_button = $(
-                "#new-post-panel .save-video-form .btn"
+                "#new-post-panel .save-video-form .btn",
             );
             $post_video_form = $("#new-post-panel .post-video-form");
             $post_video_form_button = $(
-                "#new-post-panel .post-video-form .btn"
+                "#new-post-panel .post-video-form .btn",
             );
             // shake selector
             $shake_selector = $(".shake-selector");
@@ -168,7 +168,7 @@ $(document).ready(function () {
                             document.location.host +
                             response["path"];
                     },
-                    "json"
+                    "json",
                 );
             },
             refresh_panel: function (response) {
@@ -217,7 +217,7 @@ $(document).ready(function () {
             this.$form = this.$save_this.find("form");
             this.$shake_id_input = this.$save_this.find(".shake-id-input");
             this.$shake_selector = $(
-                "<div class='save-this-shake-selector save-this-shake-selector-loading'></div>"
+                "<div class='save-this-shake-selector save-this-shake-selector-loading'></div>",
             );
         },
 
@@ -226,12 +226,12 @@ $(document).ready(function () {
             this.$save_this.delegate(
                 ".shake-link",
                 "click",
-                $.proxy(this.click_choose_shake, this)
+                $.proxy(this.click_choose_shake, this),
             );
             this.$save_this.delegate(
                 ".close",
                 "click",
-                $.proxy(this.click_close_selector, this)
+                $.proxy(this.click_close_selector, this),
             );
         },
 
@@ -269,7 +269,7 @@ $(document).ready(function () {
                 $.get(
                     "/account/shakes",
                     $.proxy(this.fetch_available_shakes, this),
-                    "json"
+                    "json",
                 );
             }
         },
@@ -298,7 +298,7 @@ $(document).ready(function () {
                 url,
                 data,
                 $.proxy(this.process_image_save_response, this),
-                "json"
+                "json",
             );
         },
 
@@ -357,7 +357,7 @@ $(document).ready(function () {
     // Prompt user to confirm before quitting a shake.
     $("#quit-shake-page").click(function () {
         return confirm(
-            "Are you sure you want to quit this shake?\n(If you are following this shake you will also have to unfollow with the button above.)"
+            "Are you sure you want to quit this shake?\n(If you are following this shake you will also have to unfollow with the button above.)",
         );
     });
 
@@ -379,7 +379,7 @@ $(document).ready(function () {
         },
         function () {
             $(this).removeClass("image-edit-title-hover");
-        }
+        },
     );
 
     $(".image-edit-title").click(function () {
@@ -400,7 +400,7 @@ $(document).ready(function () {
                         .addClass("is-active");
                 }
             },
-            "json"
+            "json",
         );
     });
 
@@ -426,7 +426,7 @@ $(document).ready(function () {
                         .removeClass("is-active");
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -468,7 +468,7 @@ $(document).ready(function () {
                     }
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -479,7 +479,7 @@ $(document).ready(function () {
         },
         function () {
             $(this).removeClass("the-description-hover");
-        }
+        },
     );
 
     $(".description-edit .the-description").click(function () {
@@ -492,14 +492,14 @@ $(document).ready(function () {
                 if ("description_raw" in result) {
                     $(that).hide();
                     let $textarea = $description_container.find(
-                        ".description-edit-textarea"
+                        ".description-edit-textarea",
                     );
                     $textarea.val(result["description_raw"]);
                     $(that).next(".description-edit-form").show();
                     screen_reader_focus($textarea[0]);
                 }
             },
-            "json"
+            "json",
         );
     });
 
@@ -537,11 +537,11 @@ $(document).ready(function () {
                         .find("textarea")
                         .val(result["alt_text_raw"]);
                     screen_reader_focus(
-                        $alt_text_container.find(".the-alt-text")[0]
+                        $alt_text_container.find(".the-alt-text")[0],
                     );
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -552,7 +552,7 @@ $(document).ready(function () {
         },
         function () {
             $(this).removeClass("the-alt-text-hover");
-        }
+        },
     );
 
     $(".alt-text-edit .the-alt-text").click(function () {
@@ -567,13 +567,13 @@ $(document).ready(function () {
                         .closest(".alt-text-edit")
                         .addClass("alt-text--editing");
                     let $textarea = $alt_text_container.find(
-                        ".alt-text-edit-textarea"
+                        ".alt-text-edit-textarea",
                     );
                     $textarea.val(result["alt_text_raw"]);
                     screen_reader_focus($textarea[0]);
                 }
             },
-            "json"
+            "json",
         );
     });
 
@@ -629,7 +629,7 @@ $(document).ready(function () {
                     StreamStatsViewRegistry.refresh_likes(share_key);
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -756,7 +756,7 @@ $(document).ready(function () {
                             SidebarStatsView.process_save(response);
                         }
                     },
-                    "json"
+                    "json",
                 );
             },
 
@@ -781,7 +781,7 @@ $(document).ready(function () {
                             SidebarStatsView.process_like(response);
                         }
                     },
-                    "json"
+                    "json",
                 );
             },
 
@@ -868,16 +868,16 @@ $(document).ready(function () {
 
         init_comment_dom: function () {
             this.$post_comment_inline = this.$inline_details.find(
-                ".post-comment-inline"
+                ".post-comment-inline",
             );
             this.$comment_form =
                 this.$inline_details.find(".post-comment-form");
             this.$comment_textarea = this.$inline_details.find("textarea");
             this.$submit_comment_button = this.$inline_details.find(
-                ".submit-comment-button"
+                ".submit-comment-button",
             );
             this.$show_more_comments = this.$inline_details.find(
-                ".show-more-comments"
+                ".show-more-comments",
             );
             this.$comment = this.$inline_details.find(".comment");
             this.$reply_to = this.$inline_details.find(".reply-to");
@@ -893,10 +893,10 @@ $(document).ready(function () {
 
         init_comment_events: function () {
             this.$comment_textarea.click(
-                $.proxy(this.click_comment_textarea, this)
+                $.proxy(this.click_comment_textarea, this),
             );
             this.$show_more_comments.click(
-                $.proxy(this.click_more_comments, this)
+                $.proxy(this.click_more_comments, this),
             );
             this.$reply_to.click($.proxy(this.click_reply_to, this));
             this.$delete.click($.proxy(this.click_delete, this));
@@ -1025,7 +1025,7 @@ $(document).ready(function () {
             var username_clean = username.replace(/[^a-zA-Z0-9_\-]+/g, "");
             var current_text = this.$comment_textarea.val();
             this.$comment_textarea.val(
-                current_text + "@" + username_clean + " "
+                current_text + "@" + username_clean + " ",
             );
             setCaret(this.$comment_textarea.get(0));
             return false;
@@ -1040,7 +1040,7 @@ $(document).ready(function () {
                     url,
                     data,
                     $.proxy(this.process_comments_response, this),
-                    "json"
+                    "json",
                 );
             }
             return false;
@@ -1057,7 +1057,7 @@ $(document).ready(function () {
                 url,
                 data,
                 $.proxy(this.process_comments_response, this),
-                "json"
+                "json",
             );
             return false;
         },
@@ -1126,7 +1126,7 @@ $(document).ready(function () {
             this.$root.delegate(
                 "a",
                 "click",
-                $.proxy(this.click_show_image, this)
+                $.proxy(this.click_show_image, this),
             );
         },
 
@@ -1141,7 +1141,7 @@ $(document).ready(function () {
                     "/services/oembed?include_embed=1&url=" +
                     escape(base_path + file_path),
                 $.proxy(this.load_image, this),
-                "json"
+                "json",
             );
             return false;
         },
@@ -1154,7 +1154,7 @@ $(document).ready(function () {
                 parent
                     .css("min-height", parent_height + "px")
                     .html(
-                        '<img class="unsized" src="' + response["url"] + '">'
+                        '<img class="unsized" src="' + response["url"] + '">',
                     );
             } else if (response["embed_html"]) {
                 parent
@@ -1162,7 +1162,7 @@ $(document).ready(function () {
                     .html(
                         '<div class="data-wrapper">' +
                             response["embed_html"] +
-                            "</div>"
+                            "</div>",
                     );
             } else if (response["type"] === "video") {
                 var content = parent
@@ -1170,8 +1170,8 @@ $(document).ready(function () {
                     .html(
                         response["html"].replace(
                             /<source /g,
-                            '<source onerror="fallbackImage(this)" '
-                        )
+                            '<source onerror="fallbackImage(this)" ',
+                        ),
                     );
                 apply_hover_for_video(content.find("video.autoplay"));
             }
@@ -1211,7 +1211,7 @@ $(document).ready(function () {
                     if (response["subscription_status"] == true) {
                         $form.attr(
                             "action",
-                            url.replace("subscribe", "unsubscribe")
+                            url.replace("subscribe", "unsubscribe"),
                         );
                         $(that)
                             .text("- Unfollow")
@@ -1220,7 +1220,7 @@ $(document).ready(function () {
                     } else {
                         $form.attr(
                             "action",
-                            url.replace("unsubscribe", "subscribe")
+                            url.replace("unsubscribe", "subscribe"),
                         );
                         $(that)
                             .text("+ Follow")
@@ -1229,7 +1229,7 @@ $(document).ready(function () {
                     }
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -1238,7 +1238,7 @@ $(document).ready(function () {
         $notification = $(this).parent(".notification");
         var $notification_block = $(this).parents(".notification-block");
         var $notification_block_hd = $notification_block.find(
-            ".notification-block-hd"
+            ".notification-block-hd",
         );
         var id = $(this)
             .attr("id")
@@ -1256,11 +1256,11 @@ $(document).ready(function () {
                     $notification_block.find(".clear-all").remove();
                 } else {
                     $notification_block_hd.html(
-                        html.replace(/[\d]+/, new_count)
+                        html.replace(/[\d]+/, new_count),
                     );
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -1284,7 +1284,7 @@ $(document).ready(function () {
                         .toggle();
                 }
             },
-            "json"
+            "json",
         );
 
         return false;
@@ -1308,7 +1308,7 @@ $(document).ready(function () {
                     if (response["count"] == 0) {
                         $(that).find("input").hide();
                         $("#invitation-count-text").html(
-                            response["count"] + " invitations"
+                            response["count"] + " invitations",
                         );
                         $(that).find(".main-message").html("<p>Thanks!</p>");
                     } else {
@@ -1317,14 +1317,14 @@ $(document).ready(function () {
                                 ? "invitation"
                                 : "invitations";
                         $("#invitation-count-text").html(
-                            response["count"] + " " + invitation_text
+                            response["count"] + " " + invitation_text,
                         );
                         $(that).find(".main-message").html(response["message"]);
                         $("#email_address").val("");
                     }
                 }
             },
-            "json"
+            "json",
         );
 
         return false;
@@ -1336,7 +1336,7 @@ $(document).ready(function () {
         var url = $(this).attr("action");
         var $block = $(this).parents(".notification");
         var $header = $(
-            "#notifcation-block-shakeinvitation .notification-block-hd"
+            "#notifcation-block-shakeinvitation .notification-block-hd",
         );
 
         var that = this;
@@ -1356,12 +1356,12 @@ $(document).ready(function () {
                                 ? "invitation"
                                 : "invitations";
                         $header.html(
-                            response["count"] + " new shake " + invitation_text
+                            response["count"] + " new shake " + invitation_text,
                         );
                     }
                 }
             },
-            "json"
+            "json",
         );
 
         return false;
@@ -1381,7 +1381,7 @@ $(document).ready(function () {
             this.$root.find(".notification").each(function () {
                 var new_invitation_request = new NotificationInvitationRequest(
                     $(this),
-                    that
+                    that,
                 );
             });
         },
@@ -1408,10 +1408,10 @@ $(document).ready(function () {
         init_dom: function () {
             this.$form = this.$root.find("form");
             this.$form_approve_invitation = this.$root.find(
-                ".approve-invitation"
+                ".approve-invitation",
             );
             this.$form_decline_invitation = this.$root.find(
-                ".decline-invitation"
+                ".decline-invitation",
             );
         },
 
@@ -1419,12 +1419,12 @@ $(document).ready(function () {
             this.$root.delegate(
                 ".approve-invitation",
                 "submit",
-                $.proxy(this.submit_approve_invitation, this)
+                $.proxy(this.submit_approve_invitation, this),
             );
             this.$root.delegate(
                 ".decline-invitation",
                 "submit",
-                $.proxy(this.submit_decline_invitation, this)
+                $.proxy(this.submit_decline_invitation, this),
             );
         },
 
@@ -1454,11 +1454,11 @@ $(document).ready(function () {
 
     var init_notification_invitation_request = function () {
         $notification_invitation_request = $(
-            "#notification-block-invitation-request"
+            "#notification-block-invitation-request",
         );
         if ($notification_invitation_request.length > 0) {
             var invitation_requests = new NotificationInvitationContainer(
-                $notification_invitation_request
+                $notification_invitation_request,
             );
         }
     };
@@ -1570,12 +1570,12 @@ $(document).ready(function () {
             this.$root.delegate(
                 ".reply-to",
                 "click",
-                $.proxy(this.click_reply_to, this)
+                $.proxy(this.click_reply_to, this),
             );
             this.$root.delegate(
                 ".delete",
                 "click",
-                $.proxy(this.click_delete, this)
+                $.proxy(this.click_delete, this),
             );
         },
 
@@ -1586,7 +1586,7 @@ $(document).ready(function () {
             var username_clean = username.replace(/[^a-zA-Z0-9_\-]+/g, "");
             var current_text = this.$post_comment_body.val();
             this.$post_comment_body.val(
-                current_text + "@" + username_clean + " "
+                current_text + "@" + username_clean + " ",
             );
             setCaret(this.$post_comment_body.get(0));
             window.location.hash = "post-comment";
@@ -1624,7 +1624,7 @@ $(document).ready(function () {
                 function (response) {
                     parent.hide("slow");
                 },
-                "ajax"
+                "ajax",
             );
             return false;
         } else {
@@ -1635,11 +1635,11 @@ $(document).ready(function () {
     // Tools: Find People / Shakes
     if ($("#content-find-people-body").length > 0) {
         $("#content-find-people-body").load(
-            "/tools/find-shakes/quick-fetch-twitter"
+            "/tools/find-shakes/quick-fetch-twitter",
         );
         $("#refresh-friends a").live("click", function () {
             $("#content-find-people-body").load(
-                "/tools/find-shakes/quick-fetch-twitter?refresh=1"
+                "/tools/find-shakes/quick-fetch-twitter?refresh=1",
             );
             return false;
         });
@@ -1696,7 +1696,7 @@ $(document).ready(function () {
         },
         function () {
             $(this).removeClass("shake-image-hover");
-        }
+        },
     );
 
     // Shake Page: choosing file to upload.
@@ -1717,7 +1717,7 @@ $(document).ready(function () {
         },
         function () {
             $(this).removeClass("shake-edit-title-hover");
-        }
+        },
     );
 
     $(".shake-edit-title").click(function () {
@@ -1736,7 +1736,7 @@ $(document).ready(function () {
                     $(that).next(".shake-edit-title-form").show();
                 }
             },
-            "json"
+            "json",
         );
     });
 
@@ -1760,7 +1760,7 @@ $(document).ready(function () {
                     $title_container.find(".shake-edit-title-form").hide();
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -1781,7 +1781,7 @@ $(document).ready(function () {
         },
         function () {
             $(this).removeClass("shake-edit-description-hover");
-        }
+        },
     );
 
     $(".shake-edit-description").click(function () {
@@ -1800,7 +1800,7 @@ $(document).ready(function () {
                     $(that).next(".shake-edit-description-form").show();
                 }
             },
-            "json"
+            "json",
         );
     });
 
@@ -1826,7 +1826,7 @@ $(document).ready(function () {
                         .hide();
                 }
             },
-            "json"
+            "json",
         );
         return false;
     });
@@ -1841,7 +1841,7 @@ $(document).ready(function () {
                 function (result) {
                     UserCounts.display_results(result);
                 },
-                "json"
+                "json",
             );
 
             return {
@@ -1886,7 +1886,7 @@ $(document).ready(function () {
             this.$root.delegate(
                 "form",
                 "submit",
-                $.proxy(this.submit_request, this)
+                $.proxy(this.submit_request, this),
             );
         },
 
@@ -1974,7 +1974,7 @@ $(document).ready(function () {
                             that.update_results(response["users"]);
                         }
                     },
-                    "json"
+                    "json",
                 );
             },
 
@@ -1995,7 +1995,7 @@ $(document).ready(function () {
                             search_results[i].profile_image_url +
                             '" width="24" height="24"><span>' +
                             search_results[i].name +
-                            "</span></li>"
+                            "</span></li>",
                     );
                 }
             },
@@ -2041,7 +2041,7 @@ $(document).ready(function () {
                             InviteMember.data_sent();
                             return false;
                         },
-                        "json"
+                        "json",
                     );
                     return false;
                 }
@@ -2066,7 +2066,7 @@ $(document).ready(function () {
             this.$root.delegate(
                 ".remove-from-shake-button-link",
                 "click",
-                $.proxy(this.remove_from_shake, this)
+                $.proxy(this.remove_from_shake, this),
             );
         },
 
@@ -2079,7 +2079,7 @@ $(document).ready(function () {
 
             if (
                 confirm(
-                    "Are you sure you want to remove this user from a shake? If they have notifications on an email will be sent informing them of the change."
+                    "Are you sure you want to remove this user from a shake? If they have notifications on an email will be sent informing them of the change.",
                 )
             ) {
                 $.post(url, data, $.proxy(this.process_remove, $li));
