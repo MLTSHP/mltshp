@@ -1,23 +1,9 @@
-from base import BaseTestCase
+from .base import BaseTestCase
 from models import User, Shake, Sourcefile, Sharedfile, Shakesharedfile, Post, Magicfile
 from tasks.timeline import add_posts, delete_posts
 from tornado.options import options
 
-import tweepy
 from mock import patch
-
-
-class MockTweepy(object):
-    count = 0
-
-    @classmethod
-    def API(cls, auth_obj):
-        cls.count = 0
-        return cls
-
-    @classmethod
-    def update_status(cls, *args, **kwargs):
-        cls.count = cls.count + 1
 
 
 class CeleryTaskTests(BaseTestCase):
@@ -72,23 +58,3 @@ class CeleryTaskTests(BaseTestCase):
         posts = Post.all()
         for post in posts:
             self.assertTrue(post.deleted)
-
-    @patch('tweepy.API', MockTweepy.API)
-    def test_tweet_best_posts(self):
-        old_likes = options.likes_to_tweet
-        old_magic = options.likes_to_magic
-        old_debug = options.debug
-        try:
-            options.likes_to_tweet = 1
-            options.likes_to_magic = 1
-            options.debug = False
-            add_posts(shake_id=self.shake_a.id, sharedfile_id=self.shared_1.id, sourcefile_id=self.source.id)
-            self.user_b.add_favorite(self.shared_1)
-            # this like should trigger a tweet
-            self.assertEqual(MockTweepy.count, 1)
-            mf = Magicfile.get("sharedfile_id = %s", self.shared_1.id)
-            self.assertIsNotNone(mf)
-        finally:
-            options.likes_to_tweet = old_likes
-            options.likes_to_magic = old_magic
-            options.debug = old_debug

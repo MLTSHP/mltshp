@@ -1,6 +1,4 @@
-import hashlib
-
-from base import BaseHandler
+from .base import BaseHandler
 import models
 import lib.utilities
 
@@ -35,7 +33,7 @@ class HomeHandler(BaseHandler):
         # We're going to older, so ony use before_id.
         if before_id:
             notifications_count = models.Notification.for_user_count(current_user_obj)
-            sharedfiles = current_user_obj.sharedfiles_from_subscriptions(before_id=before_id,per_page=11)
+            sharedfiles = current_user_obj.sharedfiles_from_subscriptions(before_id=before_id, per_page=11)
             # we have nothing on this page, redirect to home page with out params.
             if len(sharedfiles) == 0:
                 return self.redirect('/')

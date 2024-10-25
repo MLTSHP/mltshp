@@ -1,7 +1,7 @@
 from models import Sharedfile, Sourcefile, User, Comment, Conversation, Shake, Shakesharedfile, Favorite, NSFWLog, Tag, TaggedFile
 from datetime import datetime, timedelta
 import os, shutil, calendar
-from base import BaseTestCase
+from .base import BaseTestCase
 
 class SharedfileModelTests(BaseTestCase):
 

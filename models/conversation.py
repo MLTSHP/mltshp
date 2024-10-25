@@ -2,8 +2,8 @@ from lib.flyingcow import Model, Property
 from datetime import datetime
 from tornado.options import options
 
-import comment
-import sharedfile
+from . import comment
+from . import sharedfile
 
 
 class Conversation(Model):
