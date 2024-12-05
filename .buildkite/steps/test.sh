@@ -11,7 +11,7 @@ docker pull mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER}
 docker tag mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER} mltshp/mltshp-web:latest
 
 # launch fakes3/mysql/web app
-docker-compose -f .buildkite/docker-compose.yml up -d
+docker compose -f .buildkite/docker-compose.yml up -d
 
 # let's wait and allow mysql/fakes3 to spin up
 #wait_for localhost 3306
@@ -25,6 +25,6 @@ docker exec -t buildkite_mltshp_1 ./run-tests.sh
 docker exec -t -e BUILDKITE -e BUILDKITE_JOB_ID -e BUILDKITE_BRANCH -e COVERALLS_REPO_TOKEN buildkite_mltshp_1 ./coveralls-report.sh
 
 # tear down containers
-docker-compose -f .buildkite/docker-compose.yml down
+docker compose -f .buildkite/docker-compose.yml down
 
 docker container prune -f
