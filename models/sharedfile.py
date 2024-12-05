@@ -9,7 +9,7 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url
+from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url, rfc822_date
 
 import user
 import sourcefile
@@ -593,7 +593,7 @@ class Sharedfile(ModelQueryCache, Model):
         Returns a date formatted to be included in feeds
         e.g., Tue, 12 Apr 2005 13:59:56 EST
         """
-        return self.created_at.strftime("%a, %d %b %Y %H:%M:%S UTC")
+        return rfc822_date(self.created_at)
 
     def thumbnail_url(self):
         return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \

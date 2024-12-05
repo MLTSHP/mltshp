@@ -6,6 +6,7 @@ import json
 import base64
 import urllib
 from datetime import datetime
+from dateutil.parser import parse
 import urllib
 
 from PIL import Image
@@ -173,6 +174,13 @@ def pretty_date(time=False):
         diff_string = "years"
     return "%s %s ago" % (str(diff), diff_string)
 
+
+# See: https://github.com/MLTSHP/mltshp/pull/769
+def rfc822_date(time):
+    # Make sure the datetime object is timezone aware
+    if time.tzinfo == None or time.tzinfo.utcoffset(time) == None:
+        time.replace(tzinfo=datetime.timezone.utc)
+    return time.strftime("%a, %d %b %Y %H:%M:%S %Z")
 
 def normalize_string(token, timestamp, nonce, request_method, host, port, path, query_array):
     normalized_string = "%s\n" % (token)
