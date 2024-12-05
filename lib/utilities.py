@@ -5,7 +5,7 @@ import time
 import json
 import base64
 import urllib
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil.parser import parse
 import urllib
 
@@ -179,7 +179,7 @@ def pretty_date(time=False):
 def rfc822_date(time):
     # Make sure the datetime object is timezone aware
     if time.tzinfo == None or time.tzinfo.utcoffset(time) == None:
-        time.replace(tzinfo=datetime.timezone.utc)
+        time.replace(tzinfo=timezone.utc)
     return time.strftime("%a, %d %b %Y %H:%M:%S %Z")
 
 def normalize_string(token, timestamp, nonce, request_method, host, port, path, query_array):
