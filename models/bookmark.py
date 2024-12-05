@@ -47,7 +47,7 @@ class Bookmark(Model):
         Returns a date formatted to be included in feeds
         e.g., Tue, 12 Apr 2005 13:59:56 EST
         """
-        return self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+        return self.created_at.strftime("%a, %d %b %Y %H:%M:%S UTC")
 
     def sharedfile_key(self):
         return base36encode(self.sharedfile_id)
