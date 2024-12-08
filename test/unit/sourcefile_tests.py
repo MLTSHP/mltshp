@@ -29,7 +29,7 @@ class SourcefileModelTests(BaseTestCase):
         self.assertEqual("ac7180f6b038d5ae4f2297989e39a900995bb8fc", sha1_key)
     
     def test_make_oembed_url(self):
-        v_urls = ['https://vimeo.com/7100569', 'https://www.youtube.com/watch?v=bDOYN-6gdRE']
+        v_urls = ['https://vimeo.com/7100569', 'https://www.youtube.com/watch?v=bDOYN-6gdRE&si=123']
         o_encoded = ['https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569&maxwidth=550', 'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json']
         
         oembed_url = Sourcefile.make_oembed_url(v_urls[0])

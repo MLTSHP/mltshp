@@ -175,7 +175,10 @@ class Sourcefile(ModelQueryCache, Model):
 
         oembed_url = None
         if url_parsed.hostname.lower() in ['youtube.com', 'www.youtube.com', 'youtu.be']:
-            to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, url_parsed.query)
+            # We want to strip any `si` value from the query, as it can be used to track the original
+            # YouTube user that shared the link.
+            query = re.sub(r'[?&]si=[^&?]*', '', url_parsed.query)
+            to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, query)
             oembed_url = 'https://www.youtube.com/oembed?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['vimeo.com', 'www.vimeo.com']:
             to_url = 'https://%s%s' % (url_parsed.hostname, url_parsed.path)
