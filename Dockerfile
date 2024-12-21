@@ -25,9 +25,9 @@ RUN apt-get -y update && apt-get install -y \
     # install nginx + upload module
     mkdir -p /tmp/install && \
     cd /tmp/install && \
-    wget http://nginx.org/download/nginx-1.26.2.tar.gz && tar zxf nginx-1.26.2.tar.gz && \
+    wget http://nginx.org/download/nginx-1.25.3.tar.gz && tar zxf nginx-1.25.3.tar.gz && \
     wget https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz && tar zxf 2.3.0.tar.gz && \
-    cd /tmp/install/nginx-1.26.2 && \
+    cd /tmp/install/nginx-1.25.3 && \
     ./configure \
         --with-http_ssl_module \
         --with-http_stub_status_module \
@@ -53,8 +53,7 @@ RUN apt-get -y update && apt-get install -y \
 # contents of requirements.txt:
 COPY requirements.txt /tmp
 RUN python3 -m venv /srv/venv
-RUN ls -l /srv/venv/bin/
-RUN . /srv/venv/bin/activate && pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Copy configuration settings into place
 COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf

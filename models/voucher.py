@@ -199,7 +199,7 @@ https://mltshp.tumblr.com/ (our blog)
             days = int((365 * (months/12.0)) + 0.5)
             next_date = now + datetime.timedelta(days=days)
             if months >= 12 and months % 12 == 0:
-                years = months / 12
+                years = int(months / 12)
                 if years == 1:
                     amount = '1 Year'
                 elif years > 1:

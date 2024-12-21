@@ -12,7 +12,7 @@ class Pagination(UIModule):
             num_pages = 1
         else:
             diff = object_count % per_page
-            num_pages = object_count / per_page
+            num_pages = int(object_count / per_page)
             if diff > 0:
                 num_pages += 1
         
