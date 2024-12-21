@@ -7,8 +7,7 @@ set -euo pipefail
 
 export PYTHONUNBUFFERED=1
 
-# This expects to be run in a Docker container
+# These commands expect to be run in a Docker container (virtual env installed to /srv/venv)
 /srv/venv/bin/pip install -r requirements-test.txt;
-
-coverage run --source=handlers,models,tasks,lib test.py
-coverage xml
+/srv/venv/bin/coverage run --source=handlers,models,tasks,lib test.py
+/srv/venv/bin/coverage xml
