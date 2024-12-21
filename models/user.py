@@ -825,7 +825,7 @@ hello@mltshp.com
             # fetch customer then find active plan
             customer = None
             try:
-                customer = stripe.Customer.retrieve(self.stripe_customer_id)
+                customer = stripe.Customer.retrieve(self.stripe_customer_id, { "expand": ["subscriptions"] })
             except stripe.error.InvalidRequestError:
                 pass
             if customer and not getattr(customer, 'deleted', False):
