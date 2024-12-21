@@ -6,6 +6,9 @@
 set -euo pipefail
 
 export PYTHONUNBUFFERED=1
-pip install -r requirements-test.txt
+
+# This expects to be run in a Docker container
+/srv/venv/bin/pip install -r requirements-test.txt;
+
 coverage run --source=handlers,models,tasks,lib test.py
 coverage xml
