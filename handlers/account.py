@@ -215,7 +215,7 @@ class SettingsHandler(BaseHandler):
         if user.stripe_customer_id:
             customer = None
             try:
-                customer = stripe.Customer.retrieve(user.stripe_customer_id, { "expand": ["sources", "subscriptions"] })
+                customer = stripe.Customer.retrieve(user.stripe_customer_id, expand=["sources", "subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and not hasattr(customer, 'deleted'):
