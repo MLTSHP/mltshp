@@ -11,7 +11,7 @@ import tornado.web
 from tornado.options import options
 
 from .base import BaseHandler
-from lib.utilities import normalize_string, base36decode
+from lib.utilities import normalize_string, base36decode, utcnow
 from models import Accesstoken, Apihit, Apilog, App, Authorizationcode, \
     Favorite, Magicfile, Sharedfile, User, Shake, Comment
 
@@ -58,7 +58,7 @@ def oauth2authenticated(method):
                 api_log.save()
 
             timestamp = int(auth_items['timestamp'])
-            nowstamp =  int(time.mktime(datetime.utcnow().timetuple()))
+            nowstamp =  int(time.mktime(utcnow().timetuple()))
             if (nowstamp - timestamp) > 30:
                 self.set_status(401)
                 self.set_header('WWW-Authenticate', 'MAC realm="mltshp" error="invalid_token", error_description="Token is expired."')
@@ -246,7 +246,7 @@ class TokenHandler(BaseHandler):
                 self.set_status(401)
                 return self.write({'error':'invalid_request'})
         else:
-            auth_code = Authorizationcode.get("code = %s and redirect_url = %s  and expires_at > %s", code, redirect_url, datetime.utcnow())
+            auth_code = Authorizationcode.get("code = %s and redirect_url = %s  and expires_at > %s", code, redirect_url, utcnow())
 
         if auth_code:
             self.set_header("Cache-Control", "no-store")

@@ -11,7 +11,7 @@ from lib.s3 import S3Bucket
 import postmark
 from tornado.options import define, options
 
-from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail
+from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail, utcnow
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
@@ -773,9 +773,9 @@ hello@mltshp.com
         if self.is_plus():
             return True
 
-        month_days = calendar.monthrange(datetime.utcnow().year,datetime.utcnow().month)
-        start_time = datetime.utcnow().strftime("%Y-%m-01")
-        end_time = datetime.utcnow().strftime("%Y-%m-" + str(month_days[1]) )
+        month_days = calendar.monthrange(utcnow().year,utcnow().month)
+        start_time = utcnow().strftime("%Y-%m-01")
+        end_time = utcnow().strftime("%Y-%m-" + str(month_days[1]) )
 
         total_bytes = self.uploaded_kilobytes(start_time=start_time, end_time=end_time)
 
@@ -892,7 +892,7 @@ hello@mltshp.com
             self.add_error('name', 'Username should be less than 30 characters.')
             return False
 
-        if re.search("[^a-zA-Z0-9\-\_]", self.name):
+        if re.search("[^a-zA-Z0-9_-]", self.name):
             self.add_error('name', 'Username can only contain letters, numbers, dash and underscore characters.')
             return False
         return True
@@ -941,8 +941,8 @@ hello@mltshp.com
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     @classmethod
     def random_recommended(self, limit):

@@ -1,12 +1,10 @@
-import random
-import mock
-import io
-from datetime import datetime, timedelta
+from datetime import timedelta
 import tornado.httpclient
+from lib.utilities import utcnow
 
 import test.base
 import test.factories
-from models import User, Promotion, Voucher, Shake, PaymentLog
+from models import Promotion, Voucher, Shake, PaymentLog
 
 
 class VoucherTests(test.base.BaseAsyncTestCase):
@@ -20,12 +18,12 @@ class VoucherTests(test.base.BaseAsyncTestCase):
         self.shake.save()
         self.expired_promotion = Promotion(name="Expired Promotion",
             membership_months=60,
-            expires_at=datetime.utcnow() - timedelta(seconds=50),
+            expires_at=utcnow() - timedelta(seconds=50),
             promotion_shake_id=0)
         self.expired_promotion.save()
         self.promotion = Promotion(name="Unit Test Sale",
             membership_months=60, promotion_shake_id=self.shake.id,
-            expires_at=datetime.utcnow() + timedelta(seconds=60*60*24*365))
+            expires_at=utcnow() + timedelta(seconds=60*60*24*365))
         self.promotion.save()
 
         self.used_voucher = Voucher(offered_by_user_id=0, promotion_id=self.promotion.id,

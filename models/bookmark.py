@@ -1,8 +1,6 @@
-from datetime import datetime
-
 from lib.flyingcow import Model, Property
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import pretty_date, base36encode
+from lib.utilities import pretty_date, base36encode, utcnow
 from tornado.options import options
 
 
@@ -34,7 +32,7 @@ class Bookmark(Model):
         Sets the created_at field unless it's already set.
         """
         if self.id is None and self.created_at is None:
-            self.created_at = datetime.utcnow()
+            self.created_at = utcnow()
 
     def pretty_created_at(self):
         """
@@ -69,7 +67,7 @@ class Bookmark(Model):
         bookmark = Bookmark.get("user_id = %s and created_at >= %s limit 1", user.id, sharedfile_created_at)
         if not bookmark:
             try:
-                bookmark = Bookmark(user_id=user.id, sharedfile_id=sharedfile.id, created_at=datetime.utcnow())
+                bookmark = Bookmark(user_id=user.id, sharedfile_id=sharedfile.id, created_at=utcnow())
                 bookmark.save()
             except IntegrityError:
                 pass

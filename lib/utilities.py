@@ -2,10 +2,9 @@ import hashlib
 import re
 import hmac
 import time
-import json
 import base64
 import urllib.request, urllib.parse, urllib.error
-from datetime import datetime
+from datetime import datetime, UTC
 import urllib.request, urllib.parse, urllib.error
 
 from PIL import Image
@@ -21,6 +20,10 @@ PLANS = {
     "mltshp-single": "Single Scoop",
     "mltshp-double": "Double Scoop",
 }
+
+
+def utcnow():
+    return datetime.now(UTC)
 
 
 def plan_name(plan_id):
@@ -129,7 +132,7 @@ def pretty_date(time=False):
     """
     Expects a datetime in utc.
     """
-    now = datetime.utcnow()
+    now = utcnow()
     diff = now - time
     second_diff = diff.seconds
     day_diff = diff.days

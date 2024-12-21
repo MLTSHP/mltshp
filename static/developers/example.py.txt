@@ -67,7 +67,7 @@ print "SEE CODE FOR THE STEPS"
 # - the query array (there is no query array for this request, but there will be an example
 #       on the developer site soon. There is a specific method for encoding this bit.)
 
-timestamp = int(time.mktime(datetime.utcnow().timetuple()))
+timestamp = int(time.mktime(datetime.now(datetime.UTC).timetuple()))
 nonce = md5(("%s" % random.random()).encode('ascii')).hexdigest() #you might want to generate better nonces
 
 #start by normalizing the message. the order here is important

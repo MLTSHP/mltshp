@@ -1,9 +1,6 @@
 import hashlib
 import io
-from os import path
-from datetime import datetime
 from urllib.parse import urlparse
-import re
 
 from tornado.escape import url_escape, json_decode, json_encode
 from tornado.options import options
@@ -12,6 +9,7 @@ from lib.s3 import S3Bucket
 
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
+from lib.utilities import utcnow
 
 import logging
 logger = logging.getLogger('mltshp')
@@ -48,8 +46,8 @@ class Sourcefile(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def width_constrained_dimensions(self, width_constraint):
         """

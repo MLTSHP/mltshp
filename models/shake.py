@@ -1,6 +1,5 @@
 import re
 import io
-from datetime import datetime
 from urllib.parse import urljoin
 
 from tornado.options import options
@@ -10,9 +9,10 @@ from PIL import Image
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.reservedshakenames import reserved_names
-from lib.utilities import transform_to_square_thumbnail, s3_url
+from lib.utilities import transform_to_square_thumbnail, s3_url, utcnow
 
 from . import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
+
 
 class Shake(ModelQueryCache, Model):
     user_id     = Property(name='user_id')
@@ -47,8 +47,8 @@ class Shake(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def delete(self):
         """
@@ -177,7 +177,7 @@ class Shake(ModelQueryCache, Model):
             self.add_error('name', 'URLs can be 1 to 25 characters long.')
             return False
 
-        if re.search("[^a-zA-Z0-9\-]", self.name):
+        if re.search("[^a-zA-Z0-9-]", self.name):
             self.add_error('name', 'Username can only contain letters, numbers, and dashes.')
             return False
 

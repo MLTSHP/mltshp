@@ -1,6 +1,7 @@
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
-from datetime import datetime, timedelta
+from datetime import timedelta
 import postmark
 
 from . import sharedfile
@@ -33,7 +34,7 @@ class Notification(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")            
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")            
 
     def delete(self):
         self.deleted = 1
@@ -167,7 +168,7 @@ class Notification(Model):
         Notifications for user. Defaults to open,
         i.e. non-deleted notifications.
         """
-        one_week_ago = datetime.utcnow() - timedelta(days=7)
+        one_week_ago = utcnow() - timedelta(days=7)
         return cls.where("receiver_id = %s and deleted = %s and created_at > %s order by created_at desc", 
                                    user.id, deleted, one_week_ago.strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -177,7 +178,7 @@ class Notification(Model):
        Count of all notifications for user.  Defaults to open,
        i.e. non-deleted notifications.
        """
-       one_week_ago = datetime.utcnow() - timedelta(days=7)
+       one_week_ago = utcnow() - timedelta(days=7)
        return cls.where_count("receiver_id = %s and deleted = %s and created_at > %s order by created_at desc", 
                                         user.id, deleted, one_week_ago.strftime("%Y-%m-%d %H:%M:%S"))
 

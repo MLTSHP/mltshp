@@ -1,6 +1,7 @@
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
-from datetime import datetime
+from lib.utilities import utcnow
+
 from . import sharedfile
 from tornado.options import options
 
@@ -19,7 +20,7 @@ class Tag(ModelQueryCache, Model):
 
     def _set_dates(self):
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def path(self):
         return '/%s' % self.name.lower()

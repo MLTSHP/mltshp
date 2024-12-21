@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 import random
 from urllib.parse import urlparse
 from hashlib import md5, sha1
@@ -16,7 +16,7 @@ from tornado.options import options
 import test.base
 from models import Accesstoken, Apihit, App, Authorizationcode, Favorite, \
     ShakeManager, Sharedfile, Sourcefile, User, Comment
-from lib.utilities import normalize_string, base36encode
+from lib.utilities import normalize_string, base36encode, utcnow
 from tasks.counts import calculate_likes
 
 
@@ -313,7 +313,7 @@ class APITokenTests(test.base.BaseAsyncTestCase):
         self.assertEqual(j_response['error'], 'access_denied')
 
     def test_access_token_denied_too_old(self):
-        self.authorization.expires_at = datetime.utcnow() - timedelta(seconds=50)
+        self.authorization.expires_at = utcnow() - timedelta(seconds=50)
         self.authorization.save()
         message="grant_type=authorization_code&code=%s&redirect_uri=%s&client_id=%s&client_secret=%s" % (self.authorization.code, self.app.redirect_url, self.app.key(), self.app.secret)
 
@@ -435,7 +435,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
 
         extra_authorization = Authorizationcode.generate(self.app.id, self.app.redirect_url, self.user_b.id)
         self.ratelimited_access_token = Accesstoken.generate(extra_authorization.id)
-        now_hour = datetime.utcnow().strftime('%Y-%m-%d %H:00:00')
+        now_hour = utcnow().strftime('%Y-%m-%d %H:00:00')
         ratelimit = Apihit(accesstoken_id=self.ratelimited_access_token.id, hits=options.api_hits_per_hour - 2, hour_start=now_hour)
         ratelimit.save()
 
@@ -926,7 +926,7 @@ def api_request(obj, url, unsigned=False, arguments={}, headers={}, method='GET'
 
 
 def signed_request(obj, access_token, url, method='GET', headers={}, body='', signature=None, nonce=None):
-    timestamp = int(time.mktime(datetime.utcnow().timetuple()))
+    timestamp = int(time.mktime(utcnow().timetuple()))
     nonce = nonce or md5(("%s%s" % (str(timestamp), random.random())).encode("ascii")).hexdigest()
     parsed_url = urlparse(url)
     query_array = []

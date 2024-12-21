@@ -1,6 +1,6 @@
 from torndb import Connection
 from tornado.options import options
-from datetime import datetime
+from lib.utilities import utcnow
 
 from tasks import mltshp_task
 
@@ -30,7 +30,7 @@ def tweet_or_magic(db, sharedfile_id, like_count):
         return
 
     if like_count == likes_to_magic:
-        created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
         db.execute("INSERT IGNORE INTO magicfile (sharedfile_id, created_at) VALUES (%s, %s)", sharedfile_id, created_at)
 
     # The Twitter API is dead.

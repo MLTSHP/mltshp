@@ -1,6 +1,5 @@
 from lib.flyingcow import Model, Property
-from datetime import datetime
-from lib.utilities import pretty_date
+from lib.utilities import pretty_date, utcnow
 from . import user, notification
 from tornado.options import options
 
@@ -26,8 +25,7 @@ class CommentLike(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def on_create(self):
         u = user.User.get('id = %s', self.user_id)

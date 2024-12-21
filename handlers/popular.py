@@ -1,17 +1,17 @@
 from datetime import datetime
 from datetime import timedelta
 
-import tornado.web
 from tornado.options import options
 from .base import BaseHandler, require_membership
 
+from lib.utilities import utcnow
 from models import sharedfile, notification, user
 
 
 class IndexHandler(BaseHandler):
     def get(self):
         current_user_obj = self.get_current_user_object()
-        now = datetime.utcnow()
+        now = utcnow()
         then = now - timedelta(hours=24)
         notifications_count = 0
 

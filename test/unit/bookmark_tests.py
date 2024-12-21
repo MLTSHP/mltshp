@@ -1,5 +1,7 @@
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
+
+from lib.utilities import utcnow
 
 import models
 from .base import BaseTestCase
@@ -85,7 +87,7 @@ class BookmarkTests(BaseTestCase):
         latest_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         latest_file.save()
-        latest_file.created_at = datetime.utcnow() + timedelta(seconds=5)
+        latest_file.created_at = utcnow() + timedelta(seconds=5)
         latest_file.save()
 
         middle_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
@@ -93,7 +95,7 @@ class BookmarkTests(BaseTestCase):
         middle_file.save()
 
         oldest_file = self.sharedfile
-        oldest_file.created_at = datetime.utcnow() - timedelta(seconds=5)
+        oldest_file.created_at = utcnow() - timedelta(seconds=5)
         oldest_file.save()
 
         sharedfiles = [latest_file, middle_file, oldest_file]
@@ -119,13 +121,13 @@ class BookmarkTests(BaseTestCase):
         latest_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         latest_file.save()
-        latest_file.created_at = datetime.utcnow() + timedelta(seconds=5)
+        latest_file.created_at = utcnow() + timedelta(seconds=5)
         latest_file.save()
         middle_file = models.Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="1", description="some\ndescription\nhere", source_url="https://www.mltshp.com/?hi")
         middle_file.save()
         oldest_file = self.sharedfile
-        oldest_file.created_at = datetime.utcnow() - timedelta(seconds=5)
+        oldest_file.created_at = utcnow() - timedelta(seconds=5)
         oldest_file.save()
         sharedfiles = [latest_file, middle_file, oldest_file]
 

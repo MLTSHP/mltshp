@@ -1,7 +1,7 @@
 import re
 from os import path
 import hashlib
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from tornado import escape
 from tornado.options import options
@@ -9,7 +9,7 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url
+from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url, utcnow
 
 from . import user
 from . import sourcefile
@@ -508,8 +508,8 @@ class Sharedfile(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     def increment_view_count(self, amount):
         """
@@ -531,7 +531,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         If a file is recent, show its live view count.
         """
-        if datetime.utcnow() - self.created_at < timedelta(hours=24):
+        if utcnow() - self.created_at < timedelta(hours=24):
             return (self.view_count or 0) + self.calculate_view_count()
         else:
             # if a file is not recent and also has zero

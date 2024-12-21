@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from . import authorizationcode
 
 from hashlib import sha224
-from lib.utilities import base36encode
+from lib.utilities import base36encode, utcnow
 import uuid
 import time
 
@@ -32,8 +32,8 @@ class Accesstoken(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
     
     def delete(self):
         """
@@ -51,7 +51,7 @@ class Accesstoken(Model):
         consumer_key = uuid.uuid3(uuid.NAMESPACE_DNS, base36encode(auth.id) + '-' + base36encode(auth.app_id))
         consumer_secret = sha224(("%s%s" % (str(uuid.uuid1()), time.time())).encode("ascii")).hexdigest()
 
-        if auth.expires_at > datetime.utcnow():
+        if auth.expires_at > utcnow():
             access_token = Accesstoken(user_id=auth.user_id, app_id=auth.app_id, consumer_key=str(consumer_key), consumer_secret=str(consumer_secret))
             access_token.save()
             return access_token

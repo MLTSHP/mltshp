@@ -25,13 +25,16 @@ Updated for Python 3 by Brad Choate, for MLTSHP. ❤️
 
 import logging
 import time
+import datetime
+import copy
 
 import MySQLdb.constants
 import MySQLdb.converters
 import MySQLdb.cursors
+from MySQLdb.times import DateTime_or_None
 
-version = "0.4"
-version_info = (0, 4, 0, 0)
+version = "0.4.1"
+version_info = (0, 4, 1, 0)
 
 
 class Connection(object):
@@ -64,7 +67,8 @@ class Connection(object):
         # removing `conv=CONVERSIONS`
         args = dict(use_unicode=True, charset=charset,
                     db=database, init_command=('SET time_zone = "%s"' % time_zone),
-                    connect_timeout=connect_timeout, sql_mode=sql_mode)
+                    connect_timeout=connect_timeout, sql_mode=sql_mode,
+                    conv=CONVERSIONS)
         if user is not None:
             args["user"] = user
         if password is not None:
@@ -239,7 +243,18 @@ class Row(dict):
 # Fix the access conversions to properly recognize unicode/binary
 #FIELD_TYPE = MySQLdb.constants.FIELD_TYPE
 #FLAG = MySQLdb.constants.FLAG
-#CONVERSIONS = copy.copy(MySQLdb.converters.conversions)
+
+
+def to_utc(s):
+    dt = DateTime_or_None(s)
+    if dt is None:
+        return None
+    else:
+        return dt.replace(tzinfo=datetime.UTC)
+
+
+CONVERSIONS = copy.copy(MySQLdb.converters.conversions)
+CONVERSIONS[MySQLdb.constants.FIELD_TYPE.DATETIME] = to_utc
 
 #field_types = [FIELD_TYPE.BLOB, FIELD_TYPE.STRING, FIELD_TYPE.VAR_STRING]
 #if 'VARCHAR' in vars(FIELD_TYPE):
