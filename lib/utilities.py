@@ -171,7 +171,7 @@ def pretty_date(time=False):
         return "%s %s ago" % (str(diff), diff_string)
 
     diff_string = "year"
-    diff = day_diff/365
+    diff = int(day_diff/365)
     if diff > 1:
         diff_string = "years"
     return "%s %s ago" % (str(diff), diff_string)
