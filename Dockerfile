@@ -5,7 +5,8 @@ ENV PYTHONUNBUFFERED=1
 # Installs the base system dependencies for running the site.
 # None of this will change with the codebase itself, so this
 # whole layer and steps to build it should be cached.
-RUN apt-get -y update && apt-get install -y \
+RUN apt-get -y update && \
+    apt-get install -y \
         supervisor \
         build-essential \
         pkg-config \
@@ -52,8 +53,7 @@ RUN apt-get -y update && apt-get install -y \
 # Install python dependencies which will be cached on the
 # contents of requirements.txt:
 COPY requirements.txt /tmp
-RUN python3 -m venv /srv/venv
-RUN /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN python3 -m venv /srv/venv && /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Copy configuration settings into place
 COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf

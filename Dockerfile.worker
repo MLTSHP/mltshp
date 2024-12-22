@@ -1,36 +1,35 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainer="brad@bradchoate.com"
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get -y update && \
-    apt-get install -y software-properties-common python-software-properties && \
-    add-apt-repository -y ppa:jonathonf/ffmpeg-4 && \
     apt-get install -y \
-    supervisor \
-    cron \
-    pkg-config \
-    libmysqlclient-dev \
-    mysql-client \
-    python3-dev \
-    python3-full \
-    libjpeg-dev \
-    libcurl4-openssl-dev \
-    curl \
-    run-one \
-    ffmpeg \
-    wget \
-    vim \
-    libpcre3 \
-    libpcre3-dev \
-    libssl-dev \
-    libffi-dev && \
+        software-properties-common \
+        build-essential \
+        supervisor \
+        cron \
+        pkg-config \
+        libmysqlclient-dev \
+        mysql-client \
+        python3-dev \
+        python3-full \
+        libjpeg-dev \
+        libcurl4-openssl-dev \
+        curl \
+        run-one \
+        ffmpeg \
+        wget \
+        vim \
+        libpcre3 \
+        libpcre3-dev \
+        libssl-dev \
+        libffi-dev && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /srv/mltshp.com/logs && \
     chown -R ubuntu:ubuntu /srv/mltshp.com
 
 COPY requirements.txt /tmp
-RUN python3 -m venv /srv/venv
-RUN /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN python3 -m venv /srv/venv && /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 
