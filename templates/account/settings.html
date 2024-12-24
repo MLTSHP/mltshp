@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block included_scripts %}
+{% if production_site %}
 <script type="text/javascript" src="https://checkout.stripe.com/checkout.js" charset="utf-8"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -23,6 +24,7 @@ $(document).ready(function() {
   });
 });
 </script>
+{% end %}
 {% end %}
 
 {% block title %}Your Account Settings{% end %}
@@ -200,7 +202,9 @@ $(document).ready(function() {
                 {% end %}
               </p>
 
+              {% if production_site %}
               <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
+              {% end %}
 
               <form id="update-card-details-form" action="/account/payment/update" method="POST">
                 {{ xsrf_form_html() }}
@@ -230,7 +234,9 @@ $(document).ready(function() {
                 {% end %}
               </p>
 
+              {% if production_site %}
               <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
+              {% end %}
 
               <form id="update-card-details-form" action="/account/payment/update" method="POST">
                 {{ xsrf_form_html() }}

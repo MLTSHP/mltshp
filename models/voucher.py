@@ -134,7 +134,7 @@ https://mltshp.tumblr.com/ (our blog)
             return None
         vouchers = self.where("email_address = %s and claimed_by_user_id = 0", email)
         try:
-            return invitations[0]
+            return vouchers[0]
         except IndexError:
             return None
     

@@ -65,7 +65,7 @@ def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
     signature = urllib.parse.quote(base64.b64encode(digest).strip())
     signature = "?AWSAccessKeyId=%s&Expires=%s&Signature=%s" % (s3_key, seconds, signature)
 
-    if options.aws_host == "s3.amazonaws.com":
+    if options.aws_host == "s3.amazonaws.com" or options.aws_port == 443:
         url_prefix = "https://"
         port = ""
     else:
@@ -84,7 +84,7 @@ def s3_url(file_path):
     assert file_path
 
     port = ""
-    if options.aws_host == "s3.amazonaws.com":
+    if options.aws_host == "s3.amazonaws.com" or options.aws_port == 443:
         url_prefix = 'https://'
     else:
         url_prefix = 'http://'
@@ -250,16 +250,10 @@ def transform_to_square_thumbnail(file_path, size_constraint, destination):
         img = img2
     width, height = img.size
 
-    # if image is below size constraint, we just paste it on
-    # and let any pieces that are above constraint just get clipped off.
-    if width < size_constraint or height < size_constraint:
-        canvas = Image.new("RGB", (size_constraint, size_constraint,), (255, 255, 255,))
-        canvas.paste(img, (0,0,))
-        canvas.save(destination, format="JPEG", quality=95)
-    # Otherwise, we crop the image to a square and then create thumbnail
-    # out of it. Since Image.thumbnail method doesn't create good
-    # looking thumbs otherwise.
-    else:
+    if width != size_constraint or height != size_constraint:
+        # We crop the image to a square and then create thumbnail
+        # out of it. Since Image.thumbnail method doesn't create good
+        # looking thumbs otherwise.
         if width > height:
             max_dimension = height
         else:

@@ -207,6 +207,7 @@ class UpdateShakeHandler(BaseHandler):
             return self.write({'error':'You must confirm your email address to save this post.'})
 
         if shake_name is None:
+            # Also accept shake name via argument (for nginx uploads)
             shake_name = self.get_argument('shake_name', None)
         shake_to_update = Shake.get('name=%s and user_id=%s and type=%s and deleted=0', shake_name, current_user.id, 'group')
         json = self.get_argument('json', None)

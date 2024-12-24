@@ -477,7 +477,7 @@ class QuickEditAltTextHandler(BaseHandler):
         user = self.get_current_user_object()
         if sharedfile.can_edit(user):
             alt_text = self.get_argument('alt_text', '')
-            if user.is_paid or not uses_a_banned_phrase(description):
+            if user.is_paid or not uses_a_banned_phrase(alt_text):
                 sharedfile.alt_text = alt_text
                 sharedfile.save()
         return self.redirect("/p/%s/quick-edit-alt-text" % share_key)

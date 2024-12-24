@@ -1,5 +1,6 @@
 import re
 import io
+import hashlib
 from urllib.parse import urljoin
 
 from tornado.options import options
@@ -98,7 +99,7 @@ class Shake(ModelQueryCache, Model):
                 if options.app_host == "mltshp.com":
                     return "https://%s/s3/account/%s/shake_%s.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
                 else:
-                    return s3_url("account/%s/shake_%s.jpg" % (self.user_id, self.name))
+                    return "http://%s/s3/account/%s/shake_%s.jpg" % (options.cdn_host or options.app_host, self.user_id, self.name)
             else:
                 return None
 
@@ -110,12 +111,12 @@ class Shake(ModelQueryCache, Model):
                 if options.app_host == "mltshp.com":
                     return "https://%s/s3/account/%s/shake_%s_small.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
                 else:
-                    return s3_url("account/%s/shake_%s_small.jpg" % (self.user_id, self.name))
+                    return "http://%s/s3/account/%s/shake_%s_small.jpg" % (options.cdn_host or options.app_host, self.user_id, self.name)
             else:
                 if options.app_host == "mltshp.com":
                     return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
                 else:
-                    return "http://%s/static/images/default-icon-venti.svg" % options.app_host
+                    return "http://%s/static/images/default-icon-venti.svg" % (options.cdn_host or options.app_host)
 
     def path(self):
         """
@@ -333,21 +334,27 @@ class Shake(ModelQueryCache, Model):
 
         try:
             #save thumbnail
+            thumb_bytes = thumb_cstr.getvalue()
+            thumb_md5sum = hashlib.md5(thumb_bytes).hexdigest()
             bucket.put_object(
-                thumb_cstr.getvalue(),
+                thumb_bytes,
                 "account/%s/shake_%s_small.jpg" % (self.user_id, self.name),
-                ContentType="image/jpeg",
-                CacheControl="max-age=86400",
                 ACL="public-read",
+                # CacheControl="max-age=86400, must-revalidate",
+                ContentMD5=thumb_md5sum,
+                ContentType="image/jpeg",
             )
 
             #save small
+            image_bytes = image_cstr.getvalue()
+            image_md5sum = hashlib.md5(image_bytes).hexdigest()
             bucket.put_object(
-                image_cstr.getvalue(),
+                image_bytes,
                 "account/%s/shake_%s.jpg" % (self.user_id, self.name),
-                ContentType="image/jpeg",
-                CacheControl="max-age=86400",
                 ACL="public-read",
+                # CacheControl="max-age=86400, must-revalidate",
+                ContentMD5=image_md5sum,
+                ContentType="image/jpeg",
             )
 
             self.image = 1

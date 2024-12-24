@@ -9,7 +9,6 @@ pip-log.txt
 .DS_Store
 *.swp
 env
-env3
 mounts
 .env
 .deploy.env

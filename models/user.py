@@ -237,12 +237,14 @@ hello@mltshp.com
             return False
 
         if not skip_s3:
+            bytes = destination.getvalue()
+            md5sum = hashlib.md5(bytes).hexdigest()
             bucket = S3Bucket()
             bucket.put_object(
-                destination.getvalue(),
+                bytes,
                 "account/%s/profile.jpg" % self.id,
                 ContentType="image/jpeg",
-                CacheControl="max-age=86400",
+                ContentMD5=md5sum,
                 ACL="public-read"
             )
         self.profile_image = 1
@@ -659,14 +661,14 @@ hello@mltshp.com
                 this_follow['name'] = us['user_name']
                 this_follow['type'] = 'user'
                 if us['user_image']:
-                    this_follow['image'] = s3_url("account/%s/profile.jpg" % us['user_id'])
+                    this_follow['image'] = "/s3/account/%s/profile.jpg" % (us['user_id'])
             else:
                 this_follow['id'] = us['shake_id']
                 this_follow['path'] = '/%s' % (us['shake_name'])
                 this_follow['name'] = us['shake_name']
                 this_follow['type'] = 'shake'
                 if us['shake_image']:
-                    this_follow['image'] = s3_url("account/%s/shake_%s.jpg" % (us['user_id'], us['shake_name']))
+                    this_follow['image'] = "/s3/account/%s/shake_%s.jpg" % (us['user_id'], us['shake_name'])
 
             us_list.append(this_follow)
         return us_list

@@ -1,8 +1,10 @@
 # Development settings; suitable for running against our Docker
 # image.
 settings = {
+    # Exclude any port number from the host name here; also used for setting cookies
     "app_host": "mltshp.localhost",
-    "cdn_host": "s.mltshp.localhost",
+    # Include any port number for the host name here
+    "cdn_host": "s.mltshp.localhost:8000",
     "api_hits_per_hour" : 150,
     "auth_secret" : "dummy-secret",
     "aws_bucket": "mltshp-dev",

@@ -1,21 +1,18 @@
 import datetime
-import re
-import json
 from urllib.parse import urlencode
-import logging
 
 import tornado.httpclient
 import tornado.web
 from tornado.escape import json_encode, xhtml_escape
-from tornado.options import define, options
+from tornado.options import options
 import torndb
 import postmark
 import requests
 
 from .base import BaseHandler, require_membership
-from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
+from models import User, Invitation, Shake, Notification, Invitation,\
     App, PaymentLog, Voucher, Promotion, MigrationState
-from lib.utilities import email_re, base36decode, is_valid_voucher_key,\
+from lib.utilities import email_re, is_valid_voucher_key,\
     payment_notifications, uses_a_banned_phrase, plan_name
 import stripe
 from tasks.migration import migrate_for_user
@@ -207,6 +204,7 @@ class SettingsHandler(BaseHandler):
         source_card_type = None
         source_last_4 = None
         source_expiration = None
+        production_site = options.app_host == "mltshp.com"
 
         promotions = Promotion.active()
 
@@ -245,7 +243,8 @@ class SettingsHandler(BaseHandler):
             has_data_to_migrate=has_data_to_migrate,
             updated_flag=updated_flag,
             migrated_flag=migrated_flag,
-            cancel_flag=cancel_flag)
+            cancel_flag=cancel_flag,
+            production_site=production_site)
 
     @tornado.web.authenticated
     def post(self):
