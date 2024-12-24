@@ -211,7 +211,7 @@ class QuickCommentsHandler(BaseHandler):
             comments=comments, current_user=user,
             can_comment=can_comment,
             expanded=expanded)
-        return self.write({'result' : 'ok', 'count' : len(comments), 'html' : html_response })
+        return self.write({'result' : 'ok', 'count' : len(comments), 'html' : html_response.decode('utf-8') })
 
 
 class ShowRawHandler(BaseHandler):
