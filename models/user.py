@@ -1002,7 +1002,7 @@ hello@mltshp.com
         else:
             sample_size = 5
 
-        samples = random.sample(not_following_favorited, sample_size)
+        samples = random.sample(list(not_following_favorited), sample_size)
         users = []
         for user_id in samples:
             fetched_user = User.get("id = %s and deleted = 0", user_id)
