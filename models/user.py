@@ -238,13 +238,11 @@ hello@mltshp.com
 
         if not skip_s3:
             bytes = destination.getvalue()
-            md5sum = hashlib.md5(bytes).hexdigest()
             bucket = S3Bucket()
             bucket.put_object(
                 bytes,
                 "account/%s/profile.jpg" % self.id,
                 ContentType="image/jpeg",
-                ContentMD5=md5sum,
                 ACL="public-read"
             )
         self.profile_image = 1

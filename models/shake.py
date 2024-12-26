@@ -1,6 +1,5 @@
 import re
 import io
-import hashlib
 from urllib.parse import urljoin
 
 from tornado.options import options
@@ -335,25 +334,19 @@ class Shake(ModelQueryCache, Model):
         try:
             #save thumbnail
             thumb_bytes = thumb_cstr.getvalue()
-            thumb_md5sum = hashlib.md5(thumb_bytes).hexdigest()
             bucket.put_object(
                 thumb_bytes,
                 "account/%s/shake_%s_small.jpg" % (self.user_id, self.name),
                 ACL="public-read",
-                # CacheControl="max-age=86400, must-revalidate",
-                ContentMD5=thumb_md5sum,
                 ContentType="image/jpeg",
             )
 
             #save small
             image_bytes = image_cstr.getvalue()
-            image_md5sum = hashlib.md5(image_bytes).hexdigest()
             bucket.put_object(
                 image_bytes,
                 "account/%s/shake_%s.jpg" % (self.user_id, self.name),
                 ACL="public-read",
-                # CacheControl="max-age=86400, must-revalidate",
-                ContentMD5=image_md5sum,
                 ContentType="image/jpeg",
             )
 
