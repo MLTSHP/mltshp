@@ -53,6 +53,11 @@ Disallow: /
 User-agent: omgili
 Disallow: /
 
+# https://darkvisitors.com/agents/omgilibot
+
+User-agent: omgilibot
+Disallow: /
+
 # Undocumented AI Agent
 # https://darkvisitors.com/agents/claude-web
 
@@ -81,4 +86,60 @@ Disallow: /
 # https://darkvisitors.com/agents/meta-externalagent
 
 User-agent: Meta-ExternalAgent
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/ai2bot
+
+User-agent: AI2Bot
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/cohere-training-data-crawler
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/kangaroo-bot
+
+User-agent: Kangaroo Bot
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/pangubot
+
+User-agent: PanguBot
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/timpibot
+
+User-agent: Timpibot
+Disallow: /
+
+# AI Data Scraper
+# https://darkvisitors.com/agents/webzio-extended
+
+User-agent: Webzio-Extended
+Disallow: /
+
+# AI Search Crawler
+# https://darkvisitors.com/agents/amazonbot
+
+User-agent: Amazonbot
+Disallow: /
+
+# AI Search Crawler
+# https://darkvisitors.com/agents/perplexitybot
+
+User-agent: PerplexityBot
+Disallow: /
+
+# https://darkvisitors.com/agents/sentibot
+
+User-agent: SentiBot
+Disallow: /
+
+User-agent: sentibot
 Disallow: /
