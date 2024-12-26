@@ -8,9 +8,17 @@ from hashlib import md5
 
 def S3Client():
     kwargs = {}
-    if options.aws_port and options.aws_host:
-        kwargs['endpoint_url'] = "http://%s:%s" % (options.aws_host, options.aws_port)
-        kwargs['use_ssl'] = False
+    # We shouldn't override any arguments if we're using the real AWS S3
+    if options.aws_host and options.aws_host != "s3.amazonaws.com":
+        kwargs['use_ssl'] = options.aws_port == 443
+        if kwargs['use_ssl']:
+            scheme = "https"
+            port = ""
+        else:
+            kwargs['use_ssl'] = False
+            scheme = "http"
+            port = ":%s" % options.aws_port
+        kwargs['endpoint_url'] = "%s://%s%s" % (scheme, options.aws_host, port)
 
     return boto3.client('s3',
         aws_access_key_id=options.aws_key,

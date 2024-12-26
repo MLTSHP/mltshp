@@ -84,9 +84,11 @@ def s3_url(file_path):
     assert file_path
 
     port = ""
-    if options.aws_host == "s3.amazonaws.com" or options.aws_port == 443:
+    host = "s3.amazonaws.com"
+    if (not options.aws_host or options.aws_host == host) or options.aws_port == 443:
         url_prefix = 'https://'
     else:
+        host = options.aws_host
         url_prefix = 'http://'
         if options.aws_port:
             port = ":%d" % options.aws_port
