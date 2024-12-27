@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from tornado.escape import url_escape, json_decode, json_encode
 from tornado.options import options
-from PIL import Image, ImageOps
+from PIL import Image
 from lib.s3 import S3Bucket
 
 from lib.flyingcow import Model, Property
@@ -120,8 +120,6 @@ class Sourcefile(ModelQueryCache, Model):
         try:
             logger.debug("creating %s" % file_path)
             img = Image.open(file_path)
-            # Applies a rotation on the image based on EXIF data, if available
-            ImageOps.exif_transpose(img, in_place=True)
             original_width = img.size[0]
             original_height= img.size[1]
         except Exception as e:
