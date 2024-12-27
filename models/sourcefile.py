@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from tornado.escape import url_escape, json_decode, json_encode
 from tornado.options import options
-from PIL import Image
+from PIL import Image, ImageOps
 from lib.s3 import S3Bucket
 
 from lib.flyingcow import Model, Property
@@ -120,9 +120,10 @@ class Sourcefile(ModelQueryCache, Model):
         try:
             logger.debug("creating %s" % file_path)
             img = Image.open(file_path)
+            # Applies a rotation on the image based on EXIF data, if available
+            ImageOps.exif_transpose(img, in_place=True)
             original_width = img.size[0]
             original_height= img.size[1]
-            image_format = img.format
         except Exception as e:
             return None
 
@@ -142,12 +143,15 @@ class Sourcefile(ModelQueryCache, Model):
         thumb.save(thumb_cstr, format="JPEG")
         small.save(small_cstr, format="JPEG")
 
+        thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
+        small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
+
         bucket = None
         if not skip_s3:
             logger.debug("making S3 bucket")
             bucket = S3Bucket()
 
-            #save original file
+            # save original file
             if type != 'link':
                 logger.debug("putting object originals/%s" % sha1_value)
                 bucket.upload_file(
@@ -155,22 +159,22 @@ class Sourcefile(ModelQueryCache, Model):
                     "originals/%s" % sha1_value,
                 )
 
-            #save thumbnail
-            thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
+            # save thumbnail
             thumb_bytes = thumb_cstr.getvalue()
             logger.debug("putting object thumbnails/%s (length %d)" % (thumbnail_file_key, len(thumb_bytes)))
             bucket.put_object(
                 thumb_bytes,
                 "thumbnails/%s" % thumbnail_file_key,
+                ContentType="image/jpeg",
             )
 
-            #save small
-            small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
+            # save small
             small_bytes = small_cstr.getvalue()
             logger.debug("putting object smalls/%s (length %d)" % (small_file_key, len(small_bytes)))
             bucket.put_object(
                 small_bytes,
                 "smalls/%s" % small_file_key,
+                ContentType="image/jpeg",
             )
 
         img.close()

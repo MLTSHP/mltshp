@@ -3,7 +3,7 @@ services:
     build: .
     env_file:
       - .env
-    image: mltshp/mltshp-web
+    image: mltshp/mltshp-web:python3-upgrade
     volumes:
       - .:/srv/mltshp.com/mltshp
       - ./mounts/logs:/srv/mltshp.com/logs
@@ -37,7 +37,7 @@ services:
           - mltshp-testing.fakes3
           - mltshp-dev.fakes3
   mysql:
-    image: mysql:latest
+    image: mysql:8
     ports:
       - "3306:3306"
     volumes:
