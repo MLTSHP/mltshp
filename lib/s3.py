@@ -1,9 +1,9 @@
 import io
-import boto3
-
-from tornado.options import options
-
+import base64
 from hashlib import md5
+
+import boto3
+from tornado.options import options
 
 
 def S3Client():
@@ -54,7 +54,7 @@ class S3BucketWrapper(object):
         if 'ContentMD5' not in kwargs:
             md5_hash = md5()
             md5_hash.update(data)
-            kwargs['ContentMD5'] = md5_hash.hexdigest()
+            kwargs['ContentMD5'] = base64.encodebytes(md5_hash.digest()).decode('ascii')
         if 'ContentLength' not in kwargs:
             if hasattr(data, 'read'):
                 kwargs['ContentLength'] = data.seek(0, 2)

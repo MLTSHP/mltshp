@@ -147,41 +147,41 @@ class Sourcefile(ModelQueryCache, Model):
             logger.debug("making S3 bucket")
             bucket = S3Bucket()
 
-        #save original file
-        if type != 'link':
-            if not skip_s3:
+            #save original file
+            if type != 'link':
                 logger.debug("putting object originals/%s" % sha1_value)
                 bucket.upload_file(
                     file_path,
                     "originals/%s" % sha1_value,
                 )
-        img.close()
 
-        #save thumbnail
-        thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
-        if not skip_s3:
+            #save thumbnail
+            thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
             thumb_bytes = thumb_cstr.getvalue()
             logger.debug("putting object thumbnails/%s (length %d)" % (thumbnail_file_key, len(thumb_bytes)))
             bucket.put_object(
                 thumb_bytes,
                 "thumbnails/%s" % thumbnail_file_key,
             )
-        thumb.close()
 
-        #save small
-        small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
-        if not skip_s3:
+            #save small
+            small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
             small_bytes = small_cstr.getvalue()
             logger.debug("putting object smalls/%s (length %d)" % (small_file_key, len(small_bytes)))
             bucket.put_object(
                 small_bytes,
                 "smalls/%s" % small_file_key,
             )
+
+        img.close()
+        thumb.close()
         small.close()
 
         #save source file
         logger.debug("saving sourcefile")
-        sf = Sourcefile(width=original_width, height=original_height, file_key=sha1_value, thumb_key=thumbnail_file_key, small_key=small_file_key, type=type)
+        sf = Sourcefile(
+            width=original_width, height=original_height, file_key=sha1_value,
+            thumb_key=thumbnail_file_key, small_key=small_file_key, type=type)
         sf.save()
         return sf
 

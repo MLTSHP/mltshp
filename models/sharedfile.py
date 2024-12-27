@@ -280,7 +280,7 @@ class Sharedfile(ModelQueryCache, Model):
         # restrictions mltshp decides to enforce.
         # Related: https://github.com/MLTSHP/mltshp/issues/746
         if 'sandbox=' not in html:
-            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"'
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation"'
 
         # Prevent referrer leaks to third parties
         if 'referrerpolicy=' not in html:
