@@ -54,7 +54,7 @@ class S3BucketWrapper(object):
         if 'ContentMD5' not in kwargs:
             md5_hash = md5()
             md5_hash.update(data)
-            kwargs['ContentMD5'] = base64.encodebytes(md5_hash.digest()).decode('ascii')
+            kwargs['ContentMD5'] = base64.encodebytes(md5_hash.digest()).decode('ascii').strip()
         if 'ContentLength' not in kwargs:
             if hasattr(data, 'read'):
                 kwargs['ContentLength'] = data.seek(0, 2)
