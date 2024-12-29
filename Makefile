@@ -1,11 +1,11 @@
-.PHONY: init-dev run stop custom-build build shell test destroy migrate mysql
+.PHONY: init start stop custom-build build shell test destroy migrate mysql
 
-init-dev:
+init:
 	cp settings.example.py settings.py
 	cp celeryconfig.example.py celeryconfig.py
 	mkdir -p mounts/mysql mounts/logs mounts/fakes3 mounts/uploaded
 
-run:
+start:
 	docker compose up -d
 
 stop:
