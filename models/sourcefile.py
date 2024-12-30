@@ -1,6 +1,6 @@
 import hashlib
 import io
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlencode, urlparse
 
 from tornado.escape import url_escape, json_decode, json_encode
 from tornado.options import options
@@ -200,6 +200,14 @@ class Sourcefile(ModelQueryCache, Model):
 
         oembed_url = None
         if url_parsed.hostname.lower() in ['youtube.com', 'www.youtube.com', 'youtu.be']:
+            # We want to strip any `si` value from the query, as it can be used to track the original
+            # YouTube user that shared the link.
+            query_params = parse_qs(url_parsed.query)
+            if "si" in query_params:
+                del query_params["si"]
+                url_parsed = url_parsed._replace(
+                    query=urlencode(query_params, doseq=True)
+                )
             to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, url_parsed.query)
             oembed_url = 'https://www.youtube.com/oembed?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['vimeo.com', 'www.vimeo.com']:
