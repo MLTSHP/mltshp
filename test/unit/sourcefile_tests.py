@@ -6,11 +6,11 @@ import re
 
 
 class SourcefileModelTests(BaseTestCase):
-    
+
     def setUp(self):
         """
         Create a user sourcefile and sharedfile to work with.
-        """ 
+        """
         super(SourcefileModelTests, self).setUp() # register connection.
         self.user = User(name='thename',email='theemail@gmail.com',verify_email_token='created',email_confirmed=0, is_paid=1)
         self.user.save()
@@ -19,23 +19,31 @@ class SourcefileModelTests(BaseTestCase):
         self.sharedfile = Sharedfile(source_id=self.sourcefile.id, name="my shared file",user_id=self.user.id, \
             content_type="image/png", share_key="ok")
         self.sharedfile.save()
-        
+
     def testGetByShareKey(self):
         existing_source_file = Sourcefile.get_by_file_key('asdf')
         self.assertEqual(self.sourcefile.id, existing_source_file.id)
-        
+
     def test_sha1_file_encoding(self):
         sha1_key = Sourcefile.get_sha1_file_key(os.path.join(os.path.dirname(os.path.dirname(__file__)), "files/love.gif"))
         self.assertEqual("ac7180f6b038d5ae4f2297989e39a900995bb8fc", sha1_key)
-    
+
     def test_make_oembed_url(self):
-        v_urls = ['https://vimeo.com/7100569', 'https://www.youtube.com/watch?v=bDOYN-6gdRE']
-        o_encoded = ['https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569&maxwidth=550', 'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json']
-        
-        oembed_url = Sourcefile.make_oembed_url(v_urls[0])
-        self.assertEqual(oembed_url, o_encoded[0])
-        oembed_url = Sourcefile.make_oembed_url(v_urls[1])
-        self.assertEqual(oembed_url, o_encoded[1])
+        v_urls = [
+            'https://vimeo.com/7100569',
+            'https://www.youtube.com/watch?v=bDOYN-6gdRE',
+            'https://www.youtube.com/watch?si=123&v=bDOYN-6gdRE',
+            'https://www.youtube.com/watch?v=cE0wfjsybIQ&si=123&feature=youtu.be',
+        ]
+        o_encoded = [
+            'https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569&maxwidth=550',
+            'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json',
+            'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json',
+            'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Ffeature%3Dyoutu.be%26v%3DcE0wfjsybIQ&maxwidth=550&format=json',
+        ]
+        for (i, v_url) in enumerate(v_urls):
+            oembed_url = Sourcefile.make_oembed_url(v_url)
+            self.assertEqual(oembed_url, o_encoded[i])
 
     def test_fail_to_make_oembed_url(self):
         bad_urls = ['http://cnn.com/7100569', 'http://www.waxy.org/watch?v=bDOYN-6gdRE']
@@ -45,7 +53,7 @@ class SourcefileModelTests(BaseTestCase):
     def test_create_from_json_oembed(self):
         o_encoded = ['https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569', 'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&format=json&maxwidth=550']
         #get each url
-        #and 
+        #and
         #
         test_responses = [
         r'{"provider_url": "https:\/\/www.youtube.com\/", "title": "Auto-Tune the News #8: dragons. geese. Michael Vick. (ft. T-Pain)", "html": "<object width=\"425\" height=\"344\"><param name=\"movie\" value=\"https:\/\/www.youtube.com\/e\/bDOYN-6gdRE\"><\/param><param name=\"allowFullScreen\" value=\"true\"><\/param><param name=\"allowscriptaccess\" value=\"always\"><\/param><embed src=\"https:\/\/www.youtube.com\/e\/bDOYN-6gdRE\" type=\"application\/x-shockwave-flash\" width=\"425\" height=\"344\" allowscriptaccess=\"always\" allowfullscreen=\"true\"><\/embed><\/object>", "author_name": "schmoyoho", "height": 344, "thumbnail_width": 480, "width": 425, "version": "1.0", "author_url": "https:\/\/www.youtube.com\/user\/schmoyoho", "provider_name": "YouTube", "thumbnail_url": "http:\/\/i3.ytimg.com\/vi\/bDOYN-6gdRE\/hqdefault.jpg", "type": "video", "thumbnail_height": 360}',
@@ -53,11 +61,11 @@ class SourcefileModelTests(BaseTestCase):
         ]
         for response in test_responses:
             Sourcefile.create_from_json_oembed(response)
-        
 
-            
 
-        
+
+
+
             #print sf.__dict__
             #self.assertTrue(sf.id > 0)
             #self.assertTrue(sf.width > 0)
@@ -66,8 +74,8 @@ class SourcefileModelTests(BaseTestCase):
             #self.assertTrue(sf.height <= 184)
             #self.assertTrue(sf.thumb_key != '')
             #self.assertTrue(sf.small_key != '')
-            
-            
+
+
     #def test_fail_to_create_from_url(self):
     #    bad_urls = ['http://www.cnn.com/asdf', 'http://mltshp.com/?lksdjf=123']
     #    for url in bad_urls:
