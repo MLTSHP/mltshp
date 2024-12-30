@@ -2,8 +2,8 @@ import hashlib
 import cStringIO
 from os import path
 from datetime import datetime
-from urlparse import urlparse
-import re
+from urllib import urlencode
+from urlparse import urlparse, parse_qs
 
 from tornado.escape import url_escape, json_decode, json_encode
 from tornado.options import options
@@ -177,8 +177,13 @@ class Sourcefile(ModelQueryCache, Model):
         if url_parsed.hostname.lower() in ['youtube.com', 'www.youtube.com', 'youtu.be']:
             # We want to strip any `si` value from the query, as it can be used to track the original
             # YouTube user that shared the link.
-            query = re.sub(r'[?&]si=[^&?]*', '', url_parsed.query)
-            to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, query)
+            query_params = parse_qs(url_parsed.query)
+            if "si" in query_params:
+                del query_params["si"]
+                url_parsed = url_parsed._replace(
+                    query=urlencode(query_params, doseq=True)
+                )
+            to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, url_parsed.query)
             oembed_url = 'https://www.youtube.com/oembed?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['vimeo.com', 'www.vimeo.com']:
             to_url = 'https://%s%s' % (url_parsed.hostname, url_parsed.path)
