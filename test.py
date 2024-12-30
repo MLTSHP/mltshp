@@ -95,7 +95,11 @@ if __name__ == '__main__':
             # Utilize in-memory tables for faster tests.
             # Note there are some differences here with InnoDB, but
             # they shouldn't materially affect our tests.
-            cmd = statement.replace("InnoDB", "MEMORY").strip()
+            # skip this for create statements definining "text" columns,
+            # since those aren't compatible with in-memory tables.
+            cmd = statement.strip()
+            if " TEXT," not in statement.upper():
+                cmd = statement.replace("InnoDB", "MEMORY")
             if cmd != "":
                 db.execute(cmd)
     tornado.testing.main()

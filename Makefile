@@ -22,7 +22,7 @@ shell:
 	docker compose exec mltshp bash
 
 test:
-	docker compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; /srv/venv/bin/python3 test.py $(TEST)"
+	docker compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; /srv/venv/bin/python3 -u test.py $(TEST)"
 
 destroy:
 	docker compose down && rm -rf mounts

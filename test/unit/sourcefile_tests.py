@@ -39,7 +39,7 @@ class SourcefileModelTests(BaseTestCase):
             'https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F7100569&maxwidth=550',
             'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json',
             'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DbDOYN-6gdRE&maxwidth=550&format=json',
-            'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Ffeature%3Dyoutu.be%26v%3DcE0wfjsybIQ&maxwidth=550&format=json',
+            'https://www.youtube.com/oembed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DcE0wfjsybIQ%26feature%3Dyoutu.be&maxwidth=550&format=json',
         ]
         for (i, v_url) in enumerate(v_urls):
             oembed_url = Sourcefile.make_oembed_url(v_url)
