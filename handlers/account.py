@@ -1066,7 +1066,7 @@ class RSSFeedHandler(BaseHandler):
         # If this is the "mltshp" RSS feed, use original files so that links
         # won't go to the seemingly "unpopular" copy.
         if user_name == options.best_of_user_name:
-            sharedfiles = map(lambda sf: sf.original(), sharedfiles)
+            sharedfiles = list(map(lambda sf: sf.original(), sharedfiles))
 
         if sharedfiles:
             build_date = sharedfiles[0].feed_date()
