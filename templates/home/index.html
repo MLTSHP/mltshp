@@ -127,7 +127,7 @@
                     <time datetime="{{sharedfile.created_at}}" title="{{sharedfile.feed_date()}}">{{sharedfile.pretty_created_at()}}</time>
                 </span>
               </span>
-              {% if sharedfile.previous_sharedfile_id > 0 %}
+              {% if sharedfile.previous_sharedfile_id or 0 > 0 %}
                 <span class="jump-back">
                   <a href="/before/{{sharedfile.previous_sharedfile_key()}}/returning"><span class="hide-on-small">jump to</span> previous</a>
                 </span>

@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
 
 class ScriptLog(Model):
@@ -15,7 +14,7 @@ class ScriptLog(Model):
             self.add_error('_', 'Site is read-only.')
             return False
 
-        self.started_at = datetime.utcnow()
+        self.started_at = utcnow()
     
     def save(self, *args, **kwargs):
         self._set_dates()
@@ -23,7 +22,7 @@ class ScriptLog(Model):
     
     def _set_dates(self):
         if self.id is None or self.created_at is None:
-            self.finished_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.finished_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
     
     @classmethod
     def last_successful(cls, name):

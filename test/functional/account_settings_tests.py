@@ -225,7 +225,7 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         self.user.save()
         response = self.fetch_url("/account/settings")
 
-        self.assertTrue(response.body.find('Please check your inbox for verification') > -1)
+        self.assertIn('Please check your inbox for verification', response.body)
 
     def test_resend_verification_email_changes_key(self):
         self.user.verify_email_token = "asdf"

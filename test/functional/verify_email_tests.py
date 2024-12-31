@@ -8,7 +8,7 @@ class VerifyEmailTests(test.base.BaseAsyncTestCase):
 
     def test_verify_key_success(self):
         h = hashlib.sha1()
-        h.update("%s" % time.time())
+        h.update(("%s" % time.time()).encode('ascii'))
         verify_token = h.hexdigest()
 
         existant_user = User(

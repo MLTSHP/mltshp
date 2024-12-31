@@ -1,13 +1,15 @@
 # Development settings; suitable for running against our Docker
 # image.
 settings = {
+    # Exclude any port number from the host name here; also used for setting cookies
     "app_host": "mltshp.localhost",
-    "cdn_host": "s.mltshp.localhost",
+    # Include any port number for the host name here
+    "cdn_host": "s.mltshp.localhost:8000",
     "api_hits_per_hour" : 150,
     "auth_secret" : "dummy-secret",
     "aws_bucket": "mltshp-dev",
     "aws_host": "fakes3",
-    "aws_port": 8000,
+    "aws_port": 4567,
     "aws_key": "dummy-key",
     "aws_secret": "dummy-secret",
     "cookie_secret": "some secret string",
@@ -41,7 +43,7 @@ test_settings = {
     "database_host": "mysql",
     "aws_bucket": "mltshp-testing",
     "aws_host": "fakes3",
-    "aws_port": 8000,
+    "aws_port": 4567,
     "aws_key": "dummy-key",
     "aws_secret": "dummy-secret",
     "max_mb_per_month" : 300,
@@ -49,6 +51,7 @@ test_settings = {
     "use_workers": False,
     "debug_workers": True,
     "superuser_list": "admin",
+    "tornado_logging": False,
     # these must be set for testing test/unit/externalservice_tests.py
     # "twitter_consumer_key" : "twitter_consumer_key_here",
     # "twitter_consumer_secret" : "twitter_consumer_secret_key_here",

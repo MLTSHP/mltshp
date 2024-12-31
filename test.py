@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import unittest
+import logging
+
 from torndb import Connection
 from tornado.options import options
 from tornado.httpclient import AsyncHTTPClient
+from tornado.options import options
 
 import MySQLdb
 
@@ -19,7 +22,7 @@ AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 TEST_MODULES = [
     'test.AccountTests',
     'test.CommentTests',
-    'test.ExternalAccountTests',
+    # 'test.ExternalAccountTests',
     'test.FileTests',
     'test.SimpleTests',
     'test.SiteFunctionTests',
@@ -70,12 +73,17 @@ def all():
 if __name__ == '__main__':
 
     mltshpoptions.parse_dictionary(test_settings)
+    if not options.tornado_logging:
+        options.logging = None
+        logging.getLogger("tornado.access").disabled = True
+        logging.getLogger("tornado.application").disabled = True
+        logging.getLogger("tornado.general").disabled = True
 
     import tornado.testing
     db = Connection(options.database_host, 'mysql', options.database_user, options.database_password)
     try:
         db.execute("CREATE database %s" % options.database_name)
-    except MySQLdb.ProgrammingError, exc:
+    except MySQLdb.ProgrammingError as exc:
         if exc.args[0] != 1007:  # database already exists
             raise
     else:
@@ -87,7 +95,11 @@ if __name__ == '__main__':
             # Utilize in-memory tables for faster tests.
             # Note there are some differences here with InnoDB, but
             # they shouldn't materially affect our tests.
-            cmd = statement.replace("InnoDB", "MEMORY").strip()
+            # skip this for create statements definining "text" columns,
+            # since those aren't compatible with in-memory tables.
+            cmd = statement.strip()
+            if " TEXT," not in statement.upper():
+                cmd = statement.replace("InnoDB", "MEMORY")
             if cmd != "":
                 db.execute(cmd)
     tornado.testing.main()

@@ -1,7 +1,6 @@
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
-
-from datetime import datetime
 
 
 class PaymentLog(Model):
@@ -44,8 +43,8 @@ class PaymentLog(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
     def last_payments(count=3, user_id=None):

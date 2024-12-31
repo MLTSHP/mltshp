@@ -15,7 +15,7 @@ class ConnectionManager(object):
         self._connection = None
     
     def register(self, host='localhost', name=None, user=None, password=None, charset="utf8"):
-        self._connection = torndb.Connection(host, name, user, password, charset=charset)
+        self._connection = self._connection or torndb.Connection(host, name, user, password, charset=charset)
         return self._connection
     
     def connection(self):

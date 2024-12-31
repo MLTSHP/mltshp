@@ -1,5 +1,5 @@
 from lib.flyingcow import Model, Property
-from datetime import datetime
+from lib.utilities import utcnow
 from tornado.options import options
 
 
@@ -22,4 +22,4 @@ class Apilog(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")

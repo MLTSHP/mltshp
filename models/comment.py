@@ -1,16 +1,16 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import re
 
 from tornado import escape
 from tornado.options import options
 from lib.flyingcow import Model, Property
-from lib.utilities import pretty_date
-from BeautifulSoup import BeautifulSoup
+from lib.utilities import pretty_date, utcnow
+from bs4 import BeautifulSoup
 
-import user
-import notification
-import sharedfile
-import conversation
+from . import user
+from . import notification
+from . import sharedfile
+from . import conversation
 
 
 class Comment(Model):
@@ -51,7 +51,7 @@ class Comment(Model):
             new_conversation.save()
 
         # update the SF activity_at
-        sf.activity_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        sf.activity_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
         sf.save()
 
         # find any mentions and create notifciations
@@ -73,7 +73,7 @@ class Comment(Model):
         """
         Returns a comment that has its HTML removed, shortened to 15 words, and if it doesn't end in a period, add ...
         """
-        new_body  = ''.join(BeautifulSoup(self.body).findAll(text=True))
+        new_body  = ''.join(BeautifulSoup(self.body, features="html.parser").findAll(string=True))
         new_body = new_body.replace('\n', '')
         body_parts = new_body.split(' ')
         new_body = body_parts[:12]
@@ -123,8 +123,8 @@ class Comment(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     def extract_mentions(self):
         """
@@ -134,7 +134,7 @@ class Comment(Model):
         user_list = []
         if self.body == None or self.body == '':
             return user_list
-        matches = re.findall('@([A-Za-z0-9_\-]+)', self.body)
+        matches = re.findall('@([A-Za-z0-9_-]+)', self.body)
         for match in matches:
             matching_user = user.User.get('name=%s', match)
             if matching_user and matching_user.id not in [u.id for u in user_list]:
@@ -177,7 +177,7 @@ class Comment(Model):
 
         # Dropping this rule for now, since we will have 100%
         # paying members for commenters...
-        # now = datetime.utcnow()
+        # now = utcnow()
         # if user.created_at > (now - timedelta(hours=24)):
         #     if user.sharedfiles_count() == 0 and user.likes_count() == 0:
         #         if Comment.where_count("user_id = %s", user.id) >= 1:

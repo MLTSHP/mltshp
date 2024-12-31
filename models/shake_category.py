@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
 
 
@@ -20,5 +19,5 @@ class ShakeCategory(Model):
     
     def _set_dates(self):
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()

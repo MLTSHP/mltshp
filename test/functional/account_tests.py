@@ -52,13 +52,13 @@ class AccountTests(test.base.BaseAsyncTestCase):
         self.user.save()
 
         response = self.fetch_url('/')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+        self.assertIn('Please visit settings to confirm your email!', response.body)
 
         response = self.fetch_url('/incoming')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+        self.assertIn('Please visit settings to confirm your email!', response.body)
 
         response = self.fetch_url('/friends')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+        self.assertIn('Please visit settings to confirm your email!', response.body)
 
     def test_quick_notifications(self):
         """

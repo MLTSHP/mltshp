@@ -5,12 +5,12 @@ import postmark
 
 import hashlib
 import time
-import user
+from . import user
 import datetime
 
-import promotion
+from . import promotion
 
-from lib.utilities import payment_notifications
+from lib.utilities import payment_notifications, utcnow
 
 
 class Voucher(Model):
@@ -51,7 +51,7 @@ class Voucher(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def get_promotion(self):
         if self.promotion_id:
@@ -134,7 +134,7 @@ https://mltshp.tumblr.com/ (our blog)
             return None
         vouchers = self.where("email_address = %s and claimed_by_user_id = 0", email)
         try:
-            return invitations[0]
+            return vouchers[0]
         except IndexError:
             return None
     
@@ -175,7 +175,7 @@ https://mltshp.tumblr.com/ (our blog)
                 # associate the voucher with that shake's owner
                 self.offered_by_user_id = shake.user_id
 
-        now = datetime.datetime.utcnow()
+        now = utcnow()
 
         # if the user has a voucher, then we need
         # to apply a credit to their account using
@@ -199,7 +199,7 @@ https://mltshp.tumblr.com/ (our blog)
             days = int((365 * (months/12.0)) + 0.5)
             next_date = now + datetime.timedelta(days=days)
             if months >= 12 and months % 12 == 0:
-                years = months / 12
+                years = int(months / 12)
                 if years == 1:
                     amount = '1 Year'
                 elif years > 1:

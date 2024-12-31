@@ -1,18 +1,17 @@
-import cStringIO
+import io
 import time
 import hashlib
 import calendar
 import random
 import re
-import urlparse
+import urllib.parse
 from datetime import datetime
 
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 import postmark
 from tornado.options import define, options
 
-from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail
+from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail, utcnow
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
@@ -20,14 +19,14 @@ from tasks.counts import calculate_likes
 from tasks.migration import migrate_for_user
 from lib.badpasswords import bad_list
 
-import notification
-import subscription
-import shake
-import invitation
-import sharedfile
-import externalservice
-import invitation_request
-import shakemanager
+from . import notification
+from . import subscription
+from . import shake
+from . import invitation
+from . import sharedfile
+from . import externalservice
+from . import invitation_request
+from . import shakemanager
 # we use models.favorite due to some weird edge case where the reference
 # to the module gets lost.  To recreate, rename to "import favorite" and
 # change references from models.favorite to just favorite.  You can then
@@ -163,8 +162,8 @@ class User(ModelQueryCache, Model):
     def invalidate_email(self):
         self.email_confirmed = 0
         h = hashlib.sha1()
-        h.update("%s" % (time.time()))
-        h.update("%s" % (random.random()))
+        h.update(str(time.time()).encode("ascii"))
+        h.update(str(random.random()).encode("ascii"))
         self.verify_email_token = h.hexdigest()
         self.save()
         if not options.debug:
@@ -183,8 +182,8 @@ class User(ModelQueryCache, Model):
         """
 
         h = hashlib.sha1()
-        h.update("%s" % (time.time()))
-        h.update("%s" % (random.random()))
+        h.update(str(time.time()).encode("ascii"))
+        h.update(str(random.random()).encode("ascii"))
         self.reset_password_token = h.hexdigest()
         self.save()
         body = """
@@ -233,18 +232,19 @@ hello@mltshp.com
         if content_type not in valid_content_types:
             return False
 
-        destination =  cStringIO.StringIO()
+        destination = io.BytesIO()
         if not transform_to_square_thumbnail(file_path, 100*2, destination):
             return False
 
         if not skip_s3:
+            bytes = destination.getvalue()
             bucket = S3Bucket()
-            k = Key(bucket)
-            k.key = "account/%s/profile.jpg" % (self.id)
-            k.set_metadata('Content-Type', 'image/jpeg')
-            k.set_metadata('Cache-Control', 'max-age=86400')
-            k.set_contents_from_string(destination.getvalue())
-            k.set_acl('public-read')
+            bucket.put_object(
+                bytes,
+                "account/%s/profile.jpg" % self.id,
+                ContentType="image/jpeg",
+                ACL="public-read"
+            )
         self.profile_image = 1
         self.save()
         return True
@@ -442,7 +442,7 @@ hello@mltshp.com
         """
         counts = sharedfile.Sharedfile.query("SELECT sum(like_count) as likes, sum(save_count) as saves, sum(view_count) as views from sharedfile where user_id = %s AND deleted=0", self.id)
         counts = counts[0]
-        for key, value in counts.items():
+        for key, value in list(counts.items()):
             if not value:
                 counts[key] = 0
         return counts
@@ -643,7 +643,7 @@ hello@mltshp.com
               AND subscription.deleted = 0
         """ % self.id
 
-        if page > 0:
+        if page is not None and page > 0:
             limit_start = (page-1) * 20
             select = "%s LIMIT %s, %s" % (select, limit_start, 20)
 
@@ -659,14 +659,14 @@ hello@mltshp.com
                 this_follow['name'] = us['user_name']
                 this_follow['type'] = 'user'
                 if us['user_image']:
-                    this_follow['image'] = s3_url("account/%s/profile.jpg" % us['user_id'])
+                    this_follow['image'] = "/s3/account/%s/profile.jpg" % (us['user_id'])
             else:
                 this_follow['id'] = us['shake_id']
                 this_follow['path'] = '/%s' % (us['shake_name'])
                 this_follow['name'] = us['shake_name']
                 this_follow['type'] = 'shake'
                 if us['shake_image']:
-                    this_follow['image'] = s3_url("account/%s/shake_%s.jpg" % (us['user_id'], us['shake_name']))
+                    this_follow['image'] = "/s3/account/%s/shake_%s.jpg" % (us['user_id'], us['shake_name'])
 
             us_list.append(this_follow)
         return us_list
@@ -773,9 +773,9 @@ hello@mltshp.com
         if self.is_plus():
             return True
 
-        month_days = calendar.monthrange(datetime.utcnow().year,datetime.utcnow().month)
-        start_time = datetime.utcnow().strftime("%Y-%m-01")
-        end_time = datetime.utcnow().strftime("%Y-%m-" + str(month_days[1]) )
+        month_days = calendar.monthrange(utcnow().year,utcnow().month)
+        start_time = utcnow().strftime("%Y-%m-01")
+        end_time = utcnow().strftime("%Y-%m-" + str(month_days[1]) )
 
         total_bytes = self.uploaded_kilobytes(start_time=start_time, end_time=end_time)
 
@@ -825,7 +825,7 @@ hello@mltshp.com
             # fetch customer then find active plan
             customer = None
             try:
-                customer = stripe.Customer.retrieve(self.stripe_customer_id)
+                customer = stripe.Customer.retrieve(self.stripe_customer_id, expand=["subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and not getattr(customer, 'deleted', False):
@@ -892,7 +892,7 @@ hello@mltshp.com
             self.add_error('name', 'Username should be less than 30 characters.')
             return False
 
-        if re.search("[^a-zA-Z0-9\-\_]", self.name):
+        if re.search("[^a-zA-Z0-9_-]", self.name):
             self.add_error('name', 'Username can only contain letters, numbers, dash and underscore characters.')
             return False
         return True
@@ -926,7 +926,7 @@ hello@mltshp.com
             self.add_error('website', "The URL is too long.")
             return False
         if self.website != '':
-            parsed = urlparse.urlparse(self.website)
+            parsed = urllib.parse.urlparse(self.website)
             if parsed.scheme not in ('http', 'https',):
                 self.add_error('website', "Doesn't look to be a valid URL.")
                 return False
@@ -941,8 +941,8 @@ hello@mltshp.com
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     @classmethod
     def random_recommended(self, limit):
@@ -1000,7 +1000,7 @@ hello@mltshp.com
         else:
             sample_size = 5
 
-        samples = random.sample(not_following_favorited, sample_size)
+        samples = random.sample(list(not_following_favorited), sample_size)
         users = []
         for user_id in samples:
             fetched_user = User.get("id = %s and deleted = 0", user_id)
@@ -1044,8 +1044,8 @@ hello@mltshp.com
     def generate_password_digest(password):
         secret = options.auth_secret
         h = hashlib.sha1()
-        h.update(password)
-        h.update(secret)
+        h.update(password.encode(encoding="UTF-8"))
+        h.update(secret.encode(encoding="UTF-8"))
         return h.hexdigest()
 
-from sharedfile import Sharedfile
+from .sharedfile import Sharedfile

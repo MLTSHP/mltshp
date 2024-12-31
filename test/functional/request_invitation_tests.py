@@ -54,7 +54,7 @@ class RequestInvitationTests(test.base.BaseAsyncTestCase):
     def test_no_button_shows_when_request_has_been_made(self):
         response = self.post_url('/shake/derp/request_invitation?json=1')
         response = self.fetch_url('/derp')
-        self.assertTrue(response.body.find('/request_invitation') == -1)
+        self.assertNotIn('/request_invitation', response.body)
     
     def test_shake_manager_gets_notification_created(self):
         response = self.post_url('/shake/derp/request_invitation?json=1')
@@ -110,5 +110,5 @@ class RequestInvitationTests(test.base.BaseAsyncTestCase):
         self.shake.add_manager(self.user)
         
         response = self.fetch_url('/derp')
-        self.assertTrue(response.body.find('join this shake') == -1)
+        self.assertNotIn('join this shake', response.body)
         

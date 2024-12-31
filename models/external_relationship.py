@@ -1,9 +1,6 @@
-import json
-from datetime import datetime
-
 import lib.flyingcow
 from tornado.options import options
-import models
+from lib.utilities import utcnow
 
 
 class ExternalRelationship(lib.flyingcow.Model):
@@ -30,8 +27,8 @@ class ExternalRelationship(lib.flyingcow.Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
         
     @classmethod
     def add_relationship(self, user, service_id, service_type=TWITTER):
