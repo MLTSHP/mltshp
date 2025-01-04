@@ -9,7 +9,6 @@ mysqlclient==2.2.6
 Pillow==11.0.0
 pycurl==7.45.4
 pyOpenSSL==24.3.0
-pyparsing==3.2.0
 python-dateutil==2.9.0.post0
 python-postmark==0.6.0
 requests==2.32.3
