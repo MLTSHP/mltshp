@@ -12,6 +12,7 @@ RUN apt-get -y update && \
         pkg-config \
         python3-dev \
         python3-full \
+        python3-pip \
         libmysqlclient-dev \
         mysql-client \
         libjpeg-dev \
@@ -57,7 +58,7 @@ RUN apt-get -y update && \
 # contents of requirements.txt:
 COPY requirements.txt /tmp
 # It's okay to install to the system packages; we're in a container
-RUN pip3 install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN pip install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Copy configuration settings into place
 COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf
