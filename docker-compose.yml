@@ -3,7 +3,7 @@ services:
     build: .
     env_file:
       - .env
-    image: mltshp/mltshp-web:python3-upgrade
+    image: mltshp/mltshp-web:latest
     volumes:
       - .:/srv/mltshp.com/mltshp
       - ./mounts/logs:/srv/mltshp.com/logs
