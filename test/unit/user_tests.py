@@ -1,8 +1,11 @@
 from models import User, Sharedfile, Sourcefile, Shake, Favorite, invitation, Shakesharedfile, Subscription, ShakeManager
-from base import BaseTestCase
+from lib.utilities import utcnow
+
+from .base import BaseTestCase
+
 import random, os, calendar
-from datetime import datetime
 from tornado.options import options
+
 
 class UserModelTests(BaseTestCase):
 
@@ -479,9 +482,9 @@ class UserModelTests(BaseTestCase):
                 user_id = self.user.id,
                 skip_s3 = True)
 
-        month_days = calendar.monthrange(datetime.utcnow().year,datetime.utcnow().month)
-        start_time = datetime.utcnow().strftime("%Y-%m-01")
-        end_time = datetime.utcnow().strftime("%Y-%m-" + str(month_days[1]) )
+        month_days = calendar.monthrange(utcnow().year,utcnow().month)
+        start_time = utcnow().strftime("%Y-%m-01")
+        end_time = utcnow().strftime("%Y-%m-" + str(month_days[1]) )
 
         self.assertEqual(self.user.uploaded_kilobytes(start_time=start_time, end_time=end_time), 72)
 

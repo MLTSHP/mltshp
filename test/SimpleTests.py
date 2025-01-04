@@ -2,7 +2,7 @@ from tornado.testing import AsyncHTTPTestCase
 import handlers
 import time
 from models import Sharedfile, Sourcefile, User
-from base import BaseAsyncTestCase
+from .base import BaseAsyncTestCase
 from handlers import base
 
 
@@ -11,18 +11,15 @@ from handlers import base
 class TwoHundredTests(BaseAsyncTestCase):
 
     def test_sign_in(self):
-        self.http_client.fetch(self.get_url('/sign-in/'), self.stop)
-        response = self.wait()
+        response = self.fetch('/sign-in/')
         self.assertEqual(response.code, 200)
 
     def test_nonexistant(self):
-        self.http_client.fetch(self.get_url('/asdf/asdf'), self.stop)
-        response = self.wait()
+        response = self.fetch('/asdf/asdf')
         self.assertEqual(response.code, 404)
 
     def test_no_access_to_create_users(self):
-        self.http_client.fetch(self.get_url('/admin/create-users'), self.stop)
-        response = self.wait()
+        response = self.fetch('/admin/create-users')
         self.assertEqual(response.code, 403)
         
     def test_non_signed_in_permalink_view(self):
@@ -33,11 +30,9 @@ class TwoHundredTests(BaseAsyncTestCase):
         sf = Sharedfile(source_id=src.id, user_id=1, name="some.jpg", title="some", share_key="1", content_type="image/jpg")
         sf.save()
         
-        self.http_client.fetch(self.get_url('/p/1'), self.stop)
-        response = self.wait()
+        response = self.fetch('/p/1')
         self.assertEqual(response.code, 200)
         
     def test_twitter_page(self):
-        self.http_client.fetch(self.get_url('/tools/twitter'), self.stop)
-        response = self.wait()
+        response = self.fetch('/tools/twitter')
         self.assertEqual(response.code, 200)

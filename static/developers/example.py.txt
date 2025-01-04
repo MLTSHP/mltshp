@@ -67,8 +67,8 @@ print "SEE CODE FOR THE STEPS"
 # - the query array (there is no query array for this request, but there will be an example
 #       on the developer site soon. There is a specific method for encoding this bit.)
 
-timestamp = int(time.mktime(datetime.utcnow().timetuple()))
-nonce = md5("%s" % random.random()).hexdigest() #you might want to generate better nonces
+timestamp = int(time.mktime(datetime.now(datetime.UTC).timetuple()))
+nonce = md5(("%s" % random.random()).encode('ascii')).hexdigest() #you might want to generate better nonces
 
 #start by normalizing the message. the order here is important
 normalized_string = "%s\n" % (j_response['access_token'])
@@ -82,9 +82,9 @@ normalized_string += "/api/sharedfile/GA4\n"
 #note, we're not including the query string because there isn't one.
 
 #now we sign the request
-digest = hmac.new(j_response['secret'].encode('ascii'), normalized_string, sha1).digest()
-signature = base64.encodestring(digest).strip() #we strip the end off because it gives us a \n at the end
-authorization_string = 'MAC token="%s", timestamp="%s", nonce="%s", signature="%s"' % (j_response['access_token'], str(timestamp), nonce, signature)
+digest = hmac.new(j_response['secret'].encode('ascii'), normalized_string.encode('ascii'), sha1).digest()
+signature = base64.encodebytes(digest).strip() #we strip the end off because it gives us a \n at the end
+authorization_string = 'MAC token="%s", timestamp="%s", nonce="%s", signature="%s"' % (j_response['access_token'], str(timestamp), nonce, signature.decode('ascii'))
 
 
 req = urllib2.Request(RESOURCE_URL,headers={ 'Authorization' : authorization_string })

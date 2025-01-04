@@ -3,12 +3,10 @@
 import os.path
 import sys
 
-import tornado.httpserver
-import tornado.ioloop
+import asyncio
 import tornado.web
 import tornado.options
-import torndb
-from tornado.options import define, options
+from tornado.options import options
 from tornado.httpclient import AsyncHTTPClient
 
 from lib.flyingcow import register_connection
@@ -18,6 +16,10 @@ import lib.uimodules
 import mltshpoptions
 from settings import settings
 import stripe
+
+import logging
+
+logger = logging.getLogger('mltshp')
 
 AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 
@@ -37,16 +39,17 @@ class MltshpApplication(tornado.web.Application):
             # invariant settings
             "login_url": "/sign-in",
             "static_path": os.path.join(dirname, "static"),
-            "template_path":  os.path.join(dirname, "templates"),
+            "template_path": os.path.join(dirname, "templates"),
             "ui_modules": lib.uimodules,
         }
 
     def __init__(self, *args, **settings):
-        self.db = register_connection(host=options.database_host,
-                                      name=options.database_name,
-                                      user=options.database_user,
-                                      password=options.database_password,
-                                      charset="utf8mb4")
+        self.db = settings.get("db") or register_connection(
+            host=options.database_host,
+            name=options.database_name,
+            user=options.database_user,
+            password=options.database_password,
+            charset="utf8mb4")
         if options.use_query_cache:
             lib.flyingcow.cache.use_query_cache = True
         if options.stripe_secret_key:
@@ -54,21 +57,26 @@ class MltshpApplication(tornado.web.Application):
 
         super(MltshpApplication, self).__init__(*args, **settings)
 
-if __name__ == "__main__":
+
+async def main():
     mltshpoptions.parse_dictionary(settings)
     tornado.options.parse_command_line()
+
+    app_settings = MltshpApplication.app_settings()
 
     if options.dump_settings:
         from pprint import pprint
         pprint({'options': dict((k, opt.value())
-                                for k, opt in options.iteritems()),
+                                for k, opt in options.items()),
                 'app_settings': app_settings})
         sys.exit(0)
 
-    app_settings = MltshpApplication.app_settings()
     application = MltshpApplication(routes, autoescape=None, **app_settings)
-    http_server = tornado.httpserver.HTTPServer(application)
+    if options.debug:
+        logger.setLevel(logging.DEBUG)
+    logger.info("starting on port %s" % (options.on_port))
+    application.listen(int(options.on_port))
+    await asyncio.Event().wait()
 
-    print "starting on port %s" % (options.on_port)
-    http_server.listen(int(options.on_port))
-    tornado.ioloop.IOLoop.instance().start()
+if __name__ == "__main__":
+    asyncio.run(main())

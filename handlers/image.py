@@ -1,6 +1,6 @@
 import tempfile
 import re
-from urlparse import urlparse
+from urllib.parse import urlparse
 import time
 from datetime import datetime, timedelta
 import tornado.web
@@ -8,7 +8,7 @@ from tornado import escape
 from tornado.escape import json_encode
 from tornado.options import options
 
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 from models import Favorite, User, Sharedfile, Sourcefile, Comment, Shake, Externalservice
 import models
 from lib.utilities import s3_authenticated_url, uses_a_banned_phrase
@@ -35,7 +35,7 @@ class SaveHandler(BaseHandler):
         if not current_user:
             raise tornado.web.HTTPError(403)
 
-        json = self.get_arguments('json', False)
+        json = self.get_argument('json', False)
         if not sharedfile.can_save(current_user):
             if json:
                 return self.write({'error' : "Can't save that file."})
@@ -148,7 +148,7 @@ class ShowLikesHandler(BaseHandler):
     def get(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         if not sharedfile:
-            return {'error': 'Invalid file key.'}
+            return self.write({'error': 'Invalid file key.'})
 
         response_data = []
         for sharedfile in sharedfile.favorites():
@@ -169,7 +169,7 @@ class ShowSavesHandler(BaseHandler):
     def get(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
         if not sharedfile:
-            return {'error': 'Invalid file key.'}
+            return self.write({'error': 'Invalid file key.'})
 
         response_data = []
         for sharedfile in sharedfile.saves():
@@ -211,7 +211,7 @@ class QuickCommentsHandler(BaseHandler):
             comments=comments, current_user=user,
             can_comment=can_comment,
             expanded=expanded)
-        return self.write({'result' : 'ok', 'count' : len(comments), 'html' : html_response })
+        return self.write({'result' : 'ok', 'count' : len(comments), 'html' : html_response.decode('utf-8') })
 
 
 class ShowRawHandler(BaseHandler):
@@ -353,7 +353,7 @@ class AddToShakesHandler(BaseHandler):
             raise tornado.web.HTTPError(404)
         if current_user.id != sharedfile.user_id:
             raise tornado.web.HTTPError(403)
-        shakes = self.get_arguments('shakes', [])
+        shakes = self.get_arguments('shakes')
         for shake_id in shakes:
             shake = Shake.get("id = %s", shake_id)
             if shake.can_update(current_user.id):
@@ -477,7 +477,7 @@ class QuickEditAltTextHandler(BaseHandler):
         user = self.get_current_user_object()
         if sharedfile.can_edit(user):
             alt_text = self.get_argument('alt_text', '')
-            if user.is_paid or not uses_a_banned_phrase(description):
+            if user.is_paid or not uses_a_banned_phrase(alt_text):
                 sharedfile.alt_text = alt_text
                 sharedfile.save()
         return self.redirect("/p/%s/quick-edit-alt-text" % share_key)

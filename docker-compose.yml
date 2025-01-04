@@ -1,7 +1,9 @@
-version: "2"
 services:
   mltshp:
-    image: mltshp/mltshp-web
+    build: .
+    env_file:
+      - .env
+    image: mltshp/mltshp-web:python3-upgrade
     volumes:
       - .:/srv/mltshp.com/mltshp
       - ./mounts/logs:/srv/mltshp.com/logs
@@ -21,8 +23,12 @@ services:
         aliases:
           - mltshp.localhost
   fakes3:
-    image: ourtownrentals/fake-s3
-    entrypoint: fakes3 -r /srv --license ${FAKES3_LICENSE_KEY} -p 8000
+    build: ./setup/dev/fakes3
+    env_file:
+      - .env
+    entrypoint: fakes3 --root /srv --license ${FAKES3_LICENSE_KEY} --port 4567
+    ports:
+      - "4567:4567"
     volumes:
       - ./mounts/fakes3:/srv
     networks:
@@ -31,7 +37,7 @@ services:
           - mltshp-testing.fakes3
           - mltshp-dev.fakes3
   mysql:
-    image: mysql:latest
+    image: mysql:8
     ports:
       - "3306:3306"
     volumes:

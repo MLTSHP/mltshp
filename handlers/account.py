@@ -1,21 +1,18 @@
 import datetime
-import re
-import json
-from urllib import urlencode
-import logging
+from urllib.parse import urlencode
 
 import tornado.httpclient
 import tornado.web
 from tornado.escape import json_encode, xhtml_escape
-from tornado.options import define, options
+from tornado.options import options
 import torndb
 import postmark
 import requests
 
-from base import BaseHandler, require_membership
-from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
+from .base import BaseHandler, require_membership
+from models import User, Invitation, Shake, Notification, Invitation,\
     App, PaymentLog, Voucher, Promotion, MigrationState
-from lib.utilities import email_re, base36decode, is_valid_voucher_key,\
+from lib.utilities import email_re, is_valid_voucher_key,\
     payment_notifications, uses_a_banned_phrase, plan_name
 import stripe
 from tasks.migration import migrate_for_user
@@ -207,6 +204,7 @@ class SettingsHandler(BaseHandler):
         source_card_type = None
         source_last_4 = None
         source_expiration = None
+        production_site = options.app_host == "mltshp.com"
 
         promotions = Promotion.active()
 
@@ -215,7 +213,7 @@ class SettingsHandler(BaseHandler):
         if user.stripe_customer_id:
             customer = None
             try:
-                customer = stripe.Customer.retrieve(user.stripe_customer_id)
+                customer = stripe.Customer.retrieve(user.stripe_customer_id, expand=["sources", "subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and not hasattr(customer, 'deleted'):
@@ -245,7 +243,8 @@ class SettingsHandler(BaseHandler):
             has_data_to_migrate=has_data_to_migrate,
             updated_flag=updated_flag,
             migrated_flag=migrated_flag,
-            cancel_flag=cancel_flag)
+            cancel_flag=cancel_flag,
+            production_site=production_site)
 
     @tornado.web.authenticated
     def post(self):
@@ -350,9 +349,9 @@ class SettingsConnectionsHandler(BaseHandler):
         user = self.get_current_user_object()
         app = App.get("id = %s", app_id)
         if not app:
-            return {'error' : 'Invalid request.'}
+            return self.write({'error' : 'Invalid request.'})
         app.disconnect_for_user(user)
-        return {'result' : 'ok'}
+        return self.write({'result' : 'ok'})
 
 
 class ForgotPasswordHandler(BaseHandler):
@@ -845,7 +844,7 @@ class AnnouncementHandler(BaseHandler):
         """
         current_user_obj = self.get_current_user_object()
 
-        if self.get_arguments('agree', None):
+        if self.get_argument('agree', None):
             current_user_obj.tou_agreed = True
             current_user_obj.save()
             return self.redirect("/")
@@ -931,7 +930,7 @@ class MembershipHandler(BaseHandler):
         if plan_id == "mltshp-double":
             quantity = int(float(self.get_argument("quantity")))
             if quantity < 24 or quantity > 500:
-                raise "Invalid request"
+                raise Exception("Invalid request")
 
         customer = None
         sub = None
@@ -948,7 +947,7 @@ class MembershipHandler(BaseHandler):
             if customer is None:
                 if token_id is None:
                     # FIXME: handle this more gracefully...
-                    raise "Invalid request"
+                    raise Exception("Invalid request")
 
                 # create a new customer object for this subscription
                 customer = stripe.Customer.create(
@@ -1067,7 +1066,7 @@ class RSSFeedHandler(BaseHandler):
         # If this is the "mltshp" RSS feed, use original files so that links
         # won't go to the seemingly "unpopular" copy.
         if user_name == options.best_of_user_name:
-            sharedfiles = map(lambda sf: sf.original(), sharedfiles)
+            sharedfiles = list(map(lambda sf: sf.original(), sharedfiles))
 
         if sharedfiles:
             build_date = sharedfiles[0].feed_date()

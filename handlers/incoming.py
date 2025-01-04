@@ -1,7 +1,7 @@
 from lib.utilities import base36decode
 
 import tornado.web
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 from models import User, Sharedfile, notification
 
 

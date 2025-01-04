@@ -39,7 +39,7 @@ def run(script_path):
         if result:
             script_log.result = result
         script_log.success = 1
-    except Exception, e:
+    except Exception as e:
         script_log.success = 0
         script_log.result = json.dumps({'error': str(e)})
         sys.exit("Exception: %s" % e)

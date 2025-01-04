@@ -1,6 +1,6 @@
 import tornado.web
 
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 from models import Conversation, Notification, Comment, Sharedfile
 
 class IndexHandler(BaseHandler):

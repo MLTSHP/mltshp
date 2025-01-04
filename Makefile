@@ -1,31 +1,34 @@
-.PHONY: init-dev run shell test destroy migrate mysql
+.PHONY: init start stop custom-build build shell test destroy migrate mysql
 
-init-dev:
+init:
 	cp settings.example.py settings.py
 	cp celeryconfig.example.py celeryconfig.py
 	mkdir -p mounts/mysql mounts/logs mounts/fakes3 mounts/uploaded
 
-run:
-	docker-compose --env-file .env up -d
+start:
+	docker compose up -d
 
 stop:
-	docker-compose --env-file .env down
+	docker compose down
+
+custom-build:
+	@read -p "build tag (default is 'latest'): " build_tag; \
+	docker build -t mltshp/mltshp-web:$${build_tag:-latest}
 
 build:
 	docker build -t mltshp/mltshp-web:latest .
 
 shell:
-	docker-compose --env-file .env exec mltshp bash
+	docker compose exec mltshp bash
 
 test:
-	docker-compose --env-file .env exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python test.py $(TEST)"
+	docker compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python3 -u test.py $(TEST)"
 
 destroy:
-	docker-compose down
-	rm -rf mounts
+	docker compose down && rm -rf mounts
 
 migrate:
-	docker-compose --env-file .env exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python migrate.py"
+	docker compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; python3 migrate.py"
 
 mysql:
-	docker-compose --env-file .env exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"
+	docker compose exec mltshp su ubuntu -c "cd /srv/mltshp.com/mltshp; mysql -u root --host mysql mltshp"

@@ -1,7 +1,11 @@
+from lib.utilities import utcnow
 from models import Sharedfile, Sourcefile, User, Comment, Conversation, Shake, Shakesharedfile, Favorite, NSFWLog, Tag, TaggedFile
-from datetime import datetime, timedelta
+
+from datetime import timedelta
 import os, shutil, calendar
-from base import BaseTestCase
+
+from .base import BaseTestCase
+
 
 class SharedfileModelTests(BaseTestCase):
 
@@ -235,13 +239,13 @@ class SharedfileModelTests(BaseTestCase):
         created_at =  self.sharedfile.created_at
         updated_at = self.sharedfile.updated_at
         five_seconds = timedelta(seconds=5)
-        if (datetime.utcnow() - created_at) < five_seconds:
+        if (utcnow() - created_at) < five_seconds:
             created_at_is_recent = True
         else:
             created_at_is_recent = False
         self.assertTrue(created_at_is_recent)
 
-        if (datetime.utcnow() - updated_at) < five_seconds:
+        if (utcnow() - updated_at) < five_seconds:
             modified_at_is_recent = True
         else:
             modified_at_is_recent = False
@@ -571,7 +575,7 @@ class SharedfileModelTests(BaseTestCase):
         self.assertEqual(self.user.id, log_entry.user_id)
         self.assertEqual(self.sharedfile.id, log_entry.sharedfile_id)
         self.assertEqual(fetched_source.id, log_entry.sourcefile_id)
-        self.assertTrue(log_entry.created_at - datetime.utcnow() <= timedelta(seconds=2))
+        self.assertTrue(log_entry.created_at - utcnow() <= timedelta(seconds=2))
 
 
     def test_as_json_with_user_context(self):

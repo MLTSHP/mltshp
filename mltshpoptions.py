@@ -2,13 +2,14 @@ from tornado.options import define, options
 
 
 def parse_dictionary(settings):
-    for key, value in settings.iteritems():
+    for key, value in settings.items():
         if key in options:
             setattr(options, key, value)
 
 
 define('debug', type=bool, default=True, help="Run in debug/development mode")
 define('dump_settings', type=bool, default=False, help="Dump evaluated settings and exit")
+define('tornado_logging', type=bool, default=True, help="Controls Tornado logging")
 
 # app settings
 define('app_host', default='mltshp.com', metavar="HOST", help="Base hostname for web site")

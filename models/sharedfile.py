@@ -1,7 +1,7 @@
 import re
 from os import path
 import hashlib
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from tornado import escape
 from tornado.options import options
@@ -9,17 +9,17 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url
+from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url, utcnow
 
-import user
-import sourcefile
-import fileview
-import favorite
-import shakesharedfile
-import shake
-import comment
-import notification
-import conversation
+from . import user
+from . import sourcefile
+from . import fileview
+from . import favorite
+from . import shakesharedfile
+from . import shake
+from . import comment
+from . import notification
+from . import conversation
 import models.post
 import models.nsfw_log
 import models.tag
@@ -280,7 +280,7 @@ class Sharedfile(ModelQueryCache, Model):
         # restrictions mltshp decides to enforce.
         # Related: https://github.com/MLTSHP/mltshp/issues/746
         if 'sandbox=' not in html:
-            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"'
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation"'
 
         # Prevent referrer leaks to third parties
         if 'referrerpolicy=' not in html:
@@ -508,8 +508,8 @@ class Sharedfile(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     def increment_view_count(self, amount):
         """
@@ -531,7 +531,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         If a file is recent, show its live view count.
         """
-        if datetime.utcnow() - self.created_at < timedelta(hours=24):
+        if utcnow() - self.created_at < timedelta(hours=24):
             return (self.view_count or 0) + self.calculate_view_count()
         else:
             # if a file is not recent and also has zero
@@ -783,7 +783,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         TODO: Must only accept acceptable content-types after consulting a list.
         """
-        if len(sha1_value) <> 40:
+        if len(sha1_value) != 40:
             return None
 
         if user_id == None:
