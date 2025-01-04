@@ -25,17 +25,20 @@ RUN apt-get -y update && \
         libssl-dev \
         libffi-dev && \
     rm -rf /var/lib/apt/lists/* && \
+    groupadd mltshp --gid=1010 && \
+    useradd mltshp --create-home --home-dir=/home/mltshp \
+        --uid=1010 --gid=1010 && \
     mkdir -p /srv/mltshp.com/logs && \
-    chown -R ubuntu:ubuntu /srv/mltshp.com
+    chown -R mltshp:mltshp /srv/mltshp.com
 
 COPY requirements.txt /tmp
-RUN python3 -m venv /srv/venv && /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN pip3 install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 
 # NOTE: /srv/mltshp.com/logs should be a mounted volume for this image
 ADD . /srv/mltshp.com/mltshp
 WORKDIR /srv/mltshp.com/mltshp
-RUN crontab -u ubuntu setup/production/mltshp-worker--crontab
+RUN crontab -u mltshp setup/production/mltshp-worker--crontab
 
 CMD ["/usr/bin/supervisord"]

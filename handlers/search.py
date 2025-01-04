@@ -12,6 +12,7 @@ MAX_PER_PAGE = 10
 
 
 class SearchHandler(BaseHandler):
+    @tornado.web.authenticated
     @require_membership
     def get(self, base36_id=None):
         self.set_header("Cache-Control", "private")

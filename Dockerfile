@@ -42,18 +42,22 @@ RUN apt-get -y update && \
     make && make install && \
     mkdir -p /etc/nginx && \
     rm -rf /tmp/install && \
+    groupadd mltshp --gid=1010 && \
+    useradd mltshp --create-home --home-dir=/home/mltshp \
+        --uid=1010 --gid=1010 && \
     mkdir -p /mnt/tmpuploads/0 /mnt/tmpuploads/1 /mnt/tmpuploads/2  \
         /mnt/tmpuploads/3 /mnt/tmpuploads/4 /mnt/tmpuploads/5 \
         /mnt/tmpuploads/6 /mnt/tmpuploads/7 /mnt/tmpuploads/8 \
         /mnt/tmpuploads/9 && \
     chmod 777 /mnt/tmpuploads/* && \
     mkdir -p /srv/mltshp.com/uploaded /srv/mltshp.com/logs && \
-    chown -R ubuntu:ubuntu /srv/mltshp.com
+    chown -R mltshp:mltshp /srv/mltshp.com
 
 # Install python dependencies which will be cached on the
 # contents of requirements.txt:
 COPY requirements.txt /tmp
-RUN python3 -m venv /srv/venv && /srv/venv/bin/pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+# It's okay to install to the system packages; we're in a container
+RUN pip3 install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Copy configuration settings into place
 COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf

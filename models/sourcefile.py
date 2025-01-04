@@ -195,6 +195,9 @@ class Sourcefile(ModelQueryCache, Model):
         except:
             return None
 
+        if not url_parsed or not url_parsed.hostname:
+            return None
+
         if url_parsed.hostname.lower() not in ['youtube.com', 'www.youtube.com', 'vimeo.com', 'www.vimeo.com', 'youtu.be', 'flic.kr', 'flickr.com', 'www.flickr.com']:
             return None
 
