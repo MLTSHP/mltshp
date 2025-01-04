@@ -23,10 +23,10 @@ echo "~~~ Waiting for containers to start"
     sleep 10
 
 echo "+++ Running unit tests"
-    docker exec -t buildkite_mltshp_1 ./run-tests.sh
+    docker exec -t buildkite-mltshp-1 ./run-tests.sh
 
 echo "--- Submitting coverage data"
-    docker exec -t -e BUILDKITE -e BUILDKITE_JOB_ID -e BUILDKITE_BRANCH -e COVERALLS_REPO_TOKEN buildkite_mltshp_1 ./coveralls-report.sh
+    docker exec -t -e BUILDKITE -e BUILDKITE_JOB_ID -e BUILDKITE_BRANCH -e COVERALLS_REPO_TOKEN buildkite-mltshp-1 ./coveralls-report.sh
 
 echo "~~~ Stopping containers; cleanup"
     docker compose -f .buildkite/docker-compose.yml down

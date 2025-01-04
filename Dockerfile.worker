@@ -33,7 +33,7 @@ RUN apt-get -y update && \
     chown -R mltshp:mltshp /srv/mltshp.com
 
 COPY requirements.txt /tmp
-RUN pip3 install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN pip install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 COPY setup/production/supervisord-worker.conf /etc/supervisor/conf.d/mltshp.conf
 
