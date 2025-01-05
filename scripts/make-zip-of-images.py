@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Create a zip file of all the images posted or shared from 
 an account, zip into a file on S3, and email notification to them.
