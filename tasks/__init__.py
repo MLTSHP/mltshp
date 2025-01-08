@@ -1,5 +1,4 @@
-from celery import shared_task
-from celery.app.task import Task
+from celery import shared_task, Task
 from tornado.options import define, options
 
 import mltshpoptions
