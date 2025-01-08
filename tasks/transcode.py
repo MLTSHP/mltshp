@@ -96,7 +96,7 @@ def transcode_sharedfile(sharedfile_id):
     db = db_connect()
 
     sharedfile = db.get(
-        "SELECT source_id, parent_id, size FROM sharedfile WHERE id=%s AND content_type='image/gif' AND deleted=0",
+        "SELECT source_id FROM sharedfile WHERE id=%s AND content_type='image/gif' AND deleted=0",
         sharedfile_id)
     if not sharedfile:
         db.close()
@@ -114,7 +114,6 @@ def transcode_sharedfile(sharedfile_id):
 
     input_temp = tempfile.NamedTemporaryFile(
         mode="w+b",
-        bufsize=int(float(sharedfile["size"])),
         suffix=".gif",
         delete=False)
     input_file = input_temp.name
