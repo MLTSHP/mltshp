@@ -2,7 +2,7 @@ import hashlib
 import io
 from urllib.parse import parse_qs, urlencode, urlparse
 
-from tornado.escape import url_escape, json_decode, json_encode
+from tornado.escape import url_escape, json_encode
 from tornado.options import options
 from PIL import Image
 from lib.s3 import S3Bucket

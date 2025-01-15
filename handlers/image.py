@@ -1,15 +1,12 @@
-import tempfile
 import re
 from urllib.parse import urlparse
 import time
-from datetime import datetime, timedelta
 import tornado.web
 from tornado import escape
-from tornado.escape import json_encode
 from tornado.options import options
 
 from .base import BaseHandler, require_membership
-from models import Favorite, User, Sharedfile, Sourcefile, Comment, Shake, Externalservice
+from models import User, Sharedfile, Comment, Shake, Externalservice
 import models
 from lib.utilities import s3_authenticated_url, uses_a_banned_phrase
 
@@ -428,7 +425,7 @@ class QuickEditTitleHandler(BaseHandler):
         self.set_header("Cache-Control","no-store, no-cache, must-revalidate");
         self.set_header("Pragma","no-cache");
         self.set_header("Expires", 0);
-        return self.write(escape.json_encode(value))
+        return self.write(value)
 
 
 class QuickEditDescriptionHandler(BaseHandler):
@@ -460,7 +457,7 @@ class QuickEditDescriptionHandler(BaseHandler):
         self.set_header("Cache-Control","no-store, no-cache, must-revalidate");
         self.set_header("Pragma","no-cache");
         self.set_header("Expires", 0);
-        return self.write(escape.json_encode(value))
+        return self.write(value)
 
 
 class QuickEditAltTextHandler(BaseHandler):
@@ -492,7 +489,7 @@ class QuickEditAltTextHandler(BaseHandler):
         self.set_header("Cache-Control","no-store, no-cache, must-revalidate");
         self.set_header("Pragma","no-cache");
         self.set_header("Expires", 0);
-        return self.write(escape.json_encode(value))
+        return self.write(value)
 
 
 class QuickEditSourceURLHandler(BaseHandler):
@@ -521,7 +518,7 @@ class QuickEditSourceURLHandler(BaseHandler):
             'source_url' : escape.xhtml_escape(source_url),
             'source_url_raw' : source_url
         }
-        return self.write(escape.json_encode(value))
+        return self.write(value)
 
 
 class LikeHandler(BaseHandler):
@@ -534,7 +531,7 @@ class LikeHandler(BaseHandler):
         sharedfile = Sharedfile.get_by_share_key(sharedfile_key)
         if not sharedfile:
             if is_json:
-                return self.write(json_encode({'error':"Not a valid image."}))
+                return self.write({'error':"Not a valid image."})
             else:
                 return self.redirect('/p/%s' % (sharedfile_key))
 
@@ -548,13 +545,13 @@ class LikeHandler(BaseHandler):
 
         if not user.add_favorite(sharedfile):
             if is_json:
-                return self.write(json_encode({'error':"Cant like the image, probably already liked."}))
+                return self.write({'error':"Cant like the image, probably already liked."})
             else:
                 return self.redirect('/p/%s' % (sharedfile_key))
         count = sharedfile.like_count + 1
 
         if is_json:
-            return self.write(json_encode({'response':'ok', 'count': count, 'share_key' : sharedfile.share_key, 'like' : True }))
+            return self.write({'response':'ok', 'count': count, 'share_key' : sharedfile.share_key, 'like' : True })
         else:
             return self.redirect('/p/%s' % (sharedfile_key))
 
@@ -569,7 +566,7 @@ class UnlikeHandler(BaseHandler):
         sharedfile = Sharedfile.get_by_share_key(sharedfile_key)
         if not sharedfile:
             if is_json:
-                return self.write(json_encode({'error':'Not a valid image.'}))
+                return self.write({'error':'Not a valid image.'})
             else:
                 return self.redirect('/p/%s' % (sharedfile_key))
 
@@ -583,13 +580,13 @@ class UnlikeHandler(BaseHandler):
 
         if not user.remove_favorite(sharedfile):
             if is_json:
-                return self.write(json_encode({'error':"Cant unlike the image, probably not liked to begin with."}))
+                return self.write({'error':"Cant unlike the image, probably not liked to begin with."})
             else:
                 return self.redirect('/p/%s' % (sharedfile_key))
         count = sharedfile.like_count - 1
 
         if is_json:
-            return self.write(json_encode({'response':'ok', 'count' : count, 'share_key' : sharedfile.share_key, 'like' : False}))
+            return self.write({'response':'ok', 'count' : count, 'share_key' : sharedfile.share_key, 'like' : False})
         else:
             return self.redirect('/p/%s' % (sharedfile_key))
 
@@ -730,7 +727,7 @@ class CommentLikeHandler(BaseHandler):
             self.set_header("Pragma","no-cache");
             self.set_header("Expires", 0);
             count = models.CommentLike.where_count("comment_id = %s", comment.id)
-            return self.write(json_encode({'response':'ok', 'count': count, 'like' : True }))
+            return self.write({'response':'ok', 'count': count, 'like' : True })
         else:
             return self.redirect("/p/%s?salty" % (share_key,))
 
@@ -764,7 +761,7 @@ class CommentDislikeHandler(BaseHandler):
             self.set_header("Pragma","no-cache");
             self.set_header("Expires", 0);
             count = models.CommentLike.where_count("comment_id = %s", comment.id)
-            return self.write(json_encode({'response':'ok', 'count': count, 'like' : True }))
+            return self.write({'response':'ok', 'count': count, 'like' : True })
         else:
             return self.redirect("/p/%s?salty" % (share_key,))
 

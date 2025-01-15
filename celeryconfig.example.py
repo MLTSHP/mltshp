@@ -1,8 +1,16 @@
+## mltshp settings initialization
+
+import mltshpoptions
+import settings as app_settings
+mltshpoptions.parse_dictionary(app_settings.settings)
+
+## Celery configuration
+
 # List of modules to import when celery starts.
 imports = ("tasks.timeline", "tasks.counts", "tasks.migration", "tasks.transcode")
 
 task_routes = {
-    "tasks.transcode.*": "transcode",
+    "tasks.transcode.*": { "queue": "transcode" },
 }
 
 ## Result store settings.

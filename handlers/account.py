@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 import tornado.httpclient
 import tornado.web
-from tornado.escape import json_encode, xhtml_escape
+from tornado.escape import xhtml_escape
 from tornado.options import options
 import torndb
 import postmark
@@ -543,12 +543,12 @@ class SubscribeHandler(BaseHandler):
 
         if not user.subscribe_to_user(shake_owner):
             if is_json:
-                return self.write(json_encode({'error':'error'}))
+                return self.write({'error':'error'})
             else:
                 return self.redirect('/user/%s' % (user_name))
         else:
             if is_json:
-                return self.write(json_encode({'subscription_status': True}))
+                return self.write({'subscription_status': True})
             else:
                 return self.redirect('/user/%s' % (user_name))
 
@@ -569,12 +569,12 @@ class UnsubscribeHandler(BaseHandler):
 
         if not user.unsubscribe_from_user(shake_owner):
             if is_json:
-                return self.write(json_encode({'error':'error'}))
+                return self.write({'error':'error'})
             else:
                 return self.redirect('/user/%s' % (user_name))
         else:
             if is_json:
-                return self.write(json_encode({'subscription_status': False}))
+                return self.write({'subscription_status': False})
             else:
                 return self.redirect('/user/%s' % (user_name))
 
@@ -604,12 +604,12 @@ class ClearNotificationHandler(BaseHandler):
                 notification_type = n.type
                 n.delete()
             else:
-                return self.write(json_encode({'error' : 'Can\'t find that notification'}))
+                return self.write({'error' : 'Can\'t find that notification'})
         elif _type in ['favorite', 'save', 'subscriber', 'comment', 'invitation_approved']:
             ns = Notification.where('type=%s and receiver_id=%s and deleted=0', _type, current_user['id'])
             [n.delete() for n in ns]
         else:
-            return self.write(json_encode({'error' : 'I dont\'t understand that message.'}))
+            return self.write({'error' : 'I dont\'t understand that message.'})
 
         if _type == 'favorite':
             response = {'response' : "0 new likes"}
