@@ -1,5 +1,4 @@
 import tornado.web
-from tornado.escape import json_encode
 from tornado import escape
 import torndb
 from tornado.options import options
@@ -172,7 +171,7 @@ class QuickDetailsHandler(BaseHandler):
         self.set_header("Cache-Control","no-store, no-cache, must-revalidate");
         self.set_header("Pragma","no-cache");
         self.set_header("Expires", 0);
-        return self.write(escape.json_encode(value))
+        return self.write(value)
 
     @tornado.web.authenticated
     @require_membership
@@ -256,18 +255,18 @@ class SubscribeShakeHandler(BaseHandler):
         shake = Shake.get('id=%s and deleted=0', shake_id)
         if not shake:
             if is_json:
-                return self.write(json_encode({'error':'Shake not found.'}))
+                return self.write({'error':'Shake not found.'})
             else:
                 return self.redirect(shake.path())
 
         if not user.subscribe(shake):
             if is_json:
-                return self.write(json_encode({'error':'error'}))
+                return self.write({'error':'error'})
             else:
                 return self.redirect(shake.path())
         else:
             if is_json:
-                return self.write(json_encode({'subscription_status': True}))
+                return self.write({'subscription_status': True})
             else:
                 return self.redirect(shake.path())
 
@@ -296,7 +295,7 @@ class UnsubscribeShakeHandler(BaseHandler):
                 return self.redirect(shake.path())
         else:
             if is_json:
-                return self.write(json_encode({'subscription_status': False}))
+                return self.write({'subscription_status': False})
             else:
                 return self.redirect(shake.path())
 

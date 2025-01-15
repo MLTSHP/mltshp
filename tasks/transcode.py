@@ -24,8 +24,6 @@ def db_connect():
 
 @mltshp_task()
 def gif_to_video(sourcefile_id, file_key, input_file, format):
-    from models import Sourcefile
-
     result = None
 
     options = None
