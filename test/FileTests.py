@@ -1,6 +1,6 @@
 from tornado.escape import url_escape, json_decode
 from tornado.options import options
-import tornado.ioloop
+from tornado.httpclient import HTTPRequest
 
 import time
 import json
@@ -413,8 +413,8 @@ class FileUploadTests(BaseAsyncTestCase):
 
     def test_file_upload_contents(self):
         response = self.upload_test_file()
-        response = self.fetch('/r/1')
-        self.assertTrue(response.headers['Location'].startswith("/s3/originals/ac7180f6b038d5ae4f2297989e39a900995bb8fc?"))
+        response = self.fetch('/r/1', follow_redirects=False)
+        self.assertTrue(response.headers['Location'].startswith("/s3/originals/ac7180f6b038d5ae4f2297989e39a900995bb8fc"))
 
     def test_uploading_file_creates_shared_shake_file(self):
         response = self.upload_test_file()

@@ -95,8 +95,8 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url()
         else:
             if self.image:
-                scheme = options.cdn_ssl_host and "https" or "http"
-                host = options.cdn_ssl_host or options.cdn_host or options.app_host
+                scheme = options.use_cdn and options.cdn_ssl_host and "https" or "http"
+                host = (options.use_cdn and options.cdn_ssl_host or options.cdn_host) or options.app_host
                 return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}.jpg"
             else:
                 return None
@@ -105,8 +105,8 @@ class Shake(ModelQueryCache, Model):
         if self.type == 'user':
             return self.owner().profile_image_url(include_protocol=True)
         else:
-            scheme = options.cdn_ssl_host and "https" or "http"
-            host = options.cdn_ssl_host or options.cdn_host or options.app_host
+            scheme = options.use_cdn and options.cdn_ssl_host and "https" or "http"
+            host = (options.use_cdn and options.cdn_ssl_host or options.cdn_host) or options.app_host
             if self.image:
                 return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}_small.jpg"
             else:
