@@ -8,7 +8,6 @@ settings = {}
 # expected values in tests.
 test_settings = {
     "app_host": "mltshp.com",
-    "use_cdn": True,
     "cdn_host": "mltshp-cdn.com",
     "cdn_ssl_host": "mltshp-cdn.com",
     "cookie_secret": "secretz",

@@ -551,8 +551,10 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertNotEqual('newalt', user_a_file.alt_text)
 
     def test_query_user_name_resource(self):
+        options.use_cdn = True
         response = signed_request(self, self.access_token, self.get_url('/api/user_name/admin'))
         j_response = json_decode(response.body)
+        options.use_cdn = False
         self.assertEqual(j_response['name'], 'admin')
         self.assertEqual(j_response['profile_image_url'], 'https://mltshp-cdn.com/static/images/default-icon-venti.svg')
         self.assertEqual(j_response['id'], 1)
@@ -573,7 +575,9 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(j_response['id'], 2)
 
     def test_query_usershakes_resource(self):
+        options.use_cdn = True
         response = signed_request(self, self.access_token, self.get_url('/api/shakes'))
+        options.use_cdn = False
         j_response = json_decode(response.body)
         self.assertEqual(len(j_response['shakes']), 3)
         user_shake, group_shake, group_shake_2 = j_response['shakes']
