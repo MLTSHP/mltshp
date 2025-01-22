@@ -26,7 +26,7 @@ class ShakeModelTests(BaseTestCase):
         If an image exists, it should return the correct path.
         """
         self.assertEqual(None, self.shake.page_image())
-        self.assertEqual('/static/images/default-icon-venti.svg', self.user.shake().page_image())
+        self.assertEqual('//mltshp-cdn.com/static/images/default-icon-venti.svg', self.user.shake().page_image())
         self.shake.image = 1
         self.shake.save
         self.assertEqual('https://mltshp-cdn.com/s3/account/1/shake_asdf.jpg', self.shake.page_image())
