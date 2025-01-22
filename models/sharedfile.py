@@ -9,7 +9,7 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url, utcnow
+from lib.utilities import base36encode, base36decode, pretty_date, s3_url, utcnow
 
 from . import user
 from . import sourcefile
@@ -596,15 +596,18 @@ class Sharedfile(ModelQueryCache, Model):
         return self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
 
     def thumbnail_url(self):
-        return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-            file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
+        if options.cdn_ssl_host == "mltshp-cdn.com":
+            return "https://%s/s3/thumbnails/%s" % (options.cdn_ssl_host, self.sourcefile().thumb_key)
+        else:
+            return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+                file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
 
     def small_thumbnail_url(self):
-        """
-
-        """
-        return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-            file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
+        if options.cdn_ssl_host == "mltshp-cdn.com":
+            return "https://%s/s3/smalls/%s" % (options.cdn_ssl_host, self.sourcefile().small_key)
+        else:
+            return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+                file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
 
     def type(self):
         source = sourcefile.Sourcefile.get("id = %s", self.source_id)

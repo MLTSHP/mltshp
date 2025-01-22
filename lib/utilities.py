@@ -77,24 +77,18 @@ def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
         file_path, signature)
 
 
-def s3_url(file_path):
-    """
-    Return S3 authenticated URL sans network access or phatty dependencies like boto.
-    """
-    assert file_path
-
-    port = ""
-    host = "s3.amazonaws.com"
-    if (not options.aws_host or options.aws_host == host) or options.aws_port == 443:
-        url_prefix = 'https://'
+def s3_url(s3_key, s3_secret, bucket_name=None, file_path=None, seconds=3600):
+    needs_signed_url = True
+    if options.cdn_ssl_host == "mltshp-cdn.com":
+        needs_signed_url = False
+    elif options.debug:
+        needs_signed_url = False
+    elif file_path.startswith("account/"):
+        needs_signed_url = False
+    if needs_signed_url:
+        return s3_authenticated_url(s3_key, s3_secret, bucket_name, file_path, seconds)
     else:
-        host = options.aws_host
-        url_prefix = 'http://'
-        if options.aws_port:
-            port = ":%d" % options.aws_port
-
-    return "%s%s.%s%s/%s" % (
-        url_prefix, options.aws_bucket, options.aws_host, port, file_path)
+        return "https://%s/%s/%s" % (options.cdn_ssl_host, bucket_name, file_path)
 
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
