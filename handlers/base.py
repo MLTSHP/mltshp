@@ -1,5 +1,6 @@
 import time
 from functools import wraps
+import re
 
 import tornado.web
 from tornado.options import define, options
@@ -97,15 +98,16 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         sid = {'id':user.id, 'name':user.name}
         # 2^31-1 = 2147483647, the maximum time for an cookie expiration in 32bit;
         # Tue, 19 Jan 2038 03:14:07 GMT
-        self.set_secure_cookie(SESSION_COOKIE, tornado.escape.json_encode(sid),
-            expires=2147483647, domain="." + options.app_host)
+        self.set_secure_cookie(
+            SESSION_COOKIE, tornado.escape.json_encode(sid),
+            expires=2147483647, domain=re.sub(":\d+", "", options.app_host, ":\d+"))
 
     def log_out(self):
         """
         Clears out any session keys.
          sid stores a dict representing user.
         """
-        self.clear_cookie(SESSION_COOKIE, domain="." + options.app_host)
+        self.clear_cookie(SESSION_COOKIE, domain=re.sub(":\d+", "", options.app_host))
 
     def write_error(self, status_code, **kwargs):
         if status_code == 404:

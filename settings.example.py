@@ -1,10 +1,10 @@
 # Development settings; suitable for running against our Docker
 # image.
 settings = {
-    # Exclude any port number from the host name here; also used for setting cookies
-    "app_host": "mltshp.localhost",
-    # Include any port number for the host name here
-    "cdn_host": "s.mltshp.localhost:8000",
+    # Host and any special port required
+    "app_host": "mltshp.localhost:8000",
+    # Optional secondary host for CDN service
+    # "cdn_host": "mltshp-cdn.localhost:8000",
     "api_hits_per_hour" : 150,
     "auth_secret" : "dummy-secret",
     "aws_bucket": "mltshp-dev",
@@ -29,8 +29,8 @@ settings = {
 # Default settings for running tests; app host/cdn host are wired for
 # expected values in tests.
 test_settings = {
-    "app_host": "mltshp.com",
-    "cdn_host": "mltshp-cdn.com",
+    "app_host": "my-mltshp.com",
+    "cdn_host": "some-cdn.com",
     "cookie_secret": "secretz",
     "auth_secret" : "dummy-secret",
     "xsrf_cookies": True,
