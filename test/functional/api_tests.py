@@ -756,7 +756,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(response.code, 200)
 
         j_response = json_decode(response.body)
-        self.assertEqual(j_response['permalink_page'], 'https://my-mltshp.com/p/1')
+        self.assertEqual(j_response['permalink_page'], 'http://my-mltshp.com/p/1')
 
         testfile = Sharedfile.get("id = %s", 1)
         self.assertEqual(testfile.like_count, 1)
