@@ -155,7 +155,9 @@ class Sourcefile(ModelQueryCache, Model):
                 bucket.upload_file(
                     file_path,
                     "originals/%s" % sha1_value,
-                    ContentType=content_type,
+                    ExtraArgs={
+                        "ContentType": content_type,
+                    },
                 )
 
             # save thumbnail
