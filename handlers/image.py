@@ -110,8 +110,6 @@ class ShowHandler(BaseHandler):
 
         if owner_twitter_account:
             owner_twitter_account = owner_twitter_account.screen_name
-        else:
-            owner_twitter_account = 'mltshphq'
 
         image_url = "/r/%s" % (sharedfile.share_key)
         if options.debug:
@@ -226,7 +224,8 @@ class ShowRawHandler(BaseHandler):
         if not self._sharedfile:
             raise tornado.web.HTTPError(404)
 
-        is_mltshp_production = options.cdn_ssl_host == "mltshp-cdn.com"
+        # If CDN is configured, we'll assume we're in a production setting
+        is_production = bool(options.use_cdn)
 
         query = ""
         # Pass through width and dpr query parameter if present.
@@ -238,25 +237,14 @@ class ShowRawHandler(BaseHandler):
             except ValueError:
                 pass
 
-        # determine if we are to serve via CDN or direct from S3:
+        # determine if we are to serve via CDN or not:
         if self.request.host == ("s.%s" % options.app_host) and options.use_cdn:
-            # s = static; serve through CDN for "s.mltshp.com" requests
+            # s = static; redirect to CDN for "s.mltshp.com" response
+            using_https = is_production
 
-            # If we're using mltshp-cdn.com, we know that we can use
-            # https; if something else is configured, check the
-            # X-Forwarded-Proto header and fallback to the protocol
-            # of the request
-            using_https = is_mltshp_production or \
-                self.request.headers.get("X-Forwarded-Proto",
-                    self.request.protocol) == "https"
-
-            # construct a URL to the CDN-hosted image
-            # https://mltshp-cdn.com/r/share_key
-            if using_https:
-                cdn_url = "https://%s" % options.cdn_ssl_host
-            else:
-                cdn_url = "http://%s" % options.cdn_host
-
+            # construct a URL to the CDN-hosted image, ie:
+            # https://cdn-hostname.com/r/share_key
+            cdn_url = "https://%s" % options.cdn_host
             cdn_url += "/r/%s" % share_key
             if format != "":
                 cdn_url += ".%s" % format
@@ -292,15 +280,16 @@ class ShowRawHandler(BaseHandler):
             # Production service uses Fastly to serve images/video. It intercepts
             # a "/s3/*" redirect, signs it when necessary and makes the request to
             # the B2 / S3 bucket.
-            if is_mltshp_production:
+            if options.use_fastly:
                 self.redirect(f"/s3/{file_path}{query}")
             else:
                 # If running on another host, assume we need to sign the request locally
                 # and use Nginx X-Accel-Redirect to proxy the request.
                 authenticated_url = s3_url(options.aws_key, options.aws_secret,
                     options.aws_bucket, file_path=file_path, seconds=3600)
-                (uri, query) = authenticated_url.split('?')
-                if query != "":
+                query = ""
+                if "?" in authenticated_url:
+                    (uri, query) = authenticated_url.split('?')
                     query = "?" + query
 
                 self.set_header("Content-Type", content_type)

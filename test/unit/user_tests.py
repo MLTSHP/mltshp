@@ -187,11 +187,11 @@ class UserModelTests(BaseTestCase):
         Otherwise, should return an Amazon URL.
         """
         self.assertEqual(None,self.user.profile_image)
-        self.assertEqual('//mltshp-cdn.com/static/images/default-icon-venti.svg', self.user.profile_image_url())
+        self.assertEqual('//my-mltshp.com/static/images/default-icon-venti.svg', self.user.profile_image_url())
 
         self.user.profile_image = False
         self.user.save()
-        self.assertEqual('//mltshp-cdn.com/static/images/default-icon-venti.svg', self.user.profile_image_url())
+        self.assertEqual('//my-mltshp.com/static/images/default-icon-venti.svg', self.user.profile_image_url())
 
         self.user.profile_image = True
         self.user.save()

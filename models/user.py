@@ -234,10 +234,12 @@ hello@mltshp.com
 
     def profile_image_url(self, include_protocol=False):
         protocol = ''
-        host = ((options.use_cdn and options.cdn_ssl_host) or options.cdn_host) or options.app_host
+        host = (options.use_cdn and options.cdn_host) or options.app_host
         if include_protocol:
-            protocol = (options.use_cdn and options.cdn_ssl_host and 'https:') or 'http:'
+            protocol = (options.use_cdn and 'https:') or 'http:'
         if self.profile_image:
+            # For mltshp.com, we point to the CDN directly for profile images
+            # For other environments, use the /s3 alias that resolves by nginx routing.
             if options.app_host == 'mltshp.com':
                 aws_url = f"{protocol}//{host}/s3"
             else:

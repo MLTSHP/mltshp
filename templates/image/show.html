@@ -236,9 +236,9 @@
         {
           method: "feed",
           name: {{json_encode(sharedfile.get_title())}},
-          link: "https://mltshp.com/p/{{sharedfile.share_key}}",
+          link: "https://{{ app_host }}/p/{{sharedfile.share_key}}",
           {% if sourcefile.type == 'image' %}
-          picture: "https://mltshp-cdn.com/r/{{sharedfile.share_key}}",
+          picture: "https://{{ cdn_host or app_host }}/r/{{sharedfile.share_key}}",
           {% else %}
           picture: "{{thumb_url}}",
           {% end %}

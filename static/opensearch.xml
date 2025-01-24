@@ -6,7 +6,7 @@
     <Language>en-us</Language>
     <Tags>mltshp mlkshk photos images gifs memes</Tags>
     <Query role="example" searchTerms="mlkshk" />
-	<Image height="16" width="16" type="image/x-icon">https://mltshp.com/favicon.ico</Image>
+	<Image height="16" width="16" type="image/x-icon">https://mltshp-cdn.com/favicon.ico</Image>
 	<Image height="32" width="32" type="image/png">https://mltshp-cdn.com/static/images/favicon-32x32.png</Image>
     <Url type="text/html" template="https://mltshp.com/search?q={searchTerms}" />
     <Url type="application/opensearchdescription+xml" rel="self" template="https://mltshp-cdn.com/static/opensearch.xml" />

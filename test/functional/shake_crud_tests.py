@@ -172,7 +172,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=self.user.id, \
-            content_type="image/png", description="description", source_url="https://www.mltshp.com/?hi")
+            content_type="image/png", description="description", source_url="https://my-mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()
@@ -206,7 +206,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         response = self.fetch_url('/shake/yo/rss')
         self.assertEqual(response.headers['Content-Type'], 'application/xml')
         parsed_xml = lib.utilities.parse_xml(response.body)
-        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://mltshp.com/p/1')
+        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://my-mltshp.com/p/1')
 
     def test_creating_group_shake_creates_subscription(self):
         """
@@ -264,7 +264,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=user_a.id, \
-            content_type="image/png", description="description", source_url="https://www.mltshp.com/?hi")
+            content_type="image/png", description="description", source_url="https://my-mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()

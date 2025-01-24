@@ -596,18 +596,12 @@ class Sharedfile(ModelQueryCache, Model):
         return self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
 
     def thumbnail_url(self):
-        if options.cdn_ssl_host == "mltshp-cdn.com":
-            return "https://%s/s3/thumbnails/%s" % (options.cdn_ssl_host, self.sourcefile().thumb_key)
-        else:
-            return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-                file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
+        return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+            file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
 
     def small_thumbnail_url(self):
-        if options.cdn_ssl_host == "mltshp-cdn.com":
-            return "https://%s/s3/smalls/%s" % (options.cdn_ssl_host, self.sourcefile().small_key)
-        else:
-            return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-                file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
+        return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+            file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
 
     def type(self):
         source = sourcefile.Sourcefile.get("id = %s", self.source_id)
@@ -806,7 +800,7 @@ class Sharedfile(ModelQueryCache, Model):
             if not destination_shake.can_update(user_id):
                 return None
 
-        sf = sourcefile.Sourcefile.get_from_file(file_path, sha1_value, skip_s3=skip_s3)
+        sf = sourcefile.Sourcefile.get_from_file(file_path, sha1_value, skip_s3=skip_s3, content_type=content_type)
 
         if sf:
             shared_file = Sharedfile(user_id = user_id, name=file_name, content_type=content_type, source_id=sf.id, title=title, size=path.getsize(file_path))

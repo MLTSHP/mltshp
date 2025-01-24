@@ -176,9 +176,9 @@ class SharedFileTests(BaseAsyncTestCase):
         self.test_file2_content_type = "image/gif"
 
     def test_oembed_response_json(self):
-        with test_option("cdn_host", "cdn-service.com"):
+        with test_option("cdn_host", "cdn-service.com"), test_option("app_host", "my-mltshp.com"):
             response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-            response = self.fetch("/services/oembed?url=http%3A//mltshp.com/p/1")
+            response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1")
             j = json.loads(response.body)
             self.assertEqual(j['width'], 1)
             self.assertEqual(j['height'], 1)
@@ -191,7 +191,8 @@ class SharedFileTests(BaseAsyncTestCase):
         sharedfile = Sharedfile.get('id = %s', 1)
         file_time_stamp = int(time.mktime(sharedfile.created_at.timetuple()))
         callback = "jsonp" + str(file_time_stamp)
-        response = self.fetch("/services/oembed?url=http%3A//mltshp.com/p/1&jsoncallback=" + callback)
+        with test_option("app_host", "my-mltshp.com"):
+            response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1&jsoncallback=" + callback)
 
         j = json.loads(response.body.strip()[len(callback)+1:-1])
         self.assertEqual(j['callback'], callback)
@@ -208,7 +209,8 @@ class SharedFileTests(BaseAsyncTestCase):
         sharedfile.save()
         sharedfile = Sharedfile.get('id = %s', 1)
         file_time_stamp = int(time.mktime(sharedfile.created_at.timetuple()))
-        response = self.fetch("/services/oembed?url=http%3A//mltshp.com/p/1")
+        with test_option("app_host", "my-mltshp.com"):
+            response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1")
         j_response = json_decode(response.body)
         self.assertEqual(j_response['type'], "link")
         self.assertEqual(j_response['url'], url)
@@ -411,10 +413,17 @@ class FileUploadTests(BaseAsyncTestCase):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, "", self.xsrf)
         self.assertEqual(response.code, 403)
 
-    def test_file_upload_contents(self):
+    def test_file_upload_fastly(self):
+        options.use_fastly = True
         response = self.upload_test_file()
         response = self.fetch('/r/1', follow_redirects=False)
+        options.use_fastly = False
         self.assertTrue(response.headers['Location'].startswith("/s3/originals/ac7180f6b038d5ae4f2297989e39a900995bb8fc"))
+
+    def test_file_upload_contents(self):
+        response = self.upload_test_file()
+        response = self.fetch('/r/1')
+        self.assertTrue(response.headers['X-Accel-Redirect'].startswith("/s3/originals/ac7180f6b038d5ae4f2297989e39a900995bb8fc"))
 
     def test_uploading_file_creates_shared_shake_file(self):
         response = self.upload_test_file()

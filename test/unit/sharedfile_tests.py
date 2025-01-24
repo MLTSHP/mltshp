@@ -2,7 +2,7 @@ from lib.utilities import utcnow
 from models import Sharedfile, Sourcefile, User, Comment, Conversation, Shake, Shakesharedfile, Favorite, NSFWLog, Tag, TaggedFile
 
 from datetime import timedelta
-import os, shutil, calendar
+import os, shutil, tempfile
 
 from .base import BaseTestCase
 
@@ -356,23 +356,30 @@ class SharedfileModelTests(BaseTestCase):
 
     def test_sharedfile_from_existing_file(self):
         test_files = os.path.join(os.path.dirname(os.path.dirname(__file__)), "files")
-        file_key = Sourcefile.get_sha1_file_key(test_files + "/1.png")
-        shutil.copyfile("%s/1.png" % (test_files), "/tmp/%s" % (file_key))
+        test_file = os.path.join(test_files, "1.png")
+        file_key = Sourcefile.get_sha1_file_key(test_file)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            temp_file = os.path.join(tmpdirname, file_key)
+            shutil.copyfile(test_file, temp_file)
 
-        shared_file1 = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id,
-                                                   skip_s3=True)
-        shared_file2 = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id,
-                                                   skip_s3=True)
+            shared_file1 = Sharedfile.create_from_file(
+                temp_file, "1.png", file_key, "image/png", self.user.id, skip_s3=True)
+            shared_file2 = Sharedfile.create_from_file(
+                temp_file, "1.png", file_key, "image/png", self.user.id, skip_s3=True)
 
-        self.assertEqual(shared_file1.source_id, shared_file2.source_id)
+            self.assertEqual(shared_file1.source_id, shared_file2.source_id)
 
     def test_sharedfile_from_new_file(self):
         test_files = os.path.join(os.path.dirname(os.path.dirname(__file__)), "files")
-        file_key = Sourcefile.get_sha1_file_key(test_files + "/1.png")
-        shutil.copyfile("%s/1.png" % (test_files), "/tmp/%s" % (file_key))
-        shared_file = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id, skip_s3=True)
-        self.assertEqual(shared_file.id, 2)
-        self.assertEqual(shared_file.source_id, 2)
+        test_file = os.path.join(test_files, "1.png")
+        file_key = Sourcefile.get_sha1_file_key(test_file)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            temp_file = os.path.join(tmpdirname, file_key)
+            shutil.copyfile(test_file, temp_file)
+            shared_file = Sharedfile.create_from_file(
+                temp_file, "1.png", file_key, "image/png", self.user.id, skip_s3=True)
+            self.assertEqual(shared_file.id, 2)
+            self.assertEqual(shared_file.source_id, 2)
 
     def test_get_title(self):
         """
@@ -462,29 +469,27 @@ class SharedfileModelTests(BaseTestCase):
 
         self.assertEqual(2, len(fs))
 
-
-
-
-
-
     def test_sharedfile_saved_to_group_shake(self):
         test_files = os.path.join(os.path.dirname(os.path.dirname(__file__)), "files")
-        file_key = Sourcefile.get_sha1_file_key(test_files + "/1.png")
-        shutil.copyfile("%s/1.png" % (test_files), "/tmp/%s" % (file_key))
+        test_file = os.path.join(test_files, "1.png")
+        file_key = Sourcefile.get_sha1_file_key(test_file)
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            temp_file = os.path.join(tmpdirname, file_key)
+            shutil.copyfile(test_file, temp_file)
 
-        #create a new shake
-        group_shake = Shake(user_id=self.user.id, type='group', title='asdf', name='asdf')
-        group_shake.save()
+            # create a new shake
+            group_shake = Shake(user_id=self.user.id, type='group', title='asdf', name='asdf')
+            group_shake.save()
 
-        a_shared_file = Sharedfile.create_from_file("/tmp/%s" % (file_key),"1.png", file_key, "image/png", self.user.id, group_shake.id,
-                                                    skip_s3=True)
-        self.assertTrue(group_shake.can_update(self.user.id))
+            a_shared_file = Sharedfile.create_from_file(
+                temp_file, "1.png", file_key, "image/png", self.user.id, group_shake.id, skip_s3=True)
+            self.assertTrue(group_shake.can_update(self.user.id))
 
-        a_shared_file.add_to_shake(self.user.shake())
+            a_shared_file.add_to_shake(self.user.shake())
 
-        ssfs = Shakesharedfile.all()
-        for ssf in ssfs:
-            self.assertEqual(ssf.sharedfile_id, a_shared_file.id)
+            ssfs = Shakesharedfile.all()
+            for ssf in ssfs:
+                self.assertEqual(ssf.sharedfile_id, a_shared_file.id)
 
     def test_can_user_delete_from_shake(self):
         """
