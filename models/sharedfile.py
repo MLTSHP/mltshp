@@ -312,6 +312,7 @@ class Sharedfile(ModelQueryCache, Model):
         u = self.user()
         source = self.sourcefile()
 
+        scheme = (options.use_cdn and "https") or "http"
         json_object = {
             'user': u.as_json(),
             'nsfw' : source.nsfw_bool(),
@@ -328,7 +329,7 @@ class Sharedfile(ModelQueryCache, Model):
             'description' : self.description,
             'alt_text' : self.alt_text,
             'posted_at' : self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
-            'permalink_page' : 'https://%s/p/%s' % (options.app_host, self.share_key)
+            'permalink_page' : '%s://%s/p/%s' % (scheme, options.app_host, self.share_key)
         }
 
         if user_context:
@@ -338,7 +339,7 @@ class Sharedfile(ModelQueryCache, Model):
         if(source.type == 'link'):
             json_object['url'] = self.source_url
         else:
-            json_object['original_image_url'] = 'https://s.%s/r/%s' % (options.app_host, self.share_key)
+            json_object['original_image_url'] = '%s://s.%s/r/%s' % (scheme, options.app_host, self.share_key)
         return json_object
 
     def sourcefile(self):

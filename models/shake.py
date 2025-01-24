@@ -61,10 +61,11 @@ class Shake(ModelQueryCache, Model):
         self.save()
 
     def as_json(self, extended=False):
+        scheme = (options.use_cdn and "https") or "http"
         base_dict = {
             'id' : self.id,
             'name': self.display_name(),
-            'url': 'https://%s%s' % (options.app_host, self.path()),
+            'url': '%s://%s%s' % (scheme, options.app_host, self.path()),
             'thumbnail_url': self.thumbnail_url(),
             'description': self.description,
             'type': self.type,

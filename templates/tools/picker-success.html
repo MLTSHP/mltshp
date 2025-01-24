@@ -6,17 +6,17 @@
 
     <form id="fun-form-settings-profile" class="fun-form fun-form-stacked fun-form-border">
         <div class="field">
-            <label>Image URL (<a href="http://{{host}}/p/{{sf.share_key}}" target="_blank">Go there now</a>)</label>
+            <label>Image URL (<a href="{{app_scheme}}://{{app_host}}/p/{{sf.share_key}}" target="_blank">Go there now</a>)</label>
             <div class="field-input">
                 <input nonClick="javascript:this.focus();this.select();" type="text" class="input-text" name="bookmarklet"
-                value="http://{{host}}/p/{{sf.share_key}}">
+                value="{{app_scheme}}://{{app_host}}/p/{{sf.share_key}}">
             </div>
         </div>
         <div class="field">
             <label>Direct Image URL</label>
             <div class="field-input">
                 <input nonClick="javascript:this.focus();this.select();" type="text" class="input-text" name="bookmarklet"
-                value="http://{{host}}/r/{{sf.share_key}}">
+                value="{% if cdn_host %}https://{{cdn_host}}{% else %}{{app_scheme}}://{{app_host}}{% end %}/r/{{sf.share_key}}">
             </div>
         </div>
     </form>

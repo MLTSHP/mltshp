@@ -87,12 +87,6 @@ class UploadHandler(BaseHandler):
             raise tornado.web.HTTPError(403)
 
     def on_response(self, response):
-        #pm = postmark.PMMail(api_key=options.postmark_api_key,
-        #    sender="hello@mltshp.com", to="notifications@mltshp.com", 
-        #    subject="TWITTER RESPONSE",
-        #    text_body=str(response.__dict__))
-        #pm.send()
-
         if response.code == 200:
             j_body = tornado.escape.json_decode(response.body)
             external_service = Externalservice.get("service_id = %s and screen_name = %s", j_body['id'], j_body['screen_name'])
@@ -114,7 +108,8 @@ class UploadHandler(BaseHandler):
                 )
             media_type = self.get_argument("media_content_type").split('/')[1]
             media_type = tornado.escape.xhtml_escape(media_type)
-            self.write("<mediaurl>https://s.%s/r/%s.%s</mediaurl>" % (options.app_host, sf.share_key, media_type))
+            scheme = options.use_cdn and 'https' or 'http'
+            self.write("<mediaurl>%s://s.%s/r/%s.%s</mediaurl>" % (scheme, options.app_host, sf.share_key, media_type))
             return self.finish()
         raise tornado.web.HTTPError(403)
 
