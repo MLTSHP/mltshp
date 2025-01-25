@@ -62,35 +62,41 @@ class FileViewTests(BaseAsyncTestCase):
 
         options.use_cdn = True
         response = self.fetch('/r/1', method='GET',
-            headers={"Cookie": "sid=%s" % self.sid, "Host": "s.mltshp.com"},
+            headers={"Cookie": "sid=%s" % self.sid, "Host": "s.my-mltshp.com"},
             follow_redirects=False)
 
         options.use_cdn = False
-        self.assertEqual(response.headers['location'], 'https://mltshp-cdn.com/r/1')
+        self.assertEqual(response.headers['location'], 'https://some-cdn.com/r/1')
 
     def test_cdn_image_view_with_width(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1,
             self.test_file1_content_type, 1, self.sid, self.xsrf)
 
+        # These parameters are Fastly-specific
+        options.use_fastly = True
         options.use_cdn = True
         response = self.fetch('/r/1?width=550', method='GET',
-            headers={"Cookie": "sid=%s" % self.sid, "Host": "s.mltshp.com"},
+            headers={"Cookie": "sid=%s" % self.sid, "Host": "s.my-mltshp.com"},
             follow_redirects=False)
 
+        options.use_fastly = False
         options.use_cdn = False
-        self.assertEqual(response.headers['location'], 'https://mltshp-cdn.com/r/1?width=550&dpr=1')
+        self.assertEqual(response.headers['location'], 'https://some-cdn.com/r/1?width=550&dpr=1')
 
     def test_cdn_image_view_with_width_and_dpr(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1,
             self.test_file1_content_type, 1, self.sid, self.xsrf)
 
+        # These parameters are Fastly-specific
+        options.use_fastly = True
         options.use_cdn = True
         response = self.fetch('/r/1?width=550&dpr=2', method='GET',
-            headers={"Cookie": "sid=%s" % self.sid, "Host": "s.mltshp.com"},
+            headers={"Cookie": "sid=%s" % self.sid, "Host": "s.my-mltshp.com"},
             follow_redirects=False)
 
+        options.use_fastly = False
         options.use_cdn = False
-        self.assertEqual(response.headers['location'], 'https://mltshp-cdn.com/r/1?width=550&dpr=2')
+        self.assertEqual(response.headers['location'], 'https://some-cdn.com/r/1?width=550&dpr=2')
 
     def test_raw_image_view_counts(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1,

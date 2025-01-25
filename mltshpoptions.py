@@ -14,7 +14,7 @@ define('tornado_logging', type=bool, default=True, help="Controls Tornado loggin
 # app settings
 define('app_host', default='mltshp.com', metavar="HOST", help="Base hostname for web site")
 define('cdn_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for CDN")
-define('cdn_ssl_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for SSL CDN")
+define('use_fastly', default=False, type=bool, help="Enable for Fastly CDN support")
 define('disable_signups', type=bool, default=False, help="Are new user signups disabled")
 define('readonly', type=bool, default=False, help="Switch to enable site-wide readonly mode (disables posts, signups, etc).")
 define('show_promos', type=bool, default=True, help="Are we showing promos")

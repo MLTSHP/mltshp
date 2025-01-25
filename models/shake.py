@@ -61,10 +61,11 @@ class Shake(ModelQueryCache, Model):
         self.save()
 
     def as_json(self, extended=False):
+        scheme = (options.use_cdn and "https") or "http"
         base_dict = {
             'id' : self.id,
             'name': self.display_name(),
-            'url': 'https://%s%s' % (options.app_host, self.path()),
+            'url': '%s://%s%s' % (scheme, options.app_host, self.path()),
             'thumbnail_url': self.thumbnail_url(),
             'description': self.description,
             'type': self.type,
@@ -95,10 +96,9 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url()
         else:
             if self.image:
-                if options.app_host == "mltshp.com":
-                    return "https://%s/s3/account/%s/shake_%s.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
-                else:
-                    return "http://%s/s3/account/%s/shake_%s.jpg" % (options.cdn_host or options.app_host, self.user_id, self.name)
+                scheme = (options.use_cdn and "https") or "http"
+                host = (options.use_cdn and options.cdn_host) or options.app_host
+                return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}.jpg"
             else:
                 return None
 
@@ -106,16 +106,12 @@ class Shake(ModelQueryCache, Model):
         if self.type == 'user':
             return self.owner().profile_image_url(include_protocol=True)
         else:
+            scheme = (options.use_cdn and "https") or "http"
+            host = (options.use_cdn and options.cdn_host) or options.app_host
             if self.image:
-                if options.app_host == "mltshp.com":
-                    return "https://%s/s3/account/%s/shake_%s_small.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
-                else:
-                    return "http://%s/s3/account/%s/shake_%s_small.jpg" % (options.cdn_host or options.app_host, self.user_id, self.name)
+                return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}_small.jpg"
             else:
-                if options.app_host == "mltshp.com":
-                    return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
-                else:
-                    return "http://%s/static/images/default-icon-venti.svg" % (options.cdn_host or options.app_host)
+                return f"{scheme}://{host}/static/images/default-icon-venti.svg"
 
     def path(self):
         """

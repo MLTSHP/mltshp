@@ -7,9 +7,8 @@ settings = {}
 # Default settings for running tests; app host/cdn host are wired for
 # expected values in tests.
 test_settings = {
-    "app_host": "mltshp.com",
-    "cdn_host": "mltshp-cdn.com",
-    "cdn_ssl_host": "mltshp-cdn.com",
+    "app_host": "my-mltshp.com",
+    "cdn_host": "some-cdn.com",
     "cookie_secret": "secretz",
     "auth_secret" : "dummy-secret",
     "xsrf_cookies": True,

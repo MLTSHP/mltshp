@@ -9,7 +9,7 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url, utcnow
+from lib.utilities import base36encode, base36decode, pretty_date, s3_url, utcnow
 
 from . import user
 from . import sourcefile
@@ -312,6 +312,7 @@ class Sharedfile(ModelQueryCache, Model):
         u = self.user()
         source = self.sourcefile()
 
+        scheme = (options.use_cdn and "https") or "http"
         json_object = {
             'user': u.as_json(),
             'nsfw' : source.nsfw_bool(),
@@ -328,7 +329,7 @@ class Sharedfile(ModelQueryCache, Model):
             'description' : self.description,
             'alt_text' : self.alt_text,
             'posted_at' : self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
-            'permalink_page' : 'https://%s/p/%s' % (options.app_host, self.share_key)
+            'permalink_page' : '%s://%s/p/%s' % (scheme, options.app_host, self.share_key)
         }
 
         if user_context:
@@ -338,7 +339,7 @@ class Sharedfile(ModelQueryCache, Model):
         if(source.type == 'link'):
             json_object['url'] = self.source_url
         else:
-            json_object['original_image_url'] = 'https://s.%s/r/%s' % (options.app_host, self.share_key)
+            json_object['original_image_url'] = '%s://s.%s/r/%s' % (scheme, options.app_host, self.share_key)
         return json_object
 
     def sourcefile(self):
@@ -596,14 +597,11 @@ class Sharedfile(ModelQueryCache, Model):
         return self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
 
     def thumbnail_url(self):
-        return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+        return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
             file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
 
     def small_thumbnail_url(self):
-        """
-
-        """
-        return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+        return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
             file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
 
     def type(self):
@@ -803,7 +801,7 @@ class Sharedfile(ModelQueryCache, Model):
             if not destination_shake.can_update(user_id):
                 return None
 
-        sf = sourcefile.Sourcefile.get_from_file(file_path, sha1_value, skip_s3=skip_s3)
+        sf = sourcefile.Sourcefile.get_from_file(file_path, sha1_value, skip_s3=skip_s3, content_type=content_type)
 
         if sf:
             shared_file = Sharedfile(user_id = user_id, name=file_name, content_type=content_type, source_id=sf.id, title=title, size=path.getsize(file_path))

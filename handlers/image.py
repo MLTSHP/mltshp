@@ -8,7 +8,7 @@ from tornado.options import options
 from .base import BaseHandler, require_membership
 from models import User, Sharedfile, Comment, Shake, Externalservice
 import models
-from lib.utilities import s3_authenticated_url, uses_a_banned_phrase
+from lib.utilities import s3_url, uses_a_banned_phrase
 
 from tasks.transcode import transcode_sharedfile
 
@@ -110,14 +110,12 @@ class ShowHandler(BaseHandler):
 
         if owner_twitter_account:
             owner_twitter_account = owner_twitter_account.screen_name
-        else:
-            owner_twitter_account = 'mltshphq'
 
         image_url = "/r/%s" % (sharedfile.share_key)
         if options.debug:
             file_path =  "originals/%s" % (sourcefile.file_key)
-            image_url = s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, file_path=file_path, seconds=3600)
-        thumb_url = s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
+            image_url = s3_url(options.aws_key, options.aws_secret, options.aws_bucket, file_path=file_path, seconds=3600)
+        thumb_url = s3_url(options.aws_key, options.aws_secret, options.aws_bucket, file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
         jsonp = 'jsonp%s' % int(time.mktime(sharedfile.created_at.timetuple()))
 
         # OpenGraph recommendation for image size is 1200x630
@@ -214,10 +212,16 @@ class QuickCommentsHandler(BaseHandler):
 class ShowRawHandler(BaseHandler):
     """
     path: /r/{id}
-    this header should be sent for saving, but can't be used normally because it forces IE to download the file
-    set_header("Content-Disposition", "attachment: filename=\"%s\"" % (sharedfile.name))
-    """
 
+    Image request handler. Counts views upon hits from the "s" subdomain.
+    Issues a redirect to the CDN hostname for the same resource.
+    For a non "s" subdomain request, the "/s3" redirect (or an Nginx
+    X-Accel-Redirect when not behind Fastly) will be returned.
+
+    The Tornado app is not handling the actual image delivery; it is simply
+    doing view counting and returning redirects.
+
+    """
     def get(self, share_key, format=""):
         if not share_key:
             raise tornado.web.HTTPError(404)
@@ -226,37 +230,25 @@ class ShowRawHandler(BaseHandler):
         if not self._sharedfile:
             raise tornado.web.HTTPError(404)
 
-        # determine if we are to serve via CDN or direct from S3:
+        query = ""
+        # Pass through width and dpr query parameter if present.
+        # These are supported by Fastly for rendering variant images.
+        if options.use_fastly and self.get_argument("width", None) is not None:
+            try:
+                query += "?width=%d" % int(self.get_argument("width"))
+                query += ("&dpr=%.1f" % float(self.get_argument("dpr", "1"))).replace(".0", "")
+            except ValueError:
+                pass
+
+        # determine if we are to serve via CDN or not:
         if self.request.host == ("s.%s" % options.app_host) and options.use_cdn:
-            # s = static; serve through CDN for "s.mltshp.com" requests
-
-            # If we're using mltshp-cdn.com, we know that we can use
-            # https; if something else is configured, check the
-            # X-Forwarded-Proto header and fallback to the protocol
-            # of the request
-            using_https = options.cdn_ssl_host == "mltshp-cdn.com" or \
-                self.request.headers.get("X-Forwarded-Proto",
-                    self.request.protocol) == "https"
-
-            # construct a URL to the CDN-hosted image
-            # https://mltshp-cdn.com/r/share_key
-            if using_https:
-                cdn_url = "https://%s" % options.cdn_ssl_host
-            else:
-                cdn_url = "http://%s" % options.cdn_host
-
-            cdn_url += "/r/%s" % share_key
+            # s = static; redirect to CDN for "s.mltshp.com" response
+            # construct a URL to the CDN-hosted image, ie:
+            # https://cdn-hostname.com/r/share_key
+            cdn_url = "https://%s/r/%s" % (options.cdn_host, share_key)
             if format != "":
                 cdn_url += ".%s" % format
-
-            # Pass through width and dpr query parameter if present.
-            # These are supported by Fastly for rendering variant images.
-            if self.get_argument("width", None) is not None:
-                try:
-                    cdn_url += "?width=%d" % int(self.get_argument("width"))
-                    cdn_url += ("&dpr=%.1f" % float(self.get_argument("dpr", "1"))).replace(".0", "")
-                except ValueError:
-                    pass
+            cdn_url += query
 
             self.redirect(cdn_url)
         else:
@@ -285,18 +277,26 @@ class ShowRawHandler(BaseHandler):
             else:
                 file_path =  "originals/%s" % sourcefile.file_key
 
-            authenticated_url = s3_authenticated_url(options.aws_key, options.aws_secret,
-                options.aws_bucket, file_path=file_path, seconds=3600)
-            (uri, query) = authenticated_url.split('?')
+            # Production service uses Fastly to serve images/video. It intercepts
+            # a "/s3/*" redirect, signs it when necessary and makes the request to
+            # the B2 / S3 bucket.
+            if options.use_fastly:
+                self.set_header("Content-Type", content_type)
+                self.set_header("Surrogate-Control", "max-age=86400")
+                self.redirect(f"/s3/{file_path}{query}")
+            else:
+                # If running on another host, assume we need to sign the request locally
+                # and use Nginx X-Accel-Redirect to proxy the request.
+                authenticated_url = s3_url(options.aws_key, options.aws_secret,
+                    options.aws_bucket, file_path=file_path, seconds=3600)
+                query = ""
+                if "?" in authenticated_url:
+                    (uri, query) = authenticated_url.split('?')
+                    query = "?" + query
 
-            self.set_header("Content-Type", content_type)
-            self.set_header("Surrogate-Control", "max-age=86400")
-            self.set_header("X-Accel-Redirect", "/s3/%s?%s" % (file_path, query))
-
-            # We already counted the request made to s.mltshp.com/r/ when
-            # we redirected to the CDN, so don't count the view a second time.
-            if options.use_cdn:
-                self._sharedfile = None
+                self.set_header("Content-Type", content_type)
+                self.set_header("Surrogate-Control", "max-age=86400")
+                self.set_header("X-Accel-Redirect", f"/s3/{file_path}{query}")
 
     def on_finish(self):
         """
@@ -304,8 +304,11 @@ class ShowRawHandler(BaseHandler):
         log the view to the fileview table.
 
         """
-        if not hasattr(self, "_sharedfile"):
+        # only count views if we are on the s.mltshp.com host
+        if self.request.host == ("s.%s" % options.app_host):
             return
+
+        # Abort if the s.mltshp.com/r/ABCD request didn't resolve to a file
         if self._sharedfile is None:
             return
 

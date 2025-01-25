@@ -111,7 +111,7 @@ class Sourcefile(ModelQueryCache, Model):
         return h.hexdigest()
 
     @staticmethod
-    def get_from_file(file_path, sha1_value, type='image', skip_s3=None):
+    def get_from_file(file_path, sha1_value, type='image', skip_s3=None, content_type=None):
         existing_source_file = Sourcefile.get("file_key = %s", sha1_value)
         thumb_cstr = io.BytesIO()
         small_cstr = io.BytesIO()
@@ -155,6 +155,9 @@ class Sourcefile(ModelQueryCache, Model):
                 bucket.upload_file(
                     file_path,
                     "originals/%s" % sha1_value,
+                    ExtraArgs={
+                        "ContentType": content_type,
+                    },
                 )
 
             # save thumbnail

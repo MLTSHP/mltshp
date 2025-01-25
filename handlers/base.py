@@ -1,5 +1,6 @@
 import time
 from functools import wraps
+import re
 
 import tornado.web
 from tornado.options import define, options
@@ -39,19 +40,6 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         self.db = self.application.db
         self.start_time = time.time()
 
-        # configure static hostname for static assets
-        if options.use_cdn:
-            # If we're using mltshp-cdn.com, we know that we can use
-            # https; if something else is configured, check the
-            # X-Forwarded-Proto header and fallback to the protocol
-            # of the request
-            using_https = options.cdn_ssl_host == "mltshp-cdn.com" or \
-                self.request.headers.get("X-Forwarded-Proto",
-                    self.request.protocol) == "https"
-            self.settings['static_url_prefix'] = "%s://%s/static/" % \
-                (using_https and "https" or "http",
-                 using_https and options.cdn_ssl_host or options.cdn_host)
-
         super(BaseHandler, self).initialize()
 
     def finish(self, chunk=None):
@@ -80,8 +68,9 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         current_user_object = self.get_current_user_object()
         kwargs['errors'] = self._errors
         kwargs['settings'] = self.settings
-        kwargs['host'] = self.request.host
-        kwargs['cdn_host'] = options.cdn_host or self.request.host
+        kwargs['app_host'] = options.app_host or self.request.host
+        kwargs['app_scheme'] = (options.use_cdn and options.cdn_host and "https") or "http"
+        kwargs['cdn_host'] = options.cdn_host
         kwargs['current_user_object'] = current_user_object
         kwargs['site_is_readonly'] = options.readonly == 1
         kwargs['disable_signups'] = options.disable_signups == 1
@@ -109,15 +98,16 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         sid = {'id':user.id, 'name':user.name}
         # 2^31-1 = 2147483647, the maximum time for an cookie expiration in 32bit;
         # Tue, 19 Jan 2038 03:14:07 GMT
-        self.set_secure_cookie(SESSION_COOKIE, tornado.escape.json_encode(sid),
-            expires=2147483647, domain="." + options.app_host)
+        self.set_secure_cookie(
+            SESSION_COOKIE, tornado.escape.json_encode(sid),
+            expires=2147483647, domain=re.sub(":\\d+", "", options.app_host))
 
     def log_out(self):
         """
         Clears out any session keys.
          sid stores a dict representing user.
         """
-        self.clear_cookie(SESSION_COOKIE, domain="." + options.app_host)
+        self.clear_cookie(SESSION_COOKIE, domain=re.sub(":\\d+", "", options.app_host))
 
     def write_error(self, status_code, **kwargs):
         if status_code == 404:

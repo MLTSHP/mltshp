@@ -77,24 +77,31 @@ def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
         file_path, signature)
 
 
-def s3_url(file_path):
+def s3_url(s3_key, s3_secret, bucket_name=None, file_path=None, seconds=3600):
     """
-    Return S3 authenticated URL sans network access or phatty dependencies like boto.
-    """
-    assert file_path
+    Returns a URL for the given bucket and file path. If the server is running
+    in production and using Fastly, then we can side-step signing, since
+    the CDN does that for us. If we're running in debug mode, or if the file
+    path is for the "accounts" set of files, no need to sgin for these either,
+    since we're either using FakeS3 or the files are public.
 
-    port = ""
-    host = "s3.amazonaws.com"
-    if (not options.aws_host or options.aws_host == host) or options.aws_port == 443:
-        url_prefix = 'https://'
+    """
+    needs_signed_url = False
+    if options.use_fastly:
+        needs_signed_url = False
+    elif options.debug:
+        needs_signed_url = False
+    elif file_path.startswith("account/"): # these are public
+        needs_signed_url = False
+    elif options.aws_host == "s3.amazonaws.com":
+        # We use a private bucket for (non account images) on AWS
+        needs_signed_url = True
+    if needs_signed_url:
+        return s3_authenticated_url(s3_key, s3_secret, bucket_name, file_path, seconds)
     else:
-        host = options.aws_host
-        url_prefix = 'http://'
-        if options.aws_port:
-            port = ":%d" % options.aws_port
-
-    return "%s%s.%s%s/%s" % (
-        url_prefix, options.aws_bucket, options.aws_host, port, file_path)
+        scheme = options.use_cdn and "https" or "http"
+        host = (options.use_cdn and options.cdn_host) or options.app_host
+        return f"{scheme}://{host}/s3/{file_path}"
 
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):

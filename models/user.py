@@ -11,7 +11,7 @@ from lib.s3 import S3Bucket
 import postmark
 from tornado.options import define, options
 
-from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail, utcnow
+from lib.utilities import email_re, transform_to_square_thumbnail, utcnow
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
@@ -204,23 +204,6 @@ hello@mltshp.com
                 text_body=body)
             pm.send()
 
-    def sharedimages(self):
-        """
-        This is a bit of a hack, but I wanted it in the model so I could fix it up later.
-        This simply pulls all the shared images and adds one new field,
-        which is a signed url to the amazon s3 thumbnail rather than through the server.
-        Does not include deleted images.
-        """
-        images = self.connection.query("SELECT sf.id, sf.title, sf.name, sf.share_key, src.file_key, \
-            src.thumb_key FROM sharedfile as sf, sourcefile as src \
-            WHERE src.id = sf.source_id AND sf.user_id = %s and sf.deleted = 0 ORDER BY sf.created_at DESC limit 3", self.id)
-        for image in images:
-            file_path = "thumbnails/%s" % (image['thumb_key'])
-            authenticated_url = s3_authenticated_url(options.aws_key, options.aws_secret, \
-                bucket_name=options.aws_bucket, file_path=file_path)
-            image['thumbnail_url'] = authenticated_url
-        return images
-
     def set_profile_image(self, file_path, file_name, content_type, skip_s3=False):
         """
         Takes a local path, name and content-type, which are parameters passed in by
@@ -251,37 +234,25 @@ hello@mltshp.com
 
     def profile_image_url(self, include_protocol=False):
         protocol = ''
+        host = (options.use_cdn and options.cdn_host) or options.app_host
+        if include_protocol:
+            protocol = (options.use_cdn and 'https:') or 'http:'
         if self.profile_image:
-            host = options.app_host
+            # For mltshp.com, we point to the CDN directly for profile images
+            # For other environments, use the /s3 alias that resolves by nginx routing.
             if options.app_host == 'mltshp.com':
-                host = options.cdn_ssl_host
-            else:
-                host = options.use_cdn and options.cdn_host or host
-            if include_protocol:
-                if options.app_host == 'mltshp.com':
-                    protocol = 'https:'
-                else:
-                    protocol = 'http:'
-            if options.app_host == 'mltshp.com':
-                aws_url = "%s//%s/s3" % (protocol, host)
+                aws_url = f"{protocol}//{host}/s3"
             else:
                 # must be running for development. use the /s3 alias
                 aws_url = "/s3"
-            return "%s/account/%s/profile.jpg" % (aws_url, self.id)
+            return f"{aws_url}/account/{self.id}/profile.jpg"
         else:
-            if include_protocol:
-                if options.app_host == 'mltshp.com':
-                    return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
-                elif options.use_cdn and options.cdn_host:
-                    return "http://%s/static/images/default-icon-venti.svg" % options.cdn_host
-            return "/static/images/default-icon-venti.svg"
+            return f"{protocol}//{host}/static/images/default-icon-venti.svg"
 
     def sharedfiles(self, page=1, per_page=10):
         """
         Shared files, paginated.
         """
-        limit_start = (page-1) * per_page
-        #return Sharedfile.where("user_id = %s and deleted=0 order by id desc limit %s, %s ", self.id, int(limit_start), per_page)
         user_shake = self.shake()
         return user_shake.sharedfiles(page=page, per_page=per_page)
 
@@ -289,7 +260,6 @@ hello@mltshp.com
         """
         Count of all of a user's saved sharedfiles, excluding deleted.
         """
-        #return Sharedfile.where_count("user_id = %s and deleted=0", self.id)
         user_shake = self.shake()
         return user_shake.sharedfiles_count()
 
