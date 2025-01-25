@@ -100,14 +100,14 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         # Tue, 19 Jan 2038 03:14:07 GMT
         self.set_secure_cookie(
             SESSION_COOKIE, tornado.escape.json_encode(sid),
-            expires=2147483647, domain=re.sub(":\d+", "", options.app_host))
+            expires=2147483647, domain=re.sub(":\\d+", "", options.app_host))
 
     def log_out(self):
         """
         Clears out any session keys.
          sid stores a dict representing user.
         """
-        self.clear_cookie(SESSION_COOKIE, domain=re.sub(":\d+", "", options.app_host))
+        self.clear_cookie(SESSION_COOKIE, domain=re.sub(":\\d+", "", options.app_host))
 
     def write_error(self, status_code, **kwargs):
         if status_code == 404:
