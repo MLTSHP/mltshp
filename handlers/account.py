@@ -929,7 +929,7 @@ class MembershipHandler(BaseHandler):
         stripe_customer_id = current_user.stripe_customer_id
         if stripe_customer_id is not None:
             try:
-                customer = stripe.Customer.retrieve(stripe_customer_id)
+                customer = stripe.Customer.retrieve(stripe_customer_id, expand=["subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and getattr(customer, "deleted", False):
@@ -1109,7 +1109,7 @@ class PaymentCancelHandler(BaseHandler):
         user = self.get_current_user_object()
         if user.stripe_customer_id:
             try:
-                customer = stripe.Customer.retrieve(user.stripe_customer_id)
+                customer = stripe.Customer.retrieve(user.stripe_customer_id, expand=["subscriptions"])
                 if customer and customer.subscriptions.total_count > 0:
                     subscription = customer.subscriptions.data[0]
                     if subscription:
