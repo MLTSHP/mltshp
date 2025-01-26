@@ -15,7 +15,7 @@ echo "--- Pulling base Docker image"
     docker tag mltshp/mltshp-web:build-${BUILDKITE_BUILD_NUMBER} mltshp/mltshp-web:latest
 
 echo "--- Launching Docker containers"
-    docker compose -f .buildkite/docker-compose.yml up -d --build
+    docker compose -f .buildkite/docker-compose.yml up -d
 
 echo "~~~ Waiting for containers to start"
     #wait_for localhost 3306
