@@ -619,6 +619,8 @@ hello@mltshp.com
 
         users_and_shakes = User.query(select)
 
+        scheme = (options.use_cdn and "https") or "http"
+
         us_list = []
         for us in users_and_shakes:
             this_follow = {}
@@ -629,14 +631,14 @@ hello@mltshp.com
                 this_follow['name'] = us['user_name']
                 this_follow['type'] = 'user'
                 if us['user_image']:
-                    this_follow['image'] = "%s/s3/account/%s/profile.jpg" % (options.cdn_host or options.app_host, us['user_id'])
+                    this_follow['image'] = "%s://%s/s3/account/%s/profile.jpg" % (scheme, options.cdn_host or options.app_host, us['user_id'])
             else:
                 this_follow['id'] = us['shake_id']
                 this_follow['path'] = '/%s' % (us['shake_name'])
                 this_follow['name'] = us['shake_name']
                 this_follow['type'] = 'shake'
                 if us['shake_image']:
-                    this_follow['image'] = "%s/s3/account/%s/shake_%s.jpg" % (options.cdn_host or options.app_host, us['user_id'], us['shake_name'])
+                    this_follow['image'] = "%s://%s/s3/account/%s/shake_%s.jpg" % (scheme, options.cdn_host or options.app_host, us['user_id'], us['shake_name'])
 
             us_list.append(this_follow)
         return us_list
