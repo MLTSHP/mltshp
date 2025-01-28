@@ -2,6 +2,9 @@
   <ol class="admin-nav">
   <!-- <li><a href="/admin/interesting-stats">interesting stats</a></li> -->
   <!-- <li><a href="/admin/waitlist">waitlist</a></li> -->
+    {% if is_superuser %}
+    <li><a href="/admin/image-takedown">image takedown</a></li>
+    {% end %}
     <li><a href="/admin/create-users">create users</a></li>
     <li><a href="/admin/nsfw-users">nsfw users</a></li>
     <li><a href="/admin/new-users">new users</a></li>

@@ -240,11 +240,7 @@ hello@mltshp.com
         if self.profile_image:
             # For mltshp.com, we point to the CDN directly for profile images
             # For other environments, use the /s3 alias that resolves by nginx routing.
-            if options.app_host == 'mltshp.com':
-                aws_url = f"{protocol}//{host}/s3"
-            else:
-                # must be running for development. use the /s3 alias
-                aws_url = "/s3"
+            aws_url = f"{protocol}//{host}/s3"
             return f"{aws_url}/account/{self.id}/profile.jpg"
         else:
             return f"{protocol}//{host}/static/images/default-icon-venti.svg"

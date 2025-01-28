@@ -440,6 +440,18 @@ CREATE TABLE `migration_state` (
     `is_migrated` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `dmca_takedown` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `share_key` varchar(40) NOT NULL,
+    `source_id` int NOT NULL,
+    `comment` text,
+    `updated_at` datetime DEFAULT NULL,
+    `created_at` datetime DEFAULT NULL,
+    `processed` tinyint DEFAULT '0',
+    `admin_user_id` int unsigned DEFAULT '0',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `_yoyo_migration` (
     `id` varchar(255) NOT NULL,
     `ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

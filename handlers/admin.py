@@ -5,7 +5,8 @@ import tornado.web
 import postmark
 
 from .base import BaseHandler
-from models import Sharedfile, User, Shake, Shakesharedfile, Invitation, Waitlist, ShakeCategory
+from models import Sharedfile, User, Shake, Invitation, Waitlist, ShakeCategory, \
+    DmcaTakedown, Comment
 from lib.utilities import send_slack_notification
 
 
@@ -16,6 +17,11 @@ class AdminBaseHandler(BaseHandler):
             raise tornado.web.HTTPError(403)
         else:
             self.admin_user = current_user
+
+    def render_string(self, template_name, **kwargs):
+        kwargs['is_superuser'] = self.admin_user.is_superuser()
+        kwargs['is_moderator'] = self.admin_user.is_moderator()
+        return super(AdminBaseHandler, self).render_string(template_name, **kwargs)
 
 
 class NewUsers(AdminBaseHandler):
@@ -66,6 +72,61 @@ class NSFWUserHandler(AdminBaseHandler):
 
         return self.render("admin/nsfw-users.html", users=users[:20],
             previous_link=prev_link, next_link=next_link)
+
+
+class ImageTakedownHandler(AdminBaseHandler):
+    @tornado.web.authenticated
+    def get(self):
+        if not self.admin_user.is_superuser():
+            return self.redirect('/admin')
+
+        return self.render(
+            "admin/image-takedown.html",
+            share_key="",
+            confirm_step=False,
+            sharedfile=None,
+            comment="",
+            canceled=self.get_argument('canceled', "0") == "1",
+            deleted=self.get_argument('deleted', "0") == "1")
+
+    @tornado.web.authenticated
+    def post(self):
+        if not self.admin_user.is_superuser():
+            return self.redirect('/admin')
+
+        cancel = self.get_argument('cancel', None)
+        if cancel:
+            return self.redirect("/admin/image-takedown?canceled=1")
+
+        share_key = self.get_argument("share_key", None)
+        comment = self.get_argument("comment", "")
+        confirmation = self.get_argument('confirm', None) == "1"
+        sharedfile = share_key and Sharedfile.get("share_key=%s AND deleted=0", share_key) or None
+
+        if sharedfile and confirmation:
+            DmcaTakedown.takedown_image(share_key=share_key, admin_user_id=self.admin_user.id, comment=comment)
+            return self.redirect("/admin/image-takedown?deleted=1")
+        else:
+            confirm_step = bool(sharedfile)
+            if not sharedfile:
+                self.add_error('share_key', "That share key does not exist.")
+                total_instances = 0
+                comment_count = 0
+            else:
+                sharedfiles = Sharedfile.where("source_id=%s and deleted=0", sharedfile.source_id)
+                total_instances = len(sharedfiles)
+                sharedfile_ids = [sf.id for sf in sharedfiles]
+                comment_count = Comment.where_count("sharedfile_id IN %s and deleted=0", sharedfile_ids)
+            return self.render(
+                "admin/image-takedown.html",
+                share_key=share_key or "",
+                comment=comment or "",
+                canceled=False,
+                deleted=False,
+                total_instances=total_instances,
+                comment_count=comment_count,
+                confirm_step=confirm_step,
+                sharedfile=sharedfile)
 
 
 class InterestingStatsHandler(AdminBaseHandler):
