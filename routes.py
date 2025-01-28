@@ -213,6 +213,7 @@ routes = [
     (r"/popular/([\d]+)", handlers.popular.IndexHandler),
 
     (r"/admin/?", handlers.admin.IndexHandler),
+    (r"/admin/image-takedown", handlers.admin.ImageTakedownHandler),
     (r"/admin/create-users", handlers.admin.CreateUsersHandler),
     (r"/admin/interesting-stats", handlers.admin.InterestingStatsHandler),
     (r"/admin/waitlist", handlers.admin.WaitlistHandler),
