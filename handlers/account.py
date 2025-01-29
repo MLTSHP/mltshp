@@ -954,6 +954,7 @@ class MembershipHandler(BaseHandler):
                 if token_id is not None:
                     customer.source = token_id
                     customer.save()
+                    customer = stripe.Customer.retrieve(customer.id, expand=["subscriptions"])
 
             # if this works, we should have a customer with 1 subscription, this one
             if customer.subscriptions.total_count > 0:
