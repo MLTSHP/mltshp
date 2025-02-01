@@ -2,6 +2,7 @@
 
 import unittest
 import logging
+import re
 
 from torndb import Connection
 from tornado.options import options
@@ -82,14 +83,15 @@ if __name__ == '__main__':
     import tornado.testing
     db = Connection(options.database_host, 'mysql', options.database_user, options.database_password)
     try:
-        db.execute("CREATE database %s" % options.database_name)
+        db.execute("DROP DATABASE IF EXISTS %s" % options.database_name)
+        db.execute("CREATE DATABASE %s" % options.database_name)
     except MySQLdb.ProgrammingError as exc:
         if exc.args[0] != 1007:  # database already exists
             raise
     else:
+        db.execute("USE %s" % options.database_name)
         with open("setup/db-install.sql") as f:
             load_query = f.read()
-        db.execute("USE %s" % options.database_name)
         statements = load_query.split(";")
         for statement in statements:
             # Utilize in-memory tables for faster tests.
@@ -98,8 +100,9 @@ if __name__ == '__main__':
             # skip this for create statements definining "text" columns,
             # since those aren't compatible with in-memory tables.
             cmd = statement.strip()
-            if " TEXT," not in statement.upper():
-                cmd = statement.replace("InnoDB", "MEMORY")
             if cmd != "":
+                cmd = re.sub("^.+FULLTEXT KEY.+$", "", cmd, flags=re.M+re.I)
+                cmd = cmd.replace(" text,", " varchar(4000),")
+                cmd = cmd.replace("InnoDB", "MEMORY")
                 db.execute(cmd)
     tornado.testing.main()

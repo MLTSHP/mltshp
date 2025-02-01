@@ -3,6 +3,7 @@ from lib.flyingcow import register_connection
 from tornado.options import options
 import string
 import random
+import re
 
 import logging
 
@@ -14,7 +15,7 @@ class BaseTestCase(unittest.TestCase):
         super(BaseTestCase, self).__init__(*args, **kwargs)
         self.db = register_connection(
             host=options.database_host,
-            name=options.database_name,
+            name="mysql",
             user=options.database_user,
             password=options.database_password,
             charset="utf8mb4")
@@ -23,21 +24,14 @@ class BaseTestCase(unittest.TestCase):
         super(BaseTestCase, self).setUp()
         if options.database_name != "mltshp_testing":
             raise Exception("Invalid database name for unit tests")
-        self.create_database()
+        self.reset_database()
 
-    def create_database(self):
-        # logger.info("Creating database from BaseTestCase...")
-        self.db.execute("DROP database IF EXISTS %s" % (options.database_name))
-        self.db.execute("CREATE database %s" % (options.database_name))
+    def reset_database(self):
         self.db.execute("USE %s" % (options.database_name))
-        f = open("setup/db-install.sql")
-        load_query = f.read()
-        f.close()
-        statements = load_query.split(";")
-        for statement in statements:
-            if statement.strip() != "":
-                self.db.execute(statement.strip())
-        
+        with open("setup/db-truncate.sql") as f:
+            query = f.read()
+        self.db.execute(query)
+
     def generate_string_of_len(self, length):
         return ''.join(random.choice(string.ascii_letters) for i in range(length))
     

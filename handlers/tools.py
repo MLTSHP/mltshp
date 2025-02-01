@@ -142,9 +142,8 @@ class PickerPopupHandler(BaseHandler):
         user = self.get_current_user()
         try:
             logger.debug("Writing file %s/%s" % (options.uploaded_files, sha1_file_key))
-            fh = open("%s/%s" % (options.uploaded_files, sha1_file_key), 'wb')
-            fh.write(response.body)
-            fh.close()
+            with open("%s/%s" % (options.uploaded_files, sha1_file_key), 'wb') as fh:
+                fh.write(response.body)
         except Exception as e:
             logger.error("Error saving file %s/%s" % (options.uploaded_files, sha1_file_key))
             raise tornado.web.HTTPError(500)
@@ -355,9 +354,8 @@ class SaveVideoHandler(BaseHandler):
 
         sha1_key = Sourcefile.get_sha1_file_key(file_path=None, file_data=url)
         thumbnail_path = "%s/%s" % (options.uploaded_files, sha1_key)
-        fh = open(thumbnail_path, 'wb')
-        fh.write(response.body)
-        fh.close()
+        with open(thumbnail_path, 'wb') as fh:
+            fh.write(response.body)
         source_file = Sourcefile.create_from_json_oembed(
             link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path,
             skip_s3=self.get_argument('skip_s3', None))
