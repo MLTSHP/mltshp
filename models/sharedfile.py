@@ -600,21 +600,23 @@ class Sharedfile(ModelQueryCache, Model):
         # If we are running on Fastly, then we can use the Image Optimizer to
         # resize a given image. Thumbnail size is 100x100. This size is used
         # for the conversations page.
-        if options.use_fastly:
+        sourcefile = self.sourcefile()
+        if sourcefile.type == 'image' and options.use_fastly:
             return f"https://{options.cdn_host}/r/{self.share_key}?width=100"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-                file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
+                file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
 
     def small_thumbnail_url(self):
         # If we are running on Fastly, then we can use the Image Optimizer to
         # resize a given image. Small thumbnails are 240x184 at most. This size is
         # currently only used within the admin UI.
-        if options.use_fastly:
+        sourcefile = self.sourcefile()
+        if sourcefile.type == 'image' and options.use_fastly:
             return f"https://{options.cdn_host}/r/{self.share_key}?width=240&height=184&fit=bounds"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-                file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
+                file_path="smalls/%s" % (sourcefile.small_key), seconds=3600)
 
     def type(self):
         source = sourcefile.Sourcefile.get("id = %s", self.source_id)
