@@ -601,7 +601,15 @@ class Sharedfile(ModelQueryCache, Model):
         # resize a given image. Thumbnail size is 100x100. This size is used
         # for the conversations page.
         sourcefile = self.sourcefile()
-        if sourcefile.type == 'image' and options.use_fastly:
+        size = 0
+        if self.type == 'image':
+            if self.original_id > 0:
+                original = self.original()
+                size = original.size
+            else:
+                size = self.size
+        # Fastly I/O won't process images > 50mb, so condition for that
+        if sourcefile.type == 'image' and options.use_fastly and size < 50_000_000:
             return f"https://{options.cdn_host}/r/{self.share_key}?width=100"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
@@ -612,7 +620,15 @@ class Sharedfile(ModelQueryCache, Model):
         # resize a given image. Small thumbnails are 240x184 at most. This size is
         # currently only used within the admin UI.
         sourcefile = self.sourcefile()
-        if sourcefile.type == 'image' and options.use_fastly:
+        size = 0
+        if self.type == 'image':
+            if self.original_id > 0:
+                original = self.original()
+                size = original.size
+            else:
+                size = self.size
+        # Fastly I/O won't process images > 50mb, so condition for that
+        if sourcefile.type == 'image' and options.use_fastly and size < 50_000_000:
             return f"https://{options.cdn_host}/r/{self.share_key}?width=240&height=184&fit=bounds"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
