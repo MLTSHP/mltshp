@@ -23,7 +23,12 @@
     <div class="body">
       {% for conversation in conversations %}
         <div class="conversation">
-          <a class="thumb" href="/p/{{conversation['sharedfile'].share_key}}"><img src="{{ conversation['sharedfile'].thumbnail_url() }}"></a>
+          <a class="thumb" href="/p/{{conversation['sharedfile'].share_key}}">
+            <img src="{{ conversation['sharedfile'].thumbnail_url() }}"
+              loading="lazy"
+              decoding="async"
+              alt="{{ escape(conversation['sharedfile'].get_alt_text(raw=True) or 'No alt provided') }}">
+          </a>
           <div class="details-wrapper">
             <h3 class="sharedfile-title">{{ escape(conversation['sharedfile'].get_title()) }}</h3>
             <p class="sharedfile-description">
@@ -41,7 +46,7 @@
                     <div class="meta">
                         <a href="/user/{{comment.user().name}}" class="user-name">{{comment.user().name}}</a>
                         <span class="created-at">
-                            <time datetime="{{comment.created_at}}" title="{{comment.feed_date()}}">{{comment.pretty_created_at()}}</time>
+                          <time datetime="{{comment.created_at}}" title="{{comment.feed_date()}}">{{comment.pretty_created_at()}}</time>
                         </span>
                     </div>
                     {{comment.body_formatted()}}
