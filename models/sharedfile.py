@@ -709,18 +709,19 @@ class Sharedfile(ModelQueryCache, Model):
 
         select_args = []
         if q is not None:
-            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
+            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description, sharedfile.alt_text) AGAINST (%s IN BOOLEAN MODE)"
             select_args.append(q)
 
-        select = """SELECT sharedfile.*, favorite.id as favorite_id FROM sharedfile
-                    left join favorite
-                    on favorite.sharedfile_id = sharedfile.id
-                    WHERE favorite.user_id = %s
-                    AND favorite.deleted = 0
-                    AND sharedfile.deleted = 0
-                    %s
-                    GROUP BY sharedfile.source_id
-                    ORDER BY favorite.id %s limit 0, %s""" % (int(user_id), constraint_sql, order, per_page)
+        # The `GROUP BY source_id`` constrains the result so it is only returning a single row
+        # per source_id. MySQL server cannot have ONLY_FULL_GROUP_BY present in sql_mode
+        # to allow this query.
+        select = """SELECT sharedfile.*, favorite.id as favorite_id
+        	FROM favorite
+	        JOIN sharedfile on sharedfile.id = favorite.sharedfile_id and sharedfile.deleted = 0
+            WHERE favorite.user_id = %s and favorite.deleted = 0
+            %s
+            GROUP BY sharedfile.source_id
+            ORDER BY favorite.id %s limit 0, %s"""  % (int(user_id), constraint_sql, order, per_page)
         files = self.object_query(select, *select_args)
         if order == "asc":
             files.reverse()

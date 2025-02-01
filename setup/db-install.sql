@@ -110,7 +110,8 @@ CREATE TABLE `externalservice` (
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_type_idx` (`user_id`, `type`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `favorite` (
@@ -122,7 +123,8 @@ CREATE TABLE `favorite` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sharedfile_id_user_id_unique_idx` (`sharedfile_id`,`user_id`),
-  KEY `sharedfile_id_deleted_idx` (`sharedfile_id`,`deleted`) USING BTREE
+  KEY `sharedfile_id_deleted_idx` (`sharedfile_id`,`deleted`) USING BTREE,
+  KEY `user_id_idx` (`user_id`, `id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `shake` (
@@ -140,7 +142,8 @@ CREATE TABLE `shake` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id_type_idx` (`user_id`, `type`) USING BTREE
+  KEY `user_id_type_idx` (`user_id`, `type`) USING BTREE,
+  KEY `name_idx` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `subscription` (
@@ -151,7 +154,8 @@ CREATE TABLE `subscription` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_id_shake_id_idx` (`user_id`,`shake_id`)
+  UNIQUE KEY `user_id_shake_id_idx` (`user_id`,`shake_id`),
+  KEY `shake_idx` (`shake_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `shakesharedfile` (
@@ -408,7 +412,9 @@ CREATE TABLE `tagged_file` (
   `sharedfile_id` int(11) DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `sharedfile_id_idx` (`sharedfile_id`) USING BTREE,
+  KEY `tag_id_idx` (`tag_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `promotion` (
