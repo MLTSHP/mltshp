@@ -602,7 +602,7 @@ class Sharedfile(ModelQueryCache, Model):
         # for the conversations page.
         sourcefile = self.sourcefile()
         size = 0
-        if self.type == 'image':
+        if sourcefile.type == 'image':
             if self.original_id > 0:
                 original = self.original()
                 size = original.size
@@ -621,7 +621,7 @@ class Sharedfile(ModelQueryCache, Model):
         # currently only used within the admin UI.
         sourcefile = self.sourcefile()
         size = 0
-        if self.type == 'image':
+        if sourcefile.type == 'image':
             if self.original_id > 0:
                 original = self.original()
                 size = original.size
