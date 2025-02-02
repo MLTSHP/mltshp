@@ -23,13 +23,13 @@ class PaymentTests(test.base.BaseAsyncTestCase):
 
     def test_no_subscription_sees_subscription_button(self):
         response = self.fetch_url("/account/settings")
-        self.assertTrue(response.body.find('You are currently using a free account.') > -1)
+        self.assertIn('You are currently using a free account.', response.body)
 
     def test_subscriber_sees_subscription(self):
         self.user.is_paid = 1
         self.user.save()
         response = self.fetch_url('/account/settings')
-        self.assertTrue(response.body.find('Your recent payment history:') > -1)
+        self.assertIn('Your recent payment history:', response.body)
 
     def test_subcription_webhook_sets_paid_status(self):
         self.user.stripe_customer_id = "cus_AHgKQnggJErzEA"
@@ -116,7 +116,7 @@ class PaymentTests(test.base.BaseAsyncTestCase):
         }
         """
         response = self.fetch("/webhooks/stripe", method="POST", body=body)
-        self.assertEquals(response.body, "OK")
+        self.assertEqual(response.body, "OK".encode("ascii"))
 
         user = User.get(self.user.id)
         self.assertEqual(user.is_paid, 1)

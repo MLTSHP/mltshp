@@ -1,11 +1,10 @@
-from datetime import datetime
-
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
 
-import shake
-import user
-import post
+from . import shake
+from . import user
+from . import post
 
 
 class Subscription(Model):
@@ -30,8 +29,8 @@ class Subscription(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def on_create(self):
         sub_shake = shake.Shake.get('id=%s and deleted=0', self.shake_id)

@@ -1,0 +1,132 @@
+{%extends "base.html" %}
+
+{% block title %}Image Takedown{% end %}
+
+{% block included_headers %}
+<style type="text/css">
+.alert--success {
+    background-color: var(--color-bg-success-pastel);
+    color: var(--color-text-light-emphasis);
+}
+</style>
+{% end %}
+
+{% block included_scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#takedown-confirm-btn').click(function(e) {
+        e.preventDefault();
+        $('#confirm-field').val('1');
+        $('#takedown-form').submit();
+    });
+    $('#takedown-cancel-btn').click(function(e) {
+        e.preventDefault();
+        $('#cancel-field').val('1');
+        $('#takedown-form').submit();
+    });
+});
+</script>
+{% end %}
+
+{% block main %}
+<div class="content content-with-sidebar admin-new-users admin-image-takedown">
+    {% include "admin/_sidebar.html" %}
+
+    <div class="body">
+        <h1>Image Takedown</h1>
+
+        {% if canceled %}
+        <div class="alert alert--warning">
+            <strong>Canceled!</strong>
+            Whew, that was scary.
+        </div>
+        {% end %}
+
+        {% if deleted %}
+        <div class="alert alert--success">
+            <strong>Great success!</strong>
+            That image has been obliterated, and <em>GOOD RIDDANCE I SAY!</em>
+        </div>
+        {% end %}
+
+        {% if errors %}
+          <p class="fun-form-errors"><strong>Can’t proceed...</strong> You'll need to change a couple of things.</p>
+        {% end %}
+
+        <form class="fun-form fun-form-stacked" method="POST" action="/admin/image-takedown" id="takedown-form">
+            {{ xsrf_form_html() }}
+            <input id="cancel-field" name="cancel" type="hidden" value="" />
+            <input id="confirm-field" name="confirm" type="hidden" value="" />
+
+            <p>
+            This will take down a specific image from the site by share key. It will find
+            all other instances of this same image that have been saved to other shakes, etc.
+            and remove those as well. A notification will be sent to users who have had this
+            post removed to inform them of the takedown.
+            </p>
+
+            <div class="field field-prefix">
+                <label>Share key</label>
+                <span class="name-prefix">https://mltshp.com/p/</span>
+                <div class="field-input">
+                    <input class="input-text" type="text" size="10" required name="share_key" minlength="1" pattern="[0-9a-zA-Z]+" autocapitalize="characters" spellcheck="false" autocorrect="off" value="{{ share_key }}"{% if confirm_step %} readonly{% end %}>
+                    {% if errors.share_key %}
+                    <div class="error">
+                        <span class="error-text">
+                            {{ errors.share_key }}
+                        </span>
+                    </div>
+                    {% end %}
+                </div>
+                <div class="field-help">
+                    The part of the URL after <code>/p/</code> or <code>/r/</code>.
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Comment</label>
+                <div class="field-input">
+                    <textarea rows="2" name="comment"{% if confirm_step %} readonly{% end %}>{{ comment }}</textarea>
+                    {% if errors.comment %}
+                    <div class="error">
+                        <span class="error-text">
+                            {{ errors.comment }}
+                        </span>
+                    </div>
+                    {% end %}
+                </div>
+                <div class="field-help">
+                    Any final words you would like to impart.
+                </div>
+            </div>
+
+            {% if confirm_step %}
+            <hr>
+            <div class="field">
+                <div class="alert alert--danger">
+                    <strong>Is this the one?</strong>
+                    Click the Takedown button to confirm this deletion and all references to it.
+                </div>
+
+                {{modules.Image(sharedfile, list_view=True)}}
+                <div class="meta-data">
+                    <h4>Instances of this image</h4>
+                    <p>{{ total_instances }}</p>
+                    <h4>Number of comments affected</h4>
+                    <p>{{ comment_count }}</p>
+                </div>
+            </div>
+
+            {% end %}
+            <div class="field">
+                {% if confirm_step %}
+                <button id="takedown-confirm-btn" class="btn btn-danger btn-shadow" type="button">Takedown!</button>
+                <button id="takedown-cancel-btn" class="btn btn-secondary btn-shadow" type="button">Get Me Outta Here!</button>
+                {% else %}
+                <button class="btn btn-primary btn-shadow" type="submit">Check!</button>
+                {% end %}
+            </div>
+        </form>
+    </div>
+</div>
+{% end %}

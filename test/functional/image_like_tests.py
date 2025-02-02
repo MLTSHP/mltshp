@@ -132,7 +132,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         json_response = json.loads(response.body)
 
         self.assertEqual(response.code, 200)
-        self.assertTrue(json_response.has_key('error'))
+        self.assertTrue('error' in json_response)
         favorite = Favorite.get('user_id= %s and sharedfile_id = %s', self.admin.id, sharedfile.id)
         self.assertFalse(favorite)
 

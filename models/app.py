@@ -1,15 +1,14 @@
-from datetime import datetime
 import time
 import uuid
 import hashlib
-from urlparse import urlparse
+from urllib.parse import urlparse
 from tornado.options import options
 
 from lib.flyingcow import Model, Property
-from lib.utilities import base36encode, base36decode
+from lib.utilities import base36encode, base36decode, utcnow
 
-import user
-import accesstoken
+from . import user
+from . import accesstoken
 
 
 class App(Model):
@@ -42,8 +41,8 @@ class App(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
         
     def _verify_title_and_description(self):
         if self.title == '':
@@ -72,7 +71,7 @@ class App(Model):
     def on_create(self):
         """Set the secret"""
 
-        self.secret = hashlib.sha224("%s%s" % (str(uuid.uuid1()), time.time())).hexdigest()
+        self.secret = hashlib.sha224(("%s%s" % (str(uuid.uuid1()), time.time())).encode('ascii')).hexdigest()
         self.save()
         
     def key(self):

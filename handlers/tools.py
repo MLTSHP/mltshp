@@ -1,4 +1,4 @@
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 import os
 import re
 import random
@@ -8,15 +8,15 @@ import io
 from tornado.httpclient import HTTPRequest
 import tornado.auth
 import tornado.web
-from tornado.escape import url_escape, json_decode
-from tornado.options import define, options
+from tornado.escape import json_decode
+from tornado.options import options
 
-from BeautifulSoup import BeautifulSoup
-
-from models import Externalservice, User, Sourcefile, Sharedfile, Shake, ExternalRelationship, ShakeCategory
-from base import BaseHandler, require_membership
+from models import Externalservice, User, Sourcefile, Sharedfile, Shake, ShakeCategory
+from .base import BaseHandler, require_membership
 from lib.utilities import base36encode
-import lib.feathers
+
+import logging
+logger = logging.getLogger("mltshp")
 
 
 class PickerPopupHandler(BaseHandler):
@@ -81,9 +81,8 @@ class PickerPopupHandler(BaseHandler):
             can_upload_this_month=can_upload_this_month)
 
     @tornado.web.authenticated
-    @tornado.web.asynchronous
     @require_membership
-    def post(self):
+    async def post(self):
         """
         TODO: better determination of correct file name, if it is indeed a file, plus type.
         """
@@ -98,17 +97,9 @@ class PickerPopupHandler(BaseHandler):
 
         http = tornado.httpclient.AsyncHTTPClient()
 
-        #this sends a header value for cookie to d/l protected FP files
-        fp_cookie = None
-        b = re.compile(r"^http(s?)://(.*?)(.?)filepile\.org")
-        m = b.match(self.url)
-        if m:
-            for char in [' ', '[', ']']:
-                self.url = self.url.replace(char, url_escape(char))
+        logger.debug("Fetching %s" % (self.url))
+        request = HTTPRequest(self.url, header_callback=self.on_header)
 
-            fp_cookie = {'Cookie':'_filepile_session=4c2eff30dd27e679d38fbc030b204488'}
-
-        request = HTTPRequest(self.url, headers=fp_cookie, header_callback=self.on_header)
         if self.get_argument('skip_s3', None):
             # This parameter is used specifically for unit testing, so mock the file being
             # served as well.
@@ -119,9 +110,13 @@ class PickerPopupHandler(BaseHandler):
             dummy_response = tornado.httpclient.HTTPResponse(request, 200, buffer=dummy_buffer)
             self.on_response(dummy_response)
         else:
-            http.fetch(request, self.on_response)
+            fut = http.fetch(request)
+            response = await fut
+            logger.debug("Got response for %s" % (self.url))
+            self.on_response(response)
 
     def on_response(self, response):
+        logger.debug("Parsing response for %s" % (self.url))
         url_parts = urlparse(response.request.url)
         file_name = os.path.basename(url_parts.path)
         title = self.get_argument("title", None)
@@ -135,23 +130,25 @@ class PickerPopupHandler(BaseHandler):
             title = None
 
         if self.content_type not in self.approved_content_types:
-            if response.body[0:50].find('JFIF') > -1:
+            if response.body[0:50].find(b'JFIF') > -1:
                 self.content_type = 'image/jpeg'
             else:
-                return self.render("tools/picker-error.html")
+                return self.render("tools/picker-error.html", error="Invalid file type: %s" % self.content_type)
 
         if len(file_name) == 0:
-            return self.render("tools/picker-error.html")
+            return self.render("tools/picker-error.html", error="file_name is empty")
 
         sha1_file_key = Sourcefile.get_sha1_file_key(file_data=response.body)
         user = self.get_current_user()
         try:
-            fh = open("%s/%s" % (options.uploaded_files, sha1_file_key), 'wb')
-            fh.write(response.body)
-            fh.close()
+            logger.debug("Writing file %s/%s" % (options.uploaded_files, sha1_file_key))
+            with open("%s/%s" % (options.uploaded_files, sha1_file_key), 'wb') as fh:
+                fh.write(response.body)
         except Exception as e:
+            logger.error("Error saving file %s/%s" % (options.uploaded_files, sha1_file_key))
             raise tornado.web.HTTPError(500)
 
+        logger.debug("Creating sharedfile")
         sf = Sharedfile.create_from_file(
                 file_path = "%s/%s" % (options.uploaded_files, sha1_file_key),
                 file_name = file_name,
@@ -164,6 +161,7 @@ class PickerPopupHandler(BaseHandler):
         sf.source_url = source_url
         sf.description = description
         sf.alt_text = alt_text
+        logger.debug("Saving to database")
         sf.save()
         if not options.debug:
             # file cleanup
@@ -171,15 +169,16 @@ class PickerPopupHandler(BaseHandler):
                 os.remove("%s/%s" % (options.uploaded_files, sha1_file_key))
             except:
                 pass
+        logger.debug("Rendering picker-success.html")
         self.render("tools/picker-success.html", sf=sf)
 
     def on_header(self, header):
-        if header.startswith("Content-Length:"):
-            content_length = re.search("Content-Length: (.*)", header)
+        if header.lower().startswith("content-length:"):
+            content_length = re.search("content-length: (.*)", header, re.IGNORECASE)
             if int(content_length.group(1).rstrip()) > 10000000: #this is not the correct size to error on
                 raise tornado.web.HTTPError(413)
-        elif header.startswith("Content-Type:"):
-            ct = re.search("Content-Type: (.*)", header)
+        elif header.lower().startswith("content-type:"):
+            ct = re.search("content-type: (.*)", header, re.IGNORECASE)
             self.content_type = ct.group(1).rstrip()
 
 
@@ -205,10 +204,9 @@ class ToolsTwitterHowToHandler(BaseHandler):
 
 
 class ToolsTwitterConnectHandler(BaseHandler, tornado.auth.TwitterMixin):
-    @tornado.web.asynchronous
     @tornado.web.authenticated
     @require_membership
-    def get(self):
+    async def get(self):
         if self.get_argument("oauth_token", None):
             self.get_authenticated_user(self._on_auth)
             return
@@ -267,10 +265,9 @@ class NewPostHandler(BaseHandler):
 
 
 class SaveVideoHandler(BaseHandler):
-    @tornado.web.asynchronous
     @tornado.web.authenticated
     @require_membership
-    def get(self):
+    async def get(self):
         url = self.get_argument('url', None)
         shake_id = self.get_argument('shake_id', "")
         if not url:
@@ -279,30 +276,32 @@ class SaveVideoHandler(BaseHandler):
 
         url = Sourcefile.make_oembed_url(url.strip())
         if url:
-            self.handle_oembed_url(url)
+            await self.handle_oembed_url(url)
         else:
             self.render("tools/save-video-error.html", message="Invalid URL. We didn't recognize that URL")
 
-    def on_oembed_response(self, response):
+    async def on_oembed_response(self, response):
         if response.code == 401:
             self.render("tools/save-video-error.html", message="Embedding disabled by request. The user who uploaded this file has requested it not be embedded on other web sites.")
             return
-        self.handle_oembed_data(response.body)
+        await self.handle_oembed_data(response.body)
 
-    def handle_oembed_url(self, url):
+    async def handle_oembed_url(self, url):
         """Takes a sanitized URL (as created by models.sourcefile.make_oembed_url) and
         issues a request for it. If the URL is actually a data URI, strip off the well-known
         header, and handle the oembed JSON encoded into it instead.
         """
         if url.startswith('data:text/json;charset=utf-8,'):
             j_oembed = url.replace('data:text/json;charset=utf-8,', '', 1)
-            self.handle_oembed_data(j_oembed)
+            await self.handle_oembed_data(j_oembed)
         else:
             request = HTTPRequest(url, 'GET')
             http = tornado.httpclient.AsyncHTTPClient()
-            http.fetch(request,self.on_oembed_response)
+            fut = http.fetch(request)
+            response = await fut
+            await self.on_oembed_response(response)
 
-    def handle_oembed_data(self, oembed):
+    async def handle_oembed_data(self, oembed):
         try:
             j_oembed = json_decode(oembed)
         except Exception as e:
@@ -313,7 +312,7 @@ class SaveVideoHandler(BaseHandler):
             self.render("tools/save-video-error.html", message="We could not load the embed code for this file. Please contact support.")
             return
 
-        if j_oembed.has_key('type') and j_oembed['provider_name'] == 'Flickr' and j_oembed['type'] != 'video':
+        if 'type' in j_oembed and j_oembed['provider_name'] == 'Flickr' and j_oembed['type'] != 'video':
             self.render("tools/save-video-error.html", message="We could not load the embed code for this file. Please contact support.")
             return
 
@@ -338,7 +337,9 @@ class SaveVideoHandler(BaseHandler):
             self.oembed_doc = j_oembed
             request = HTTPRequest(self.oembed_doc['thumbnail_url'], 'GET')
             http = tornado.httpclient.AsyncHTTPClient()
-            http.fetch(request,self.on_thumbnail_response)
+            fut = http.fetch(request)
+            response = await fut
+            self.on_thumbnail_response(response)
         else:
             self.render("tools/save-video.html", url=url, html=j_oembed['html'], shake_id=shake_id)
 
@@ -353,9 +354,8 @@ class SaveVideoHandler(BaseHandler):
 
         sha1_key = Sourcefile.get_sha1_file_key(file_path=None, file_data=url)
         thumbnail_path = "%s/%s" % (options.uploaded_files, sha1_key)
-        fh = open(thumbnail_path, 'wb')
-        fh.write(response.body)
-        fh.close()
+        with open(thumbnail_path, 'wb') as fh:
+            fh.write(response.body)
         source_file = Sourcefile.create_from_json_oembed(
             link=url, oembed_doc=self.oembed_doc, thumbnail_file_path=thumbnail_path,
             skip_s3=self.get_argument('skip_s3', None))
@@ -367,7 +367,7 @@ class SaveVideoHandler(BaseHandler):
                 pass
 
         title = ''
-        if self.oembed_doc.has_key('title'):
+        if 'title' in self.oembed_doc:
             title = self.oembed_doc['title']
 
         shared_file = Sharedfile(user_id=current_user.id, name=url, content_type='text/html', source_id=source_file.id, title=title, source_url=url)
@@ -380,16 +380,15 @@ class SaveVideoHandler(BaseHandler):
         user_shake = Shake.get('user_id = %s and type=%s', current_user.id, 'user')
         shared_file.add_to_shake(self.destination_shake)
 
-        if self.oembed_doc.has_key('description'):
+        if 'description' in self.oembed_doc:
             shared_file.description = self.oembed_doc['description']
 
         self.write({'path' : "/p/%s" % (share_key)})
         self.finish()
 
-    @tornado.web.asynchronous
     @tornado.web.authenticated
     @require_membership
-    def post(self):
+    async def post(self):
         url = self.get_argument('url', None)
         if not url:
             self.render("tools/save-video.html", url = url, title = None, description=None)
@@ -407,7 +406,7 @@ class SaveVideoHandler(BaseHandler):
                     return self.render("tools/save-video-error.html", message="We couldn't save the video to specified shake. Please contact support.")
                 if current_user.email_confirmed != 1:
                     return self.render("tools/save-video-error.html", message="You must confirm your email address before you can post.")
-            self.handle_oembed_url(url)
+            await self.handle_oembed_url(url)
         else:
             self.render("tools/save-video-error.html", message="We could not load the embed code. The video server may be down. Please contact support.")
 

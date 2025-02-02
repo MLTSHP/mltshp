@@ -11,7 +11,6 @@ from tasks import mltshp_task
 from ffmpy import FFmpeg
 from PIL import Image
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 
 
 logger = get_task_logger(__name__)
@@ -25,8 +24,6 @@ def db_connect():
 
 @mltshp_task()
 def gif_to_video(sourcefile_id, file_key, input_file, format):
-    from models import Sourcefile
-
     result = None
 
     options = None
@@ -69,11 +66,11 @@ def gif_to_video(sourcefile_id, file_key, input_file, format):
 
         # upload transcoded file to S3, then flag the sourcefile
         bucket = S3Bucket()
-        key = Key(bucket)
-        key.key = "%s/%s" % (format, file_key)
-
         logger.info("uploading transcoded video: %s" % file_key)
-        key.set_contents_from_filename(output_file)
+        bucket.upload_file(
+            output_file,
+            "%s/%s" % (format, file_key),
+        )
         logger.info("-- upload complete")
         db = db_connect()
         db.execute(
@@ -97,7 +94,7 @@ def transcode_sharedfile(sharedfile_id):
     db = db_connect()
 
     sharedfile = db.get(
-        "SELECT source_id, parent_id, size FROM sharedfile WHERE id=%s AND content_type='image/gif' AND deleted=0",
+        "SELECT source_id FROM sharedfile WHERE id=%s AND content_type='image/gif' AND deleted=0",
         sharedfile_id)
     if not sharedfile:
         db.close()
@@ -115,16 +112,14 @@ def transcode_sharedfile(sharedfile_id):
 
     input_temp = tempfile.NamedTemporaryFile(
         mode="w+b",
-        bufsize=int(float(sharedfile["size"])),
         suffix=".gif",
         delete=False)
     input_file = input_temp.name
 
     bucket = S3Bucket()
-    key = Key(bucket)
-    key.key = "originals/%s" % sourcefile["file_key"]
+    key = "originals/%s" % sourcefile["file_key"]
     logger.info("Downloading original GIF from S3 for sourcefile %s..." % sharedfile["source_id"])
-    key.get_contents_to_filename(input_file)
+    bucket.download_file(input_file, key)
 
     # Test to see if GIF is animated or not
     animated = False
@@ -134,6 +129,7 @@ def transcode_sharedfile(sharedfile_id):
         animated = True
     except EOFError:
         pass
+    im.close()
 
     if not animated:
         os.unlink(input_file)

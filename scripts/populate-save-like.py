@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from torndb import Connection
 from tornado.options import options
@@ -28,5 +28,5 @@ def main():
             saves = save_counts[0]['save_count']
 
         if likes > 0 or saves > 0:
-            print "UPDATE sharedfile SET like_count = %s, save_count = %s WHERE id = %s" % (likes, saves, sf.id)
-            print db1.execute("UPDATE sharedfile SET like_count = %s, save_count = %s WHERE id = %s", likes, saves, sf.id)
+            print("UPDATE sharedfile SET like_count = %s, save_count = %s WHERE id = %s" % (likes, saves, sf.id))
+            print(db1.execute("UPDATE sharedfile SET like_count = %s, save_count = %s WHERE id = %s", likes, saves, sf.id))

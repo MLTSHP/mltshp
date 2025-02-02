@@ -2,11 +2,10 @@ import hashlib
 import re
 import hmac
 import time
-import json
 import base64
-import urllib
-from datetime import datetime
-import urllib
+import urllib.request, urllib.parse, urllib.error
+from datetime import datetime, UTC
+import urllib.request, urllib.parse, urllib.error
 
 from PIL import Image
 from tornado.options import options
@@ -21,6 +20,10 @@ PLANS = {
     "mltshp-single": "Single Scoop",
     "mltshp-double": "Double Scoop",
 }
+
+
+def utcnow():
+    return datetime.now(UTC)
 
 
 def plan_name(plan_id):
@@ -58,11 +61,11 @@ def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
 
     seconds = int(time.time()) + seconds
     to_sign = "GET\n\n\n%s\n/%s/%s" % (seconds, bucket_name, file_path)
-    digest = hmac.new(s3_secret, to_sign, hashlib.sha1).digest()
-    signature = urllib.quote(base64.encodestring(digest).strip())
+    digest = hmac.new(s3_secret.encode("ascii"), to_sign.encode("ascii"), hashlib.sha1).digest()
+    signature = urllib.parse.quote(base64.b64encode(digest).strip())
     signature = "?AWSAccessKeyId=%s&Expires=%s&Signature=%s" % (s3_key, seconds, signature)
 
-    if options.aws_host == "s3.amazonaws.com":
+    if options.aws_host == "s3.amazonaws.com" or options.aws_port == 443:
         url_prefix = "https://"
         port = ""
     else:
@@ -74,26 +77,35 @@ def s3_authenticated_url(s3_key, s3_secret, bucket_name=None, file_path=None,
         file_path, signature)
 
 
-def s3_url(file_path):
+def s3_url(s3_key, s3_secret, bucket_name=None, file_path=None, seconds=3600):
     """
-    Return S3 authenticated URL sans network access or phatty dependencies like boto.
-    """
-    assert file_path
+    Returns a URL for the given bucket and file path. If the server is running
+    in production and using Fastly, then we can side-step signing, since
+    the CDN does that for us. If we're running in debug mode, or if the file
+    path is for the "accounts" set of files, no need to sgin for these either,
+    since we're either using FakeS3 or the files are public.
 
-    port = ""
-    if options.aws_host == "s3.amazonaws.com":
-        url_prefix = 'https://'
+    """
+    needs_signed_url = False
+    if options.use_fastly:
+        needs_signed_url = False
+    elif options.debug:
+        needs_signed_url = False
+    elif file_path.startswith("account/"): # these are public
+        needs_signed_url = False
+    elif options.aws_host == "s3.amazonaws.com":
+        # We use a private bucket for (non account images) on AWS
+        needs_signed_url = True
+    if needs_signed_url:
+        return s3_authenticated_url(s3_key, s3_secret, bucket_name, file_path, seconds)
     else:
-        url_prefix = 'http://'
-        if options.aws_port:
-            port = ":%d" % options.aws_port
-
-    return "%s%s.%s%s/%s" % (
-        url_prefix, options.aws_bucket, options.aws_host, port, file_path)
+        scheme = options.use_cdn and "https" or "http"
+        host = (options.use_cdn and options.cdn_host) or options.app_host
+        return f"{scheme}://{host}/s3/{file_path}"
 
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
-    if not isinstance(number, (int, long)):
+    if not isinstance(number, int):
         raise TypeError('number must be an integer')
 
     # Special case for zero
@@ -120,7 +132,7 @@ def base36decode(number):
 def generate_digest_from_dictionary(values):
     h = hashlib.sha1()
     for value in values:
-        h.update("%s" % (value))
+        h.update(("%s" % value).encode("ascii"))
     return h.hexdigest()
 
 
@@ -129,7 +141,7 @@ def pretty_date(time=False):
     """
     Expects a datetime in utc.
     """
-    now = datetime.utcnow()
+    now = utcnow()
     diff = now - time
     second_diff = diff.seconds
     day_diff = diff.days
@@ -145,30 +157,30 @@ def pretty_date(time=False):
         if second_diff < 120:
             return  "a minute ago"
         if second_diff < 3600:
-            return str( second_diff / 60 ) + " minutes ago"
+            return str( int(second_diff / 60) ) + " minutes ago"
         if second_diff < 7200:
             return "an hour ago"
         if second_diff < 86400:
-            return str( second_diff / 3600 ) + " hours ago"
+            return str( int(second_diff / 3600) ) + " hours ago"
     if day_diff == 1:
         return "Yesterday"
     if day_diff < 7:
         return str(day_diff) + " days ago"
     if day_diff < 31:
-        diff = day_diff/7
+        diff = int(day_diff/7)
         diff_string = "week"
         if diff > 1:
             diff_string = "weeks"
         return  "%s %s ago" % (str(diff), diff_string)
     if day_diff < 365:
-        diff = day_diff/30
+        diff = int(day_diff/30)
         diff_string = "month"
         if diff > 1:
             diff_string = "months"
         return "%s %s ago" % (str(diff), diff_string)
 
     diff_string = "year"
-    diff = day_diff/365
+    diff = int(day_diff/365)
     if diff > 1:
         diff_string = "years"
     return "%s %s ago" % (str(diff), diff_string)
@@ -237,32 +249,29 @@ def payment_notifications(user, action, amount=None):
 def transform_to_square_thumbnail(file_path, size_constraint, destination):
     """
     Takes a local path with a file, and writes the thumbntail to the destination
-    which is a cStringIO.StringIO instance.  Used by User.set_profile_image()
+    which is a io.BytesIO instance. Used by User.set_profile_image()
     """
     img = Image.open(file_path)
     # convert to RGB, probably for proper resizing of gifs.
     if img.mode != "RGB":
-        img = img.convert("RGB")
+        img2 = img.convert("RGB")
+        img.close()
+        img = img2
     width, height = img.size
 
-    # if image is below size constraint, we just paste it on
-    # and let any pieces that are above constraint just get clipped off.
-    if width < size_constraint or height < size_constraint:
-        canvas = Image.new("RGB", (size_constraint, size_constraint,), (255, 255, 255,))
-        canvas.paste(img, (0,0,))
-        canvas.save(destination, format="JPEG", quality=95)
-    # Otherwise, we crop the image to a square and then create thumbnail
-    # out of it. Since Image.thumbnail method doesn't create good
-    # looking thumbs otherwise.
-    else:
+    if width != size_constraint or height != size_constraint:
+        # We crop the image to a square and then create thumbnail
+        # out of it. Since Image.thumbnail method doesn't create good
+        # looking thumbs otherwise.
         if width > height:
             max_dimension = height
         else:
             max_dimension = width
         cropped = img.crop((0,0,max_dimension,max_dimension,))
         cropped.load()
-        cropped.thumbnail((size_constraint,size_constraint), Image.ANTIALIAS)
+        cropped.thumbnail((size_constraint,size_constraint), Image.Resampling.LANCZOS)
         cropped.save(destination, format="JPEG", quality=95)
+    img.close()
     return True
 
 email_re = re.compile(
@@ -321,4 +330,4 @@ def clean_search_term(s):
     if s is None:
         return None
 
-    return s.replace(u"\u201C", '"').replace(u"\u201D", '"')
+    return s.replace("\u201C", '"').replace("\u201D", '"')

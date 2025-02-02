@@ -1,39 +1,35 @@
-FROM ubuntu:16.04
-LABEL maintainer "brad@bradchoate.com"
-ENV PYTHONUNBUFFERED 1
+FROM ubuntu:24.04
+LABEL maintainer="brad@bradchoate.com"
+ENV PYTHONUNBUFFERED=1
 
 # Installs the base system dependencies for running the site.
 # None of this will change with the codebase itself, so this
 # whole layer and steps to build it should be cached.
-RUN apt-get -y update && apt-get install -y \
+RUN apt-get -y update && \
+    apt-get install -y \
         supervisor \
+        build-essential \
+        pkg-config \
+        python3-dev \
+        python3-full \
+        python3-pip \
         libmysqlclient-dev \
         mysql-client \
-        python-dev \
         libjpeg-dev \
         libcurl4-openssl-dev \
         curl \
         wget \
-        vim \
-        htop \
         libpcre3 \
         libpcre3-dev \
         libssl-dev \
-        libffi-dev \
-        python-pip && \
+        libffi-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    \
-    pip install -U 'pip==20.3.4' 'setuptools==44.0.0' distribute && \
-    # fixes a weird issue where distribute complains about setuptools "0.7"
-    # (incorrectly matching version "20.7.0" which ubuntu 16.04 has preinstalled)
-    rm -rf /usr/lib/python2.7/dist-packages/setuptools-20.7.0.egg-info && \
-    \
     # install nginx + upload module
     mkdir -p /tmp/install && \
     cd /tmp/install && \
-    wget http://nginx.org/download/nginx-0.8.55.tar.gz && tar zxf nginx-0.8.55.tar.gz && \
-    wget https://github.com/fdintino/nginx-upload-module/archive/2.2.0.tar.gz && tar zxf 2.2.0.tar.gz && \
-    cd /tmp/install/nginx-0.8.55 && \
+    wget http://nginx.org/download/nginx-1.25.3.tar.gz && tar zxf nginx-1.25.3.tar.gz && \
+    wget https://github.com/fdintino/nginx-upload-module/archive/2.3.0.tar.gz && tar zxf 2.3.0.tar.gz && \
+    cd /tmp/install/nginx-1.25.3 && \
     ./configure \
         --with-http_ssl_module \
         --with-http_stub_status_module \
@@ -43,12 +39,12 @@ RUN apt-get -y update && apt-get install -y \
         --conf-path=/etc/nginx/nginx.conf \
         --error-log-path=/srv/mltshp.com/nginx-error.log \
         --http-log-path=/srv/mltshp.com/nginx-access.log \
-        --add-module=/tmp/install/nginx-upload-module-2.2.0 && \
+        --add-module=/tmp/install/nginx-upload-module-2.3.0 && \
     make && make install && \
     mkdir -p /etc/nginx && \
     rm -rf /tmp/install && \
-    groupadd ubuntu --gid=1010 && \
-    useradd ubuntu --create-home --home-dir=/home/ubuntu \
+    groupadd mltshp --gid=1010 && \
+    useradd mltshp --create-home --home-dir=/home/mltshp \
         --uid=1010 --gid=1010 && \
     mkdir -p /mnt/tmpuploads/0 /mnt/tmpuploads/1 /mnt/tmpuploads/2  \
         /mnt/tmpuploads/3 /mnt/tmpuploads/4 /mnt/tmpuploads/5 \
@@ -56,12 +52,13 @@ RUN apt-get -y update && apt-get install -y \
         /mnt/tmpuploads/9 && \
     chmod 777 /mnt/tmpuploads/* && \
     mkdir -p /srv/mltshp.com/uploaded /srv/mltshp.com/logs && \
-    chown -R ubuntu:ubuntu /srv/mltshp.com
+    chown -R mltshp:mltshp /srv/mltshp.com
 
 # Install python dependencies which will be cached on the
 # contents of requirements.txt:
 COPY requirements.txt /tmp
-RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+# It's okay to install to the system packages; we're in a container
+RUN pip install --break-system-packages -r /tmp/requirements.txt && rm /tmp/requirements.txt
 
 # Copy configuration settings into place
 COPY setup/production/supervisord-web.conf /etc/supervisor/conf.d/mltshp.conf
