@@ -3,29 +3,35 @@ from lib.flyingcow import register_connection
 from tornado.options import options
 import string
 import random
+import re
 
-class BaseTestCase(unittest.TestCase):        
+import logging
+
+logger = logging.getLogger('mltshp.test')
+logger.setLevel(logging.INFO)
+
+class BaseTestCase(unittest.TestCase):   
+    def __init__(self, *args, **kwargs):
+        super(BaseTestCase, self).__init__(*args, **kwargs)
+        self.db = register_connection(
+            host=options.database_host,
+            name="mysql",
+            user=options.database_user,
+            password=options.database_password,
+            charset="utf8mb4")
+
     def setUp(self):
         super(BaseTestCase, self).setUp()
-        self.db = self.create_database('mltshp_testing')
+        if options.database_name != "mltshp_testing":
+            raise Exception("Invalid database name for unit tests")
+        self.reset_database()
 
-    def tearDown(self):
-        super(BaseTestCase, self).tearDown()
+    def reset_database(self):
+        self.db.execute("USE %s" % (options.database_name))
+        with open("setup/db-truncate.sql") as f:
+            query = f.read()
+        self.db.execute(query)
 
-    def create_database(self, name):
-        db = register_connection(options.database_host, name, options.database_user, options.database_password)
-        db.execute("DROP database IF EXISTS %s" % (name))
-        db.execute("CREATE database %s" % (name))
-        db.execute("USE %s" % (name))
-        f = open("setup/db-install.sql")
-        load_query = f.read()
-        f.close()
-        statements = load_query.split(";")
-        for statement in statements:
-            if statement.strip() != "":
-                db.execute(statement.strip())
-        return db
-        
     def generate_string_of_len(self, length):
-        return ''.join(random.choice(string.letters) for i in xrange(length))
+        return ''.join(random.choice(string.ascii_letters) for i in range(length))
     

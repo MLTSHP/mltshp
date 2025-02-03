@@ -150,13 +150,13 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         arguments = {
             'full_name' : 'Some User',
             'about' : 'About text.',
-            'website' : 'https://mltshp.com/'
+            'website' : 'https://my-mltshp.com/'
         }
         self.post_url('/account/settings/profile', arguments=arguments)
         user_reloaded = User.get('id = %s', self.user.id)
         self.assertEqual('Some User', user_reloaded.full_name)
         self.assertEqual('About text.', user_reloaded.about)
-        self.assertEqual('https://mltshp.com/', user_reloaded.website)
+        self.assertEqual('https://my-mltshp.com/', user_reloaded.website)
 
     def test_updating_user_profile_photo(self):
         """
@@ -225,7 +225,7 @@ class AccountSettingsTests(test.base.BaseAsyncTestCase):
         self.user.save()
         response = self.fetch_url("/account/settings")
 
-        self.assertTrue(response.body.find('Please check your inbox for verification') > -1)
+        self.assertIn('Please check your inbox for verification', response.body)
 
     def test_resend_verification_email_changes_key(self):
         self.user.verify_email_token = "asdf"

@@ -1,5 +1,5 @@
 import tornado.web
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 
 
 class FriendHandler(BaseHandler):

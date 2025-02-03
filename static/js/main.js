@@ -2097,22 +2097,23 @@ $(document).ready(function () {
         var shake_member_list = new ShakeMemberList($shake_member_list);
     }
 
-    // support for dismissable "Vote 2020" banner; cookie naturally expires on Nov 4th
-    var alertVote2020 = $("#alert-vote-2020");
-    var alertVote2020CookieVal = "dismiss-alert-vote-2020=1";
-    var alertVote2020Expires = new Date("2020-11-04T00:00:00");
+    // support for dismissable "Vote" banner;
+    // cookie naturally expires the day after the election
+    var alertVote = $("#alert-vote");
+    var alertVoteCookieVal = "dismiss-alert-vote=1";
+    var alertVoteExpires = new Date("2024-11-06T00:00:00");
     if (
-        document.cookie.indexOf(alertVote2020CookieVal) === -1 &&
-        new Date() < alertVote2020Expires
+        document.cookie.indexOf(alertVoteCookieVal) === -1 &&
+        new Date() < alertVoteExpires
     ) {
-        alertVote2020.css({ display: "block" });
-        alertVote2020.find("button").click(function () {
+        alertVote.css({ display: "block" });
+        alertVote.find("button").click(function () {
             document.cookie = [
-                alertVote2020CookieVal,
-                "expires=" + alertVote2020Expires.toGMTString(),
+                alertVoteCookieVal,
+                "expires=" + alertVoteExpires.toGMTString(),
                 "path=/",
             ].join("; ");
-            alertVote2020.css({ display: "none" });
+            alertVote.css({ display: "none" });
         });
     }
 });

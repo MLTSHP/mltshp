@@ -30,7 +30,7 @@ class AccountTests(test.base.BaseAsyncTestCase):
         response = self.fetch_url('/user/admin/rss')
         self.assertEqual(response.headers['Content-Type'], 'application/xml')
         parsed_xml = lib.utilities.parse_xml(response.body)
-        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://mltshp.com/p/1')
+        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://my-mltshp.com/p/1')
 
     def test_user_unpaid_account_rss_404s(self):
         self.user.update_attribute("is_paid", 0)
@@ -52,13 +52,13 @@ class AccountTests(test.base.BaseAsyncTestCase):
         self.user.save()
 
         response = self.fetch_url('/')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+        self.assertIn('Please visit settings to confirm your email!', response.body)
 
         response = self.fetch_url('/incoming')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+        self.assertIn('Please visit settings to confirm your email!', response.body)
 
         response = self.fetch_url('/friends')
-        self.assertTrue(response.body.find('Please visit settings to confirm your email!') > -1)
+        self.assertIn('Please visit settings to confirm your email!', response.body)
 
     def test_quick_notifications(self):
         """

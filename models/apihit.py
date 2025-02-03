@@ -1,6 +1,6 @@
 from lib.flyingcow import Model, Property
 from lib.flyingcow.db import connection
-from datetime import datetime
+from lib.utilities import utcnow
 from tornado.options import options
 
 
@@ -19,13 +19,13 @@ class Apihit(Model):
 
     def _set_dates(self):
         if self.id is None or self.hour_start is None:
-            self.hour_start = datetime.utcnow().strftime("%Y-%m-%d %H:00:00")
+            self.hour_start = utcnow().strftime("%Y-%m-%d %H:00:00")
 
     @classmethod
-    def hit(cls, accesstoken_id, utcnow=None):
-        if utcnow is None:
-            utcnow = datetime.utcnow()
-        hour_start = utcnow.strftime('%Y-%m-%d %H:00:00')
+    def hit(cls, accesstoken_id, ts=None):
+        if ts is None:
+            ts = utcnow()
+        hour_start = ts.strftime('%Y-%m-%d %H:00:00')
 
         sql = """INSERT INTO apihit (accesstoken_id, hits, hour_start) VALUES (%s, 1, %s)
                  ON DUPLICATE KEY UPDATE hits = hits + 1"""

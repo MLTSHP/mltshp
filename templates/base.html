@@ -13,7 +13,7 @@
     <link rel="dns-prefetch" href="//mltshp-cdn.com">
 
     <!-- Behave more like an app when saved to home screen in iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
     <!-- Proper favicon generator by Philippe Bernard: http://realfavicongenerator.net/ -->
@@ -23,7 +23,8 @@
     <link rel="icon" type="image/png" href="{{ static_url("images/favicon-16x16.png") }}" sizes="16x16">
     <link rel="manifest" href="{{ static_url("manifest.json") }}">
     <link rel="mask-icon" href="{{ static_url("images/safari-pinned-tab.svg") }}" color="#fc1a9a">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#dbfaff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#13454c" media="(prefers-color-scheme: dark)">
 
     <script type="text/javascript">
     function fallbackImage(source) {
@@ -56,7 +57,7 @@
     {% end %}
 </head>
 <body>
-    <div id="alert-vote-2020"
+    <div id="alert-vote"
         class="alert alert--warning"
         style="text-align: center;
             background-image: url('/static/images/mltshp-flag.svg');

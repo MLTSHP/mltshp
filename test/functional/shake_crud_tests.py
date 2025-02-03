@@ -43,7 +43,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         }
         response = self.post_url('/shake/create', arguments=arguments)
         self.assertEqual(response.effective_url, self.get_url('/shake/create'))
-        self.assertTrue(response.body.find('That URL is not valid.') > -1)
+        self.assertIn('That URL is not valid.', response.body)
 
     def test_shake_create_error_on_title(self):
         """
@@ -58,7 +58,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         }
         response = self.post_url('/shake/create', arguments=arguments)
         self.assertEqual(response.effective_url, self.get_url('/shake/create'))
-        self.assertTrue(response.body.find("Title can't be blank.") > -1)
+        self.assertIn("Title can't be blank.", response.body)
 
 
     def test_shake_update_description(self):
@@ -99,7 +99,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
             'title' : 'got one'
         }
         response = self.post_url('/shake/create', arguments=arguments)
-        self.assertTrue(response.body.find('That URL is already taken.') > -1)
+        self.assertIn('That URL is already taken.', response.body)
 
     def test_subscribe_unsubscribe_works(self):
         user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1, is_paid=1, stripe_plan_id="mltshp-double")
@@ -142,7 +142,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
             'title' : 'Shake Test',
         }
         response = self.post_url('/shake/create', arguments=arguments)
-        self.assertTrue(response.body.find('Create up to 100 group shakes') > -1)
+        self.assertIn('Create up to 100 group shakes', response.body)
 
     def test_create_shake_page_works_for_plus_members(self):
         user_a = User(name='user_a', email='user_a@example.com', email_confirmed=1,
@@ -172,7 +172,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=self.user.id, \
-            content_type="image/png", description="description", source_url="https://www.mltshp.com/?hi")
+            content_type="image/png", description="description", source_url="https://my-mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()
@@ -206,7 +206,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         response = self.fetch_url('/shake/yo/rss')
         self.assertEqual(response.headers['Content-Type'], 'application/xml')
         parsed_xml = lib.utilities.parse_xml(response.body)
-        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://mltshp.com/p/1')
+        self.assertEqual(parsed_xml['rss']['channel']['item']['link'], 'https://my-mltshp.com/p/1')
 
     def test_creating_group_shake_creates_subscription(self):
         """
@@ -264,7 +264,7 @@ class ShakeCrudTests(test.base.BaseAsyncTestCase):
         sourcefile = Sourcefile(width=20,height=20,file_key="asdf",thumb_key="asdf_t")
         sourcefile.save()
         sharedfile = Sharedfile(source_id=sourcefile.id, name="the name",user_id=user_a.id, \
-            content_type="image/png", description="description", source_url="https://www.mltshp.com/?hi")
+            content_type="image/png", description="description", source_url="https://my-mltshp.com/?hi")
         sharedfile.save()
         sharedfile.share_key = lib.utilities.base36encode(sharedfile.id)
         sharedfile.save()

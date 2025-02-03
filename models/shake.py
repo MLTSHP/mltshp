@@ -1,19 +1,18 @@
 import re
-import cStringIO
-from datetime import datetime
-from urlparse import urljoin
+import io
+from urllib.parse import urljoin
 
 from tornado.options import options
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 from PIL import Image
 
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.reservedshakenames import reserved_names
-from lib.utilities import transform_to_square_thumbnail, s3_url
+from lib.utilities import transform_to_square_thumbnail, s3_url, rfc822_date, utcnow
 
-import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
+from . import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
+
 
 class Shake(ModelQueryCache, Model):
     user_id     = Property(name='user_id')
@@ -48,8 +47,8 @@ class Shake(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def delete(self):
         """
@@ -62,10 +61,11 @@ class Shake(ModelQueryCache, Model):
         self.save()
 
     def as_json(self, extended=False):
+        scheme = (options.use_cdn and "https") or "http"
         base_dict = {
             'id' : self.id,
             'name': self.display_name(),
-            'url': 'https://%s%s' % (options.app_host, self.path()),
+            'url': '%s://%s%s' % (scheme, options.app_host, self.path()),
             'thumbnail_url': self.thumbnail_url(),
             'description': self.description,
             'type': self.type,
@@ -96,10 +96,9 @@ class Shake(ModelQueryCache, Model):
             return self.owner().profile_image_url()
         else:
             if self.image:
-                if options.app_host == "mltshp.com":
-                    return "https://%s/s3/account/%s/shake_%s.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
-                else:
-                    return s3_url("account/%s/shake_%s.jpg" % (self.user_id, self.name))
+                scheme = (options.use_cdn and "https") or "http"
+                host = (options.use_cdn and options.cdn_host) or options.app_host
+                return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}.jpg"
             else:
                 return None
 
@@ -107,16 +106,12 @@ class Shake(ModelQueryCache, Model):
         if self.type == 'user':
             return self.owner().profile_image_url(include_protocol=True)
         else:
+            scheme = (options.use_cdn and "https") or "http"
+            host = (options.use_cdn and options.cdn_host) or options.app_host
             if self.image:
-                if options.app_host == "mltshp.com":
-                    return "https://%s/s3/account/%s/shake_%s_small.jpg" % (options.cdn_ssl_host, self.user_id, self.name)
-                else:
-                    return s3_url("account/%s/shake_%s_small.jpg" % (self.user_id, self.name))
+                return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}_small.jpg"
             else:
-                if options.app_host == "mltshp.com":
-                    return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
-                else:
-                    return "http://%s/static/images/default-icon-venti.svg" % options.app_host
+                return f"{scheme}://{host}/static/images/default-icon-venti.svg"
 
     def path(self):
         """
@@ -178,7 +173,7 @@ class Shake(ModelQueryCache, Model):
             self.add_error('name', 'URLs can be 1 to 25 characters long.')
             return False
 
-        if re.search("[^a-zA-Z0-9\-]", self.name):
+        if re.search("[^a-zA-Z0-9-]", self.name):
             self.add_error('name', 'Username can only contain letters, numbers, and dashes.')
             return False
 
@@ -195,7 +190,7 @@ class Shake(ModelQueryCache, Model):
                    WHERE shake_id = %s
                        AND subscription.deleted = 0
                    ORDER BY subscription.id """
-        if page > 0:
+        if page is not None and page > 0:
             limit_start = (page-1) * 20
             sql = "%s LIMIT %s, %s" % (sql, limit_start, 20)
         return user.User.object_query(sql, self.id)
@@ -317,8 +312,8 @@ class Shake(ModelQueryCache, Model):
         return self.is_owner(user)
 
     def set_page_image(self, file_path=None, sha1_value=None):
-        thumb_cstr =  cStringIO.StringIO()
-        image_cstr =  cStringIO.StringIO()
+        thumb_cstr = io.BytesIO()
+        image_cstr = io.BytesIO()
 
         if not file_path or not sha1_value:
             return False
@@ -334,20 +329,22 @@ class Shake(ModelQueryCache, Model):
 
         try:
             #save thumbnail
-            k = Key(bucket)
-            k.key = "account/%s/shake_%s_small.jpg" % (self.user_id, self.name)
-            k.set_metadata('Content-Type', 'image/jpeg')
-            k.set_metadata('Cache-Control', 'max-age=86400')
-            k.set_contents_from_string(thumb_cstr.getvalue())
-            k.set_acl('public-read')
+            thumb_bytes = thumb_cstr.getvalue()
+            bucket.put_object(
+                thumb_bytes,
+                "account/%s/shake_%s_small.jpg" % (self.user_id, self.name),
+                ACL="public-read",
+                ContentType="image/jpeg",
+            )
 
             #save small
-            k = Key(bucket)
-            k.key = "account/%s/shake_%s.jpg" % (self.user_id, self.name)
-            k.set_metadata('Content-Type', 'image/jpeg')
-            k.set_metadata('Cache-Control', 'max-age=86400')
-            k.set_contents_from_string(image_cstr.getvalue())
-            k.set_acl('public-read')
+            image_bytes = image_cstr.getvalue()
+            bucket.put_object(
+                image_bytes,
+                "account/%s/shake_%s.jpg" % (self.user_id, self.name),
+                ACL="public-read",
+                ContentType="image/jpeg",
+            )
 
             self.image = 1
             self.save()
@@ -361,7 +358,7 @@ class Shake(ModelQueryCache, Model):
         Returns a date formatted to be included in feeds
         e.g., Tue, 12 Apr 2005 13:59:56 EST
         """
-        return self.created_at and self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+        return self.created_at and rfc822_date(self.created_at)
 
     @classmethod
     def featured_shakes(self, limit=3):
