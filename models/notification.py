@@ -1,14 +1,15 @@
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
-from datetime import datetime, timedelta
+from datetime import timedelta
 import postmark
 
-import sharedfile
-import user
-import comment
-import shake
-import invitation
-import subscription
+from . import sharedfile
+from . import user
+from . import comment
+from . import shake
+from . import invitation
+from . import subscription
 
 
 class Notification(Model):
@@ -33,7 +34,7 @@ class Notification(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")            
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")            
 
     def delete(self):
         self.deleted = 1
@@ -127,7 +128,7 @@ class Notification(Model):
             _notification = {'sender' : sender, 'related_object' : related_object, 'id' : notification.id}
             
             if notification.type == 'favorite':
-                if not notifications['like']['items'].has_key(related_object.id):
+                if related_object.id not in notifications['like']['items']:
                     notifications['like']['items'][related_object.id] = []
                 notifications['like']['items'][related_object.id].append(_notification)
                 notifications['like']['count'] += 1
@@ -137,7 +138,7 @@ class Notification(Model):
                 notifications['follow'].append(_notification)
                 
             elif notification.type == 'save':
-                if not notifications['save']['items'].has_key(related_object.id):
+                if related_object.id not in notifications['save']['items']:
                     notifications['save']['items'][related_object.id] = []
                 notifications['save']['items'][related_object.id].append(_notification)
                 notifications['save']['count'] += 1
@@ -167,7 +168,7 @@ class Notification(Model):
         Notifications for user. Defaults to open,
         i.e. non-deleted notifications.
         """
-        one_week_ago = datetime.utcnow() - timedelta(days=7)
+        one_week_ago = utcnow() - timedelta(days=7)
         return cls.where("receiver_id = %s and deleted = %s and created_at > %s order by created_at desc", 
                                    user.id, deleted, one_week_ago.strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -177,7 +178,7 @@ class Notification(Model):
        Count of all notifications for user.  Defaults to open,
        i.e. non-deleted notifications.
        """
-       one_week_ago = datetime.utcnow() - timedelta(days=7)
+       one_week_ago = utcnow() - timedelta(days=7)
        return cls.where_count("receiver_id = %s and deleted = %s and created_at > %s order by created_at desc", 
                                         user.id, deleted, one_week_ago.strftime("%Y-%m-%d %H:%M:%S"))
 

@@ -1,7 +1,7 @@
 from tornado.options import options
 
 from models import User, Shake, Sourcefile, Sharedfile, ShakeManager
-from base import BaseTestCase
+from .base import BaseTestCase
 
 
 class ShakeModelTests(BaseTestCase):
@@ -26,20 +26,24 @@ class ShakeModelTests(BaseTestCase):
         If an image exists, it should return the correct path.
         """
         self.assertEqual(None, self.shake.page_image())
-        self.assertEqual('/static/images/default-icon-venti.svg', self.user.shake().page_image())
+        options.use_cdn = True
+        self.assertEqual('//some-cdn.com/static/images/default-icon-venti.svg', self.user.shake().page_image())
         self.shake.image = 1
         self.shake.save
-        self.assertEqual('https://mltshp-cdn.com/s3/account/1/shake_asdf.jpg', self.shake.page_image())
+        self.assertEqual('https://some-cdn.com/s3/account/1/shake_asdf.jpg', self.shake.page_image())
+        options.use_cdn = False
 
     def test_correct_thumbnail_url_is_returned(self):
         """
         If an image exists, it should return the correct thumbnail path
         """
-        self.assertEqual('https://mltshp-cdn.com/static/images/default-icon-venti.svg', self.shake.thumbnail_url())
-        self.assertEqual('https://mltshp-cdn.com/static/images/default-icon-venti.svg', self.user.shake().thumbnail_url())
+        options.use_cdn = True
+        self.assertEqual('https://some-cdn.com/static/images/default-icon-venti.svg', self.shake.thumbnail_url())
+        self.assertEqual('https://some-cdn.com/static/images/default-icon-venti.svg', self.user.shake().thumbnail_url())
         self.shake.image = 1
         self.shake.save()
-        self.assertEqual('https://mltshp-cdn.com/s3/account/1/shake_asdf_small.jpg', self.shake.thumbnail_url())
+        self.assertEqual('https://some-cdn.com/s3/account/1/shake_asdf_small.jpg', self.shake.thumbnail_url())
+        options.use_cdn = False
 
     def test_correct_path_is_returned(self):
         """

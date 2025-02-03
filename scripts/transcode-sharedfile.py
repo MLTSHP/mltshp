@@ -13,7 +13,7 @@ def main():
 
     options.use_workers = False
     if len(keys) == 0:
-        print "Selecting untranscoded sharedfiles..."
+        print("Selecting untranscoded sharedfiles...")
         select = """SELECT share_key
                     FROM sharedfile
                     JOIN sourcefile ON sourcefile.id = sharedfile.source_id
@@ -25,12 +25,12 @@ def main():
         results = Sharedfile.query(select)
         for result in results:
             keys.append(result["share_key"])
-        print "Found %d sharedfiles to transcode" % len(keys)
+        print("Found %d sharedfiles to transcode" % len(keys))
 
     for key in keys:
         sf = Sharedfile.get("share_key=%s AND content_type='image/gif' AND deleted=0", key)
         if sf is not None:
-            print "Transcoding %s..." % sf.share_key
+            print("Transcoding %s..." % sf.share_key)
             transcode_sharedfile.delay_or_run(sf.id)
         else:
-            print "Could not find sharedfile with key: %s" % key
+            print("Could not find sharedfile with key: %s" % key)

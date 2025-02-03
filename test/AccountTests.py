@@ -1,21 +1,14 @@
-from tornado.testing import AsyncHTTPTestCase
-from torndb import Connection
-from tornado.httpclient import HTTPRequest
 from tornado.escape import json_decode
 
-
-import Cookie
-import base64
 import time
-import copy
 import hashlib
 import random
 import os
 
+from .base import BaseAsyncTestCase
 
-from base import BaseAsyncTestCase
+from models import User, Sourcefile, Sharedfile, Subscription, Notification, Post
 
-from models import User, Sourcefile, Sharedfile, Shake, Subscription, Notification, Post
 
 class AccountIndexTests(BaseAsyncTestCase):
     def setUp(self):
@@ -24,9 +17,9 @@ class AccountIndexTests(BaseAsyncTestCase):
         self.admin.set_password('asdfasdf')
         self.admin.save()
         self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
         self.flake=str(time.time())
-        
+
     def test_pagination_returns_correct_counts(self):
         """
         This tests creating 111 shared files for a user and then tests that pagination
@@ -36,14 +29,14 @@ class AccountIndexTests(BaseAsyncTestCase):
         user_shake = user.shake()
         source_file = Sourcefile(width=10, height=10, file_key='mumbles', thumb_key='bumbles')
         source_file.save()
-        
+
         missing_ids = []
-        
+
         for i in range(111):
             sf = Sharedfile(source_id = source_file.id, user_id = user.id, name="shgaredfile.png", title='shared file', share_key='asdf', content_type='image/png', deleted=0)  
             sf.save()
             sf.add_to_shake(user_shake)
-            
+
         for i in range(12):
             response = self.fetch('/user/admin/%s' % (i + 1))
             self.assertEqual(response.code, 200)
@@ -52,10 +45,9 @@ class AccountIndexTests(BaseAsyncTestCase):
         """
         This tests that a new user who just signed up will see the welcome page.
         """
-        self.http_client.fetch(self.get_url('/'), self.stop)
-        response = self.wait()
+        response = self.fetch_url('/')
         self.assertEqual(response.code, 200)
-        self.assertTrue(response.body.find('Getting Started'))
+        self.assertIn('Getting Started', response.body)
 
 
 class SubscriptionTests(BaseAsyncTestCase):    
@@ -64,99 +56,83 @@ class SubscriptionTests(BaseAsyncTestCase):
         self.admin = User(name='admin', email='admin@mltshp.com', email_confirmed=1, is_paid=1)
         self.admin.set_password('asdfasdf')
         self.admin.save()
-        
+
         self.user2 = User(name='user2', email='user2@mltshp.com', email_confirmed=1, is_paid=1)
         self.user2.set_password('asdfasdf')
         self.user2.save()
-        
+
         self.user3 = User(name='user3', email='user3@mltshp.com', email_confirmed=1, is_paid=1)
         self.user3.set_password('asdfasdf')
         self.user3.save()
-        
+
         self.sid = self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
         self.flake=str(time.time())
-        
+
     def test_follow_signed_in(self):
-        request = HTTPRequest(self.get_url('/user/user3/subscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-                
+        response = self.fetch("/user/user3/subscribe?json=1", method="POST", headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % self.xsrf)
+
         j = json_decode(response.body)
         self.assertEqual(j['subscription_status'], True)
-        
+
         subscription = Subscription.get('user_id=1 and shake_id=3')
         self.assertTrue(subscription)
         self.assertFalse(subscription.deleted)
-    
+
     def test_follow_creates_posts(self):
         self.sign_in('user3', 'asdfasdf')
         response = self.upload_test_file()
         self.sign_in('admin', 'asdfasdf')
         self.post_url('/user/user3/subscribe?json=1')
-    
+
         post = Post.where('user_id=%s', self.admin.id)
+        self.assertTrue(len(post) > 0)
         self.assertEqual(3, post[0].shake_id)
-        
+
     def test_cannot_follow_self(self):
-        request = HTTPRequest(self.get_url('/user/admin/subscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-                
+        response = self.fetch('/user/admin/subscribe?json=1', method='POST', headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % (self.xsrf))
+
         j = json_decode(response.body)
         self.assertTrue('error' in j)
-        
+
         subscription = Subscription.all()
         self.assertTrue(len(subscription) == 0)
 
     def test_cannot_subscribe_if_not_signed_in(self):
-        request = HTTPRequest(self.get_url('/user/user3/subscribe?json=1'), 'POST', {'Cookie':'_xsrf=%s' % (self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = self.fetch('/user/user3/subscribe?json=1', method="POST", headers={'Cookie':'_xsrf=%s' % self.xsrf}, body="_xsrf=%s" % self.xsrf)
         self.assertEqual(response.code, 403)
-    
+
     def test_unsubscribe_shake(self):
-        request = HTTPRequest(self.get_url('/user/user3/subscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-                
-        request = HTTPRequest(self.get_url('/user/user3/unsubscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-                
+        response = self.fetch('/user/user3/subscribe?json=1', method="POST", headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % self.xsrf)
+
+        response = self.fetch('/user/user3/unsubscribe?json=1', method='POST', headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % self.xsrf)
+
         j = json_decode(response.body)
         self.assertEqual(j['subscription_status'], False)
-        
+
         subscription = Subscription.get('user_id=1 and shake_id=3')
         self.assertTrue(subscription)
         self.assertTrue(subscription.deleted)
-        
-        
+
     def test_subscribe_unsubscribe_is_same_object(self):
-        request = HTTPRequest(self.get_url('/user/user3/subscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-        
+        response = self.fetch('/user/user3/subscribe?json=1', method='POST', headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % self.xsrf)
+
         first_subscription = Subscription.get('user_id=1 and shake_id=3')
-                
-        request = HTTPRequest(self.get_url('/user/user3/unsubscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-                
+
+        response = self.fetch('/user/user3/unsubscribe?json=1', method='POST', headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % self.xsrf)
+
         j = json_decode(response.body)
         self.assertEqual(j['subscription_status'], False)
-        
+
         second_subscription = Subscription.get('user_id=1 and shake_id=3')
         self.assertEqual(first_subscription.id, second_subscription.id)
-        
+
     def test_notification_created_when_subscription_created(self):
         """
         User is followed. Notification created.
         """
-        request = HTTPRequest(self.get_url('/user/user3/subscribe?json=1'), 'POST', {'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, "_xsrf=%s" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-        
+        response = self.fetch('/user/user3/subscribe?json=1', method='POST', headers={'Cookie':'sid=%s;_xsrf=%s' % (self.sid, self.xsrf)}, body="_xsrf=%s" % self.xsrf)
+
         subscriptions = Subscription.all()
         self.assertEqual(len(subscriptions), 1)
         notifications = Notification.all()
@@ -174,58 +150,52 @@ class EmailVerificationTests(BaseAsyncTestCase):
         self.user = User(name="admin", email="admin@mltshp.com", email_confirmed=1, is_paid=1)
         self.user.set_password('asdfasdf')
         self.user.save()
-        self.xsrf = self.get_xsrf()
-        
+        self.xsrf = self.get_xsrf().decode("ascii")
+
     def test_email_verification(self):
         self.assertEqual(self.user.email_confirmed, 1)
         self.assertTrue(self.user.verify_email_token == None)
-        
-        
+
         self.user.invalidate_email()
         
         reload_user = User.get("id=%s", self.user.id)
-        
+
         self.assertEqual(reload_user.email_confirmed, 0)
         self.assertTrue(len(reload_user.verify_email_token) == 40)
-        
+
     def test_lost_password(self):
         self.assertTrue(self.user.reset_password_token == None)
-        request=HTTPRequest(
-                    url = self.get_url("/account/forgot-password"),
+        response = self.fetch(
+                    "/account/forgot-password",
                     method='POST',
-                    headers = {'Cookie':'_xsrf=%s' % (self.xsrf)},
+                    headers = {'Cookie':'_xsrf=%s' % self.xsrf},
                     body = "_xsrf=%s&email=%s" % (self.xsrf, self.user.email))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
         self.assertEqual(response.code, 200)
-        self.assertTrue(response.body.find("We Sent You Instructions!") > 0)
+        self.assertIn("We Sent You Instructions!", response.body)
         user = User.get("id=%s", 1)
         self.assertTrue(len(user.reset_password_token) == 40)
         
     def test_lost_password_lookup_failure(self):
         self.assertTrue(self.user.reset_password_token == None)
     
-        request=HTTPRequest(
-                    url = self.get_url("/account/forgot-password"),
+        response = self.fetch(
+                    "/account/forgot-password",
                     method='POST',
                     headers = {'Cookie':'_xsrf=%s' % self.xsrf},
-                    body = "_xsrf=%s&email=25235235" % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-        self.assertTrue(response.body.find("That email address doesn't have an account.") > 0)
+                    body = "_xsrf=%s&email=25235235" % self.xsrf)
+        self.assertIn("That email address doesn't have an account.", response.body)
         
     def test_reset_password_lookup(self):
         """
         Hitting the reset-password url with a valid key will correctly look it up.
         """
         h = hashlib.sha1()
-        h.update("%s-%s" % (time.time(), random.random()))
+        h.update(("%s-%s" % (time.time(), random.random())).encode("ascii"))
         self.user.reset_password_token = h.hexdigest()
         self.user.save()
         
-        self.http_client.fetch(self.get_url("/account/reset-password/%s" % (self.user.reset_password_token)), self.stop)
-        response = self.wait()
-        self.assertTrue(response.body.find("Enter a new password for your account.") > -1)
+        response = self.fetch("/account/reset-password/%s" % self.user.reset_password_token)
+        self.assertIn("Enter a new password for your account.", response.body)
         
     def test_reset_password_finish(self):
         """
@@ -233,17 +203,14 @@ class EmailVerificationTests(BaseAsyncTestCase):
         """
         self.user.create_reset_password_token()
         
-        self.http_client.fetch(self.get_url("/account/reset-password/%s" % (self.user.reset_password_token)), self.stop)
-        response = self.wait()
+        response = self.fetch("/account/reset-password/%s" % self.user.reset_password_token)
         
-        request = HTTPRequest(
-                    url = self.get_url("/account/reset-password/%s" % (self.user.reset_password_token)),
+        response = self.fetch(
+                    "/account/reset-password/%s" % self.user.reset_password_token,
                     method='POST',
-                    headers={"Cookie":"_xsrf=%s" % (self.xsrf)},
+                    headers={"Cookie":"_xsrf=%s" % self.xsrf},
                     body="password=%s&password_again=%s&_xsrf=%s" % ("qwertyqwerty", "qwertyqwerty", self.xsrf)
                     )
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
         
         self.user = User.get("id=%s", 1)
         self.assertEqual(self.user.reset_password_token, "")
@@ -256,15 +223,13 @@ class EmailVerificationTests(BaseAsyncTestCase):
         self.user.create_reset_password_token()
         reset_token = self.user.reset_password_token
         
-        request = HTTPRequest(
-                    url = self.get_url("/account/reset-password/%s" % (reset_token)),
+        response = self.fetch(
+                    "/account/reset-password/%s" % reset_token,
                     method='POST',
                     headers={"Cookie":"_xsrf=%s" % (self.xsrf)},
                     body="password=%s&password_again=%s&_xsrf=%s" % ("qwertyqwerty", "poiupoiu", self.xsrf)
         )
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
-        self.assertTrue(response.body.find("Those passwords didn't match, or are invalid. Please try again.") > -1)
+        self.assertIn("Those passwords didn't match, or are invalid. Please try again.", response.body)
         self.user = User.get("id = %s", 1)
         self.assertEqual(self.user.hashed_password, User.generate_password_digest('asdfasdf'))
         self.assertEqual(reset_token, self.user.reset_password_token)
@@ -279,8 +244,7 @@ class EmailVerificationTests(BaseAsyncTestCase):
                             "",
                             "029%203208%2032093093%2020923"]
         for token in invalid_tokens:
-            self.http_client.fetch(self.get_url("/account/reset-password/%s" % (token)), self.stop)
-            response = self.wait()
+            response = self.fetch("/account/reset-password/%s" % token)
             self.assertEqual(response.code, 404)
 
     def test_password_reset_while_signed_in(self):
@@ -290,14 +254,12 @@ class EmailVerificationTests(BaseAsyncTestCase):
         sid = self.sign_in("admin", "asdfasdf")
         self.user.create_reset_password_token()
         
-        request = HTTPRequest(
-                    url = self.get_url("/account/reset-password/%s" % (self.user.reset_password_token)),
+        response = self.fetch(
+                    "/account/reset-password/%s" % self.user.reset_password_token,
                     method='GET',
                     headers={'Cookie':"sid=%s" % (sid)},
                     follow_redirects=False
         )
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
 
 class NotificationTests(BaseAsyncTestCase):
     def setUp(self):
@@ -309,7 +271,7 @@ class NotificationTests(BaseAsyncTestCase):
         self.receiver.set_password('asdfasdf')
         self.receiver.save()
 
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
         self.sender_sid = self.sign_in('admin', 'asdfasdf')        
         self.receiver_sid = self.sign_in('user2', 'asdfasdf')
 
@@ -323,9 +285,7 @@ class NotificationTests(BaseAsyncTestCase):
         sharedfile = Sharedfile.get('id=1')
         n = Notification.new_favorite(self.sender, sharedfile)
         
-        request = HTTPRequest(self.get_url('/account/clear-notification'), 'POST', {'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, '_xsrf=%s&type=single&id=%s' % (self.xsrf, n.id))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = self.fetch('/account/clear-notification', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, body='_xsrf=%s&type=single&id=%s' % (self.xsrf, n.id))
 
         j = json_decode(response.body)
         self.assertTrue('response' in j)
@@ -336,9 +296,7 @@ class NotificationTests(BaseAsyncTestCase):
         sharedfile = Sharedfile.get('id=1')
         n = Notification.new_favorite(self.sender, sharedfile)
         
-        request = HTTPRequest(self.get_url('/account/clear-notification'), 'POST', {'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sender_sid)}, '_xsrf=%s&type=single&id=%s' % (self.xsrf, n.id))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = self.fetch('/account/clear-notification', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sender_sid)}, body='_xsrf=%s&type=single&id=%s' % (self.xsrf, n.id))
 
         j = json_decode(response.body)
         self.assertTrue('error' in j)
@@ -354,9 +312,7 @@ class NotificationTests(BaseAsyncTestCase):
         n = Notification.new_save(self.sender, sharedfile)
         
         
-        request = HTTPRequest(self.get_url('/account/clear-notification'), 'POST', {'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, '_xsrf=%s&type=save' % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = self.fetch('/account/clear-notification', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, body='_xsrf=%s&type=save' % (self.xsrf))
 
         j = json_decode(response.body)
         self.assertEqual(j['response'], "0 new saves")
@@ -371,9 +327,7 @@ class NotificationTests(BaseAsyncTestCase):
         n = Notification.new_favorite(self.sender, sharedfile)
         n = Notification.new_favorite(self.sender, sharedfile)
         
-        request = HTTPRequest(self.get_url('/account/clear-notification'), 'POST', {'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, '_xsrf=%s&type=favorite' % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = self.fetch('/account/clear-notification', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, body='_xsrf=%s&type=favorite' % self.xsrf)
 
         j = json_decode(response.body)
         self.assertEqual(j['response'], "0 new likes")
@@ -394,9 +348,7 @@ class NotificationTests(BaseAsyncTestCase):
         Notification.new_subscriber(self.sender, self.receiver, 1)
         Notification.new_subscriber(user3, self.receiver, 2)
         
-        request = HTTPRequest(self.get_url('/account/clear-notification'), 'POST', {'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, '_xsrf=%s&type=subscriber' % (self.xsrf))
-        self.http_client.fetch(request, self.stop)
-        response = self.wait()
+        response = self.fetch('/account/clear-notification', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.receiver_sid)}, body='_xsrf=%s&type=subscriber' % self.xsrf)
 
         j = json_decode(response.body)
         self.assertEqual(j['response'], "You have 0 new followers")
@@ -411,7 +363,7 @@ class AccountFormattingTests(BaseAsyncTestCase):
         self.admin.set_password('asdfasdf')
         self.admin.save()
         self.sid = self.sign_in('admin', 'asdfasdf')
-        self.xsrf = self.get_xsrf()
+        self.xsrf = self.get_xsrf().decode("ascii")
         self.flake=str(time.time())
 
     def test_usernames_with_special_characters_can_be_seen(self):
@@ -420,8 +372,5 @@ class AccountFormattingTests(BaseAsyncTestCase):
             new_user = User(name=name, email='%s@mltshp.com' % (name), email_confirmed=1)
             new_user.set_password('asdfasdf')
             new_user.save()
-            self.http_client.fetch(self.get_url('/user/%s' % name), self.stop)
-            response = self.wait()            
+            response = self.fetch('/user/%s' % name)
             self.assertEqual(response.code, 200)
-            
-

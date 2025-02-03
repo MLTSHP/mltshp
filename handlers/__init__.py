@@ -1,20 +1,20 @@
 #handlers
-import base
-import account
-import admin
-import image
-import home
-import misc
-import tools
-import upload
-import incoming
-import friends
-import api
-import developers
-import conversations
-import error
-import popular
-import shake
-import tag
-import stripe_hooks
-import search
+from . import base
+from . import account
+from . import admin
+from . import image
+from . import home
+from . import misc
+from . import tools
+from . import upload
+from . import incoming
+from . import friends
+from . import api
+from . import developers
+from . import conversations
+from . import error
+from . import popular
+from . import shake
+from . import tag
+from . import stripe_hooks
+from . import search

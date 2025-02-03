@@ -1,7 +1,7 @@
 import re
 from os import path
 import hashlib
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from tornado import escape
 from tornado.options import options
@@ -9,17 +9,18 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_authenticated_url, rfc822_date
+from lib.utilities import base36encode, base36decode, pretty_date, s3_url, rfc822_date, utcnow
 
-import user
-import sourcefile
-import fileview
-import favorite
-import shakesharedfile
-import shake
-import comment
-import notification
-import conversation
+from . import user
+from . import sourcefile
+from . import fileview
+from . import favorite
+from . import shakesharedfile
+from . import shake
+from . import comment
+from . import notification
+from . import conversation
+
 import models.post
 import models.nsfw_log
 import models.tag
@@ -280,7 +281,7 @@ class Sharedfile(ModelQueryCache, Model):
         # restrictions mltshp decides to enforce.
         # Related: https://github.com/MLTSHP/mltshp/issues/746
         if 'sandbox=' not in html:
-            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"'
+            extra_attributes += ' sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation"'
 
         # Prevent referrer leaks to third parties
         if 'referrerpolicy=' not in html:
@@ -312,6 +313,7 @@ class Sharedfile(ModelQueryCache, Model):
         u = self.user()
         source = self.sourcefile()
 
+        scheme = (options.use_cdn and "https") or "http"
         json_object = {
             'user': u.as_json(),
             'nsfw' : source.nsfw_bool(),
@@ -328,7 +330,7 @@ class Sharedfile(ModelQueryCache, Model):
             'description' : self.description,
             'alt_text' : self.alt_text,
             'posted_at' : self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
-            'permalink_page' : 'https://%s/p/%s' % (options.app_host, self.share_key)
+            'permalink_page' : '%s://%s/p/%s' % (scheme, options.app_host, self.share_key)
         }
 
         if user_context:
@@ -338,7 +340,7 @@ class Sharedfile(ModelQueryCache, Model):
         if(source.type == 'link'):
             json_object['url'] = self.source_url
         else:
-            json_object['original_image_url'] = 'https://s.%s/r/%s' % (options.app_host, self.share_key)
+            json_object['original_image_url'] = '%s://s.%s/r/%s' % (scheme, options.app_host, self.share_key)
         return json_object
 
     def sourcefile(self):
@@ -508,8 +510,8 @@ class Sharedfile(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     def increment_view_count(self, amount):
         """
@@ -531,7 +533,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         If a file is recent, show its live view count.
         """
-        if datetime.utcnow() - self.created_at < timedelta(hours=24):
+        if utcnow() - self.created_at < timedelta(hours=24):
             return (self.view_count or 0) + self.calculate_view_count()
         else:
             # if a file is not recent and also has zero
@@ -596,15 +598,42 @@ class Sharedfile(ModelQueryCache, Model):
         return rfc822_date(self.created_at)
 
     def thumbnail_url(self):
-        return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-            file_path="thumbnails/%s" % (self.sourcefile().thumb_key), seconds=3600)
+        # If we are running on Fastly, then we can use the Image Optimizer to
+        # resize a given image. Thumbnail size is 100x100. This size is used
+        # for the conversations page.
+        sourcefile = self.sourcefile()
+        size = 0
+        if sourcefile.type == 'image':
+            if self.original_id > 0:
+                original = self.original()
+                size = original.size
+            else:
+                size = self.size
+        # Fastly I/O won't process images > 50mb, so condition for that
+        if sourcefile.type == 'image' and options.use_fastly and size < 50_000_000:
+            return f"https://{options.cdn_host}/r/{self.share_key}?width=100"
+        else:
+            return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+                file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
 
     def small_thumbnail_url(self):
-        """
-
-        """
-        return s3_authenticated_url(options.aws_key, options.aws_secret, options.aws_bucket, \
-            file_path="smalls/%s" % (self.sourcefile().small_key), seconds=3600)
+        # If we are running on Fastly, then we can use the Image Optimizer to
+        # resize a given image. Small thumbnails are 240x184 at most. This size is
+        # currently only used within the admin UI.
+        sourcefile = self.sourcefile()
+        size = 0
+        if sourcefile.type == 'image':
+            if self.original_id > 0:
+                original = self.original()
+                size = original.size
+            else:
+                size = self.size
+        # Fastly I/O won't process images > 50mb, so condition for that
+        if sourcefile.type == 'image' and options.use_fastly and size < 50_000_000:
+            return f"https://{options.cdn_host}/r/{self.share_key}?width=240&height=184&fit=bounds"
+        else:
+            return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
+                file_path="smalls/%s" % (sourcefile.small_key), seconds=3600)
 
     def type(self):
         source = sourcefile.Sourcefile.get("id = %s", self.source_id)
@@ -711,18 +740,19 @@ class Sharedfile(ModelQueryCache, Model):
 
         select_args = []
         if q is not None:
-            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description) AGAINST (%s IN BOOLEAN MODE)"
+            constraint_sql += " AND MATCH (sharedfile.title, sharedfile.description, sharedfile.alt_text) AGAINST (%s IN BOOLEAN MODE)"
             select_args.append(q)
 
-        select = """SELECT sharedfile.*, favorite.id as favorite_id FROM sharedfile
-                    left join favorite
-                    on favorite.sharedfile_id = sharedfile.id
-                    WHERE favorite.user_id = %s
-                    AND favorite.deleted = 0
-                    AND sharedfile.deleted = 0
-                    %s
-                    GROUP BY sharedfile.source_id
-                    ORDER BY favorite.id %s limit 0, %s""" % (int(user_id), constraint_sql, order, per_page)
+        # The `GROUP BY source_id`` constrains the result so it is only returning a single row
+        # per source_id. MySQL server cannot have ONLY_FULL_GROUP_BY present in sql_mode
+        # to allow this query.
+        select = """SELECT sharedfile.*, favorite.id as favorite_id
+        	FROM favorite
+	        JOIN sharedfile on sharedfile.id = favorite.sharedfile_id and sharedfile.deleted = 0
+            WHERE favorite.user_id = %s and favorite.deleted = 0
+            %s
+            GROUP BY sharedfile.source_id
+            ORDER BY favorite.id %s limit 0, %s"""  % (int(user_id), constraint_sql, order, per_page)
         files = self.object_query(select, *select_args)
         if order == "asc":
             files.reverse()
@@ -783,7 +813,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         TODO: Must only accept acceptable content-types after consulting a list.
         """
-        if len(sha1_value) <> 40:
+        if len(sha1_value) != 40:
             return None
 
         if user_id == None:
@@ -803,7 +833,7 @@ class Sharedfile(ModelQueryCache, Model):
             if not destination_shake.can_update(user_id):
                 return None
 
-        sf = sourcefile.Sourcefile.get_from_file(file_path, sha1_value, skip_s3=skip_s3)
+        sf = sourcefile.Sourcefile.get_from_file(file_path, sha1_value, skip_s3=skip_s3, content_type=content_type)
 
         if sf:
             shared_file = Sharedfile(user_id = user_id, name=file_name, content_type=content_type, source_id=sf.id, title=title, size=path.getsize(file_path))
