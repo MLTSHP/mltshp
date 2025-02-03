@@ -1,7 +1,8 @@
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>{{xhtml_escape(shake.display_name())}}</title>
 <link>https://{{ app_host }}{{shake.path()}}</link>
+<atom:link href="https://{{ app_host }}/shake/{{shake.name}}/rss" rel="self" type="application/rss+xml" />
 {% if shake.description %}
 <description>
 {{xhtml_escape(shake.description)}}
@@ -23,6 +24,7 @@
 {{xhtml_escape(sf.get_title())}}
 </title>
 <link>https://{{ app_host }}/p/{{sf.share_key}}</link>
+<guid>https://{{ app_host }}/p/{{sf.share_key}}</guid>
 <description>
 <![CDATA[
   <p>
