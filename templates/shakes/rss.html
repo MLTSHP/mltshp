@@ -3,11 +3,9 @@
 <title>{{xhtml_escape(shake.display_name())}}</title>
 <link>https://{{ app_host }}{{shake.path()}}</link>
 <atom:link href="https://{{ app_host }}{{shake.path()}}/rss" rel="self" type="application/rss+xml" />
-{% if (shake.type == "user") and shake.description %}
 <description>
-{{xhtml_escape(shake.description)}}
+{% if (shake.type == "group") and shake.description %}{{xhtml_escape(shake.description)}}{% end %}
 </description>
-{% end %}
 <language>en-us</language>
 {% if build_date %}
 <lastBuildDate>{{build_date}}</lastBuildDate>
