@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Create celery tasks for all the sharefiles that have views since
 last time this script was run.

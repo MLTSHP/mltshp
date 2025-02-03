@@ -1,18 +1,18 @@
 import hashlib
-import cStringIO
-from os import path
-from datetime import datetime
-from urlparse import urlparse
-import re
+import io
+from urllib.parse import parse_qs, urlencode, urlparse
 
-from tornado.escape import url_escape, json_decode, json_encode
+from tornado.escape import url_escape, json_encode
 from tornado.options import options
 from PIL import Image
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
+from lib.utilities import utcnow
+
+import logging
+logger = logging.getLogger('mltshp')
 
 
 class Sourcefile(ModelQueryCache, Model):
@@ -46,8 +46,8 @@ class Sourcefile(ModelQueryCache, Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        self.updated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        self.updated_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def width_constrained_dimensions(self, width_constraint):
         """
@@ -101,64 +101,92 @@ class Sourcefile(ModelQueryCache, Model):
             except Exception as e:
                 return None
         else:
-            h.update(file_data)
+            # test if file_data is a string
+            if isinstance(file_data, str):
+                h.update(file_data.encode("UTF-8"))
+            elif isinstance(file_data, bytes):
+                h.update(file_data)
+            else:
+                raise Exception("file_data must be a string or bytes")
         return h.hexdigest()
 
     @staticmethod
-    def get_from_file(file_path, sha1_value, type='image', skip_s3=None):
+    def get_from_file(file_path, sha1_value, type='image', skip_s3=None, content_type=None):
         existing_source_file = Sourcefile.get("file_key = %s", sha1_value)
-        thumb_cstr =  cStringIO.StringIO()
-        small_cstr =  cStringIO.StringIO()
+        thumb_cstr = io.BytesIO()
+        small_cstr = io.BytesIO()
         if existing_source_file:
             return existing_source_file
         try:
+            logger.debug("creating %s" % file_path)
             img = Image.open(file_path)
             original_width = img.size[0]
             original_height= img.size[1]
-            image_format = img.format
         except Exception as e:
             return None
 
         if img.mode != "RGB":
-            img = img.convert("RGB")
+            logger.debug("converting to RGB")
+            img2 = img.convert("RGB")
+            img.close()
+            img = img2
 
         #generate smaller versions
         thumb = img.copy()
         small = img.copy()
 
-        thumb.thumbnail((100,100), Image.ANTIALIAS)
-        small.thumbnail((240,184), Image.ANTIALIAS)
+        thumb.thumbnail((100,100), Image.Resampling.LANCZOS)
+        small.thumbnail((240,184), Image.Resampling.LANCZOS)
 
         thumb.save(thumb_cstr, format="JPEG")
         small.save(small_cstr, format="JPEG")
 
+        thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
+        small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
+
         bucket = None
         if not skip_s3:
+            logger.debug("making S3 bucket")
             bucket = S3Bucket()
 
-        #save original file
-        if type != 'link':
-            if not skip_s3:
-                k = Key(bucket)
-                k.key = "originals/%s" % (sha1_value)
-                k.set_contents_from_filename(file_path)
+            # save original file
+            if type != 'link':
+                logger.debug("putting object originals/%s" % sha1_value)
+                bucket.upload_file(
+                    file_path,
+                    "originals/%s" % sha1_value,
+                    ExtraArgs={
+                        "ContentType": content_type,
+                    },
+                )
 
-        #save thumbnail
-        thumbnail_file_key = Sourcefile.get_sha1_file_key(file_data=thumb_cstr.getvalue())
-        if not skip_s3:
-            k = Key(bucket)
-            k.key = "thumbnails/%s" % thumbnail_file_key
-            k.set_contents_from_string(thumb_cstr.getvalue())
+            # save thumbnail
+            thumb_bytes = thumb_cstr.getvalue()
+            logger.debug("putting object thumbnails/%s (length %d)" % (thumbnail_file_key, len(thumb_bytes)))
+            bucket.put_object(
+                thumb_bytes,
+                "thumbnails/%s" % thumbnail_file_key,
+                ContentType="image/jpeg",
+            )
 
-        #save small
-        small_file_key = Sourcefile.get_sha1_file_key(file_data=small_cstr.getvalue())
-        if not skip_s3:
-            k = Key(bucket)
-            k.key = "smalls/%s" % small_file_key
-            k.set_contents_from_string(small_cstr.getvalue())
+            # save small
+            small_bytes = small_cstr.getvalue()
+            logger.debug("putting object smalls/%s (length %d)" % (small_file_key, len(small_bytes)))
+            bucket.put_object(
+                small_bytes,
+                "smalls/%s" % small_file_key,
+                ContentType="image/jpeg",
+            )
+
+        img.close()
+        thumb.close()
+        small.close()
 
         #save source file
-        sf = Sourcefile(width=original_width, height=original_height, file_key=sha1_value, thumb_key=thumbnail_file_key, small_key=small_file_key, type=type)
+        logger.debug("saving sourcefile")
+        sf = Sourcefile(
+            width=original_width, height=original_height, file_key=sha1_value,
+            thumb_key=thumbnail_file_key, small_key=small_file_key, type=type)
         sf.save()
         return sf
 
@@ -170,11 +198,22 @@ class Sourcefile(ModelQueryCache, Model):
         except:
             return None
 
+        if not url_parsed or not url_parsed.hostname:
+            return None
+
         if url_parsed.hostname.lower() not in ['youtube.com', 'www.youtube.com', 'vimeo.com', 'www.vimeo.com', 'youtu.be', 'flic.kr', 'flickr.com', 'www.flickr.com']:
             return None
 
         oembed_url = None
         if url_parsed.hostname.lower() in ['youtube.com', 'www.youtube.com', 'youtu.be']:
+            # We want to strip any `si` value from the query, as it can be used to track the original
+            # YouTube user that shared the link.
+            query_params = parse_qs(url_parsed.query)
+            if "si" in query_params:
+                del query_params["si"]
+                url_parsed = url_parsed._replace(
+                    query=urlencode(query_params, doseq=True)
+                )
             to_url = 'https://%s%s?%s' % (url_parsed.hostname, url_parsed.path, url_parsed.query)
             oembed_url = 'https://www.youtube.com/oembed?url=%s&maxwidth=550&format=json' % (url_escape(to_url))
         elif url_parsed.hostname.lower() in ['vimeo.com', 'www.vimeo.com']:

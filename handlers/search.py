@@ -3,7 +3,7 @@ import re
 import tornado.web
 from tornado import escape
 from tornado.options import options
-from base import BaseHandler, require_membership
+from .base import BaseHandler, require_membership
 import lib.utilities
 
 from models import sharedfile, user
@@ -12,6 +12,7 @@ MAX_PER_PAGE = 10
 
 
 class SearchHandler(BaseHandler):
+    @tornado.web.authenticated
     @require_membership
     def get(self, base36_id=None):
         self.set_header("Cache-Control", "private")

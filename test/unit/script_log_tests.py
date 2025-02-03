@@ -1,7 +1,7 @@
 import datetime
 
 from models import ScriptLog
-from base import BaseTestCase
+from .base import BaseTestCase
 import test.factories
 
 class ScriptLogTests(BaseTestCase):

@@ -1,5 +1,5 @@
 from models import User, Externalservice, ExternalRelationship
-from base import BaseTestCase
+from .base import BaseTestCase
 
 class ExternalserviceModelTests(BaseTestCase):
     def setUp(self):

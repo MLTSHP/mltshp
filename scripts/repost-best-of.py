@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 For a specific user, we get the last 10 files and collect the sharedfile ids
 the file was saved from.  We then go through last 10 magic files and save 

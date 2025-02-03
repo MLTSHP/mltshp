@@ -31,7 +31,7 @@ routes = [
     (r"/api/friends/(before|after)/([\a-zA-Z0-9]+)",
         handlers.api.FriendShakeHandler),
     (r"/api/upload", handlers.api.FileUploadHandler),
-    (r"/api/internalupload", handlers.api.FileUploadHandler),
+    (r"/internal/api/upload", handlers.api.FileUploadHandler),
     (r"/api/magicfiles", handlers.api.MagicfilesHandler),
     (r"/api/magicfiles/(before|after)/([0-9]+)",
         handlers.api.MagicfilesHandler),
@@ -92,7 +92,7 @@ routes = [
     (r"/shake/create", handlers.shake.CreateShakeHandler),
     (r"/shake/([a-zA-Z0-9\-]+)/members", handlers.shake.MembersHandler),
     (r"/shake/([a-zA-Z0-9\-]+)/update", handlers.shake.UpdateShakeHandler),
-    (r"/shake/internalupdate", handlers.shake.UpdateShakeHandler),
+    (r"/internal/shake/update", handlers.shake.UpdateShakeHandler),
     (r"/shake/([a-zA-Z0-9\-]+)/subscribe",
         handlers.shake.SubscribeShakeHandler),
     (r"/shake/([a-zA-Z0-9\-]+)/unsubscribe",
@@ -167,7 +167,7 @@ routes = [
         handlers.account.SettingsConnectionsHandler),
     (r"/account/settings/profile", handlers.account.SettingsProfileHandler),
     # below is for nginx, which will only send POSTs here, via upload module.
-    (r"/account/settings/profile/internalsave",
+    (r"/internal/account/settings/profile/save",
         handlers.account.SettingsProfileHandler),
     (r"/account/settings/profile/save",
         handlers.account.SettingsProfileHandler),
@@ -213,6 +213,7 @@ routes = [
     (r"/popular/([\d]+)", handlers.popular.IndexHandler),
 
     (r"/admin/?", handlers.admin.IndexHandler),
+    (r"/admin/image-takedown", handlers.admin.ImageTakedownHandler),
     (r"/admin/create-users", handlers.admin.CreateUsersHandler),
     (r"/admin/interesting-stats", handlers.admin.InterestingStatsHandler),
     (r"/admin/waitlist", handlers.admin.WaitlistHandler),
@@ -241,7 +242,7 @@ routes = [
     (r"/tools/find-shakes", handlers.tools.FindShakesGroups),
 
     (r"/upload", handlers.upload.UploadHandler),
-    (r"/internalupload", handlers.upload.UploadHandler),
+    (r"/internal/upload", handlers.upload.UploadHandler),
 
     (r"/search/?", handlers.search.SearchHandler),
     (r"/search/before/([0-9A-Za-z]+)?",

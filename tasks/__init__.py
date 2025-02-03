@@ -1,6 +1,4 @@
-from celery.task import task
-from celery.task.base import Task
-import postmark
+from celery import shared_task, Task
 from tornado.options import define, options
 
 import mltshpoptions
@@ -30,4 +28,4 @@ class MltshpTask(Task):
 
 def mltshp_task(*args, **options):
     # This is how celery's periodic_task decorator customizes the class, so try it here too.
-    return task(**dict({"base": MltshpTask}, **options))
+    return shared_task(**dict({"base": MltshpTask}, **options))

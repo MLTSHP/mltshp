@@ -4,15 +4,15 @@
   "type": "link",
   "url": "{{sharedfile.source_url}}",{% else %}{% if sourcefile.mp4_flag or sourcefile.webm_flag %}
   "type": "video",
-  "html": "<video class=\"autoplay\" autoplay muted playsinline webkit-playsinline loop=\"loop\" width=\"{{sourcefile.width}}\" height=\"{{sourcefile.height}}\"  data-alt=\"{{escape(sharedfile.get_title())}}\" data-src=\"https://s.{{host}}/r/{{sharedfile.share_key}}\">{% if sourcefile.webm_flag %}<source src=\"http{% if cdn_host == "mltshp-cdn.com" %}s{% end %}://{{cdn_host}}/r/{{sharedfile.share_key}}.webm\" type=\"video/webm\">{% end %}{% if sourcefile.mp4_flag %}<source src=\"http{% if cdn_host == "mltshp-cdn.com" %}s{% end %}://{{cdn_host}}/r/{{sharedfile.share_key}}.mp4\" type=\"video/mp4\">{% end %}</video>",{% else %}
+  "html": "<video class=\"autoplay\" autoplay muted playsinline webkit-playsinline loop=\"loop\" width=\"{{sourcefile.width}}\" height=\"{{sourcefile.height}}\"  data-alt=\"{{escape(sharedfile.get_title())}}\" data-src=\"{{app_scheme}}://s.{{app_host}}/r/{{sharedfile.share_key}}\">{% if sourcefile.webm_flag %}<source src=\"https://{{cdn_host}}/r/{{sharedfile.share_key}}.webm\" type=\"video/webm\">{% end %}{% if sourcefile.mp4_flag %}<source src=\"https://{{cdn_host}}/r/{{sharedfile.share_key}}.mp4\" type=\"video/mp4\">{% end %}</video>",{% else %}
   "type": "photo",
   "url": "https://{{cdn_host}}/r/{{sharedfile.share_key}}",{% end %}{% end %}
   "width": {{sourcefile.width}},
   "height": {{sourcefile.height}},
   "title": {{json_encode(sharedfile.get_title())}},
   "author_name": "{{escape(sharedfile_owner.name)}}",
-  "author_url": "http://{{app_host}}/user/{{sharedfile_owner.name}}",
+  "author_url": "https://{{app_host}}/user/{{sharedfile_owner.name}}",
   "provider_name": "MLTSHP",{% if include_embed and sourcefile.type == "link" %}
   "embed_html": {{json_encode(sharedfile.render_data())}},{% end %}
-  "provider_url": "http://{{app_host}}/"
+  "provider_url": "https://{{app_host}}/"
 }{% if jsonp %}){%end %}
