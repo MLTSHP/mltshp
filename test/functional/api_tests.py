@@ -601,7 +601,7 @@ class APIResourceRequests(test.base.BaseAsyncTestCase):
         self.assertEqual(group_shake_2['name'], 'Group Shake')
         self.assertEqual(group_shake_2['owner'], {'name': 'user2', 'id': 2,  'profile_image_url': "https://some-cdn.com/static/images/default-icon-venti.svg"})
         self.assertEqual(group_shake_2['thumbnail_url'], 'https://some-cdn.com/static/images/default-icon-venti.svg')
-        self.assertEqual(group_shake_2['url'], 'https://mltshp.com/groupshake')
+        self.assertEqual(group_shake_2['url'], 'https://my-mltshp.com/groupshake')
         self.assertEqual(group_shake_2['description'], 'This is a group shake.')
         self.assertTrue('created_at' in group_shake_2)
         self.assertTrue('updated_at' in group_shake_2)
