@@ -9,7 +9,7 @@ from PIL import Image
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.reservedshakenames import reserved_names
-from lib.utilities import transform_to_square_thumbnail, s3_url, utcnow
+from lib.utilities import transform_to_square_thumbnail, s3_url, rfc822_date, utcnow
 
 from . import user, shake, shakesharedfile, sharedfile, subscription, shakemanager
 
@@ -358,7 +358,7 @@ class Shake(ModelQueryCache, Model):
         Returns a date formatted to be included in feeds
         e.g., Tue, 12 Apr 2005 13:59:56 EST
         """
-        return self.created_at and self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+        return self.created_at and rfc822_date(self.created_at)
 
     @classmethod
     def featured_shakes(self, limit=3):

@@ -4,7 +4,7 @@ import re
 from tornado import escape
 from tornado.options import options
 from lib.flyingcow import Model, Property
-from lib.utilities import pretty_date, utcnow
+from lib.utilities import pretty_date, rfc822_date, utcnow
 from bs4 import BeautifulSoup
 
 from . import user
@@ -99,7 +99,7 @@ class Comment(Model):
         Returns a date formatted to be included in feeds
         e.g., Tue, 12 Apr 2005 13:59:56 EST
         """
-        return self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+        return rfc822_date(self.created_at)
 
     def body_formatted(self):
         """

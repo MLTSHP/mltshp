@@ -9,7 +9,7 @@ from tornado.options import options
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
-from lib.utilities import base36encode, base36decode, pretty_date, s3_url, utcnow
+from lib.utilities import base36encode, base36decode, pretty_date, s3_url, rfc822_date, utcnow
 
 from . import user
 from . import sourcefile
@@ -20,6 +20,7 @@ from . import shake
 from . import comment
 from . import notification
 from . import conversation
+
 import models.post
 import models.nsfw_log
 import models.tag
@@ -594,7 +595,7 @@ class Sharedfile(ModelQueryCache, Model):
         Returns a date formatted to be included in feeds
         e.g., Tue, 12 Apr 2005 13:59:56 EST
         """
-        return self.created_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+        return rfc822_date(self.created_at)
 
     def thumbnail_url(self):
         # If we are running on Fastly, then we can use the Image Optimizer to

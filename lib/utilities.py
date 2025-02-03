@@ -186,6 +186,12 @@ def pretty_date(time=False):
     return "%s %s ago" % (str(diff), diff_string)
 
 
+def rfc822_date(time):
+    # Format for RFC822; all of our times are in UTC, so add "Z" to the end,
+    # instead of "UTC" or "GMT"
+    return time.strftime("%a, %d %b %Y %H:%M:%S Z")
+
+
 def normalize_string(token, timestamp, nonce, request_method, host, port, path, query_array):
     normalized_string = "%s\n" % (token)
     normalized_string += "%s\n" % (timestamp)
