@@ -75,6 +75,8 @@ class Sharedfile(ModelQueryCache, Model):
         if not description:
             description = ''
 
+        scheme = (options.use_cdn and "https") or "http"
+
         if not raw:
             #description = escape.xhtml_escape(description)
             extra_params = 'target="_blank" rel="nofollow"'
@@ -82,11 +84,10 @@ class Sharedfile(ModelQueryCache, Model):
             description = escape.linkify(description, True,
                 extra_params=extra_params)
 
-            #re_hash = re.compile(r'#[0-9a-zA-Z+]*',re.IGNORECASE)
-            #for iterator in re_hash.finditer(description):
-
-            description = re.sub(r'(\A|\s)#(\w+)', r'\1<a href="/tag/\2">#\2</a>', description)
-
+            description = re.sub(
+                r'(\A|\s)#(\w+)',
+                '\1<a href="' + scheme + '://' + options.app_host + '/tag/\2">#\2</a>',
+                description)
             description = description.replace('\n', '<br>')
         return description
 
