@@ -1190,12 +1190,12 @@ $(document).ready(function () {
     apply_hover_for_video($(".image-content video.autoplay"));
 
     /* Open / close notification boxes */
-    $(".notification-block-hd").live("click", function () {
+    $(document).on("click", ".notification-block-hd", function () {
         $(this).next().toggle();
     });
 
     /* User follow module */
-    $(".user-follow .submit-form").live("click", function () {
+    $(document).on("click", ".user-follow .submit-form", function () {
         var $container = $(this).parents(".user-follow");
         var $form = $container.find("form");
         var url = $form.attr("action");
@@ -1234,7 +1234,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $(".notification-close").live("click", function () {
+    $(document).on("click", ".notification-close", function () {
         $notification = $(this).parent(".notification");
         var $notification_block = $(this).parents(".notification-block");
         var $notification_block_hd = $notification_block.find(
@@ -1265,7 +1265,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $(".notification-block .clear-all a").live("click", function () {
+    $(document).on("click", ".notification-block .clear-all a", function () {
         var url = $(this).attr("href");
         var $notification_block = $(this).parents(".notification-block");
         $.post(
@@ -1291,7 +1291,7 @@ $(document).ready(function () {
     });
 
     /* Notification block: invitations: */
-    $("#notifcation-block-invitations form").live("submit", function () {
+    $(document).on("submit", "#notifcation-block-invitations form", function () {
         var data = $(this).serialize();
         var url = $(this).attr("action");
 
@@ -1331,7 +1331,7 @@ $(document).ready(function () {
     });
 
     /* Notification block: shake invitations: */
-    $("#notifcation-block-shakeinvitation form").live("submit", function () {
+    $(document).on("submit", "#notifcation-block-shakeinvitation form", function () {
         var data = $(this).serialize();
         var url = $(this).attr("action");
         var $block = $(this).parents(".notification");
@@ -1637,7 +1637,7 @@ $(document).ready(function () {
         $("#content-find-people-body").load(
             "/tools/find-shakes/quick-fetch-twitter",
         );
-        $("#refresh-friends a").live("click", function () {
+        $(document).on("click", "#refresh-friends a", function () {
             $("#content-find-people-body").load(
                 "/tools/find-shakes/quick-fetch-twitter?refresh=1",
             );
