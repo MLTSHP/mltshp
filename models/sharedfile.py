@@ -86,7 +86,7 @@ class Sharedfile(ModelQueryCache, Model):
 
             description = re.sub(
                 r'(\A|\s)#(\w+)',
-                '\1<a href="' + scheme + '://' + options.app_host + '/tag/\2">#\2</a>',
+                r'\1<a href="' + scheme + '://' + options.app_host + r'/tag/\2">#\2</a>',
                 description)
             description = description.replace('\n', '<br>')
         return description
