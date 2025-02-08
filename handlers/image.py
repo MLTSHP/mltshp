@@ -37,7 +37,7 @@ class SaveHandler(BaseHandler):
             if json:
                 return self.write({'error' : "Can't save that file."})
             else:
-                return self.redirect("/p/%s" % sharedfile.share_key)
+                return self.redirect(sharedfile.post_url(relative=True))
 
         count = sharedfile.save_count
 
@@ -57,7 +57,7 @@ class SaveHandler(BaseHandler):
                 'count' : count + 1
             })
         else:
-            return self.redirect("/p/%s" % new_sharedfile.share_key)
+            return self.redirect(new_sharedfile.post_url(relative=True))
 
 
 class ShowHandler(BaseHandler):
@@ -149,6 +149,7 @@ class ShowLikesHandler(BaseHandler):
         for sharedfile in sharedfile.favorites():
             user = sharedfile.user()
             response_data.append({
+                'action' : 'like',
                 'user_name' : user.name,
                 'user_profile_image_url' :  user.profile_image_url(),
                 'posted_at_friendly' : sharedfile.pretty_created_at()
@@ -170,7 +171,9 @@ class ShowSavesHandler(BaseHandler):
         for sharedfile in sharedfile.saves():
             user = sharedfile.user()
             response_data.append({
+                'action' : 'save',
                 'user_name' : user.name,
+                'post_url' : sharedfile.post_url(),
                 'user_profile_image_url' :  user.profile_image_url(),
                 'posted_at_friendly' : sharedfile.pretty_created_at()
             })
@@ -358,7 +361,7 @@ class AddToShakesHandler(BaseHandler):
             shake = Shake.get("id = %s", shake_id)
             if shake.can_update(current_user.id):
                 sharedfile.add_to_shake(shake)
-        return self.redirect("/p/%s" % sharedfile.share_key)
+        return self.redirect(sharedfile.post_url(relative=True))
 
 
 class DeleteFromShake(BaseHandler):
@@ -382,7 +385,7 @@ class DeleteFromShake(BaseHandler):
         if redirect_to:
             return self.redirect(redirect_to)
         else:
-            return self.redirect("/p/%s" % sharedfile.share_key)
+            return self.redirect(sharedfile.post_url(relative=True))
 
 
 class DeleteHandler(BaseHandler):
@@ -416,7 +419,7 @@ class QuickEditTitleHandler(BaseHandler):
             if user.is_paid or not uses_a_banned_phrase(title):
                 sharedfile.title = title
                 sharedfile.save()
-        return self.redirect("/p/%s/quick-edit-title" % share_key)
+        return self.redirect(sharedfile.post_url(relative=True) + "/quick-edit-title")
 
     def get(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
@@ -448,7 +451,7 @@ class QuickEditDescriptionHandler(BaseHandler):
             if user.is_paid or not uses_a_banned_phrase(description):
                 sharedfile.description = description
                 sharedfile.save()
-        return self.redirect("/p/%s/quick-edit-description" % share_key)
+        return self.redirect(sharedfile.post_url(relative=True) + "/quick-edit-description")
 
     def get(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
@@ -480,7 +483,7 @@ class QuickEditAltTextHandler(BaseHandler):
             if user.is_paid or not uses_a_banned_phrase(alt_text):
                 sharedfile.alt_text = alt_text
                 sharedfile.save()
-        return self.redirect("/p/%s/quick-edit-alt-text" % share_key)
+        return self.redirect(sharedfile.post_url(relative=True) + "/quick-edit-alt-text")
 
     def get(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
@@ -510,7 +513,7 @@ class QuickEditSourceURLHandler(BaseHandler):
         if sharedfile.can_edit(user):
             sharedfile.source_url = self.get_argument('source_url', '')
             sharedfile.save()
-        return self.redirect("/p/%s/quick-edit-source-url" % share_key)
+        return self.redirect(sharedfile.post_url(relative=True) + "/quick-edit-source-url")
 
     def get(self, share_key):
         sharedfile = Sharedfile.get_by_share_key(share_key)
@@ -536,7 +539,7 @@ class LikeHandler(BaseHandler):
             if is_json:
                 return self.write({'error':"Not a valid image."})
             else:
-                return self.redirect('/p/%s' % (sharedfile_key))
+                return self.redirect(sharedfile.post_url(relative=True))
 
         #Attempt to add favorites for the parent and original
         original_sf = sharedfile.original()
@@ -550,13 +553,13 @@ class LikeHandler(BaseHandler):
             if is_json:
                 return self.write({'error':"Cant like the image, probably already liked."})
             else:
-                return self.redirect('/p/%s' % (sharedfile_key))
+                return self.redirect(sharedfile.post_url(relative=True))
         count = sharedfile.like_count + 1
 
         if is_json:
             return self.write({'response':'ok', 'count': count, 'share_key' : sharedfile.share_key, 'like' : True })
         else:
-            return self.redirect('/p/%s' % (sharedfile_key))
+            return self.redirect(sharedfile.post_url(relative=True))
 
 
 class UnlikeHandler(BaseHandler):
@@ -571,7 +574,7 @@ class UnlikeHandler(BaseHandler):
             if is_json:
                 return self.write({'error':'Not a valid image.'})
             else:
-                return self.redirect('/p/%s' % (sharedfile_key))
+                return self.redirect(sharedfile.post_url(relative=True))
 
         #Attempt to remove favorites for the parent and original
         original_sf = sharedfile.original(include_deleted=True)
@@ -585,13 +588,13 @@ class UnlikeHandler(BaseHandler):
             if is_json:
                 return self.write({'error':"Cant unlike the image, probably not liked to begin with."})
             else:
-                return self.redirect('/p/%s' % (sharedfile_key))
+                return self.redirect(sharedfile.post_url(relative=True))
         count = sharedfile.like_count - 1
 
         if is_json:
             return self.write({'response':'ok', 'count' : count, 'share_key' : sharedfile.share_key, 'like' : False})
         else:
-            return self.redirect('/p/%s' % (sharedfile_key))
+            return self.redirect(sharedfile.post_url(relative=True))
 
 
 class OEmbedHandler(BaseHandler):
@@ -647,8 +650,8 @@ class CommentHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, share_key):
-        shared_file = Sharedfile.get_by_share_key(share_key)
-        if not shared_file:
+        sharedfile = Sharedfile.get_by_share_key(share_key)
+        if not sharedfile:
             raise tornado.web.HTTPError(404)
 
         ajax = self.get_argument('ajax', False)
@@ -664,8 +667,8 @@ class CommentHandler(BaseHandler):
 
         user = self.get_current_user_object()
         if user and user.email_confirmed == 1:
-            comment = Comment.add(user=user, sharedfile=shared_file, body=body)
-        return self.redirect("/p/%s%s" % (share_key, redirect_suffix))
+            comment = Comment.add(user=user, sharedfile=sharedfile, body=body)
+        return self.redirect(sharedfile.post_url(relative=True) + redirect_suffix)
 
 
 class CommentDeleteHandler(BaseHandler):
@@ -677,8 +680,8 @@ class CommentDeleteHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, share_key, comment_id):
-        shared_file = Sharedfile.get_by_share_key(share_key)
-        if not shared_file:
+        sharedfile = Sharedfile.get_by_share_key(share_key)
+        if not sharedfile:
             raise tornado.web.HTTPError(404)
 
         ajax = self.get_argument('ajax', False)
@@ -694,7 +697,7 @@ class CommentDeleteHandler(BaseHandler):
         comment = Comment.get("id = %s", comment_id)
         if comment.can_user_delete(user):
             comment.delete()
-        return self.redirect("/p/%s%s" % (share_key, redirect_suffix))
+        return self.redirect(sharedfile.post_url(relative=True) + redirect_suffix)
 
 
 class CommentLikeHandler(BaseHandler):
@@ -706,11 +709,11 @@ class CommentLikeHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, share_key, comment_id):
-        shared_file = models.Sharedfile.get_by_share_key(share_key)
+        sharedfile = models.Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
         comment = Comment.get("id=%s", comment_id)
 
-        if not shared_file or not comment:
+        if not sharedfile or not comment:
             raise tornado.web.HTTPError(404)
 
         existing_comment_like = models.CommentLike.get("comment_id = %s and user_id = %s",
@@ -732,7 +735,7 @@ class CommentLikeHandler(BaseHandler):
             count = models.CommentLike.where_count("comment_id = %s", comment.id)
             return self.write({'response':'ok', 'count': count, 'like' : True })
         else:
-            return self.redirect("/p/%s?salty" % (share_key,))
+            return self.redirect(sharedfile.post_url(relative=True) + "?salty")
 
 
 class CommentDislikeHandler(BaseHandler):
@@ -744,11 +747,11 @@ class CommentDislikeHandler(BaseHandler):
     @tornado.web.authenticated
     @require_membership
     def post(self, share_key, comment_id):
-        shared_file = models.Sharedfile.get_by_share_key(share_key)
+        sharedfile = models.Sharedfile.get_by_share_key(share_key)
         user = self.get_current_user_object()
         comment = Comment.get("id=%s", comment_id)
 
-        if not shared_file or not comment:
+        if not sharedfile or not comment:
             raise tornado.web.HTTPError(404)
 
         existing_comment_like = models.CommentLike.get("comment_id = %s and user_id = %s",
@@ -766,7 +769,7 @@ class CommentDislikeHandler(BaseHandler):
             count = models.CommentLike.where_count("comment_id = %s", comment.id)
             return self.write({'response':'ok', 'count': count, 'like' : True })
         else:
-            return self.redirect("/p/%s?salty" % (share_key,))
+            return self.redirect(sharedfile.post_url(relative=True) + "?salty")
 
 
 class NSFWHandler(BaseHandler):
@@ -791,4 +794,4 @@ class NSFWHandler(BaseHandler):
 
         user = self.get_current_user_object()
         sharedfile.set_nsfw(user)
-        return self.redirect("/p/%s" % sharedfile.share_key)
+        return self.redirect(sharedfile.post_url(relative=True))

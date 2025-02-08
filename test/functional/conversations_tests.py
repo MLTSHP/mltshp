@@ -24,28 +24,27 @@ class ConversationTests(test.base.BaseAsyncTestCase):
         self.shf.save()
 
     def test_creating_a_new_comment_creates_a_conversation(self):
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
 
         conversations = Conversation.all()
         self.assertEqual(len(conversations), 2)
 
     def test_creating_a_new_comment_does_not_create_a_duplicate_conversation(self):
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
-
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a second comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a second comment"), self.xsrf))
         
         conversations = Conversation.all()
         self.assertEqual(len(conversations), 2)
 
     def test_another_user_commenting_will_update_the_files_activity_at(self):
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
 
         time.sleep(1)
         
         sf = Sharedfile.get('id=%s', self.shf.id)
         activity_one = sf.activity_at
 
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a second comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a second comment"), self.xsrf))
         
         sf = Sharedfile.get('id=%s', self.shf.id)
         activity_two = sf.activity_at
@@ -53,9 +52,8 @@ class ConversationTests(test.base.BaseAsyncTestCase):
         self.assertTrue(activity_two > activity_one)
 
     def test_deleting_a_file_will_set_conversation_to_muted(self):
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
-
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a second comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a comment"), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape("a second comment"), self.xsrf))
 
         self.shf.delete()
 

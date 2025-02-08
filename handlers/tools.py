@@ -370,20 +370,20 @@ class SaveVideoHandler(BaseHandler):
         if 'title' in self.oembed_doc:
             title = self.oembed_doc['title']
 
-        shared_file = Sharedfile(user_id=current_user.id, name=url, content_type='text/html', source_id=source_file.id, title=title, source_url=url)
-        shared_file.save()
+        sharedfile = Sharedfile(user_id=current_user.id, name=url, content_type='text/html', source_id=source_file.id, title=title, source_url=url)
+        sharedfile.save()
 
-        share_key = base36encode(shared_file.id)
-        shared_file.share_key = share_key
-        shared_file.save()
+        share_key = base36encode(sharedfile.id)
+        sharedfile.share_key = share_key
+        sharedfile.save()
 
         user_shake = Shake.get('user_id = %s and type=%s', current_user.id, 'user')
-        shared_file.add_to_shake(self.destination_shake)
+        sharedfile.add_to_shake(self.destination_shake)
 
         if 'description' in self.oembed_doc:
-            shared_file.description = self.oembed_doc['description']
+            sharedfile.description = self.oembed_doc['description']
 
-        self.write({'path' : "/p/%s" % (share_key)})
+        self.write({'path' : sharedfile.post_url(relative=True)})
         self.finish()
 
     @tornado.web.authenticated

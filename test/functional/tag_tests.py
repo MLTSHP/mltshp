@@ -37,7 +37,7 @@ class TagTests(test.base.BaseAsyncTestCase):
     
     def test_create_tag_for_sf_creates_new_tag(self):
         self.sign_in('admin', 'asdfasdf')
-        response = self.post_url('/p/%s/create_tag' % self.sharedfile.share_key, {'tag':'asdf'})
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/create_tag', {'tag':'asdf'})
         
         all_tags = Tag.all()
         all_tag_shared_files = TagSharedfile.all()
@@ -49,11 +49,8 @@ class TagTests(test.base.BaseAsyncTestCase):
         
     def test_not_signedin_user_cant_creat_tag(self):
         self.sign_in('bob', 'asdfasdf')
-        response = self.post_url('/p/%s/create_tag' % self.sharedfile.share_key, {'tag':'asdf'})
-        
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/create_tag', {'tag':'asdf'})
 
-        print(self.response.code)
-        
         all_tags = Tag.all()
         all_tag_shared_files = TagSharedfile.all()
         
@@ -62,9 +59,9 @@ class TagTests(test.base.BaseAsyncTestCase):
         
     def test_delete_tag_for_sf(self):
         self.sign_in('admin', 'asdfasdf')
-        self.post_url('/p/%s/create_tag' % self.sharedfile.share_key, {'tag':'asdf'})
+        self.post_url(self.sharedfile.post_url(relative=True) + '/create_tag', {'tag':'asdf'})
         
-        response = self.post_url('/p/%s/delete_tag' % self.sharedfile.share_key, {'tag':'asdf'})
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/delete_tag', {'tag':'asdf'})
         
         all_tags = Tag.all()
         all_tag_shared_files = TagSharedfile.all()
@@ -76,8 +73,8 @@ class TagTests(test.base.BaseAsyncTestCase):
 
     def test_saving_file_carries_over_tags(self):
         self.sign_in('admin', 'asdfasdf')
-        self.post_url('/p/%s/create_tag' % self.sharedfile.share_key, {'tag':'asdf'})
-        self.post_url('/p/%s/create_tag' % self.sharedfile.share_key, {'tag':'qwer'})
+        self.post_url(self.sharedfile.post_url(relative=True) + '/create_tag', {'tag':'asdf'})
+        self.post_url(self.sharedfile.post_url(relative=True) + '/create_tag', {'tag':'qwer'})
         
         self.sign_in('bob', 'asdfasdf')
         

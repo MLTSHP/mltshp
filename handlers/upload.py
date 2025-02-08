@@ -57,7 +57,7 @@ class UploadHandler(BaseHandler):
                     shake_id=shake_id,
                     skip_s3=self.get_argument('skip_s3', None))
                 if sf is not None:
-                    return self.redirect("/p/%s" % (sf.share_key))
+                    return self.redirect(sf.post_url(relative=True))
                 else:
                     raise tornado.web.HTTPError(403)
             else:

@@ -818,24 +818,31 @@ $(document).ready(function () {
             render_content: function (response) {
                 var html = "";
                 for (var i = 0, len = response["result"].length; i < len; i++) {
+                    var result = response["result"][i];
+                    var link;
+                    if (result["action"] == "save") {
+                        // for saves, we link to the saved post
+                        link = result["post_url"];
+                    } else {
+                        link = "/user/" + result["user_name"];
+                    }
                     html += '<div class="user-action">';
                     html +=
                         '<a class="icon" href="/user/' +
-                        response["result"][i]["user_name"] +
+                        result["user_name"] +
                         '">';
+                        result["user_name"] +
+                        "</a>";
                     html +=
                         '<img class="avatar--img" src="' +
-                        response["result"][i]["user_profile_image_url"] +
+                        result["user_profile_image_url"] +
                         '" height="20" width="20" alt=""></a>';
-                    html +=
-                        '<a href="/user/' +
-                        response["result"][i]["user_name"] +
-                        '" class="name">' +
-                        response["result"][i]["user_name"] +
+                    html += '<a class="name" href="' + link + '">'
+                        result["user_name"] +
                         "</a>";
                     html +=
                         '<span class="date">' +
-                        response["result"][i]["posted_at_friendly"] +
+                        result["posted_at_friendly"] +
                         "</span>";
                     html += "</div>";
                 }

@@ -25,7 +25,7 @@ class CommentFavorTests(test.base.BaseAsyncTestCase):
         print(self.comment.user_id)
 
         self.sign_in('admin','asdfasdf')
-        response = self.post_url('/p/%s/comment/%s/like?json=1' % (self.shf.share_key, self.comment.id))
+        response = self.post_url(self.shf.post_url(relative=True) + ('/comment/%s/like?json=1' % (self.comment.id,)))
 
     def test_comment_can_be_liked(self):
         comment_like = models.CommentLike.get('user_id=%s', self.admin.id)
@@ -33,7 +33,7 @@ class CommentFavorTests(test.base.BaseAsyncTestCase):
 
     def test_comment_reliking_reuses_existing_like(self):
         #dislike it
-        response = self.post_url('/p/%s/comment/%s/dislike?json=1' % (self.shf.share_key, self.comment.id))
+        response = self.post_url(self.shf.post_url(relative=True) + ('/comment/%s/dislike?json=1' % (self.comment.id,)))
         comment_like = models.CommentLike.get('user_id=%s', self.admin.id)
         self.assertTrue(comment_like)
 
@@ -41,7 +41,7 @@ class CommentFavorTests(test.base.BaseAsyncTestCase):
         self.assertEqual(comment_like.deleted ,1)
 
         #now it is liked again
-        response = self.post_url('/p/%s/comment/%s/like?json=1' % (self.shf.share_key, self.comment.id))
+        response = self.post_url(self.shf.post_url(relative=True) + ('/comment/%s/like?json=1' % (self.comment.id,)))
 
         comment_like = models.CommentLike.get('user_id=%s', self.admin.id)
         self.assertTrue(comment_like)

@@ -306,6 +306,13 @@ class Sharedfile(ModelQueryCache, Model):
 
         return html
 
+    def post_url(self, relative=False):
+        if relative:
+            return '/p/%s' % (self.share_key)
+        else:
+            scheme = (options.use_cdn and "https") or "http"
+            return '%s://%s/p/%s' % (scheme, options.app_host, self.share_key)
+
     def as_json(self, user_context=None):
         """
         If user_context is provided, adds a couple of fields to
@@ -331,7 +338,7 @@ class Sharedfile(ModelQueryCache, Model):
             'description' : self.description,
             'alt_text' : self.alt_text,
             'posted_at' : self.created_at.replace(microsecond=0, tzinfo=None).isoformat() + 'Z',
-            'permalink_page' : '%s://%s/p/%s' % (scheme, options.app_host, self.share_key)
+            'permalink_page' : self.post_url(),
         }
 
         if user_context:

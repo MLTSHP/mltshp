@@ -154,7 +154,7 @@ class FileViewTests(BaseAsyncTestCase):
         self.assertEqual("1.png", sf.name)
         sf.delete()
 
-        response = self.fetch('/p/%s' % sf.share_key, follow_redirects=False)
+        response = self.fetch(sf.post_url(relative=True), follow_redirects=False)
         self.assertEqual(response.error.code, 404)
 
 
