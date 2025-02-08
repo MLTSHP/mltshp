@@ -497,6 +497,7 @@ class RSSFeedHandler(BaseHandler):
 
         self.set_header("Content-Type", "application/xml")
         return self.render("shakes/rss.html",
+            cdn_host=options.cdn_host,
             app_host=options.app_host, shake=shake,
             sharedfiles=sharedfiles, build_date=build_date)
 

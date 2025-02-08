@@ -11,7 +11,7 @@
 <lastBuildDate>{{build_date}}</lastBuildDate>
 {% end %}
 <image>
-<url>https:{{shake.page_image()}}</url>
+<url>{{shake.page_image()}}</url>
 <title>{{xhtml_escape(shake.display_name())}}</title>
 <link>https://{{ app_host }}{{shake.path()}}</link>
 </image>
@@ -29,7 +29,7 @@
     {% if sf.type() == "link" %}
       {{sf.render_data(store_view=False)}}
     {% else %}
-      <a href="https://{{ app_host }}/r/{{sf.share_key}}"><img border="0" src="https://{{ app_host }}/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}" alt="{{escape(sf.get_alt_text(raw=True) or 'No alt provided')}}"></a>
+      <a href="https://{{ cdn_host }}/r/{{sf.share_key}}"><img border="0" src="https://{{ cdn_host }}/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}" alt="{{escape(sf.get_alt_text(raw=True) or 'No alt provided')}}"></a>
     {% end %}
   </p>
   {% if sf.description %}

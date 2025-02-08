@@ -1,9 +1,17 @@
 <div class="image-title {% if show_attribution_in_title %}image-title-with-poster{% end %}">
     {% if can_edit and not site_is_readonly %}
         {% if list_view %}
-            <h3 class="image-edit-title">{{escape(sharedfile.get_title())}}</h3>
+            {% if sharedfile.get_title() == "" %}
+                <h3 class="image-edit-title the-title the-title-blank">click here to edit title</h3>
+            {% else %}
+                <h3 class="image-edit-title the-title">{{escape(sharedfile.get_title())}}</h3>
+            {% end %}
         {% else %}
-            <h1 class="image-edit-title">{{escape(sharedfile.get_title())}}</h1>
+            {% if sharedfile.get_title() == "" %}
+                <h1 class="image-edit-title the-title the-title-blank">click here to edit title</h1>
+            {% else %}
+                <h1 class="image-edit-title the-title">{{escape(sharedfile.get_title())}}</h1>
+            {% end %}
         {% end %}
         <form method="post" class="image-edit-title-form" action="/p/{{sharedfile.share_key}}/quick-edit-title">
             {{ xsrf_form_html() }}
@@ -111,7 +119,7 @@
         </div>
         <div class="description {% if can_edit %}description-edit{%end%}">
             {% if can_edit and not site_is_readonly %}
-                {% if not sharedfile.get_description() %}
+                {% if sharedfile.get_description() == "" %}
                     <div class="the-description the-description-blank">click here to edit description</div>
                 {% else %}
                     <div class="the-description">{{sharedfile.get_description()}}</div>
