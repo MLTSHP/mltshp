@@ -31,7 +31,7 @@ class CommentTests(BaseAsyncTestCase):
 
         That is all.&_xsrf=asdf
         """
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
 
         comments = self.shf.comments()
         self.assertEqual(len(comments), 1)
@@ -39,7 +39,7 @@ class CommentTests(BaseAsyncTestCase):
 
     def test_blank_comment_doesnt_save(self):
         body = ""
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
 
         comments = self.shf.comments()
         self.assertEqual(len(comments), 0)
@@ -48,7 +48,7 @@ class CommentTests(BaseAsyncTestCase):
         #submit a comment to /share_key/save_comment
         body = """
         """
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
 
         comments = self.shf.comments()
         self.assertEqual(len(comments), 0)
@@ -58,33 +58,7 @@ class CommentTests(BaseAsyncTestCase):
         body = """
         This is a comment.
         """
-        response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s' % (self.xsrf)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
+        response = self.fetch(self.shf.post_url(relative=True) + '/comment', method='POST', headers={'Cookie':'_xsrf=%s' % (self.xsrf)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
 
         comments = self.shf.comments()
         self.assertEqual(len(comments), 0)
-
-    # def test_saving_two_comments_within_24_hrs_restricts(self):
-    #     body = """
-    #         This is a comment.
-    #         """
-
-    #     response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
-
-    #     response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
-
-    #     test_user = User.get('id = 1')
-    #     self.assertEqual(test_user.restricted, 1)
-
-    # def test_saving_two_comments_after_social_does_not_restrict(self):
-
-    #     self.upload_test_file(shake_id=self.admin.shake().id)
-
-    #     body = """
-    #         This is a comment.
-    #         """
-    #     response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
-
-    #     response = self.fetch('/p/%s/comment' % self.shf.share_key, method='POST', headers={'Cookie':'_xsrf=%s;sid=%s' % (self.xsrf, self.sid)}, body="body=%s&_xsrf=%s" % (url_escape(body), self.xsrf))
-
-   #     test_user = User.get('id = 1')
-   #     self.assertEqual(test_user.restricted, 0)
