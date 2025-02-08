@@ -1291,81 +1291,95 @@ $(document).ready(function () {
     });
 
     /* Notification block: invitations: */
-    $(document).on("submit", "#notifcation-block-invitations form", function () {
-        var data = $(this).serialize();
-        var url = $(this).attr("action");
+    $(document).on(
+        "submit",
+        "#notifcation-block-invitations form",
+        function () {
+            var data = $(this).serialize();
+            var url = $(this).attr("action");
 
-        var that = this;
-        $.post(
-            url,
-            data,
-            function (response) {
-                if (response["error"]) {
-                    $(that)
-                        .find(".main-message")
-                        .html("<p>" + response["error"] + "</p>");
-                } else {
-                    if (response["count"] == 0) {
-                        $(that).find("input").hide();
-                        $("#invitation-count-text").html(
-                            response["count"] + " invitations",
-                        );
-                        $(that).find(".main-message").html("<p>Thanks!</p>");
+            var that = this;
+            $.post(
+                url,
+                data,
+                function (response) {
+                    if (response["error"]) {
+                        $(that)
+                            .find(".main-message")
+                            .html("<p>" + response["error"] + "</p>");
                     } else {
-                        var invitation_text =
-                            response["count"] == 1
-                                ? "invitation"
-                                : "invitations";
-                        $("#invitation-count-text").html(
-                            response["count"] + " " + invitation_text,
-                        );
-                        $(that).find(".main-message").html(response["message"]);
-                        $("#email_address").val("");
+                        if (response["count"] == 0) {
+                            $(that).find("input").hide();
+                            $("#invitation-count-text").html(
+                                response["count"] + " invitations",
+                            );
+                            $(that)
+                                .find(".main-message")
+                                .html("<p>Thanks!</p>");
+                        } else {
+                            var invitation_text =
+                                response["count"] == 1
+                                    ? "invitation"
+                                    : "invitations";
+                            $("#invitation-count-text").html(
+                                response["count"] + " " + invitation_text,
+                            );
+                            $(that)
+                                .find(".main-message")
+                                .html(response["message"]);
+                            $("#email_address").val("");
+                        }
                     }
-                }
-            },
-            "json",
-        );
+                },
+                "json",
+            );
 
-        return false;
-    });
+            return false;
+        },
+    );
 
     /* Notification block: shake invitations: */
-    $(document).on("submit", "#notifcation-block-shakeinvitation form", function () {
-        var data = $(this).serialize();
-        var url = $(this).attr("action");
-        var $block = $(this).parents(".notification");
-        var $header = $(
-            "#notifcation-block-shakeinvitation .notification-block-hd",
-        );
+    $(document).on(
+        "submit",
+        "#notifcation-block-shakeinvitation form",
+        function () {
+            var data = $(this).serialize();
+            var url = $(this).attr("action");
+            var $block = $(this).parents(".notification");
+            var $header = $(
+                "#notifcation-block-shakeinvitation .notification-block-hd",
+            );
 
-        var that = this;
-        $.post(
-            url,
-            data,
-            function (response) {
-                if (!response["error"]) {
-                    $block.remove();
-                    // we update the header differently when presenting only one
-                    // invitation on the shake page itself.
-                    if ($header.hasClass("invitation-single")) {
-                        $header.html("Got it.");
-                    } else {
-                        var invitation_text =
-                            response["count"] == 1
-                                ? "invitation"
-                                : "invitations";
-                        $header.html(
-                            response["count"] + " new shake " + invitation_text,
-                        );
+            var that = this;
+            $.post(
+                url,
+                data,
+                function (response) {
+                    if (!response["error"]) {
+                        $block.remove();
+                        // we update the header differently when presenting only one
+                        // invitation on the shake page itself.
+                        if ($header.hasClass("invitation-single")) {
+                            $header.html("Got it.");
+                        } else {
+                            var invitation_text =
+                                response["count"] == 1
+                                    ? "invitation"
+                                    : "invitations";
+                            $header.html(
+                                response["count"] +
+                                    " new shake " +
+                                    invitation_text,
+                            );
+                        }
                     }
-                }
-            },
-            "json",
-        );
+                },
+                "json",
+            );
 
-        return false;
-    });
+            return false;
+        },
+    );
 
     var NotificationInvitationContainer = function ($root) {
         this.$root = $root;

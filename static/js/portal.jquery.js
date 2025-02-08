@@ -37,7 +37,7 @@
             top = e.touches[0].pageY - this.$element.offset().top;
         } else if (
             typeof e.changedTouches != "undefined" &&
-            typeof e.changedTouches[0] != "udefined"
+            typeof e.changedTouches[0] != "undefined"
         ) {
             left = e.changedTouches[0].pageX - this.$element.offset().left;
             top = e.changedTouches[0].pageY - this.$element.offset().top;
