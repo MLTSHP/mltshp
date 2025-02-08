@@ -827,10 +827,7 @@ $(document).ready(function () {
                         link = "/user/" + result["user_name"];
                     }
                     html += '<div class="user-action">';
-                    html +=
-                        '<a class="icon" href="/user/' +
-                        result["user_name"] +
-                        '">';
+                    html += '<a class="icon" href="' + link + '">';
                     html +=
                         '<img class="avatar--img" src="' +
                         result["user_profile_image_url"] +
@@ -942,17 +939,15 @@ $(document).ready(function () {
                     link = "/user/" + result["user_name"];
                 }
                 html +=
-                    '<a class="icon" href="/user/' +
-                    result["user_name"] +
+                    '<a href="' +
+                    link +
                     '">' +
                     '<img class="avatar--img" src="' +
                     result["user_profile_image_url"] +
-                    '" height="20" width="20" alt=""></a>' +
-                    '<a class="name" href="' +
-                    link +
-                    '">' +
+                    '" height="20" width="20" alt="">' +
+                    '<span class="name">' +
                     result["user_name"] +
-                    "</a>";
+                    "</span></a>";
             }
             return html;
         },
