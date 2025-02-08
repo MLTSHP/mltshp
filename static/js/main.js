@@ -827,17 +827,15 @@ $(document).ready(function () {
                         link = "/user/" + result["user_name"];
                     }
                     html += '<div class="user-action">';
-                    html +=
-                        '<a class="icon" href="/user/' +
-                        result["user_name"] +
-                        '">';
-                        result["user_name"] +
-                        "</a>";
+                    html += '<a class="icon" href="' + link + '">';
                     html +=
                         '<img class="avatar--img" src="' +
                         result["user_profile_image_url"] +
                         '" height="20" width="20" alt=""></a>';
-                    html += '<a class="name" href="' + link + '">'
+                    html +=
+                        '<a class="name" href="' +
+                        link +
+                        '">' +
                         result["user_name"] +
                         "</a>";
                     html +=
@@ -933,15 +931,22 @@ $(document).ready(function () {
         user_html: function (data) {
             var html = "";
             for (var i = 0; i < data.result.length; i++) {
+                var result = data.result[i];
+                var link;
+                if (result["action"] == "save") {
+                    link = result["post_url"];
+                } else {
+                    link = "/user/" + result["user_name"];
+                }
                 html +=
-                    '<a href="/user/' +
-                    data.result[i]["user_name"] +
+                    '<a href="' +
+                    link +
                     '">' +
                     '<img class="avatar--img" src="' +
-                    data.result[i]["user_profile_image_url"] +
+                    result["user_profile_image_url"] +
                     '" height="20" width="20" alt="">' +
                     '<span class="name">' +
-                    data.result[i]["user_name"] +
+                    result["user_name"] +
                     "</span></a>";
             }
             return html;
