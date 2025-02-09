@@ -1,0 +1,94 @@
+name: Test and Deploy Pipeline
+
+env:
+    build_number: ${{ github.run_id }}
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build-web:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Pull latest web image
+              run: docker pull mltshp/mltshp-web:latest
+
+            - name: Build and push web image
+              run: |
+                docker build -t mltshp/mltshp-web:build-${{ env.build_number }} .
+                docker push mltshp/mltshp-web:build-${{ env.build_number }}
+
+    build-worker:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Pull latest worker image
+              run: docker pull mltshp/mltshp-worker:latest
+
+            - name: Build and push worker image
+              run: |
+                docker build -t mltshp/mltshp-worker:build-${{ env.build_number }} -f Dockerfile.worker .
+                docker push mltshp/mltshp-worker:build-${{ env.build_number }}
+
+    test:
+        needs: [build-web, build-worker]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Pull and tag web image
+              run: |
+                docker pull mltshp/mltshp-web:build-${{ env.build_number }}
+                docker tag mltshp/mltshp-web:build-${{ env.build_number }} mltshp/mltshp-web:latest
+
+            - name: Start services with Docker Compose
+              run: docker compose -f .buildkite/docker-compose.yml up -d --build
+
+            - name: Wait for services to be ready
+              run: sleep 10
+
+            - name: Run tests
+              run: docker exec -t buildkite-mltshp-1 ./run-tests.sh
+
+            - name: Run Coveralls report
+              env:
+                COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+              run: docker exec -t buildkite-mltshp-1 ./coveralls-report.sh
+
+            - name: Stop services and clean up
+              run: |
+                docker compose -f .buildkite/docker-compose.yml down
+                docker container prune -f
+
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        if: success()
+        steps:
+            - name: Pull and tag web image
+              run: |
+                docker pull mltshp/mltshp-web:build-${{ env.build_number }}
+                docker tag mltshp/mltshp-web:build-${{ env.build_number }} mltshp/mltshp-web:latest
+                docker push mltshp/mltshp-web:latest
+
+            - name: Pull and tag worker image
+              run: |
+                docker pull mltshp/mltshp-worker:build-${{ env.build_number }}
+                docker tag mltshp/mltshp-worker:build-${{ env.build_number }} mltshp/mltshp-worker:latest
+                docker push mltshp/mltshp-worker:latest
+
+            - name: Notify Slack
+              uses: 8398a7/action-slack@v3
+              with:
+                status: success
+                fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+              env:
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
