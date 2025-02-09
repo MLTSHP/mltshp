@@ -11,7 +11,7 @@
 <lastBuildDate>{{build_date}}</lastBuildDate>
 {% end %}
 <image>
-<url>{{shake.page_image()}}</url>
+<url>{{shake.page_image(include_protocol=True)}}</url>
 <title>{{xhtml_escape(shake.display_name())}}</title>
 <link>https://{{ app_host }}{{shake.path()}}</link>
 </image>

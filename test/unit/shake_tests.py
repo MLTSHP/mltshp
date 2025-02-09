@@ -27,7 +27,7 @@ class ShakeModelTests(BaseTestCase):
         """
         self.assertEqual(None, self.shake.page_image())
         options.use_cdn = True
-        self.assertEqual('//some-cdn.com/static/images/default-icon-venti.svg', self.user.shake().page_image())
+        self.assertEqual('https://some-cdn.com/static/images/default-icon-venti.svg', self.user.shake().page_image())
         self.shake.image = 1
         self.shake.save
         self.assertEqual('https://some-cdn.com/s3/account/1/shake_asdf.jpg', self.shake.page_image())

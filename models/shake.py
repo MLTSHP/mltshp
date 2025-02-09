@@ -87,18 +87,19 @@ class Shake(ModelQueryCache, Model):
             new_sub = subscription.Subscription(user_id=self.user_id, shake_id=self.id)
             new_sub.save()
 
-    def page_image(self):
+    def page_image(self, include_protocol=True):
         """
         Return's users profile image if it's a user shake or the shake image.
         If no image, returns None.
         """
         if self.type == 'user':
-            return self.owner().profile_image_url()
+            return self.owner().profile_image_url(include_protocol=include_protocol)
         else:
             if self.image:
                 scheme = (options.use_cdn and "https") or "http"
                 host = (options.use_cdn and options.cdn_host) or options.app_host
-                return f"{scheme}://{host}/s3/account/{self.user_id}/shake_{self.name}.jpg"
+                proto = f"{scheme}:" if include_protocol else ""
+                return f"{proto}//{host}/s3/account/{self.user_id}/shake_{self.name}.jpg"
             else:
                 return None
 

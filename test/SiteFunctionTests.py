@@ -103,7 +103,7 @@ class FileViewTests(BaseAsyncTestCase):
             self.test_file1_content_type, 1, self.sid, self.xsrf)
         response = self.fetch('/user/admin', method='GET',
             headers={"Cookie":"sid=%s" % self.sid})
-        self.assertIn("1.png", response.body)
+        self.assertIn("/r/1", response.body)
 
         for i in range(0,10):
             if i % 2 == 0:

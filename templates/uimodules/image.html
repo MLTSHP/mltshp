@@ -31,9 +31,9 @@
             </div>
         {% end %}
         {% if list_view %}
-            <h3>{{escape(sharedfile.get_title())}}</h3>
+            <h3>{% if sharedfile.get_title() == "" %}&nbsp;{% else %}{{escape(sharedfile.get_title())}}{% end %}</h3>
         {% else %}
-            <h1>{{escape(sharedfile.get_title())}}</h1>
+            <h1>{% if sharedfile.get_title() == "" %}&nbsp;{% else %}{{escape(sharedfile.get_title())}}{% end %}</h1>
         {% end %}
         <div class="clear"><!-- --></div>
     {% end %}
