@@ -389,10 +389,10 @@ class SharedfileModelTests(BaseTestCase):
         if sans_quotes argument set to True, all quotes should be escaped. Off by default
         """
         self.assertEqual(self.sharedfile.title, None)
-        self.assertEqual(self.sharedfile.get_title(), self.sharedfile.name)
+        self.assertEqual(self.sharedfile.get_title(), '')
         self.sharedfile.title = ''
         self.sharedfile.save()
-        self.assertEqual(self.sharedfile.get_title(), self.sharedfile.name)
+        self.assertEqual(self.sharedfile.get_title(), '')
         self.sharedfile.title = 'New title'
         self.sharedfile.save()
         self.assertEqual(self.sharedfile.get_title(), 'New title')

@@ -58,8 +58,8 @@ class Sharedfile(ModelQueryCache, Model):
         Returns title, escapes double quotes if sans_quotes is True, used
         for rendering title inside fields.
         """
-        if self.title == '' or self.title == None:
-            title = self.name
+        if self.title is None:
+            title = ''
         else:
             title = self.title
         if sans_quotes:
@@ -72,7 +72,7 @@ class Sharedfile(ModelQueryCache, Model):
         for rendering description inside fields.
         """
         description = self.description
-        if not description:
+        if description is None:
             description = ''
 
         scheme = (options.use_cdn and "https") or "http"

@@ -97,7 +97,7 @@ class FileViewTests(BaseAsyncTestCase):
     def test_raw_image_view_counts(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
         response = self.fetch('/user/admin', method='GET', headers={"Cookie":"sid=%s" % self.sid2})
-        self.assertIn("1.png", response.body)
+        self.assertIn("/r/1", response.body)
 
         for i in range(0,10):
             if i % 2 == 0:
@@ -114,7 +114,7 @@ class FileViewTests(BaseAsyncTestCase):
     def test_raw_load_with_extension(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
         response = self.fetch('/user/admin', method='GET', headers={"Cookie":"sid=%s" % self.sid2})
-        self.assertIn("1.png", response.body)
+        self.assertIn("/r/1", response.body)
 
         for i in range(0,10):
             if i % 2 == 0:
@@ -176,23 +176,21 @@ class SharedFileTests(BaseAsyncTestCase):
         self.test_file2_content_type = "image/gif"
 
     def test_oembed_response_json(self):
-        with test_option("cdn_host", "cdn-service.com"), test_option("app_host", "my-mltshp.com"):
-            response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
-            response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1")
-            j = json.loads(response.body)
-            self.assertEqual(j['width'], 1)
-            self.assertEqual(j['height'], 1)
-            self.assertEqual(j['title'], '1.png')
-            # pattern from oembed.json is...
-            #    https://{{ cdn_host }}/r/{{sharedfile.share_key}}
-            self.assertEqual(j['url'], 'https://cdn-service.com/r/1')
+        response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
+        response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1")
+        j = json.loads(response.body)
+        self.assertEqual(j['width'], 1)
+        self.assertEqual(j['height'], 1)
+        self.assertEqual(j['title'], '')
+        # pattern from oembed.json is...
+        #    https://{{ cdn_host }}/r/{{sharedfile.share_key}}
+        self.assertEqual(j['url'], 'https://some-cdn.com/r/1')
 
         #test jsonp callback works
         sharedfile = Sharedfile.get('id = %s', 1)
         file_time_stamp = int(time.mktime(sharedfile.created_at.timetuple()))
         callback = "jsonp" + str(file_time_stamp)
-        with test_option("app_host", "my-mltshp.com"):
-            response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1&jsoncallback=" + callback)
+        response = self.fetch("/services/oembed?url=http%3A//my-mltshp.com/p/1&jsoncallback=" + callback)
 
         j = json.loads(response.body.strip()[len(callback)+1:-1])
         self.assertEqual(j['callback'], callback)
@@ -224,7 +222,7 @@ class SharedFileTests(BaseAsyncTestCase):
     def test_title_pulls_from_name_if_blank_or_null(self):
         response = self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)
         sf = Sharedfile.get("id = %s", 1)
-        self.assertEqual(sf.get_title(), "1.png")
+        self.assertEqual(sf.name, "1.png")
 
     def test_quick_edit_title(self):
         self.upload_file(self.test_file1_path, self.test_file1_sha1, self.test_file1_content_type, 1, self.sid, self.xsrf)

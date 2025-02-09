@@ -395,9 +395,11 @@ $(document).ready(function () {
                     $title_container
                         .find(".title-input")
                         .val(result["title_raw"]);
+                    var $input = $title_container.find(".title-input");
                     $(that)
                         .next(".image-edit-title-form")
                         .addClass("is-active");
+                    screen_reader_focus($input[0]);
                 }
             },
             "json",
@@ -424,6 +426,19 @@ $(document).ready(function () {
                     $title_container
                         .find(".image-edit-title-form")
                         .removeClass("is-active");
+                    if (result["title_raw"] === "") {
+                        $title_container
+                            .find(".the-title")
+                            .html("click here to edit title")
+                            .show();
+                        $title_container
+                            .find(".the-title")
+                            .addClass("the-title-blank");
+                    } else {
+                        $title_container
+                            .find(".the-title")
+                            .removeClass("the-title-blank");
+                    }
                 }
             },
             "json",
