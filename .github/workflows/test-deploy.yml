@@ -74,22 +74,22 @@ jobs:
                   docker tag mltshp/mltshp-web:build-${{ env.build_number }} mltshp/mltshp-web:latest
 
             - name: Start services with Docker Compose
-              run: docker compose -f .buildkite/docker-compose.yml up -d
+              run: docker compose -f release/docker-compose.yml up -d
 
             - name: Wait for services to be ready
               run: sleep 10
 
             - name: Run tests
-              run: docker exec -t buildkite-mltshp-1 ./run-tests.sh
+              run: docker exec -t release-mltshp-1 ./run-tests.sh
 
             - name: Run Coveralls report
               env:
                   COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-              run: docker exec -t -e COVERALLS_REPO_TOKEN buildkite-mltshp-1 ./coveralls-report.sh
+              run: docker exec -t -e COVERALLS_REPO_TOKEN release-mltshp-1 ./coveralls-report.sh
 
             - name: Stop services and clean up
               run: |
-                  docker compose -f .buildkite/docker-compose.yml down
+                  docker compose -f release/docker-compose.yml down
                   docker container prune -f
 
     deploy:
