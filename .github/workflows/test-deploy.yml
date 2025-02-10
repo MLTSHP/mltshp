@@ -15,7 +15,7 @@ on:
 jobs:
     build-web:
         runs-on: ubuntu-latest
-        environment: production
+        environment: staging
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
 
     build-worker:
         runs-on: ubuntu-latest
-        environment: production
+        environment: staging
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
