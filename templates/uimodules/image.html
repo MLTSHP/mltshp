@@ -98,10 +98,10 @@
         {% end %}
     </div>
     <div id="image-content-footer-{{sharedfile.share_key}}" class="image-content-footer">
-        <div class="alt-text {% if can_edit %}alt-text-edit{%end%}{% if not sharedfile.get_alt_text() %} alt-text--blank{%else%} alt-text--hidden{%end%}">
+        <div class="alt-text {% if can_edit %}alt-text-edit{%end%}{% if sharedfile.get_alt_text() == "" %} alt-text--blank{%else%} alt-text--hidden{%end%}">
             <div class="alt-text-toggle link link--primary">alt text</div>
             {% if can_edit and not site_is_readonly %}
-                {% if not sharedfile.get_alt_text() %}
+                {% if sharedfile.get_alt_text() == "" %}
                     <div class="the-alt-text" role="button">add some alt text</div>
                 {% else %}
                     <div class="the-alt-text" role="button">{{sharedfile.get_alt_text()}}</div>
@@ -120,7 +120,7 @@
                     </div>
                 </form>
             {% else %}
-                {% if sharedfile.get_alt_text() %}
+                {% if sharedfile.get_alt_text() != "" %}
                     <div class="the-alt-text">{{sharedfile.get_alt_text()}}</div>
                 {% end %}
             {% end %}

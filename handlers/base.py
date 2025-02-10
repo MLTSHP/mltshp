@@ -47,6 +47,12 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         self.set_header('x-proc-time',"%s" % (proc_time))
         super(BaseHandler, self).finish(chunk)
 
+    def static_url(self, *args, **kwargs):
+        base_url = ""
+        if options.use_cdn:
+            base_url = "https://%s" % options.cdn_host
+        return base_url + super(BaseHandler, self).static_url(*args, **kwargs)
+
     def get_current_user(self):
         sid = self.get_secure_cookie(SESSION_COOKIE)
         if sid:
@@ -68,6 +74,7 @@ class BaseHandler(RequestHandlerQueryCache, tornado.web.RequestHandler):
         current_user_object = self.get_current_user_object()
         kwargs['errors'] = self._errors
         kwargs['settings'] = self.settings
+        kwargs['host_banner'] = options.host_banner
         kwargs['app_host'] = options.app_host or self.request.host
         kwargs['app_scheme'] = (options.use_cdn and options.cdn_host and "https") or "http"
         kwargs['cdn_host'] = options.cdn_host

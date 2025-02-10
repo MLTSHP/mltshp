@@ -4,7 +4,7 @@ env:
     build_number: ${{ github.run_id }}
 
 concurrency:
-    group: production
+    group: test-deploy
     cancel-in-progress: true
 
 on:
@@ -91,6 +91,24 @@ jobs:
               run: |
                   docker compose -f release/docker-compose.yml down
                   docker container prune -f
+
+    staging:
+      needs: [test]
+      runs-on: ubuntu-latest
+      environment: staging
+      if: success()
+      steps:
+          - name: Login to Docker Hub
+            uses: docker/login-action@v3
+            with:
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+          - name: Pull and tag web image
+            run: |
+                docker pull mltshp/mltshp-web:build-${{ env.build_number }}
+                docker tag mltshp/mltshp-web:build-${{ env.build_number }} mltshp/mltshp-web:staging
+                docker push mltshp/mltshp-web:staging
 
     deploy:
         needs: [test, build-worker]
