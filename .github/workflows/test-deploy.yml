@@ -68,11 +68,6 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
-            - name: Pull and tag web image
-              run: |
-                  docker pull mltshp/mltshp-web:build-${{ env.build_number }}
-                  docker tag mltshp/mltshp-web:build-${{ env.build_number }} mltshp/mltshp-web:latest
-
             - name: Start services with Docker Compose
               run: docker compose -f release/docker-compose.yml up -d
 
