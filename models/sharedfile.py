@@ -97,13 +97,14 @@ class Sharedfile(ModelQueryCache, Model):
         for rendering alt text inside textarea fields.
         """
         alt_text = self.alt_text
-        if not alt_text:
+        if alt_text is None:
             alt_text = ''
 
         if not raw:
+            alt_text = escape.xhtml_escape(alt_text)
             alt_text = alt_text.replace('\n', '<br>')
 
-        return alt_text
+        return alt_text.strip()
 
     def save(self, *args, **kwargs):
         """
@@ -614,11 +615,12 @@ class Sharedfile(ModelQueryCache, Model):
         if sourcefile.type == 'image':
             if self.original_id > 0:
                 original = self.original()
-                size = original.size
+                if original:
+                    size = original.size
             else:
                 size = self.size
         # Fastly I/O won't process images > 50mb, so condition for that
-        if sourcefile.type == 'image' and options.use_fastly and size < 50_000_000:
+        if sourcefile.type == 'image' and options.use_fastly and size > 0 and size < 50_000_000:
             return f"https://{options.cdn_host}/r/{self.share_key}?width=100"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
@@ -633,11 +635,11 @@ class Sharedfile(ModelQueryCache, Model):
         if sourcefile.type == 'image':
             if self.original_id > 0:
                 original = self.original()
-                size = original.size
+                if original: size = original.size
             else:
                 size = self.size
         # Fastly I/O won't process images > 50mb, so condition for that
-        if sourcefile.type == 'image' and options.use_fastly and size < 50_000_000:
+        if sourcefile.type == 'image' and options.use_fastly and size > 0 and size < 50_000_000:
             return f"https://{options.cdn_host}/r/{self.share_key}?width=240&height=184&fit=bounds"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \

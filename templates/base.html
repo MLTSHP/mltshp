@@ -9,8 +9,8 @@
 
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/main.min.css") }}">
 
-    <link rel="dns-prefetch" href="//s.mltshp.com">
-    <link rel="dns-prefetch" href="//mltshp-cdn.com">
+    <link rel="dns-prefetch" href="//s.{{ app_host }}">{% if cdn_host %}
+    <link rel="dns-prefetch" href="//{{ cdn_host }}">{% end %}
 
     <!-- Behave more like an app when saved to home screen in iOS -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -132,6 +132,11 @@
                                     We’re doing something cool with the database!
                                 </li>
                             {% end %}
+                            {% if host_banner %}
+                                <li class="user-nav--item">
+                                    {{ escape(host_banner) }}
+                                </li>
+                            {% end %}
                             {% if current_user_object and not current_user_object.email_confirmed %}
                                 {% if not site_is_readonly %}
                                     <li class="user-nav--item">
@@ -150,6 +155,11 @@
                             </li>
                         {% else %}
                             {% set handler_class = handler.__class__.__name__  %}
+                            {% if host_banner %}
+                                <li class="user-nav--item">
+                                    {{ escape(host_banner) }}
+                                </li>
+                            {% end %}
                             <li class="user-nav--item">
                                 <a href="/sign-in?next={{request.path}}" class="user-nav--link">sign in</a>
                             </li>

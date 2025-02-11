@@ -30,6 +30,7 @@ define('use_query_cache', type=bool, default=True, help="Turn on flyingcow's Que
 define('best_of_user_name', default='mltshp', help="User name where Best Of images are saved.")
 define('superuser_list', default='', help='Comma separated list of users who are superuser accounts')
 define('moderator_list', default='', help='Comma separated list of users who are moderator accounts')
+define('host_banner', default='', help='Shown in header when present')
 
 # infrastructure
 define('database_host', metavar="HOST", help="Hostname for database connection")
