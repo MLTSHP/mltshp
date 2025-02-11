@@ -1,5 +1,6 @@
 services:
   mltshp:
+    image: "mltshp/mltshp-web:build-${build_number}"
     build: ..
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py

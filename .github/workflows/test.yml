@@ -23,11 +23,6 @@ jobs:
             - name: Run tests
               run: docker exec -t release-mltshp-1 ./run-tests.sh
 
-            - name: Run Coveralls report
-              env:
-                COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-              run: docker exec -t -e COVERALLS_REPO_TOKEN release-mltshp-1 ./coveralls-report.sh
-
             - name: Stop services and clean up
               run: |
                 docker compose -f release/docker-compose.yml down
