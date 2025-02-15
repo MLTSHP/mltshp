@@ -629,7 +629,9 @@ hello@mltshp.com
 
         if page is not None and page > 0:
             limit_start = (page-1) * 20
-            select = "%s LIMIT %s, %s" % (select, limit_start, 20)
+            select += " LIMIT %s, %s" % (limit_start, 20)
+        else:
+            select += " LIMIT 20"
 
         users_and_shakes = User.query(select)
 
