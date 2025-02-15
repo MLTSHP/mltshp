@@ -58,13 +58,12 @@ class Sharedfile(ModelQueryCache, Model):
         Returns title, escapes double quotes if sans_quotes is True, used
         for rendering title inside fields.
         """
-        if self.title is None:
+        title = self.title
+        if title is None:
             title = ''
-        else:
-            title = self.title
         if sans_quotes:
             title = re.sub('"', '&quot;', title)
-        return title
+        return title.strip()
 
     def get_description(self, raw=False):
         """
@@ -78,7 +77,6 @@ class Sharedfile(ModelQueryCache, Model):
         scheme = (options.use_cdn and "https") or "http"
 
         if not raw:
-            #description = escape.xhtml_escape(description)
             extra_params = 'target="_blank" rel="nofollow"'
 
             description = escape.linkify(description, True,
@@ -89,7 +87,7 @@ class Sharedfile(ModelQueryCache, Model):
                 r'\1<a href="' + scheme + '://' + options.app_host + r'/tag/\2">#\2</a>',
                 description)
             description = description.replace('\n', '<br>')
-        return description
+        return description.strip()
 
     def get_alt_text(self, raw=False):
         """

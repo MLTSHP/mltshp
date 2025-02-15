@@ -205,12 +205,13 @@ def normalize_string(token, timestamp, nonce, request_method, host, port, path, 
     return normalized_string
 
 
-def send_slack_notification(message, channel=None, username=None, icon_emoji=None):
+def send_slack_notification(message=None, payload=None, channel=None, username=None, icon_emoji=None):
     if options.slack_webhook_url is None:
         return
 
     try:
-        payload = {"text": message}
+        if payload is None and message is not None:
+            payload = {"text": message}
         if channel is not None:
             payload['channel'] = channel
         if username is not None:
