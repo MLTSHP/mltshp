@@ -277,6 +277,8 @@ def transform_to_square_thumbnail(file_path, size_constraint, destination):
         cropped.load()
         cropped.thumbnail((size_constraint,size_constraint), Image.Resampling.LANCZOS)
         cropped.save(destination, format="JPEG", quality=95)
+    else:
+        img.save(destination, format="JPEG", quality=95)
     img.close()
     return True
 
