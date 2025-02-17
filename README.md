@@ -7,7 +7,7 @@
 ## Project Description
 
 This project is the codebase for running [mltshp.com](https://mltshp.com).
-It's a Python 3 application, utilizing a MySQL database, Amazon S3 for
+It's a Python 3 application, utilizing a MySQL database, Backblaze B2 for
 asset storage, and RabbitMQ for background jobs.
 
 ## Development Environment
@@ -97,25 +97,12 @@ The directory structure looks like this:
     * mysql/
         * (mysql data files)
 
-## AWS S3 Storage
+## S3 Storage
 
-MLTSHP utilizes AWS S3 for storing uploaded images. The development
-environment provides a dummy S3 server for local operation. But it requires
-a license key in order to use it. Visit [this page](https://supso.org/projects/fake-s3)
-to obtain a license key. For individual developers and small organizations,
-there is no cost. Add the following to a local `.env` file in the root
-of the project:
-
-```
-FAKES3_LICENSE_KEY=your-license-key-here
-```
+MLTSHP utilizes S3 for storing uploaded images. The development
+environment provides a dummy S3 server for local operation.
 
 You will find any uploaded files under the `mounts/fakes3' directory.
-
-**Note:** As of this time, the Docker image for the fake S3 server is
-incompatible with Apple Silicon CPU architectures. If you are using a
-computer with an Apple ARM CPU, you will need to use a real S3 bucket
-(see below).
 
 If you would rather use a real S3 bucket, you can do that too. Create
 one and then assign these in your local settings.py file:
@@ -202,6 +189,23 @@ $ make stop
 ```
 
 Then, run another `make start`.
+
+## Straw
+
+There's one resource that requires manual compilation when it is updated.
+That's the `static/straw/source.js` script. This script is for the bookmkarklet
+for MLTSHP. It can be compiled using this command:
+
+```shell
+$ make straw
+```
+
+After this, you'll need to check in the modified source.js and compact.js
+files.
+
+The command requires that the `closure-compiler` binary is available. This
+can be installed via Homebrew (`brew install closure-compiler`) or your
+favorite package manager.
 
 ## Relationship with MLTSHP-Patterns
 

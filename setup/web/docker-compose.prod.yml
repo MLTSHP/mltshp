@@ -1,0 +1,62 @@
+services:
+  mltshp-web:
+    build:
+      context: ../..
+      dockerfile: setup/web/Dockerfile
+    env_file:
+      - ../../.env
+    image: mltshp/mltshp-web:latest
+    volumes:
+      - .:/srv/mltshp.com/mltshp
+      - ./mounts/logs:/srv/mltshp.com/logs
+      - ./mounts/uploaded:/srv/mltshp.com/uploaded
+      - ./mounts/tmpuploads/0:/mnt/tmpuploads/0
+      - ./mounts/tmpuploads/1:/mnt/tmpuploads/1
+      - ./mounts/tmpuploads/2:/mnt/tmpuploads/2
+      - ./mounts/tmpuploads/3:/mnt/tmpuploads/3
+      - ./mounts/tmpuploads/4:/mnt/tmpuploads/4
+      - ./mounts/tmpuploads/5:/mnt/tmpuploads/5
+      - ./mounts/tmpuploads/6:/mnt/tmpuploads/6
+      - ./mounts/tmpuploads/7:/mnt/tmpuploads/7
+      - ./mounts/tmpuploads/8:/mnt/tmpuploads/8
+      - ./mounts/tmpuploads/9:/mnt/tmpuploads/9
+      - ./setup/web/supervisor/prod.conf:/etc/mltshp/supervisor.conf
+    depends_on:
+      - mysql
+      - fakes3
+    links:
+      - mysql
+      - fakes3
+    networks:
+      app_net:
+        aliases:
+          - mltshp-web
+  nginx:
+    image: mltshp/nginx:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - ./setup/nginx/prod.conf:/etc/nginx/nginx.conf
+      - ./mounts/logs:/srv/mltshp.com/logs
+      - ./mounts/uploaded:/srv/mltshp.com/uploaded
+      - ./mounts/tmpuploads/0:/mnt/tmpuploads/0
+      - ./mounts/tmpuploads/1:/mnt/tmpuploads/1
+      - ./mounts/tmpuploads/2:/mnt/tmpuploads/2
+      - ./mounts/tmpuploads/3:/mnt/tmpuploads/3
+      - ./mounts/tmpuploads/4:/mnt/tmpuploads/4
+      - ./mounts/tmpuploads/5:/mnt/tmpuploads/5
+      - ./mounts/tmpuploads/6:/mnt/tmpuploads/6
+      - ./mounts/tmpuploads/7:/mnt/tmpuploads/7
+      - ./mounts/tmpuploads/8:/mnt/tmpuploads/8
+      - ./mounts/tmpuploads/9:/mnt/tmpuploads/9
+    depends_on:
+      - mltshp-web
+    links:
+      - mltshp-web
+    networks:
+      app_net:
+        aliases:
+          - mltshp.localhost
+
+networks:
+  app_net:

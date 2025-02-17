@@ -1,9 +1,10 @@
 *.pyc
-/settings.py
-celeryconfig.py
+web/settings.py
+web/settings.*.py
+web/yoyo.ini
+web/yoyo.*.ini
+web/celeryconfig.py
 .eggs/
-build/
-html/
 .figleaf
 pip-log.txt
 .DS_Store
@@ -11,7 +12,7 @@ pip-log.txt
 env
 mounts
 .env
-.deploy.env
+.*.env
 .coverage
 coverage.xml
 .vscode/

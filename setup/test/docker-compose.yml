@@ -1,0 +1,35 @@
+services:
+  mltshp:
+    image: mltshp/mltshp-web:${build_number:-latest}
+    build:
+      context: .
+      dockerfile: setup/web/Dockerfile
+    command: "sleep infinity"
+    volumes:
+      - ./setup/test/settings.py:/srv/mltshp.com/mltshp/settings.py
+      - .git:/srv/mltshp.com/mltshp/.git
+      - ./test:/srv/mltshp.com/mltshp/test
+      - ./worker/scripts:/srv/mltshp.com/mltshp/scripts
+      - ./setup/database:/srv/mltshp.com/mltshp/setup/database
+      - ./mounts/logs:/srv/mltshp.com/logs
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    networks:
+      app_net:
+        aliases:
+          - mltshp.dev
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "mltshp_testing"
+      MYSQL_USER: "mltshp"
+    networks:
+      - app_net
+
+networks:
+  app_net:
