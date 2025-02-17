@@ -75,12 +75,12 @@ jobs:
               run: sleep 10
 
             - name: Run tests
-              run: docker exec -t test-mltshp-1 ./run-tests.sh
+              run: docker exec -t mltshp-mltshp-1 ./run-tests.sh
 
             - name: Run Coveralls report
               env:
                   COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-              run: docker exec -t -e COVERALLS_REPO_TOKEN test-mltshp-1 ./coveralls-report.sh
+              run: docker exec -t -e COVERALLS_REPO_TOKEN mltshp-mltshp-1 ./coveralls-report.sh
 
             - name: Stop services and clean up
               run: |

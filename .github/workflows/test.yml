@@ -21,7 +21,7 @@ jobs:
               run: sleep 10
 
             - name: Run tests
-              run: docker exec -t test-mltshp-1 ./run-tests.sh
+              run: docker exec -t mltshp-mltshp-1 ./run-tests.sh
 
             - name: Stop services and clean up
               run: |
