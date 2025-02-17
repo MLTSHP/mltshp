@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: setup/web/Dockerfile
-    command: "python3 test/run-tests.sh"
+    command: "sleep infinity"
     volumes:
       - ./setup/test/settings.py:/srv/mltshp.com/mltshp/settings.py
       - .git:/srv/mltshp.com/mltshp/.git
