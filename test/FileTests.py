@@ -101,9 +101,9 @@ class FileViewTests(BaseAsyncTestCase):
 
         for i in range(0,10):
             if i % 2 == 0:
-                response = self.fetch('/r/1', method='GET', headers={"Cookie":"sid=%s" % self.sid2})
+                response = self.fetch('/r/1', method='GET', headers={"Host": "s." + options.app_host, "Cookie":"sid=%s" % self.sid2})
             else:
-                response = self.fetch('/r/1', method='GET')
+                response = self.fetch('/r/1', method='GET', headers={"Host": "s." + options.app_host})
 
         imageviews = self.db.query("SELECT id, user_id, sharedfile_id, created_at from fileview")
         self.assertEqual(len(imageviews), 10)
@@ -118,9 +118,9 @@ class FileViewTests(BaseAsyncTestCase):
 
         for i in range(0,10):
             if i % 2 == 0:
-                response = self.fetch('/r/1.jpg', method='GET', headers={"Cookie":"sid=%s" % self.sid2})
+                response = self.fetch('/r/1.jpg', method='GET', headers={"Host": "s." + options.app_host, "Cookie":"sid=%s" % self.sid2})
             else:
-                response = self.fetch('/r/1.jpg', method='GET')
+                response = self.fetch('/r/1.jpg', method='GET', headers={"Host": "s." + options.app_host})
 
         imageviews = self.db.query("SELECT id, user_id, sharedfile_id, created_at from fileview")
         self.assertEqual(len(imageviews), 10)
