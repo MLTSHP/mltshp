@@ -2,7 +2,7 @@
 """
 For a specific user, we get the last 10 files and collect the sharedfile ids
 the file was saved from.  We then go through last 10 magic files and save 
-them to user until we reach a sharedifile that has already been saved.
+them to user until we reach a sharedfile that has already been saved.
 """
 import json
 import models
@@ -12,6 +12,9 @@ from lib.utilities import send_slack_notification
 
 
 def post_to_slack(sharedfile):
+    if not options.repost_slack_webhook_url:
+        return
+
     cdn_host = options.cdn_host
     app_host = options.app_host
     scheme = cdn_host and "https" or "http"
@@ -20,8 +23,11 @@ def post_to_slack(sharedfile):
     sourcefile = sharedfile.sourcefile()
     alt_text = sharedfile.get_alt_text(raw=True)
     description = sharedfile.get_description(raw=True)
-    username = sharedfile.user.name
+    username = sharedfile.user().name
     postlink = f"{scheme}://{app_host}/p/{sharedfile.share_key}"
+
+    if sourcefile.nsfw_bool():
+        return
 
     payload = {
         "blocks": []
@@ -68,6 +74,7 @@ def post_to_slack(sharedfile):
                 },
             )
         else:
+            print("Link type not supported for Slack")
             return
 
     payload["blocks"].append(
@@ -83,14 +90,14 @@ def post_to_slack(sharedfile):
                             "url": f"{scheme}://{cdn_host or app_host}/user/{username}",
                         },
                         {
-                            "type": "link",
-                            "text": postlink,
-                            "url": postlink,
+                            "type": "date",
+                            "timestamp": int(sharedfile.created_at.timestamp()),
+                            "format": " posted {ago} ",
                         },
                         {
-                            "type": "date",
-                            "timestamp": sharedfile.created_at.timestamp(),
-                            "format": "posted {ago}",
+                            "type": "link",
+                            "text": "[link]",
+                            "url": postlink,
                         },
                     ],
                 },
@@ -103,14 +110,16 @@ def post_to_slack(sharedfile):
             {
                 "type": "section",
                 "text": {
-                    "type": "plain_text",
+                    "type": "mrkdwn",
                     "text": description,
-                    "emoji": False,
                 }
             }
         )
 
-    send_slack_notification(payload=payload, channel="#popular", username="mltshp", icon_emoji=":popular:")
+    payload["text"] = f"just saved this post from {username}!"
+    send_slack_notification(
+        sync=True, payload=payload, username="mltshp", icon_emoji=":popular:",
+        webhook_url=options.repost_slack_webhook_url)
 
 
 def main():
@@ -135,7 +144,7 @@ def main():
         try:
             post_to_slack(sharedfile)
         except Exception as e:
-            print(f"Error posting to slack: {e}")
+            print(f"Error posting to Slack: {e}")
             pass
 
     results = {
