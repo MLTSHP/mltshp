@@ -6,6 +6,7 @@ import base64
 import urllib.request, urllib.parse, urllib.error
 from datetime import datetime, UTC
 import urllib.request, urllib.parse, urllib.error
+import json
 
 from PIL import Image
 from tornado.options import options
@@ -205,8 +206,8 @@ def normalize_string(token, timestamp, nonce, request_method, host, port, path, 
     return normalized_string
 
 
-def send_slack_notification(message=None, payload=None, channel=None, username=None, icon_emoji=None):
-    if options.slack_webhook_url is None:
+def send_slack_notification(message=None, sync=False, payload=None, channel=None, username=None, icon_emoji=None, webhook_url=None):
+    if options.slack_webhook_url is None and webhook_url is None:
         return
 
     try:
@@ -219,14 +220,16 @@ def send_slack_notification(message=None, payload=None, channel=None, username=N
         if icon_emoji is not None:
             payload['icon_emoji'] = icon_emoji
 
-        body = "payload=%s" % tornado.escape.url_escape(
-            tornado.escape.json_encode(payload))
-        http = tornado.httpclient.AsyncHTTPClient()
+        body = json.dumps(payload)
+        http = sync and tornado.httpclient.HTTPClient() or tornado.httpclient.AsyncHTTPClient()
         http.fetch(
             HTTPRequest(
-                url=options.slack_webhook_url,
+                url=webhook_url or options.slack_webhook_url,
                 method='POST',
-                body=body
+                body=body,
+                headers={
+                    'Content-Type': 'application/json',
+                },
             )
         )
     except Exception as e:

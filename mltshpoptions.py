@@ -57,6 +57,7 @@ define('postmark_api_key', metavar='KEY', help="Postmark (postmarkapp.com) API k
 define('recaptcha_site_key', metavar="KEY", help="Site key for reCAPTCHA v3")
 define('recaptcha_secret_key', metavar="SECRET", help="Secret key for reCAPTCHA v3")
 define('slack_webhook_url', metavar="SECRET", help="URL for posting notifications to Slack")
+define('repost_slack_webhook_url', metavar="SECRET", help="URL for posting best-of notifications to Slack")
 
 # Stripe
 define('stripe_secret_key', metavar='SECRET', help='Stripe.com secret key')
