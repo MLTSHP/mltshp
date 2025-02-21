@@ -308,7 +308,7 @@ class ShowRawHandler(BaseHandler):
 
         """
         # only count views if we are on the s.mltshp.com host
-        if self.request.host == ("s.%s" % options.app_host):
+        if self.request.host != ("s.%s" % options.app_host):
             return
 
         # Abort if the s.mltshp.com/r/ABCD request didn't resolve to a file
