@@ -5,6 +5,12 @@
   Friend Shake
 {% end %}
 
+{% block notification_button %}
+  {% if notifications_count > 0 %}
+  <a href="#notifications-anchor" class="site-nav--notifications btn btn-danger btn-pastel">{{ notifications_count }}</a>
+  {% end %}
+{% end %}
+
 {% block main %}
 <div class="content content-with-sidebar content-account">
   <div class="account-header">
@@ -19,7 +25,7 @@
       {% end %}
     </div>
   </div>
-  <div class="sidebar">
+  <div class="sidebar" id="notifications-anchor">
     {% if current_user_obj.show_stats %}
     {{modules.UserCounts(user=current_user_obj)}}
     {% end %}
