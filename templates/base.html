@@ -84,9 +84,11 @@
         <div class="wrapper">
             <header class="site-header">
                 <div class="site-branding">
-                    <a href="/"><img class="site-branding--logo" src="{{ static_url("images/logo-compact.svg") }}" alt="MLTSHP"></a>
+                    <a href="/"><img class="site-branding--logo" src="{{ static_url("images/logo-compact.svg") }}" alt="MLTSHP">
+                    <span class="site-branding--icon" /></a>
                 </div>
                 <nav id="site-nav" class="site-nav">
+                    {% block notification_button %}{% end %}
                     <button type="button" class="site-nav--toggle btn btn-warning btn-pastel btn-icon">&#9776;</button>
                     <ul class="site-nav--list">
                         {% if current_user and current_user_object.is_member() %}

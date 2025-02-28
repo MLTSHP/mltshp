@@ -2157,4 +2157,35 @@ $(document).ready(function () {
             alertVote.css({ display: "none" });
         });
     }
+
+    // Support for sticky site header
+    const $siteHeader = $('.site-header');
+    if ($siteHeader.length > 0) {
+        let lastScrollY = window.scrollY;
+        const scrollHandler = () => {
+            if (!$siteHeader.hasClass('docked')) {
+                if (window.scrollY > 120) {
+                $siteHeader.addClass('docked');
+                }
+            } else {
+                if (window.scrollY <= 120) {
+                $siteHeader.removeClass('docked visible hidden');
+                }
+            }
+            if ($siteHeader.hasClass('docked')) {
+                const isVisible = $siteHeader.hasClass('visible');
+                if (!isVisible && window.scrollY < lastScrollY) {
+                // triggering delta can be 1px
+                $siteHeader.addClass('visible');
+                $siteHeader.removeClass('hidden');
+                } else if (isVisible && window.scrollY > lastScrollY + 20) {
+                // triggering delta must be ~20px
+                $siteHeader.removeClass('visible');
+                $siteHeader.addClass('hidden');
+                }
+            }
+            lastScrollY = window.scrollY;
+        };
+        $(window).on('scroll', scrollHandler);
+    }
 });

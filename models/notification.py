@@ -19,7 +19,7 @@ class Notification(Model):
     type        = Property() # favorite, save, subscriber
     deleted     = Property(default=0)
     created_at  = Property()
-    
+
     def save(self, *args, **kwargs):
         if options.readonly:
             self.add_error('_', 'Site is read-only.')
@@ -27,7 +27,7 @@ class Notification(Model):
 
         self._set_dates()
         return super(Notification, self).save(*args, **kwargs)
-    
+
     def _set_dates(self):
         """
         Sets the created_at and updated_at fields. This should be something
@@ -39,13 +39,13 @@ class Notification(Model):
     def delete(self):
         self.deleted = 1
         self.save()
-        
+
     def sender(self):
         return user.User.get("id=%s", self.sender_id)
-        
+
     def receiver(self):
         return user.User.get("id=%s", self.receiver_id)
-    
+
     def related_object(self):
         """
         Return the object this notification relates to. In the case of a favorite
@@ -63,7 +63,7 @@ class Notification(Model):
             return subscription_ and subscription_.shake()
         else:
             return user.User.get("id = %s and deleted=0", self.sender_id)
-    
+
     @classmethod
     def invitation_to_shake_for_user(self, shake, user):
         """
@@ -117,8 +117,10 @@ class Notification(Model):
                           'invitation':[],
                           'invitations': [], # TODO: kill this ambiguity - IK
                           'invitation_request' : [],
-                          'invitation_approved' : []
+                          'invitation_approved' : [],
+                          'total': 0,
                         }
+        total = 0
         for notification in cls.for_user(user):
             sender = notification.sender()
             related_object = notification.related_object()
@@ -126,42 +128,52 @@ class Notification(Model):
                 continue
 
             _notification = {'sender' : sender, 'related_object' : related_object, 'id' : notification.id}
-            
+
             if notification.type == 'favorite':
                 if related_object.id not in notifications['like']['items']:
                     notifications['like']['items'][related_object.id] = []
                 notifications['like']['items'][related_object.id].append(_notification)
                 notifications['like']['count'] += 1
-                
+                total += 1
+
             elif notification.type == 'subscriber':
                 _notification['post_name_text'] = " is now following " + related_object.display_name(user)
                 notifications['follow'].append(_notification)
-                
+                total += 1
+
             elif notification.type == 'save':
                 if related_object.id not in notifications['save']['items']:
                     notifications['save']['items'][related_object.id] = []
                 notifications['save']['items'][related_object.id].append(_notification)
                 notifications['save']['count'] += 1
+                total += 1
 
             elif notification.type == 'comment':
                 notifications['comment'].append(_notification)
+                total += 1
 
             elif notification.type == 'mention':
                 notifications['mention'].append(_notification)
+                total += 1
 
             elif notification.type == 'invitation':
                 notifications['invitation'].append(_notification)
-            
+                total += 1
+
             elif notification.type == 'invitation_request':
                 notifications['invitation_request'].append(_notification)
-            
+                total += 1
+
             elif notification.type == 'invitation_approved':
                 notifications['invitation_approved'].append(_notification)
-            
+                total += 1
+
+        notifications['total'] = total
+
         #for invitation_ in invitation.Invitation.by_user(user):
         #    notifications['invitations'].append(invitation_.email_address)
         return notifications
-        
+
     @classmethod
     def for_user(cls, user, deleted=False):
         """
@@ -192,7 +204,7 @@ class Notification(Model):
         n = Notification(sender_id=sender.id, receiver_id=sharedfile.user_id, action_id=sharedfile.id, type='favorite')
         n.save()
         return n
-    
+
     @staticmethod
     def new_save(sender, sharedfile):
         """
@@ -215,7 +227,7 @@ class Notification(Model):
         n = Notification(sender_id=comment.user_id, receiver_id=sf.user_id, action_id=comment.id, type='comment')
         n.save()
         return n
-    
+
     @staticmethod
     def new_comment_like(comment, sender):
         """
@@ -237,7 +249,7 @@ class Notification(Model):
         n = Notification(sender_id=comment.user_id, receiver_id=receiver.id, action_id=comment.id, type='mention')
         n.save()
         return n
-        
+
     @staticmethod
     def new_invitation_request_accepted(sender, receiver, shake):
         """
@@ -256,7 +268,7 @@ class Notification(Model):
         action_id - the shake_id
         """
         the_shake = shake.Shake.get('id=%s', action_id)
-        
+
         n = Notification(sender_id=sender.id, receiver_id=receiver.id, action_id=action_id, type='invitation_request')
         text_message = """Hi, %s.
 %s has requested to join "%s". This means they will be able to put files into the "%s" shake.
@@ -325,7 +337,7 @@ If you do join you'll notice a new shake name when you upload or save files.
 """ % (receiver.name, options.app_host, sender.name, sender.display_name(), options.app_host,
        new_shake.name, new_shake.display_name(), options.app_host, new_shake.name,
        new_shake.display_name(), options.app_host, new_shake.name, options.app_host, new_shake.name)
-            
+
         n.save()
 
         if not receiver.disable_notifications and not options.debug:
@@ -336,7 +348,7 @@ If you do join you'll notice a new shake name when you upload or save files.
                 html_body=html_message)
             pm.send()
         return n
-        
+
     @staticmethod
     def new_subscriber(sender, receiver, action_id):
         """
@@ -349,7 +361,7 @@ If you do join you'll notice a new shake name when you upload or save files.
         subscription_line = ""
         if target_shake.type == 'group':
             subscription_line = " called '%s'" % (target_shake.name)
-        
+
         n = Notification(sender_id=sender.id, receiver_id=receiver.id, action_id=action_id, type='subscriber')
 
         text_message = """Hi, %s.
@@ -381,7 +393,7 @@ Have a good day.<br>
        options.app_host)
 
         n.save()
-        
+
         if not receiver.disable_notifications and not options.debug:
             pm = postmark.PMMail(api_key=options.postmark_api_key, 
                 sender="hello@mltshp.com", to=receiver.email, 
@@ -390,7 +402,7 @@ Have a good day.<br>
                 html_body=html_message)
             pm.send()
         return n
-        
+
     @staticmethod
     def send_shake_member_removal(former_shake, former_member):
         """

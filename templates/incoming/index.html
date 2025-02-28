@@ -2,13 +2,20 @@
 
 {% block title %}Incoming!!!{% end %}
 
+{% block notification_button %}
+  {% if notifications_count > 0 %}
+  <a href="#notifications-anchor" class="site-nav--notifications btn btn-danger btn-pastel">{{ notifications_count }}</a>
+  {% end %}
+{% end %}
+
 {% block main %}
   <div class="content content-with-sidebar content-incoming">
     <div class="incoming-header">
       <h2 class="incoming-header--title">Our most recent files</h2>
     </div>
 
-    <div class="sidebar">
+    <div class="sidebar" id="notifications-anchor">
+
     {% if notifications_count > 0 %}
       <div class="notification-block notification-block-aggregate" id="notification-block-aggregate">
         <div class="notification-block-hd">

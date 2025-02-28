@@ -65,6 +65,7 @@ class HomeHandler(BaseHandler):
         else:
             front_page = True
             notifications = models.Notification.display_for_user(current_user_obj)
+            notifications_count = notifications['total']
             sharedfiles = current_user_obj.sharedfiles_from_subscriptions(per_page=11)
             # Start Reading.
             first_bookmark = None
