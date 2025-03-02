@@ -604,7 +604,7 @@ class Sharedfile(ModelQueryCache, Model):
         """
         return rfc822_date(self.created_at)
 
-    def thumbnail_url(self):
+    def thumbnail_url(self, direct=False):
         # If we are running on Fastly, then we can use the Image Optimizer to
         # resize a given image. Thumbnail size is 100x100. This size is used
         # for the conversations page.
@@ -619,14 +619,17 @@ class Sharedfile(ModelQueryCache, Model):
                 size = self.size
         # Fastly I/O won't process images > 50mb, so condition for that
         if sourcefile.type == 'image' and options.use_fastly and size > 0 and size < 50_000_000:
-            return f"https://{options.cdn_host}/r/{self.share_key}?width=100"
+            if direct:
+                return f"https://{options.cdn_host}/s3/originals/{sourcefile.file_key}?width=100"
+            else:
+                return f"https://{options.cdn_host}/r/{self.share_key}?width=100"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
                 file_path="thumbnails/%s" % (sourcefile.thumb_key), seconds=3600)
 
-    def small_thumbnail_url(self):
+    def small_thumbnail_url(self, direct=False):
         # If we are running on Fastly, then we can use the Image Optimizer to
-        # resize a given image. Small thumbnails are 240x184 at most. This size is
+        # resize a given image. Small thumbnails are 270-wide at most. This size is
         # currently only used within the admin UI.
         sourcefile = self.sourcefile()
         size = 0
@@ -638,7 +641,10 @@ class Sharedfile(ModelQueryCache, Model):
                 size = self.size
         # Fastly I/O won't process images > 50mb, so condition for that
         if sourcefile.type == 'image' and options.use_fastly and size > 0 and size < 50_000_000:
-            return f"https://{options.cdn_host}/r/{self.share_key}?width=240&height=184&fit=bounds"
+            if direct:
+                return f"https://{options.cdn_host}/s3/originals/{sourcefile.file_key}?width=270"
+            else:
+                return f"https://{options.cdn_host}/r/{self.share_key}?width=270"
         else:
             return s3_url(options.aws_key, options.aws_secret, options.aws_bucket, \
                 file_path="smalls/%s" % (sourcefile.small_key), seconds=3600)

@@ -136,7 +136,7 @@ class Sourcefile(ModelQueryCache, Model):
         small = img.copy()
 
         thumb.thumbnail((100,100), Image.Resampling.LANCZOS)
-        small.thumbnail((240,184), Image.Resampling.LANCZOS)
+        small.thumbnail((270,200), Image.Resampling.LANCZOS)
 
         thumb.save(thumb_cstr, format="JPEG")
         small.save(small_cstr, format="JPEG")

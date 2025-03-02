@@ -218,6 +218,7 @@ routes = [
     (r"/admin/interesting-stats", handlers.admin.InterestingStatsHandler),
     (r"/admin/waitlist", handlers.admin.WaitlistHandler),
     (r"/admin/nsfw-users", handlers.admin.NSFWUserHandler),
+    (r"/admin/user/([a-zA-Z0-9_\-]+)", handlers.admin.UserHandler),
     (r"/admin/user/([a-zA-Z0-9_\-]+)/flag-nsfw",
         handlers.admin.FlagNSFWHandler),
     (r"/admin/delete-user", handlers.admin.DeleteUserHandler),

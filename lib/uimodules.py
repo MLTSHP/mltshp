@@ -163,10 +163,10 @@ class Image(UIModule):
 
 
 class ImageMedium(UIModule):
-    def render(self, sharedfile):
+    def render(self, sharedfile, direct=False):
         sharedfile_user = sharedfile.user()
         return self.render_string("uimodules/image-medium.html", sharedfile=sharedfile, \
-            sharedfile_user=sharedfile_user)
+            sharedfile_user=sharedfile_user, direct=direct)
 
 class ShakeFollow(UIModule):
     def render(self, follow_user=None, follow_shake=None, current_user=None, 

@@ -146,6 +146,11 @@
                                     </li>
                                 {% end %}
                             {% end %}
+                            {% if current_user_object and current_user_object.is_admin() %}
+                            <li class="user-nav--item">
+                                <a href="/admin" class="user-nav--link">admin</a>
+                            </li>
+                            {% end %}
                             <li class="user-nav--item">
                                 <a href="/account/settings" class="user-nav--link">settings</a>
                             </li>

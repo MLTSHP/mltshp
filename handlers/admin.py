@@ -6,8 +6,8 @@ import postmark
 
 from .base import BaseHandler
 from models import Sharedfile, User, Shake, Invitation, Waitlist, ShakeCategory, \
-    DmcaTakedown, Comment
-from lib.utilities import send_slack_notification
+    DmcaTakedown, Comment, Favorite, PaymentLog, Conversation
+from lib.utilities import send_slack_notification, pretty_date
 
 
 class AdminBaseHandler(BaseHandler):
@@ -52,6 +52,62 @@ class IndexHandler(AdminBaseHandler):
         return self.render("admin/index.html")
 
 
+class UserHandler(AdminBaseHandler):
+    @tornado.web.authenticated
+    def get(self, user_name):
+        plan_names = {
+            "mltshp-single-canceled": "Single Scoop - Canceled",
+            "mltshp-single": "Single Scoop",
+            "mltshp-double-canceled": "Double Scoop - Canceled",
+            "mltshp-double": "Double Scoop",
+        }
+        user = User.get('name=%s', user_name)
+        if not user:
+            return self.redirect('/admin?error=User%20not%20found')
+
+        post_count = "{:,d}".format(Sharedfile.where_count("user_id=%s and deleted=0", user.id))
+        shake_count = "{:,d}".format(Shake.where_count("user_id=%s and deleted=0", user.id))
+        comment_count = "{:,d}".format(Comment.where_count("user_id=%s and deleted=0", user.id))
+        like_count = "{:,d}".format(Favorite.where_count("user_id=%s and deleted=0", user.id))
+        last_activity_date = user.get_last_activity_date()
+        pretty_last_activity_date = last_activity_date and pretty_date(last_activity_date) or "None"
+        subscribed = bool(user.is_paid)
+        subscription = subscribed and user.active_paid_subscription()
+        subscription_level = plan_names.get(user.stripe_plan_id) or None
+        subscription_start = subscription and subscription['start_date']
+        subscription_end = subscription and subscription['end_date']
+        all_payments = PaymentLog.where("user_id=%s", user.id)
+        total_payments = 0.00
+        for payment in all_payments:
+            if payment.status == "payment":
+                total_payments = total_payments + float(payment.transaction_amount.split(" ")[1])
+        uploaded_all_time_mb = "{:,.2f}".format(user.uploaded_kilobytes() / 1024)
+        uploaded_this_month_mb = "{:,.2f}".format(user.uploaded_this_month() / 1024)
+        # select all _original_ posts from this user; we care less about reposts for this view
+        recent_posts = Sharedfile.where("user_id=%s and original_id=0 order by created_at desc limit 50", user.id)
+        recent_comments = Comment.where("user_id=%s order by created_at desc limit 100", user.id)
+
+        return self.render(
+            "admin/user.html",
+            user=user,
+            user_name=user_name,
+            post_count=post_count,
+            shake_count=shake_count,
+            comment_count=comment_count,
+            like_count=like_count,
+            uploaded_all_time_mb=uploaded_all_time_mb,
+            uploaded_this_month_mb=uploaded_this_month_mb,
+            total_payments=total_payments,
+            subscribed=subscribed,
+            subscription_level=subscription_level,
+            subscription_start=subscription_start,
+            subscription_end=subscription_end,
+            last_activity_date=last_activity_date,
+            pretty_last_activity_date=pretty_last_activity_date,
+            recent_posts=recent_posts,
+            recent_comments=recent_comments,)
+
+
 class NSFWUserHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self):
@@ -80,11 +136,17 @@ class ImageTakedownHandler(AdminBaseHandler):
         if not self.admin_user.is_superuser():
             return self.redirect('/admin')
 
+        share_key = self.get_argument("share_key", None)
+        if share_key:
+            sharedfile = Sharedfile.get("share_key=%s AND deleted=0", share_key)
+        else:
+            sharedfile = None
+
         return self.render(
             "admin/image-takedown.html",
-            share_key="",
+            share_key=share_key or "",
             confirm_step=False,
-            sharedfile=None,
+            sharedfile=sharedfile,
             comment="",
             canceled=self.get_argument('canceled', "0") == "1",
             deleted=self.get_argument('deleted', "0") == "1")
@@ -169,18 +231,25 @@ class WaitlistHandler(AdminBaseHandler):
 
 class DeleteUserHandler(AdminBaseHandler):
     @tornado.web.authenticated
-    def get(self):
-        if not self.admin_user.is_superuser():
-            return self.redirect('/admin')
-        return self.render('admin/delete-user.html')
-        
-    @tornado.web.authenticated
     def post(self):
-        user_id = self.get_argument('user_id')
+        # Only a superuser can delete users
+        if not self.admin_user.is_superuser():
+            return self.write({'error': 'not allowed'})
+
         user_name = self.get_argument('user_name')
-        user = User.get('name=%s and id=%s', user_name, user_id)
-        user.delete()
-        return self.redirect('/user/%s' % user_name)
+        user = None
+        if user_name:
+            user = User.get('name=%s', user_name)
+
+        if user:
+            # admin users cannot be deleted (moderator or superuser)
+            if user.is_admin():
+                return self.write({'error': 'cannot delete admin'})
+
+            user.delete()
+            return self.write({'response': 'ok' })
+        else:
+            return self.write({'error': 'user not found'})
 
 
 class FlagNSFWHandler(AdminBaseHandler):
@@ -190,6 +259,7 @@ class FlagNSFWHandler(AdminBaseHandler):
         if not user:
             return self.redirect('/')
         
+        json = int(self.get_argument("json", 0))
         nsfw = int(self.get_argument("nsfw", 0))
         if nsfw == 1:
             user.flag_nsfw()
@@ -198,7 +268,10 @@ class FlagNSFWHandler(AdminBaseHandler):
         user.save()
         send_slack_notification("%s flagged user '%s' as %s" % (self.admin_user.name, user.name, nsfw == 1 and "NSFW" or "SFW"),
             channel="#moderation", icon_emoji=":ghost:", username="modbot")
-        return self.redirect("/user/%s" % user.name)
+        if json == 1:
+            return self.write({'response': 'ok' })
+        else:
+            return self.redirect("/user/%s" % user.name)
 
 
 class RecommendedGroupShakeHandler(AdminBaseHandler):

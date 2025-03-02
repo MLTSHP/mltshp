@@ -1,4 +1,4 @@
-.PHONY: init start stop custom-build build shell test destroy migrate mysql
+.PHONY: init start stop custom-build build staging shell test destroy migrate mysql
 
 init:
 	cp settings.example.py settings.py
@@ -17,6 +17,9 @@ custom-build:
 
 build:
 	docker build -t mltshp/mltshp-web:latest .
+
+staging:
+	docker build --platform linux/amd64 -t mltshp/mltshp-web:staging .
 
 shell:
 	docker compose exec mltshp bash
