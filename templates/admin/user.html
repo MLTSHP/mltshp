@@ -162,7 +162,7 @@
         {% if user.stripe_customer_id %}
         <a target="_blank" href="https://dashboard.stripe.com/customers/{{ user.stripe_customer_id }}" class="btn btn-secondary">Stripe</a>
         {% end %}
-        <!-- <button id="export-posts" class="btn btn-secondary">Export Posts</button> -->
+        <!-- <button id="export-posts" class="btn btn-secondary">Export</button> -->
         {% if user.deleted == 0 %}
         <button style="float: right" id="delete-account" class="btn btn-secondary btn-danger">Delete!</button>
         {% end %}

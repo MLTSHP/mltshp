@@ -8,6 +8,7 @@ from .base import BaseHandler
 from models import Sharedfile, User, Shake, Invitation, Waitlist, ShakeCategory, \
     DmcaTakedown, Comment, Favorite, PaymentLog, Conversation
 from lib.utilities import send_slack_notification, pretty_date
+from tasks.delete_account import delete_account
 
 
 class AdminBaseHandler(BaseHandler):
@@ -246,7 +247,11 @@ class DeleteUserHandler(AdminBaseHandler):
             if user.is_admin():
                 return self.write({'error': 'cannot delete admin'})
 
-            user.delete()
+            # Flag as deleted; send full deletion work to the background
+            user.deleted = 1
+            user.save()
+
+            delete_account.delay_or_run(user.id)
             return self.write({'response': 'ok' })
         else:
             return self.write({'error': 'user not found'})
