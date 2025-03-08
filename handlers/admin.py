@@ -8,7 +8,7 @@ from .base import BaseHandler
 from models import Sharedfile, User, Shake, Invitation, Waitlist, ShakeCategory, \
     DmcaTakedown, Comment, Favorite, PaymentLog, Conversation
 from lib.utilities import send_slack_notification, pretty_date
-from tasks.delete_account import delete_account
+from tasks.admin import delete_account
 
 
 class AdminBaseHandler(BaseHandler):

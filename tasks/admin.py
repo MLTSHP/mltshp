@@ -10,6 +10,6 @@ def delete_account(user_id=0, **kwargs):
 
     """
     user = User.get('id = %s', user_id)
-    if not user or user.is_admin or user.deleted == 0:
+    if not user or user.is_admin() or user.deleted == 0:
         return
     user.delete()
