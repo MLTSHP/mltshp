@@ -1,5 +1,15 @@
+from contextlib import contextmanager
 import test.base
 from models import User, Sharedfile, Sourcefile, Conversation, Comment
+
+
+@contextmanager
+def test_option(name, value):
+    old_value = getattr(options, name)
+    setattr(options, name, value)
+    yield
+    setattr(options, name, old_value)
+
 
 class AdminUserFlagNSFWTests(test.base.BaseAsyncTestCase):
     def setUp(self):
@@ -67,7 +77,8 @@ class AdminDeleteUserTest(test.base.BaseAsyncTestCase):
         user_shake = user_to_del.shake()
         sharedfile.add_to_shake(user_shake)
 
-        self.post_url('/admin/delete-user', arguments={'user_id':user_to_del.id, 'user_name':user_to_del.name})
+        with test_option('use_workers', False):
+            self.post_url('/admin/delete-user', arguments={'user_id':user_to_del.id, 'user_name':user_to_del.name})
 
         deleted_user = User.get('id = %s and name = %s', user_to_del.id, user_to_del.name)
         self.assertEqual(deleted_user.deleted, 1)
