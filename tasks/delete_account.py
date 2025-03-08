@@ -9,7 +9,7 @@ def delete_account(user_id=0, **kwargs):
     related records for a User object that has a deleted flag already set.
 
     """
-    user = User.get(user_id)
+    user = User.get('id = %s', user_id)
     if not user or user.is_admin or user.deleted == 0:
         return
     user.delete()
