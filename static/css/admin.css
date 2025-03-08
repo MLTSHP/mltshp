@@ -1,0 +1,170 @@
+/* Admin CSS for user admin page: /admin/user/___ */
+
+.admin-user .pro-badge {
+    line-height: 16px;
+    vertical-align: super;
+}
+
+@media screen and (max-width: 589px) {
+    .admin-user .body {
+        padding: var(--size-spacing-default);
+    }
+}
+
+.admin-user .recent-posts .user-and-title {
+    display: none;
+}
+
+.admin-user .recent-posts {
+    max-width: 100%;
+    padding: var(--size-spacing-default);
+}
+
+.admin-user .recent-posts .post {
+    margin-bottom: var(--size-spacing-default);
+    position: relative;
+    width: 270px;
+}
+
+.admin-user .recent-posts .post .takedown {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+}
+
+.admin-user .recent-comments {
+    padding: 2px;
+}
+
+.admin-user .recent-comments .comment {
+    margin-bottom: var(--size-spacing-default);
+    padding: var(--size-spacing-default);
+    word-break: break-word;
+}
+
+.admin-user .recent-posts .post.deleted .image-medium-thumb {
+    border: 1px solid red;
+}
+
+.admin-user .recent-posts .post.deleted img {
+    filter: grayscale(100%);
+}
+
+.admin-user .recent-posts .post.deleted:hover .image-medium-thumb {
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.admin-user .recent-posts .post.deleted:hover img {
+    filter: none;
+}
+
+.admin-user .recent-comments .comment:nth-child(even) {
+    background-color: var(--color-background-content);
+}
+
+.admin-user .user-info {
+    width: 100%;
+}
+
+.admin-user .user-info th {
+    padding-right: 1em;
+    text-align: right;
+    vertical-align: top;
+    width: 33%;
+}
+
+.admin-user .user-info td {
+    vertical-align: top;
+}
+
+.admin-user .body {
+    position: relative;
+}
+
+.admin-user .user-info-avatar {
+    position: absolute;
+    right: var(--size-spacing-triple);
+    top: var(--size-spacing-triple);
+    z-index: 2; /* Prevents clipping from .tabs-header which has a background assigned */
+}
+
+@media screen and (max-width: 589px) {
+    .admin-user .user-info-avatar {
+        right: var(--size-spacing-default);
+        top: var(--size-spacing-default);
+    }
+    .admin-user .user-info-avatar img {
+        height: 50px;
+        width: 50px;
+    }
+}
+
+.admin-user .user-info label {
+    display: inline;
+}
+
+.admin-user .tab-recent-posts,
+.admin-user .tab-recent-comments {
+    display: none;
+}
+
+/* Ideally, these styles should be made more generic, so we don't have to
+   reinvent tab styling for other situations where we want them. */
+.admin-user .tabs {
+    margin-bottom: var(--size-spacing-double);
+}
+
+.admin-user .tabs .tabs-header {
+    background-color: var(--color-background-content);
+    margin-bottom: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.admin-user .tabs .tabs-header ul {
+    font-size: 1.2rem;
+    list-style: none;
+    margin: 0;
+    max-width: 75vw;
+    overflow-x: auto;
+    padding: var(--size-spacing-double) 0 0 0;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 589px) {
+    .admin-user .tabs .tabs-header ul {
+        max-width: 85vw;
+    }
+}
+
+.admin-user .tabs .tabs-header a {
+    color: var(--color-text-link-primary);
+    text-decoration: none;
+}
+
+.admin-user .tabs .tabs-header a:hover {
+    text-decoration: underline;
+}
+
+.admin-user .tabs .tabs-header a.active {
+    font-weight: bold;
+}
+
+.admin-user .tabs .tabs-header li {
+    background-color: var(--color-background-content-secondary);
+    border-radius: var(--size-border-radius-large)
+        var(--size-border-radius-large) 0 0;
+    display: inline-block;
+    padding: var(--size-spacing-default);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.admin-user .tabs .tab {
+    background-color: var(--color-background-content-secondary);
+    border-radius: 0 var(--size-border-radius-large)
+        var(--size-border-radius-large) var(--size-border-radius-large);
+    margin-top: 0;
+    padding: var(--size-spacing-double) 0;
+}
