@@ -251,7 +251,7 @@ class DeleteUserHandler(AdminBaseHandler):
             user.deleted = 1
             user.save()
 
-            delete_account.delay_or_run(user.id)
+            delete_account.delay_or_run(user_id=user.id)
             return self.write({'response': 'ok' })
         else:
             return self.write({'error': 'user not found'})
