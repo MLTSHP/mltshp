@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from tornado.options import options
 import test.base
 from models import User, Sharedfile, Sourcefile, Conversation, Comment
 
