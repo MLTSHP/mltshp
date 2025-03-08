@@ -11,7 +11,7 @@ from lib.s3 import S3Bucket
 import postmark
 from tornado.options import define, options
 
-from lib.utilities import email_re, transform_to_square_thumbnail, utcnow
+from lib.utilities import email_re, transform_to_square_thumbnail, utcnow, pretty_date
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
@@ -505,10 +505,11 @@ hello@mltshp.com
             service.save()
 
         user_shake = self.shake()
-        subscriptions = subscription.Subscription.where("user_id=%s or shake_id=%s", self.id, user_shake.id)
-        for sub in subscriptions:
-            sub.deleted = 1
-            sub.save()
+        if user_shake:
+            subscriptions = subscription.Subscription.where("user_id=%s or shake_id=%s", self.id, user_shake.id)
+            for sub in subscriptions:
+                sub.deleted = 1
+                sub.save()
 
         shakemanagers = shakemanager.ShakeManager.where("user_id=%s and deleted=0", self.id)
         for sm in shakemanagers:
@@ -725,6 +726,25 @@ hello@mltshp.com
             self.email = email
             self._validate_email_uniqueness()
 
+    def get_last_activity_date(self):
+        sql = """SELECT max(created_at) last_activity_date FROM (
+            SELECT max(created_at) created_at FROM sharedfile WHERE user_id=%s AND deleted=0
+            UNION
+            SELECT max(created_at) created_at FROM comment WHERE user_id=%s AND deleted=0
+            UNION
+            SELECT max(created_at) created_at FROM favorite WHERE user_id=%s AND deleted=0
+            UNION
+            SELECT max(created_at) created_at FROM bookmark WHERE user_id=%s
+            ) as activities
+        """
+        response = self.query(sql, self.id, self.id, self.id, self.id)
+        if response and response[0]['last_activity_date']:
+            return response[0]['last_activity_date']
+        return None
+
+    def pretty_created_at(self):
+        return pretty_date(self.created_at)
+
     def uploaded_kilobytes(self, start_time=None, end_time=None):
         """
         Returns the total number of kilobytes uploaded for the time period specified
@@ -750,6 +770,13 @@ hello@mltshp.com
     def can_post(self):
         return self.can_upload_this_month()
 
+    def uploaded_this_month(self):
+        month_days = calendar.monthrange(utcnow().year,utcnow().month)
+        start_time = utcnow().strftime("%Y-%m-01")
+        end_time = utcnow().strftime("%Y-%m-" + str(month_days[1]) )
+
+        return self.uploaded_kilobytes(start_time=start_time, end_time=end_time)
+
     def can_upload_this_month(self):
         """
         Returns if this user can upload this month.
@@ -761,11 +788,7 @@ hello@mltshp.com
         if self.is_plus():
             return True
 
-        month_days = calendar.monthrange(utcnow().year,utcnow().month)
-        start_time = utcnow().strftime("%Y-%m-01")
-        end_time = utcnow().strftime("%Y-%m-" + str(month_days[1]) )
-
-        total_bytes = self.uploaded_kilobytes(start_time=start_time, end_time=end_time)
+        total_bytes = self.uploaded_this_month()
 
         if total_bytes == 0:
             return True

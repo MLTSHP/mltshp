@@ -46,18 +46,19 @@ def calculate_saves(sharedfile_id, **kwargs):
     """
     db = Connection(options.database_host, options.database_name, options.database_user, options.database_password)
     sharedfile = db.get("select original_id from sharedfile where id = %s", sharedfile_id)
-    original_id = sharedfile['original_id']        
-    
-    # If this file is original, calculate it's save count by all sharedfile where this file is the original_id.
-    if original_id == 0:
-        original_saves =  db.get("SELECT count(id) AS count FROM sharedfile where original_id = %s and deleted = 0", sharedfile_id)
-        db.execute("UPDATE sharedfile set save_count = %s WHERE id = %s", original_saves['count'], sharedfile_id)
-    # Otherwise, we need to update the original's save count and this file's save count.
-    else:
-        original_saves =  db.get("SELECT count(id) AS count FROM sharedfile where original_id = %s and deleted = 0", original_id)
-        db.execute("UPDATE sharedfile set save_count = %s WHERE id = %s", original_saves['count'], original_id)
+    if sharedfile:
+        original_id = sharedfile['original_id']        
         
-        # Calc this files new save count, only based on parent since its not original.
-        parent_saves =  db.get("SELECT count(id) AS count FROM sharedfile where parent_id = %s and deleted = 0", sharedfile_id)
-        db.execute("UPDATE sharedfile set save_count = %s WHERE id = %s", parent_saves['count'], sharedfile_id)
+        # If this file is original, calculate it's save count by all sharedfile where this file is the original_id.
+        if original_id == 0:
+            original_saves =  db.get("SELECT count(id) AS count FROM sharedfile where original_id = %s and deleted = 0", sharedfile_id)
+            db.execute("UPDATE sharedfile set save_count = %s WHERE id = %s", original_saves['count'], sharedfile_id)
+        # Otherwise, we need to update the original's save count and this file's save count.
+        else:
+            original_saves =  db.get("SELECT count(id) AS count FROM sharedfile where original_id = %s and deleted = 0", original_id)
+            db.execute("UPDATE sharedfile set save_count = %s WHERE id = %s", original_saves['count'], original_id)
+            
+            # Calc this files new save count, only based on parent since its not original.
+            parent_saves =  db.get("SELECT count(id) AS count FROM sharedfile where parent_id = %s and deleted = 0", sharedfile_id)
+            db.execute("UPDATE sharedfile set save_count = %s WHERE id = %s", parent_saves['count'], sharedfile_id)
     db.close()

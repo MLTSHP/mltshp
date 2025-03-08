@@ -1,0 +1,257 @@
+{%extends "base.html" %}
+
+{% block title %}Admin - {{ user.name }}{% end %}
+
+{% block main %}
+<div class="content admin-user admin-new-users">
+  <div class="body">
+    <h1><a href="/user/{{ user.name }}" target="_blank">{{ user.name }}</a>{% if user.is_plus() %} <span class="pro-badge"><img src="{{ static_url("images/icon_plus.svg") }}" width="16" height="16" border="0" valign="center" alt="pro"></span>{% end %}</h1>
+
+    <div class="user-info-avatar">
+        <img src="{{ user.profile_image_url() }}" alt="{{ escape(user.name) }}" width="70" height="70">
+    </div>
+
+    <div class="tabs">
+        <div class="tabs-header">
+            <ul>
+                <li><a class="active" href="#tab-user-details">Account</a></li>
+                <li><a href="#tab-recent-posts">Posts</a></li>
+                <li><a href="#tab-recent-comments">Comments</a></li>
+            </ul>
+        </div>
+
+        <div class="tab tab-user-details">
+            <table class="user-info">
+                <tr>
+                    <th>ID</th>
+                    <td>{{ user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Full Name</th>
+                    <td>{{ escape(user.full_name) }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td><a href="mailto:{{ escape(user.email) }}">{{ escape(user.email) }}</a> ({% if not user.email_confirmed %}un{% end %}confirmed)</td>
+                </tr>
+                <tr>
+                    <th>Created</th>
+                    <td><span title="{{ user.created_at.strftime("%Y-%m-%d %H:%M:%S") }}">{{ user.pretty_created_at() }}</td>
+                </tr>
+                <tr>
+                    <th>Last Active</th>
+                    <td><span title="{{ last_activity_date and last_activity_date.strftime("%Y-%m-%d %H:%M:%S") or "None" }}">{{ pretty_last_activity_date }}</span></td>
+                </tr>
+                <tr>
+                    <th>TOU Acknowledged</th>
+                    <td>{% if user.tou_agreed %}Yes{% else %}No{% end %}</td>
+                </tr>
+                <tr>
+                    <th>About</th>
+                    <td>{{ escape(user.about) }}</td>
+                </tr>
+                <tr>
+                    <th>Website</th>
+                    <td><a href="{{ escape(user.website) }}" target="_blank">{{ escape(user.website) }}</a></td>
+                </tr>
+                <tr>
+                    <th>Statuses</th>
+                    <td>
+                        <input type="checkbox" id="flag-nsfw" {% if user.nsfw %} checked="checked"{% end %}> <label for="flag-nsfw">NSFW</label>
+                        {% if user.deleted == 1 %}
+                        <br><input type="checkbox" checked="checked" disabled="disabled"> <label>Deleted</label>
+                        {% end %}
+                        {% if user.deleted == 2 %}
+                        <br><input type="checkbox" checked="checked" disabled="disabled"> <label>Unmigrated from MLKSHK</label>
+                        {% end %}
+                        <!-- <input type="checkbox" id="flag-recommended" {% if user.recommended %} checked="checked"{% end %}> <label for="flag-recommended">Recommended</label><br> -->
+                        <!-- <input type="checkbox" id="flag-restricted" {% if user.restricted %} checked="checked"{% end %}> <label for="flag-restricted">Restricted</label> -->
+                    </td>
+                </tr>
+                {% if subscribed %}
+                <tr>
+                    <th>Subscription Plan</th>
+                    <td>{{ subscription_level }}</td>
+                </tr>
+                <tr>
+                    <th>Subscription Term</th>
+                    <td>{{ subscription_start or "None" }} - {{ subscription_end or "None" }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <th>Subscription Plan</th>
+                    <td>Not actively subscribed {% if subscription_level %}(previously: {{ subscription_level }}){% end %}</td>
+                </tr>
+                {% end %}
+                <tr>
+                    <th>Total Payments</th>
+                    <td>{{ total_payments and "${:,.2f}".format(total_payments) or "None" }}</td>
+                </tr>
+                <tr>
+                    <th>Posts</th>
+                    <td>{{ post_count }}</td>
+                </tr>
+                <tr>
+                    <th>Shakes</th>
+                    <td>{{ shake_count }}</td>
+                </tr>
+                <tr>
+                    <th>Comments</strong>
+                    <td>{{ comment_count }}</td>
+                </tr>
+                <tr>
+                    <th>Likes</th>
+                    <td>{{ like_count }}</td>
+                </tr>
+                <tr>
+                    <th>Uploads</th>
+                    <td>
+                        All Time: {{ uploaded_all_time_mb or "None" }} MB<br>
+                        This Month: {{ uploaded_this_month_mb or "None" }} MB {% if subscribed and not user.can_post() %} (reached limit){% end %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tab tab-recent-posts hidden">
+            {% if recent_posts %}
+            <div class="recent-posts" data-masonry='{"columnWidth": 270, "gutter": 20, "itemSelector": ".post"}'>
+                {% for post in recent_posts %}
+                <div class="post {% if post.deleted == 1 %}deleted{% end %}">
+                    <div class="takedown">
+                        <a class="delete btn btn-danger" href="/admin/image-takedown?share_key={{ post.share_key }}" title="Takedown this image">&times;</a>
+                    </div>
+                    {{modules.ImageMedium(post, direct=True)}}
+                </div>
+                {% end %}
+            </div>
+            {% else %}
+            <div class="recent-posts">
+                <p>No recent posts found</p>
+            </div>
+            {% end %}
+        </div>
+
+        <div class="tab tab-recent-comments hidden">
+            {% if recent_comments %}
+            <div class="recent-comments">
+            {% for comment in recent_comments %}
+                <div class="comment {% if comment.deleted == 1 %}deleted{% end %}">
+                    {% if comment.deleted == 1 %}<strike>{% end %}{{ comment.body_formatted() }}{% if comment.deleted == 1 %}</strike>
+                    &nbsp;— deleted {{ comment.updated_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                    {% else %}
+                    {% if comment.sharedfile() %}
+                    &nbsp;— posted <a href="/p/{{ comment.sharedfile().share_key }}" target="_blank" title="{{ comment.created_at.strftime("%Y-%m-%d %H:%M:%S") }}">{{ comment.pretty_created_at() }}</a>
+                    {% else %}
+                    &nbsp;— posted <span title="{{ comment.created_at.strftime("%Y-%m-%d %H:%M:%S") }}">{{ comment.pretty_created_at() }}</span>
+                    {% end %}
+                    {% end %}
+                </div>
+            {% end %}
+            </div>
+            {% else %}
+            <div class="recent-comments">
+                <p>No recent comments found</p>
+            </div>
+            {% end %}
+        </div>
+    </div>
+
+    {% if is_superuser %}
+    <div class="actions">
+        {% if user.stripe_customer_id %}
+        <a target="_blank" href="https://dashboard.stripe.com/customers/{{ user.stripe_customer_id }}" class="btn btn-secondary">Stripe</a>
+        {% end %}
+        <!-- <button id="export-posts" class="btn btn-secondary">Export</button> -->
+        {% if user.deleted == 0 %}
+        <button style="float: right" id="delete-account" class="btn btn-secondary btn-danger">Delete!</button>
+        {% end %}
+    </div>
+    {% end %}
+  </div>
+</div>
+{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
+
+{% block included_scripts %}
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script type="text/javascript">
+$(".admin-user #delete-account").on("click", function () {
+    const answer = prompt(
+        "Are you sure you want to delete this account?\n\nThis action cannot be undone.\n\nEnter the username to confirm this action."
+    );
+    if (answer === "{{ escape(user.name) }}") {
+        $.post(
+            "/admin/delete-user",
+            {
+                user_name: "{{ escape(user.name) }}",
+                _xsrf: "{{ escape(xsrf_token) }}",
+            },
+            (data) => {
+                if (data.response === "ok") {
+                    alert("Account deleted successfully.");
+                    window.location.href = "/admin";
+                } else {
+                    alert("Error deleting account: " + data.error);
+                }
+            },
+            "json"
+        );
+    } else if (answer !== null) {
+        alert("The username given did not match. Account spared!");
+    }
+});
+
+$(".admin-user #flag-nsfw").on("click", function () {
+    const nsfw = $(this).is(":checked") ? 1 : 0;
+    $(this).prop("disabled", "disabled");
+    $.post(
+        "/admin/user/{{ user.name }}/flag-nsfw",
+        { _xsrf: "{{ escape(xsrf_token) }}", nsfw: nsfw, json: 1 },
+        (data) => {
+            if (data.response === "ok") {
+                $(this).prop("checked", nsfw === 1 ? "checked" : "");
+                $(this).prop("disabled", "");
+            } else {
+                alert("Error updating NSFW flag: " + data.error);
+            }
+        },
+        "json"
+    );
+});
+
+let msnry;
+$(".admin-user .tabs-header li a").on("click", function (e) {
+    e.preventDefault();
+    $(this).blur();
+    $(".tabs-header a.active").removeClass("active");
+    $(this).addClass("active");
+
+    const target = $(this).attr("href").substring(1);
+    window.location.hash = target; // Update the URL hash
+    $(".tabs .tab").hide();
+    $(`.${target}`).show();
+    if (target === "tab-recent-posts") {
+        msnry =
+            msnry ||
+            new Masonry(".recent-posts", {
+                itemSelector: ".post",
+                columnWidth: 270,
+                gutter: 20,
+            });
+        msnry.layout();
+    }
+});
+
+// Set initial tab based on hash when present
+if (window.location.hash) {
+    const hash = window.location.hash.substring(1);
+    if (hash.startsWith('tab-')) {
+        $(`.admin-user [href="#${hash}"]`).trigger("click");
+    }
+}
+</script>
+{% end %}

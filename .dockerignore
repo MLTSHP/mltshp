@@ -10,6 +10,8 @@ celeryconfig.py
 .eggs/
 build/
 html/
+web/
+worker/
 pip-log.txt
 .DS_Store
 *.swp

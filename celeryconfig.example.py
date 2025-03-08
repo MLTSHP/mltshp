@@ -7,7 +7,7 @@ mltshpoptions.parse_dictionary(app_settings.settings)
 ## Celery configuration
 
 # List of modules to import when celery starts.
-imports = ("tasks.timeline", "tasks.counts", "tasks.migration", "tasks.transcode")
+imports = ("tasks.timeline", "tasks.counts", "tasks.migration", "tasks.transcode", "tasks.admin")
 
 task_routes = {
     "tasks.transcode.*": { "queue": "transcode" },
