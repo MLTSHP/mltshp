@@ -15,6 +15,7 @@
         <div class="tabs-header">
             <ul>
                 <li><a class="active" href="#tab-user-details">Account</a></li>
+                <li><a href="#tab-shakes">Shakes</a></li>
                 <li><a href="#tab-recent-posts">Posts</a></li>
                 <li><a href="#tab-recent-comments">Comments</a></li>
             </ul>
@@ -113,6 +114,20 @@
             </table>
         </div>
 
+        <div class="tab tab-shakes hidden">
+            {% if shakes %}
+            <ul>
+                {% for shake in shakes %}
+                <li>
+                    <a href="/admin/group-shake/{{ shake.id }}" title="{{ shake.display_name() }}"><img src="{{ shake.thumbnail_url() }}" width="48" height="48" alt="{{ escape(shake.display_name()) }}"></a>
+                </li>
+                {% end %}
+            </ul>
+            {% else %}
+            <p>No shakes found</p>
+            {% end %}
+        </div>
+
         <div class="tab tab-recent-posts hidden">
             {% if recent_posts %}
             <div class="recent-posts" data-masonry='{"columnWidth": 270, "gutter": 20, "itemSelector": ".post"}'>
@@ -131,6 +146,7 @@
             <div class="recent-posts">
                 <p>No recent posts found</p>
             </div>
+            <br style="clear:both">
             {% end %}
         </div>
 
@@ -155,6 +171,7 @@
             <div class="recent-comments">
                 <p>No recent comments found</p>
             </div>
+            <br style="clear:both">
             {% end %}
         </div>
     </div>
@@ -170,6 +187,8 @@
         {% end %}
     </div>
     {% end %}
+
+    <br style="clear:both">
   </div>
 </div>
 {% end %}

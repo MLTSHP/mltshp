@@ -17,6 +17,7 @@
           </a>
           <div class="details">
             <h4><a class="icon" href="/user/{{user.name}}">{{ escape(user.display_name()) }}</a> {% if user.is_plus() %}<img alt="pro" src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center">{% end %}</h4>
+            <p>joined {{ user.pretty_created_at() }}</p>
             <p class="about">{{escape(user.about)}}
             {% if user.website %}
               <br>
@@ -36,6 +37,7 @@
             <input type="hidden"  name="nsfw"  value="1">
             <input class="btn btn-small btn-pastel btn-primary unflag-nsfw-button" type="submit" value="Set NSFW Flag">
           {% end %}
+          <a class="btn btn-small btn-pastel btn-primary" href="/admin/user/{{user.name}}">edit</a>
         </form>
 
         {% if user.last_sharedfile %}

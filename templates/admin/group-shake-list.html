@@ -3,17 +3,20 @@
 {% block title %}Group Shakes{% end %}
 
 {% block main %}
-<div class="content content-with-sidebar admin-new-users">
+<div class="content admin-shake content-with-sidebar admin-new-users">
   {% include "admin/_sidebar.html" %}
 
   <div class="body">
-    <h1>All Shakes</h1>
+    <h1>Group Shakes</h1>
 
-    <p>Sort: <a class="{{ sort_order == "members" and "link--primary" or "" }}" href="?sort=members">Members</a> |
-        <a class="{{ sort_order == "posts" and "link--primary" or "" }}" href="?sort=posts">Posts</a> |
-        <a class="{{ sort_order == "last-activity" and "link--primary" or "" }}" href="?sort=last-activity">Last Activity</a> |
-        <a class="{{ sort_order == "recommended" and "link--primary" or "" }}" href="?sort=recommended" title="filtered; title sort">Recommended</a>
-    </p>
+    <form id="search-form" method="GET" action="/admin/group-shakes" style="margin-bottom: 1em;">
+        <input type="hidden" name="sort" value="{{ sort_order }}">
+        <input type="search" name="q" value="{{ escape(q) }}" placeholder="search" size="10">&nbsp; &nbsp;
+        <a class="sort-link {{ sort_order == "members" and "link--primary" or "" }}" href="#" data-value="members">Members</a> |
+        <a class="sort-link {{ sort_order == "posts" and "link--primary" or "" }}" href="#" data-value="posts">Posts</a> |
+        <a class="sort-link {{ sort_order == "last-activity" and "link--primary" or "" }}" href="#" data-value="last-activity">Last Activity</a> |
+        <a class="sort-link {{ sort_order == "recommended" and "link--primary" or "" }}" href="#" data-value="recommended" title="filtered; title sort">Recommended</a>
+    </form>
 
     <ol class="shake-list">
     {% for group_shake in group_shakes %}
@@ -22,7 +25,7 @@
                 <img src="{{group_shake.thumbnail_url()}}" width="48" height="48">
             </div>
             <div class="shake-list--description">
-                <a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a>
+                <a href="/{{group_shake.name}}" target="_blank">{{escape(group_shake.display_name())}}</a> ({{ escape(group_shake.name) }})
                 <p>{{ escape(group_shake.description) }}</p>
                 <p>{{ "{:,d}".format(group_shake.subscriber_count()) }} members &bull; {{ "{:,d}".format(group_shake.sharedfiles_count()) }} posts
                 {% set sf = group_shake.sharedfiles(per_page=1) %}
@@ -50,3 +53,17 @@
 </div>
 {% end %}
 
+{% block included_scripts %}
+<script type="text/javascript">
+$('.sort-link').click(function(e) {
+    e.preventDefault();
+    var sort = $(this).data('value');
+    $('#search-form input[name="sort"]').val(sort);
+    $('#search-form').submit();
+});
+</script>
+{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}
