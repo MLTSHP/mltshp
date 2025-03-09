@@ -28,6 +28,12 @@
       </li>
     {% end %}
     </ol>
+
+    <br style="clear:both">
+
+    <div>
+      {{modules.Pagination(object_count=group_count, current_page=page, url_format=url_format, per_page=20)}}
+    </div>
   </div>
 </div>
 {% end %}
