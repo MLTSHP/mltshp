@@ -282,8 +282,16 @@ class FlagNSFWHandler(AdminBaseHandler):
 class RecommendedGroupShakeHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self, type=None):
-        group_shakes = Shake.where('type=%s ORDER BY recommended', 'group')
-        return self.render("admin/group-shake-recommended.html", group_shakes=group_shakes)
+        offset = 0
+        page = self.get_argument('page', 1)
+        offset = 20 * (int(page) - 1)
+        where = "type=%s AND deleted=0 ORDER BY recommended LIMIT %s, 20"
+        group_shakes = Shake.where(where, 'group', offset)
+        group_count = Shake.where_count("type=%s AND deleted=0", 'group')
+
+        return self.render(
+            "admin/group-shake-recommended.html", group_shakes=group_shakes,
+            page=page, group_count=group_count, url_format="?page=%d")
     
     @tornado.web.authenticated
     def post(self, type=None):
@@ -301,16 +309,59 @@ class RecommendedGroupShakeHandler(AdminBaseHandler):
 class GroupShakeListHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self):
-        group_shakes = Shake.where('type=%s ORDER BY created_at desc', 'group')
-        return self.render("admin/group-shake-list.html", group_shakes=group_shakes)
+        offset = 0
+        sort_order = self.get_argument("sort", "members")
+        if sort_order == "members":
+            query = """
+                select shake.*, count(distinct subscription.user_id) as member_count
+                from shake
+                left join subscription on subscription.shake_id = shake.id and subscription.deleted=0
+                where shake.type=%s and shake.deleted=0
+                group by shake.id
+                order by member_count DESC
+                limit %s, 20
+                """
+        elif sort_order == "last-activity":
+            query = """
+                select shake.*, max(shakesharedfile.created_at) as last_activity
+                from shake
+                left join shakesharedfile on shakesharedfile.shake_id = shake.id and shakesharedfile.deleted=0
+                where shake.type=%s and shake.deleted=0
+                group by shake.id
+                order by last_activity DESC
+                limit %s, 20
+                """
+        elif sort_order == "posts":
+            query = """
+                select shake.*, count(distinct shakesharedfile.sharedfile_id) as post_count
+                from shake
+                left join shakesharedfile on shakesharedfile.shake_id = shake.id and shakesharedfile.deleted=0
+                where shake.type=%s and shake.deleted=0
+                group by shake.id
+                order by post_count DESC
+                limit %s, 20
+                """
+        else:
+            sort_order = ""
+
+        page = self.get_argument("page", 1)
+        offset = 20 * (int(page) - 1)
+
+        group_shakes = Shake.object_query(query, 'group', offset)
+        group_count = Shake.where_count("type=%s AND deleted=0", 'group')
+
+        return self.render(
+            "admin/group-shake-list.html", group_shakes=group_shakes,
+            sort_order=sort_order,
+            page=page, group_count=group_count, url_format="?page=%d&sort=" + sort_order)
 
 
 class GroupShakeViewHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self, shake_id=None):
-        shake = Shake.get('id=%s and type=%s', shake_id, 'group')
+        shake = Shake.get('id=%s and type=%s and deleted=0', shake_id, 'group')
         shake_categories = ShakeCategory.all()
-        featured_shakes = Shake.where('featured = 1')
+        featured_shakes = Shake.where('featured=1 and deleted=0')
         if not shake:
             return self.redirect("/admin/group-shakes")
 
@@ -320,7 +371,7 @@ class GroupShakeViewHandler(AdminBaseHandler):
     
     @tornado.web.authenticated
     def post(self, shake_id=None):
-        shake = Shake.get('id=%s and type=%s', shake_id, 'group')
+        shake = Shake.get('id=%s and type=%s and deleted=0', shake_id, 'group')
         if self.get_argument('shake_category_id', None):
             shake.shake_category_id = self.get_argument('shake_category_id', 0)
         if self.get_argument('featured', None):

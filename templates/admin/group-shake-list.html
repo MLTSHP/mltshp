@@ -8,6 +8,12 @@
 
   <div class="body">
     <h1>All Shakes</h1>
+
+    <p>Sort: <a class="{{ sort_order == "members" and "link--primary" or "" }}" href="?sort=members">Members</a> |
+        <a class="{{ sort_order == "posts" and "link--primary" or "" }}" href="?sort=posts">Posts</a> |
+        <a class="{{ sort_order == "last-activity" and "link--primary" or "" }}" href="?sort=last-activity">Last Activity</a>
+    </p>
+
     <ol class="shake-list">
     {% for group_shake in group_shakes %}
         <li class="shake-list--shake">
@@ -17,6 +23,12 @@
             <div class="shake-list--description">
                 <a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a>
                 <p>{{group_shake.description}}</p>
+                <p>Members: {{ group_shake.subscriber_count() }}</p>
+                <p>Posts: {{ group_shake.sharedfiles_count() }}</p>
+                {% set sf = group_shake.sharedfiles(per_page=1) %}
+                {% if sf %}
+                    <p>Last Activity: {{ sf[0].pretty_created_at() }}</p>
+                {% end %}
             </div>
             <div class="shake-list--recommend">
                 <a class="btn btn-small btn-pastel btn-primary" href="/admin/group-shake/{{group_shake.id}}">edit</a>
@@ -24,6 +36,11 @@
         </li>
     {% end %}
     </ol>
+
+    <br style="clear:both">
+    <div>
+        {{modules.Pagination(object_count=group_count, current_page=page, url_format=url_format, per_page=20)}}
+    </div>
   </div>
 </div>
 {% end %}

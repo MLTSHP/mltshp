@@ -118,9 +118,11 @@
             <div class="recent-posts" data-masonry='{"columnWidth": 270, "gutter": 20, "itemSelector": ".post"}'>
                 {% for post in recent_posts %}
                 <div class="post {% if post.deleted == 1 %}deleted{% end %}">
+                    {% if is_superuser %}
                     <div class="takedown">
                         <a class="delete btn btn-danger" href="/admin/image-takedown?share_key={{ post.share_key }}" title="Takedown this image">&times;</a>
                     </div>
+                    {% end %}
                     {{modules.ImageMedium(post, direct=True)}}
                 </div>
                 {% end %}
