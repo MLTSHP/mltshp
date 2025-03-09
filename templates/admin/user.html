@@ -116,16 +116,13 @@
 
         <div class="tab tab-shakes hidden">
             {% if shakes %}
-            <ul>
-                {% for shake in shakes %}
-                <li>
-                    <a href="/admin/group-shake/{{ shake.id }}" title="{{ shake.display_name() }}"><img src="{{ shake.thumbnail_url() }}" width="48" height="48" alt="{{ escape(shake.display_name()) }}"></a>
-                </li>
-                {% end %}
-            </ul>
+              {% for shake in shakes %}
+              <a href="/admin/group-shake/{{ shake.id }}" title="{{ shake.display_name() }}"><img align="left" style="margin: 5px;" src="{{ shake.thumbnail_url() }}" width="48" height="48" alt="{{ escape(shake.display_name()) }}"></a>
+              {% end %}
             {% else %}
             <p>No shakes found</p>
             {% end %}
+            <br style="clear:both">
         </div>
 
         <div class="tab tab-recent-posts hidden">

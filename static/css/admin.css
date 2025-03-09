@@ -64,10 +64,6 @@
     background-color: var(--color-background-content);
 }
 
-.admin-user .tabs-shakes ul {
-    list-style: none;
-}
-
 .admin-user .user-info {
     width: 100%;
 }
