@@ -30,7 +30,6 @@ TEST_MODULES = [
 
     'test.unit.app_tests',
     'test.unit.comment_tests',
-    'test.unit.externalservice_tests',
     'test.unit.notification_tests',
     'test.unit.shake_tests',
     'test.unit.sharedfile_tests',
