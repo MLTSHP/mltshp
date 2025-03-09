@@ -222,10 +222,10 @@ routes = [
     (r"/admin/user/([a-zA-Z0-9_\-]+)/flag-nsfw",
         handlers.admin.FlagNSFWHandler),
     (r"/admin/delete-user", handlers.admin.DeleteUserHandler),
-    (r"/admin/recommend-group-shake/?(recommend|unrecommend)?",
-        handlers.admin.RecommendedGroupShakeHandler),
     (r"/admin/group-shakes", handlers.admin.GroupShakeListHandler),
     (r"/admin/group-shake/([0-9]+)", handlers.admin.GroupShakeViewHandler),
+    (r"/admin/group-shake/([0-9]+)/(recommend|unrecommend)",
+        handlers.admin.RecommendedGroupShakeHandler),
     (r"/admin/shake-categories", handlers.admin.ShakeCategoriesHandler),
     (r"/admin/new-users", handlers.admin.NewUsers),
 
