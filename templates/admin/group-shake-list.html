@@ -11,7 +11,8 @@
 
     <p>Sort: <a class="{{ sort_order == "members" and "link--primary" or "" }}" href="?sort=members">Members</a> |
         <a class="{{ sort_order == "posts" and "link--primary" or "" }}" href="?sort=posts">Posts</a> |
-        <a class="{{ sort_order == "last-activity" and "link--primary" or "" }}" href="?sort=last-activity">Last Activity</a>
+        <a class="{{ sort_order == "last-activity" and "link--primary" or "" }}" href="?sort=last-activity">Last Activity</a> |
+        <a class="{{ sort_order == "recommended" and "link--primary" or "" }}" href="?sort=recommended" title="filtered; title sort">Recommended</a>
     </p>
 
     <ol class="shake-list">
@@ -22,15 +23,19 @@
             </div>
             <div class="shake-list--description">
                 <a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a>
-                <p>{{group_shake.description}}</p>
-                <p>Members: {{ group_shake.subscriber_count() }}</p>
-                <p>Posts: {{ group_shake.sharedfiles_count() }}</p>
+                <p>{{ escape(group_shake.description) }}</p>
+                <p>{{ "{:,d}".format(group_shake.subscriber_count()) }} members &bull; {{ "{:,d}".format(group_shake.sharedfiles_count()) }} posts
                 {% set sf = group_shake.sharedfiles(per_page=1) %}
                 {% if sf %}
-                    <p>Last Activity: {{ sf[0].pretty_created_at() }}</p>
+                    &bull; posted {{ sf[0].pretty_created_at() }}
                 {% end %}
+                </p>
             </div>
             <div class="shake-list--recommend">
+                <form style='display:inline;' method="post" action='/admin/group-shake/{{ group_shake.id }}/{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>
+                    {{ xsrf_form_html() }}
+                    <input class="btn btn-small btn-pastel btn-primary" type='submit' value='{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>
+                </form>
                 <a class="btn btn-small btn-pastel btn-primary" href="/admin/group-shake/{{group_shake.id}}">edit</a>
             </div>
         </li>

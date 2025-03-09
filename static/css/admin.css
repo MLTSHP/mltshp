@@ -77,11 +77,13 @@
     vertical-align: top;
 }
 
-.admin-user .body {
+.admin-user .body,
+.admin-shake {
     position: relative;
 }
 
-.admin-user .user-info-avatar {
+.admin-user .user-info-avatar,
+.admin-shake .shake-info-avatar {
     position: absolute;
     right: var(--size-spacing-triple);
     top: var(--size-spacing-triple);

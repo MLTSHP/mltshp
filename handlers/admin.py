@@ -281,21 +281,9 @@ class FlagNSFWHandler(AdminBaseHandler):
 
 class RecommendedGroupShakeHandler(AdminBaseHandler):
     @tornado.web.authenticated
-    def get(self, type=None):
-        offset = 0
-        page = self.get_argument('page', 1)
-        offset = 20 * (int(page) - 1)
-        where = "type=%s AND deleted=0 ORDER BY recommended LIMIT %s, 20"
-        group_shakes = Shake.where(where, 'group', offset)
-        group_count = Shake.where_count("type=%s AND deleted=0", 'group')
-
-        return self.render(
-            "admin/group-shake-recommended.html", group_shakes=group_shakes,
-            page=page, group_count=group_count, url_format="?page=%d")
-    
-    @tornado.web.authenticated
-    def post(self, type=None):
-        shake_to_update = Shake.get("id = %s and type=%s", self.get_argument('shake_id', None), 'group')
+    def post(self, shake_id, type):
+        json = int(self.get_argument("json", 0))
+        shake_to_update = Shake.get("id = %s and type=%s and deleted=0", shake_id, 'group')
         if shake_to_update:
             if type=="recommend":
                 shake_to_update.recommended = 1
@@ -303,7 +291,12 @@ class RecommendedGroupShakeHandler(AdminBaseHandler):
             elif type=='unrecommend':
                 shake_to_update.recommended = 0
                 shake_to_update.save()
-        return self.redirect("/admin/recommend-group-shake")
+            if json == 1:
+                return self.write({'response': 'ok' })
+        if json == 1:
+            return self.write({'error': 'invalid shake id' })
+        else:
+            return self.redirect("/admin/group-shakes?sort=recommended")
 
 
 class GroupShakeListHandler(AdminBaseHandler):
@@ -341,6 +334,14 @@ class GroupShakeListHandler(AdminBaseHandler):
                 order by post_count DESC
                 limit %s, 20
                 """
+        elif sort_order == "recommended":
+            query = """
+                select shake.*
+                from shake
+                where shake.type=%s and shake.deleted=0 and shake.recommended=1
+                order by title
+                limit %s, 20
+                """
         else:
             sort_order = ""
 
@@ -348,7 +349,10 @@ class GroupShakeListHandler(AdminBaseHandler):
         offset = 20 * (int(page) - 1)
 
         group_shakes = Shake.object_query(query, 'group', offset)
-        group_count = Shake.where_count("type=%s AND deleted=0", 'group')
+        if sort_order == "recommended":
+            group_count = Shake.where_count("type=%s AND deleted=0 and recommended=1", 'group')
+        else:
+            group_count = Shake.where_count("type=%s AND deleted=0", 'group')
 
         return self.render(
             "admin/group-shake-list.html", group_shakes=group_shakes,
@@ -360,24 +364,35 @@ class GroupShakeViewHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self, shake_id=None):
         shake = Shake.get('id=%s and type=%s and deleted=0', shake_id, 'group')
-        shake_categories = ShakeCategory.all()
-        featured_shakes = Shake.where('featured=1 and deleted=0')
         if not shake:
             return self.redirect("/admin/group-shakes")
+        shake_categories = ShakeCategory.all()
+        featured_shakes = Shake.where('id <> %s and deleted=0 and featured=1', shake.id)
+        if shake.shake_category_id > 0:
+            category_shakes = Shake.where('id <> %s and deleted=0 and shake_category_id=%s', shake.id, shake.shake_category_id)
+        else:
+            category_shakes = []
 
-        return self.render("admin/group-shake-view.html", shake=shake, 
-                            shake_categories=shake_categories, 
-                            featured_shakes=featured_shakes)
+        return self.render(
+            "admin/group-shake-view.html",
+            shake=shake,
+            shake_editor=shake.owner(),
+            shake_categories=shake_categories, 
+            featured_shakes=featured_shakes,
+            category_shakes=category_shakes)
     
     @tornado.web.authenticated
     def post(self, shake_id=None):
         shake = Shake.get('id=%s and type=%s and deleted=0', shake_id, 'group')
-        if self.get_argument('shake_category_id', None):
-            shake.shake_category_id = self.get_argument('shake_category_id', 0)
-        if self.get_argument('featured', None):
+        shake.shake_category_id = self.get_argument('shake_category_id', 0)
+        if self.get_argument('featured', None) == "1":
             shake.featured = 1
         else:
             shake.featured = 0
+        if self.get_argument('recommended', None) == "1":
+            shake.recommended = 1
+        else:
+            shake.recommended = 0
         shake.save()
         return self.redirect('/admin/group-shake/%s' % (shake_id))
 
