@@ -25,7 +25,7 @@
       <div class="field">
         <label>Name:</label>
         <div class="field-input">
-          {{ escape(shake.name) }}
+          <a href="/{{ escape(shake.name) }}" target="_blank">{{ escape(shake.name) }}</a>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
           <a class="shake-manager-promotion" title="Promote {{ escape(manager.display_name()) }}" href="#" data-value="{{ manager.id }}"><img align="left" style="margin: 5px" class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48" alt="{{ escape(manager.display_name()) }}"></a>
           {% end %}
           {% else %}
-          <p>None</p>
+          None
           {% end %}
         </div>
       </div>
