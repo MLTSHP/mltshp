@@ -351,6 +351,8 @@ class GroupShakeViewHandler(AdminBaseHandler):
         else:
             category_shakes = []
         managers = shake.managers()
+        # make sure to exclude the owner, just in case they are also in the manager list
+        managers = [m for m in managers if m.id != shake.user_id]
 
         return self.render(
             "admin/group-shake-view.html",
