@@ -189,59 +189,6 @@ class PluginsHandler(BaseHandler):
         return self.render("tools/plugins.html")
 
 
-class ToolsTwitterHandler(BaseHandler):
-    @tornado.web.authenticated
-    @require_membership
-    def get(self):
-        return self.render("tools/twitter.html")
-
-
-class ToolsTwitterHowToHandler(BaseHandler):
-    @tornado.web.authenticated
-    @require_membership
-    def get(self):
-        return self.render("tools/twitter-how-to.html")
-
-
-class ToolsTwitterConnectHandler(BaseHandler, tornado.auth.TwitterMixin):
-    @tornado.web.authenticated
-    @require_membership
-    async def get(self):
-        if self.get_argument("oauth_token", None):
-            self.get_authenticated_user(self._on_auth)
-            return
-        self.authorize_redirect(callback=self._on_redirect)
-
-    def _on_redirect(self):
-        pass
-
-    def _on_auth(self, user):
-        if not user:
-            raise tornado.web.HTTPError(500, "Twitter auth failed")
-
-        #is there an existing external account?
-        current_user = self.get_current_user()
-        authenticated_user = User.get("id=%s", current_user['id'])
-        existing = Externalservice.by_user(authenticated_user, Externalservice.TWITTER)
-        if existing:
-            existing.service_id = user['access_token']['user_id']
-            existing.service_secret = user['access_token']['secret']
-            existing.service_key = user['access_token']['key']
-            existing.screen_name = user['access_token']['screen_name']
-            existing.save()
-        else:
-            external_service = Externalservice(
-                                    user_id=authenticated_user.id,
-                                    service_id=user['access_token']['user_id'],
-                                    screen_name=user['access_token']['screen_name'],
-                                    type=Externalservice.TWITTER,
-                                    service_key=user['access_token']['key'],
-                                    service_secret=user['access_token']['secret'])
-            external_service.save()
-        # if not, insert credentials for this user
-        # if there is, update that account
-        return self.render("tools/twitter-connected.html")
-
 class BookmarkletPageHandler(BaseHandler):
     """Displays a page for a user to save the bookmarklet."""
 

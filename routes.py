@@ -214,9 +214,7 @@ routes = [
 
     (r"/admin/?", handlers.admin.IndexHandler),
     (r"/admin/image-takedown", handlers.admin.ImageTakedownHandler),
-    (r"/admin/create-users", handlers.admin.CreateUsersHandler),
     (r"/admin/interesting-stats", handlers.admin.InterestingStatsHandler),
-    (r"/admin/waitlist", handlers.admin.WaitlistHandler),
     (r"/admin/nsfw-users", handlers.admin.NSFWUserHandler),
     (r"/admin/user/([a-zA-Z0-9_\-]+)", handlers.admin.UserHandler),
     (r"/admin/user/([a-zA-Z0-9_\-]+)/flag-nsfw",
@@ -224,6 +222,8 @@ routes = [
     (r"/admin/delete-user", handlers.admin.DeleteUserHandler),
     (r"/admin/group-shakes", handlers.admin.GroupShakeListHandler),
     (r"/admin/group-shake/([0-9]+)", handlers.admin.GroupShakeViewHandler),
+    (r"/admin/group-shake/([0-9]+)/editor/([0-9]+)", handlers.admin.GroupShakeEditorHandler),
+    (r"/admin/delete-shake", handlers.admin.DeleteShakeHandler),
     (r"/admin/group-shake/([0-9]+)/(recommend|unrecommend)",
         handlers.admin.RecommendedGroupShakeHandler),
     (r"/admin/shake-categories", handlers.admin.ShakeCategoriesHandler),
@@ -231,9 +231,6 @@ routes = [
 
     (r"/tools/p", handlers.tools.PickerPopupHandler),
     (r"/tools/plugins", handlers.tools.PluginsHandler),
-    (r"/tools/twitter", handlers.tools.ToolsTwitterHandler),
-    (r"/tools/twitter/connect", handlers.tools.ToolsTwitterConnectHandler),
-    (r"/tools/twitter/how-to", handlers.tools.ToolsTwitterHowToHandler),
     (r"/tools/new-post", handlers.tools.NewPostHandler),
     (r"/tools/save-video", handlers.tools.SaveVideoHandler),
     (r"/tools/bookmarklet", handlers.tools.BookmarkletPageHandler),

@@ -85,7 +85,6 @@ class ShowHandler(BaseHandler):
 
         sourcefile = sharedfile.sourcefile()
         sharedfile_owner = sharedfile.user()
-        owner_twitter_account = Externalservice.by_user(sharedfile_owner, Externalservice.TWITTER)
         comments = sharedfile.comments()
         view_count = sharedfile.livish_view_count()
         save_count = sharedfile.save_count
@@ -108,9 +107,6 @@ class ShowHandler(BaseHandler):
                 add_to_shakes.append(user_shake)
         can_add_to_shakes = (can_delete and len(add_to_shakes) > 0)
 
-        if owner_twitter_account:
-            owner_twitter_account = owner_twitter_account.screen_name
-
         image_url = "/r/%s" % (sharedfile.share_key)
         if options.debug:
             file_path =  "originals/%s" % (sourcefile.file_key)
@@ -131,7 +127,6 @@ class ShowHandler(BaseHandler):
             sourcefile=sourcefile, in_these_shakes=in_these_shakes, user_shakes=user_shakes,
             add_to_shakes=add_to_shakes, can_add_to_shakes=can_add_to_shakes,
             can_comment=can_comment,
-            owner_twitter_account=owner_twitter_account,
             user_is_owner=user_is_owner,
             og_width=og_width, og_height=og_height)
 

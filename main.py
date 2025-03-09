@@ -33,8 +33,6 @@ class MltshpApplication(tornado.web.Application):
             "debug": options.debug,
             "cookie_secret": options.cookie_secret,
             "xsrf_cookies": options.xsrf_cookies,
-            "twitter_consumer_key": options.twitter_consumer_key,
-            "twitter_consumer_secret": options.twitter_consumer_secret,
 
             # invariant settings
             "login_url": "/sign-in",

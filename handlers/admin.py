@@ -1,12 +1,9 @@
-import hashlib
-import time
-
 import tornado.web
-import postmark
+from tornado.escape import xhtml_escape
 
 from .base import BaseHandler
-from models import Sharedfile, User, Shake, Invitation, Waitlist, ShakeCategory, \
-    DmcaTakedown, Comment, Favorite, PaymentLog, Conversation
+from models import Sharedfile, User, Shake, ShakeCategory, \
+    DmcaTakedown, Comment, Favorite, PaymentLog, ShakeManager
 from lib.utilities import send_slack_notification, pretty_date
 from tasks.admin import delete_account
 
@@ -87,12 +84,14 @@ class UserHandler(AdminBaseHandler):
         # select all _original_ posts from this user; we care less about reposts for this view
         recent_posts = Sharedfile.where("user_id=%s and original_id=0 order by created_at desc limit 50", user.id)
         recent_comments = Comment.where("user_id=%s order by created_at desc limit 100", user.id)
+        shakes = [s for s in user.shakes() if s.type == "group"]
 
         return self.render(
             "admin/user.html",
             user=user,
             user_name=user_name,
             post_count=post_count,
+            shakes=shakes,
             shake_count=shake_count,
             comment_count=comment_count,
             like_count=like_count,
@@ -199,37 +198,6 @@ class InterestingStatsHandler(AdminBaseHandler):
         return self.render('admin/interesting-stats.html', total_files=total)
 
 
-class CreateUsersHandler(AdminBaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-        return self.render("admin/create-users.html")
-
-    @tornado.web.authenticated
-    def post(self):
-        emails = self.get_argument("emails")
-        for email in emails.split('\r\n'):
-            email = email.strip()
-            Invitation.create_for_email(email, self.admin_user.id)
-        return self.redirect("/admin")
-
-
-class WaitlistHandler(AdminBaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-        waiters = Waitlist.where("invited = 0 or invited is NULL")
-        return self.render('admin/waitlist.html', waiters=waiters[0:50])
-
-    @tornado.web.authenticated
-    def post(self):
-        if self.get_argument('waitlist_id', None):
-            waitlist_id = self.get_argument('waitlist_id')
-            waiter = Waitlist.get('id = %s', waitlist_id)
-            invitation = Invitation.create_for_email(waiter.email, self.admin_user.id)
-            waiter.invited = 1
-            waiter.save()
-        return self.redirect('/admin/waitlist')
-
-
 class DeleteUserHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def post(self):
@@ -303,42 +271,48 @@ class GroupShakeListHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self):
         offset = 0
+        q = self.get_argument("q", "")
+        q_prop = ("*" in q and q or ("*" + q + "*")).replace("*", "%")
+        if q:
+            search_clause = "and (shake.title like %s or shake.name like %s or shake.description like %s)"
+        else:
+            search_clause = ""
         sort_order = self.get_argument("sort", "members")
         if sort_order == "members":
-            query = """
+            query = f"""
                 select shake.*, count(distinct subscription.user_id) as member_count
                 from shake
                 left join subscription on subscription.shake_id = shake.id and subscription.deleted=0
-                where shake.type=%s and shake.deleted=0
+                where shake.type=%s and shake.deleted=0 {search_clause}
                 group by shake.id
                 order by member_count DESC
                 limit %s, 20
                 """
         elif sort_order == "last-activity":
-            query = """
+            query = f"""
                 select shake.*, max(shakesharedfile.created_at) as last_activity
                 from shake
                 left join shakesharedfile on shakesharedfile.shake_id = shake.id and shakesharedfile.deleted=0
-                where shake.type=%s and shake.deleted=0
+                where shake.type=%s and shake.deleted=0 {search_clause}
                 group by shake.id
                 order by last_activity DESC
                 limit %s, 20
                 """
         elif sort_order == "posts":
-            query = """
+            query = f"""
                 select shake.*, count(distinct shakesharedfile.sharedfile_id) as post_count
                 from shake
                 left join shakesharedfile on shakesharedfile.shake_id = shake.id and shakesharedfile.deleted=0
-                where shake.type=%s and shake.deleted=0
+                where shake.type=%s and shake.deleted=0 {search_clause}
                 group by shake.id
                 order by post_count DESC
                 limit %s, 20
                 """
         elif sort_order == "recommended":
-            query = """
+            query = f"""
                 select shake.*
                 from shake
-                where shake.type=%s and shake.deleted=0 and shake.recommended=1
+                where shake.type=%s and shake.deleted=0 and shake.recommended=1 {search_clause}
                 order by title
                 limit %s, 20
                 """
@@ -348,16 +322,20 @@ class GroupShakeListHandler(AdminBaseHandler):
         page = self.get_argument("page", 1)
         offset = 20 * (int(page) - 1)
 
-        group_shakes = Shake.object_query(query, 'group', offset)
+        params = ['group']
+        if q:
+            params.extend([q_prop, q_prop, q_prop])
+        group_shakes = Shake.object_query(query, *params, offset)
+
         if sort_order == "recommended":
-            group_count = Shake.where_count("type=%s AND deleted=0 and recommended=1", 'group')
+            group_count = Shake.where_count(f"type=%s AND deleted=0 and recommended=1 {search_clause}", *params)
         else:
-            group_count = Shake.where_count("type=%s AND deleted=0", 'group')
+            group_count = Shake.where_count(f"type=%s AND deleted=0 {search_clause}", *params)
 
         return self.render(
             "admin/group-shake-list.html", group_shakes=group_shakes,
-            sort_order=sort_order,
-            page=page, group_count=group_count, url_format="?page=%d&sort=" + sort_order)
+            sort_order=sort_order, q=q,
+            page=page, group_count=group_count, url_format="?page=%d&q=" + xhtml_escape(q) + "&sort=" + sort_order)
 
 
 class GroupShakeViewHandler(AdminBaseHandler):
@@ -372,11 +350,13 @@ class GroupShakeViewHandler(AdminBaseHandler):
             category_shakes = Shake.where('id <> %s and deleted=0 and shake_category_id=%s', shake.id, shake.shake_category_id)
         else:
             category_shakes = []
+        managers = shake.managers()
 
         return self.render(
             "admin/group-shake-view.html",
             shake=shake,
             shake_editor=shake.owner(),
+            managers=managers,
             shake_categories=shake_categories, 
             featured_shakes=featured_shakes,
             category_shakes=category_shakes)
@@ -396,7 +376,42 @@ class GroupShakeViewHandler(AdminBaseHandler):
         shake.save()
         return self.redirect('/admin/group-shake/%s' % (shake_id))
 
-                            
+
+class GroupShakeEditorHandler(AdminBaseHandler):
+    @tornado.web.authenticated
+    def post(self, shake_id, user_id):
+        shake = Shake.get('id=%s and type=%s and deleted=0', shake_id, 'group')
+        user = User.get('id=%s', user_id)
+        if not shake or not user:
+            return self.write({ 'error': 'invalid shake or user' })
+        current_owner = shake.owner()
+        manager = ShakeManager.get('shake_id=%s and user_id=%s and deleted=0', shake.id, user.id)
+        if not current_owner or (current_owner and current_owner.id != user.id):
+            shake.user_id = user.id
+            shake.save()
+            if current_owner:
+                # make former owner a manager
+                shake.add_manager(current_owner)
+            if manager:
+                manager.delete()
+            self.write({ 'response': 'ok' })
+        else:
+            self.write({ 'error': 'invalid shake or user' })
+
+
+class DeleteShakeHandler(AdminBaseHandler):
+    @tornado.web.authenticated
+    def post(self):
+        if not self.admin_user.is_superuser():
+            return self.write({'error': 'not allowed'})
+        shake_id = self.get_argument('shake_id')
+        shake = Shake.get('id=%s and type=%s and deleted=0', shake_id, 'group')
+        if not shake:
+            return self.write({'error': 'invalid shake'})
+        shake.delete()
+        return self.write({'response': 'ok' })
+
+
 class ShakeCategoriesHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self):

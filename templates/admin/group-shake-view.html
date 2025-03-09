@@ -15,24 +15,33 @@
       {{ xsrf_form_html() }}
 
       <div class="field">
-        <label for="shake-owner">Shake Owner:</label>
+        <label>Shake Editor:</label>
         <div class="field-input">
-          <a target="_blank" href="/user/{{ shake_editor.name }}"><img align="left" class="avatar--img" src="{{shake_editor.profile_image_url()}}" width="48" height="48" alt=""></a>
+          <a target="_blank" href="/user/{{ shake_editor.name }}"><img style="display: inline; vertical-align: middle;" class="avatar--img" src="{{shake_editor.profile_image_url()}}" width="48" height="48" alt=""></a>
           &nbsp; <a target="_blank" href="/user/{{ shake_editor.name }}">{{ escape(shake_editor.display_name()) }}</a>
         </div>
       </div>
 
       <div class="field">
-        <label for="shake-owner">Name:</label>
+        <label>Name:</label>
         <div class="field-input">
           {{ escape(shake.name) }}
         </div>
       </div>
 
       <div class="field">
-        <label for="shake-owner">Description:</label>
+        <label>Description:</label>
         <div class="field-input">
           {{ escape(shake.description) }}
+        </div>
+      </div>
+
+      <div class="field" style="align-items: start;">
+        <label>Managers:</label>
+        <div class="field-input">
+          {% for manager in managers %}
+          <a class="shake-manager-promotion" title="Promote {{ escape(manager.display_name()) }}" href="#" data-value="{{ manager.id }}"><img align="left" style="margin: 5px" class="avatar--img" src="{{manager.profile_image_url()}}" width="48" height="48" alt="{{ escape(manager.display_name()) }}"></a>
+          {% end %}
         </div>
       </div>
 
@@ -88,7 +97,12 @@
         </div>
       </div>
 
-      <input class="btn btn-primary btn-shadow" type="submit" value="save this">
+      <div class="actions">
+        <input class="btn btn-primary btn-shadow" type="submit" value="save this">
+        {% if shake.deleted == 0 and is_superuser %}
+        <button style="float: right" id="delete-shake" class="btn btn-secondary btn-danger">Delete!</button>
+        {% end %}
+      </div>
     </form>
   </div>
 
@@ -96,6 +110,55 @@
     <a class="btn btn-pastel btn-secondary" href="/admin/group-shakes">&lt; Back to Shake List</a>
   </p>
 </div>
+{% end %}
+
+{% block included_scripts %}
+<script type="text/javascript">
+$('.shake-manager-promotion').click((e) => {
+    e.preventDefault();
+    const title = $(e.delegateTarget).attr('title');
+    const manager = $(e.delegateTarget).data('value');
+    if (confirm(title + '?')) {
+        const data = {
+            '_xsrf': '{{ xsrf_token }}',
+        };
+        $.post('/admin/group-shake/{{shake.id}}/editor/' + manager, data, (data) => {
+            if (data.response === 'ok') {
+                location.reload();
+            } else {
+                alert('Failed to promote manager! ' + data.error);
+            }
+        }, 'json');
+    }
+});
+
+$(".admin-shake #delete-shake").on("click", (e) => {
+    e.preventDefault();
+    const answer = prompt(
+        "Are you sure you want to delete this shake?\n\nEnter the shake name to confirm this action."
+    );
+    if (answer === "{{ escape(shake.name) }}") {
+        $.post(
+            "/admin/delete-shake",
+            {
+                shake_id: "{{ shake.id }}",
+                _xsrf: "{{ escape(xsrf_token) }}",
+            },
+            (data) => {
+                if (data.response === "ok") {
+                    alert("Shake deleted successfully.");
+                    window.location.href = "/admin/group-shakes";
+                } else {
+                    alert("Error deleting shake: " + data.error);
+                }
+            },
+            "json"
+        );
+    } else if (answer !== null) {
+        alert("The shake name given did not match. Shake spared!");
+    }
+});
+</script>
 {% end %}
 
 {% block included_headers %}
