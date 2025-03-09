@@ -1673,19 +1673,6 @@ $(document).ready(function () {
         }
     });
 
-    // Tools: Find People / Shakes
-    if ($("#content-find-people-body").length > 0) {
-        $("#content-find-people-body").load(
-            "/tools/find-shakes/quick-fetch-twitter",
-        );
-        $(document).on("click", "#refresh-friends a", function () {
-            $("#content-find-people-body").load(
-                "/tools/find-shakes/quick-fetch-twitter?refresh=1",
-            );
-            return false;
-        });
-    }
-
     // Tools: Recommended group shakes
     if ($("#shake-categories").length > 0) {
         var RecommendedShakeCategory = function (root) {

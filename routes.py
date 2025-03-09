@@ -231,9 +231,6 @@ routes = [
 
     (r"/tools/p", handlers.tools.PickerPopupHandler),
     (r"/tools/plugins", handlers.tools.PluginsHandler),
-    (r"/tools/twitter", handlers.tools.ToolsTwitterHandler),
-    (r"/tools/twitter/connect", handlers.tools.ToolsTwitterConnectHandler),
-    (r"/tools/twitter/how-to", handlers.tools.ToolsTwitterHowToHandler),
     (r"/tools/new-post", handlers.tools.NewPostHandler),
     (r"/tools/save-video", handlers.tools.SaveVideoHandler),
     (r"/tools/bookmarklet", handlers.tools.BookmarkletPageHandler),

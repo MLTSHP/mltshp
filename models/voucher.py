@@ -86,8 +86,7 @@ We're adding features and making updates daily so please check back often.
 
 Once you have your account set up, check out:
 https://%s/tools/plugins (browser plugins for saving images)
-https://%s/tools/twitter (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)
-https://twitter.com/mltshphq (our twitter account)
+https://mefi.social/@best_of_mltshp (our Mastodon account)
 https://mltshp.tumblr.com/ (our blog)
 
 - MLTSHP""" % (sending_user.name, options.app_host, voucher_key, options.app_host, options.app_host)
@@ -104,8 +103,7 @@ https://mltshp.tumblr.com/ (our blog)
 <p>Once you have your account set up, check out:</p>
 <p>
 <a href="https://%s/tools/plugins">https://%s/tools/plugins</a> (browser plugins for saving images)<br>
-<a href="https://%s/tools/twitter">https://%s/tools/twitter</a> (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)<br>
-<a href="https://twitter.com/mltshphq">https://twitter.com/mltshphq</a> (our twitter account)<br>
+<a href="https://mefi.social/@best_of_mltshp">https://mefi.social/@best_of_mltshp</a> (our Mastodon account)<br>
 <a href="https://mltshphq.tumblr.com/">https://mltshphq.tumblr.com/</a> (our blog)
 </p>
 <p>

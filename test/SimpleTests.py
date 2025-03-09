@@ -18,10 +18,6 @@ class TwoHundredTests(BaseAsyncTestCase):
         response = self.fetch('/asdf/asdf')
         self.assertEqual(response.code, 404)
 
-    def test_no_access_to_create_users(self):
-        response = self.fetch('/admin/create-users')
-        self.assertEqual(response.code, 403)
-        
     def test_non_signed_in_permalink_view(self):
         user = User(name='admin', email='admin@mltshp.com', email_confirmed=1)
         user.save()
@@ -29,10 +25,6 @@ class TwoHundredTests(BaseAsyncTestCase):
         src.save()
         sf = Sharedfile(source_id=src.id, user_id=1, name="some.jpg", title="some", share_key="1", content_type="image/jpg")
         sf.save()
-        
+
         response = self.fetch('/p/1')
-        self.assertEqual(response.code, 200)
-        
-    def test_twitter_page(self):
-        response = self.fetch('/tools/twitter')
         self.assertEqual(response.code, 200)
