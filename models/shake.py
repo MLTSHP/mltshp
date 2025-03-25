@@ -194,6 +194,9 @@ class Shake(ModelQueryCache, Model):
         if page is not None and page > 0:
             limit_start = (page-1) * 20
             sql = "%s LIMIT %s, %s" % (sql, limit_start, 20)
+        else:
+            sql += " LIMIT 20"
+
         return user.User.object_query(sql, self.id)
 
     def subscriber_count(self):

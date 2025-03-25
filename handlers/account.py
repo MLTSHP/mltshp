@@ -60,12 +60,13 @@ class AccountImagesHandler(BaseHandler):
         url_format = '/user/%s/' % user.name
         url_format = url_format + '%d'
 
-        following_shakes = user.following()
-        following_shakes_count = len(following_shakes)
+        following_shakes = user.following(page=1)
+        following_shakes_count = user.following_count()
 
         user_shake = user.shake()
-        followers = user_shake.subscribers()
-        follower_count = len(followers)
+        followers = user_shake.subscribers(page=1)
+        follower_count = user_shake.subscriber_count()
+
         count = user_shake.sharedfiles_count()
         images = user_shake.sharedfiles(page=page)
 
@@ -141,11 +142,12 @@ class UserLikesHandler(BaseHandler):
             if len(sharedfiles) > 10:
                 older_link = "/user/%s/likes/before/%s" % (user.name, sharedfiles[9].favorite_id)
 
-        following_shakes = user.following()
-        following_shakes_count = len(following_shakes)
+        following_shakes = user.following(page=1)
+        following_shakes_count = user.following_count()
 
-        followers = user.shake().subscribers()
-        follower_count = len(followers)
+        shake = user.shake()
+        followers = shake.subscribers(page=1)
+        follower_count = shake.subscriber_count()
 
         return self.render("account/likes.html", sharedfiles=sharedfiles[0:10],
             current_user_obj=current_user_obj,
