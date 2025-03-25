@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-{{user.name}}&#x27;s likes
+{{escape(user.name)}}&#x27;s Favorites
 {% end %}
 
 
@@ -10,7 +10,11 @@
 <div class="content content-with-sidebar content-account">
   <div class="account-header">
     <div class="avatar">
+    {% if user == current_user_obj %}
       <h2>Your Favorites</h2>
+    {% else %}
+      <h2>{{escape(user.name)}}&#x27;s Favorites</h2>
+    {% end %}
     </div>
   </div>
   <div class="sidebar">
@@ -22,7 +26,7 @@
           <input type="hidden" name="context" value="in:likes">
           <div class="field">
             <div class="field-input">
-              <input type="search" class="input-text" name="q" placeholder="Search your favorites!" autocorrect="off">
+              <input type="search" class="input-text" name="q" placeholder="Search!" autocorrect="off">
             </div>
           </div>
         </form>
