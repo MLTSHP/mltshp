@@ -31,6 +31,14 @@ $(document).ready(function() {
 
 {% block main %}
   <div class="content content-settings">
+    {% if cancel_error %}
+    <div class="alert alert--danger">
+      <strong>We weren&rsquo;t able to cancel your subscription.</strong>
+      Please <a href="mailto:hello@mltshp.com">contact us</a>
+      about this and we&rsquo;ll take care of it.
+    </div>
+    {% end %}
+
     <div class="settings-header">
       <h1>Your Settings</h1>
       <div class="settings-navigation">
@@ -134,7 +142,7 @@ $(document).ready(function() {
                   Your MLKSHK posts are safe and sound and ready to be restored. Click the button below
                   to start restoring your content.
                 </p>
-                <a class="btn btn-primary btn-shadow" href="/account/mlkshk-migrate">Let's Go!</a>
+                <a class="btn btn-primary btn-shadow" href="/account/mlkshk-migrate">Let&rsquo;s Go!</a>
                 {% end %}
             </div>
         </div>
@@ -213,13 +221,13 @@ $(document).ready(function() {
               {% end %}
 
               {% if not cancel_flag %}
-              <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
+              <p>If you&rsquo;d like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
               {% end %}
             {% else %}
               {% if user.stripe_customer_id %}
               <p>
                 You have no active MLTSHP subscription. <a href="/account/membership">Click here to re-subscribe</a>
-                if you'd like to support MLTSHP!
+                if you&rsquo;d like to support MLTSHP!
               </p>
 
               <p><hr></p>
@@ -245,7 +253,7 @@ $(document).ready(function() {
 
               {% else %}
               <p>
-                You are currently using a free account. If you'd like
+                You are currently using a free account. If you&rsquo;d like
                 to support MLTSHP and get some nifty new benefits you can
                 <a href="/account/membership">upgrade to a paid account</a>.
               </p>

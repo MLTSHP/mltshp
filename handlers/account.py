@@ -202,6 +202,7 @@ class SettingsHandler(BaseHandler):
         cancel_flag = "canceled" in (user.stripe_plan_id or "")
         updated_flag = self.get_argument("update", "") == "1"
         migrated_flag = self.get_argument("migrated", 0)
+        cancel_error = self.get_argument("cancel-error", "") == "1"
         past_due = False
         source_card_type = None
         source_last_4 = None
@@ -246,6 +247,7 @@ class SettingsHandler(BaseHandler):
             updated_flag=updated_flag,
             migrated_flag=migrated_flag,
             cancel_flag=cancel_flag,
+            cancel_error=cancel_error,
             production_site=production_site)
 
     @tornado.web.authenticated
@@ -1112,13 +1114,21 @@ class PaymentCancelHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self):
         user = self.get_current_user_object()
+        cancel_comments = self.get_argument("cancel_comments", "")
+        cancel_reason = self.get_argument("cancel_reason", "")
         if user.stripe_customer_id:
             try:
                 customer = stripe.Customer.retrieve(user.stripe_customer_id, expand=["subscriptions"])
                 if customer and customer.subscriptions.total_count > 0:
                     subscription = customer.subscriptions.data[0]
                     if subscription:
-                        subscription.delete(at_period_end=True)
+                        cancellation_details = {
+                            "feedback": cancel_reason,
+                            "comment": cancel_comments,
+                        }
+                        stripe.Subscription.modify(
+                            subscription.id, cancel_at_period_end=True,
+                            cancellation_details=cancellation_details)
                         if user.stripe_plan_id and ("-canceled" not in user.stripe_plan_id):
                             user.stripe_plan_id = user.stripe_plan_id + "-canceled"
                         user.stripe_plan_rate = None
@@ -1133,7 +1143,7 @@ class PaymentCancelHandler(BaseHandler):
 
                         payment_notifications(user, 'cancellation')
             except stripe.error.InvalidRequestError:
-                pass
+                self.redirect('/account/settings?cancel-error=1')
         return self.redirect('/account/settings?cancel=1')
 
     @tornado.web.authenticated
