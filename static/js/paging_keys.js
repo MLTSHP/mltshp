@@ -21,14 +21,14 @@ HotKey.kc2char = function (kc) {
     return between(65, 90)
         ? String.fromCharCode(kc + 32) // a-z
         : between(48, 57)
-        ? String.fromCharCode(kc) // 0-9
-        : between(96, 105)
-        ? String.fromCharCode(kc - 48) // num 0-9
-        : between(32, 40)
-        ? _32_40[kc - 32]
-        : kt.hasOwnProperty(kc)
-        ? kt[kc]
-        : null;
+          ? String.fromCharCode(kc) // 0-9
+          : between(96, 105)
+            ? String.fromCharCode(kc - 48) // num 0-9
+            : between(32, 40)
+              ? _32_40[kc - 32]
+              : kt.hasOwnProperty(kc)
+                ? kt[kc]
+                : null;
 };
 HotKey.prototype.ignore = /input|textarea/i;
 HotKey.prototype.init = function () {
@@ -140,16 +140,8 @@ var pagingKeys = (function () {
         return $(window).scrollTop();
     }
 
-    function isIE() {
-        return $.browser.msie;
-    }
-
-    function isWebKit() {
-        return $.browser.safari;
-    }
-
     function init() {
-        $(window).load(setupPagingKeys);
+        $(window).on("load", setupPagingKeys);
         windowScrollInit();
     }
 
@@ -227,16 +219,7 @@ var pagingKeys = (function () {
     }
 
     function redirect(href) {
-        /* fix IE */
-        if (isIE()) {
-            var a = document.createElement("a");
-            a.style.display = "none";
-            a.href = href;
-            document.body.appendChild(a);
-            a.click();
-        } else {
-            location.href = href;
-        }
+        location.href = href;
     }
 
     function disableHotKeys() {
@@ -295,20 +278,13 @@ var pagingKeys = (function () {
     // determine current position in the document based on viewport and scrolling
     function whereAmI() {
         var st = getScrollTop();
-        var sl = document.body.scrollLeft;
         var sh = document.body.scrollHeight;
-        var ch = 0;
-
-        if (isWebKit()) ch = window.innerHeight;
-        else ch = document.body.clientHeight;
+        var ch = window.innerHeight;
 
         return {
-            top: st,
-            left: sl,
             height: sh,
-            clientHeight: ch,
-            is_at_top: st == 0 && sl == 0,
-            is_at_last: st + ch == sh && sl == 0,
+            is_at_top: st == 0,
+            is_at_last: st + ch == sh,
         };
     }
 

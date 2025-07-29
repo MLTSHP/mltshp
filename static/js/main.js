@@ -395,9 +395,11 @@ $(document).ready(function () {
                     $title_container
                         .find(".title-input")
                         .val(result["title_raw"]);
+                    var $input = $title_container.find(".title-input");
                     $(that)
                         .next(".image-edit-title-form")
                         .addClass("is-active");
+                    screen_reader_focus($input[0]);
                 }
             },
             "json",
@@ -424,6 +426,19 @@ $(document).ready(function () {
                     $title_container
                         .find(".image-edit-title-form")
                         .removeClass("is-active");
+                    if (result["title_raw"] === "") {
+                        $title_container
+                            .find(".the-title")
+                            .html("click here to edit title")
+                            .show();
+                        $title_container
+                            .find(".the-title")
+                            .addClass("the-title-blank");
+                    } else {
+                        $title_container
+                            .find(".the-title")
+                            .removeClass("the-title-blank");
+                    }
                 }
             },
             "json",
@@ -818,24 +833,29 @@ $(document).ready(function () {
             render_content: function (response) {
                 var html = "";
                 for (var i = 0, len = response["result"].length; i < len; i++) {
+                    var result = response["result"][i];
+                    var link;
+                    if (result["action"] == "save") {
+                        // for saves, we link to the saved post
+                        link = result["post_url"];
+                    } else {
+                        link = "/user/" + result["user_name"];
+                    }
                     html += '<div class="user-action">';
-                    html +=
-                        '<a class="icon" href="/user/' +
-                        response["result"][i]["user_name"] +
-                        '">';
+                    html += '<a class="icon" href="' + link + '">';
                     html +=
                         '<img class="avatar--img" src="' +
-                        response["result"][i]["user_profile_image_url"] +
+                        result["user_profile_image_url"] +
                         '" height="20" width="20" alt=""></a>';
                     html +=
-                        '<a href="/user/' +
-                        response["result"][i]["user_name"] +
-                        '" class="name">' +
-                        response["result"][i]["user_name"] +
+                        '<a class="name" href="' +
+                        link +
+                        '">' +
+                        result["user_name"] +
                         "</a>";
                     html +=
                         '<span class="date">' +
-                        response["result"][i]["posted_at_friendly"] +
+                        result["posted_at_friendly"] +
                         "</span>";
                     html += "</div>";
                 }
@@ -926,15 +946,22 @@ $(document).ready(function () {
         user_html: function (data) {
             var html = "";
             for (var i = 0; i < data.result.length; i++) {
+                var result = data.result[i];
+                var link;
+                if (result["action"] == "save") {
+                    link = result["post_url"];
+                } else {
+                    link = "/user/" + result["user_name"];
+                }
                 html +=
-                    '<a href="/user/' +
-                    data.result[i]["user_name"] +
+                    '<a href="' +
+                    link +
                     '">' +
                     '<img class="avatar--img" src="' +
-                    data.result[i]["user_profile_image_url"] +
+                    result["user_profile_image_url"] +
                     '" height="20" width="20" alt="">' +
                     '<span class="name">' +
-                    data.result[i]["user_name"] +
+                    result["user_name"] +
                     "</span></a>";
             }
             return html;
@@ -1190,12 +1217,12 @@ $(document).ready(function () {
     apply_hover_for_video($(".image-content video.autoplay"));
 
     /* Open / close notification boxes */
-    $(".notification-block-hd").live("click", function () {
+    $(document).on("click", ".notification-block-hd", function () {
         $(this).next().toggle();
     });
 
     /* User follow module */
-    $(".user-follow .submit-form").live("click", function () {
+    $(document).on("click", ".user-follow .submit-form", function () {
         var $container = $(this).parents(".user-follow");
         var $form = $container.find("form");
         var url = $form.attr("action");
@@ -1234,7 +1261,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $(".notification-close").live("click", function () {
+    $(document).on("click", ".notification-close", function () {
         $notification = $(this).parent(".notification");
         var $notification_block = $(this).parents(".notification-block");
         var $notification_block_hd = $notification_block.find(
@@ -1265,7 +1292,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $(".notification-block .clear-all a").live("click", function () {
+    $(document).on("click", ".notification-block .clear-all a", function () {
         var url = $(this).attr("href");
         var $notification_block = $(this).parents(".notification-block");
         $.post(
@@ -1291,81 +1318,95 @@ $(document).ready(function () {
     });
 
     /* Notification block: invitations: */
-    $("#notifcation-block-invitations form").live("submit", function () {
-        var data = $(this).serialize();
-        var url = $(this).attr("action");
+    $(document).on(
+        "submit",
+        "#notifcation-block-invitations form",
+        function () {
+            var data = $(this).serialize();
+            var url = $(this).attr("action");
 
-        var that = this;
-        $.post(
-            url,
-            data,
-            function (response) {
-                if (response["error"]) {
-                    $(that)
-                        .find(".main-message")
-                        .html("<p>" + response["error"] + "</p>");
-                } else {
-                    if (response["count"] == 0) {
-                        $(that).find("input").hide();
-                        $("#invitation-count-text").html(
-                            response["count"] + " invitations",
-                        );
-                        $(that).find(".main-message").html("<p>Thanks!</p>");
+            var that = this;
+            $.post(
+                url,
+                data,
+                function (response) {
+                    if (response["error"]) {
+                        $(that)
+                            .find(".main-message")
+                            .html("<p>" + response["error"] + "</p>");
                     } else {
-                        var invitation_text =
-                            response["count"] == 1
-                                ? "invitation"
-                                : "invitations";
-                        $("#invitation-count-text").html(
-                            response["count"] + " " + invitation_text,
-                        );
-                        $(that).find(".main-message").html(response["message"]);
-                        $("#email_address").val("");
+                        if (response["count"] == 0) {
+                            $(that).find("input").hide();
+                            $("#invitation-count-text").html(
+                                response["count"] + " invitations",
+                            );
+                            $(that)
+                                .find(".main-message")
+                                .html("<p>Thanks!</p>");
+                        } else {
+                            var invitation_text =
+                                response["count"] == 1
+                                    ? "invitation"
+                                    : "invitations";
+                            $("#invitation-count-text").html(
+                                response["count"] + " " + invitation_text,
+                            );
+                            $(that)
+                                .find(".main-message")
+                                .html(response["message"]);
+                            $("#email_address").val("");
+                        }
                     }
-                }
-            },
-            "json",
-        );
+                },
+                "json",
+            );
 
-        return false;
-    });
+            return false;
+        },
+    );
 
     /* Notification block: shake invitations: */
-    $("#notifcation-block-shakeinvitation form").live("submit", function () {
-        var data = $(this).serialize();
-        var url = $(this).attr("action");
-        var $block = $(this).parents(".notification");
-        var $header = $(
-            "#notifcation-block-shakeinvitation .notification-block-hd",
-        );
+    $(document).on(
+        "submit",
+        "#notifcation-block-shakeinvitation form",
+        function () {
+            var data = $(this).serialize();
+            var url = $(this).attr("action");
+            var $block = $(this).parents(".notification");
+            var $header = $(
+                "#notifcation-block-shakeinvitation .notification-block-hd",
+            );
 
-        var that = this;
-        $.post(
-            url,
-            data,
-            function (response) {
-                if (!response["error"]) {
-                    $block.remove();
-                    // we update the header differently when presenting only one
-                    // invitation on the shake page itself.
-                    if ($header.hasClass("invitation-single")) {
-                        $header.html("Got it.");
-                    } else {
-                        var invitation_text =
-                            response["count"] == 1
-                                ? "invitation"
-                                : "invitations";
-                        $header.html(
-                            response["count"] + " new shake " + invitation_text,
-                        );
+            var that = this;
+            $.post(
+                url,
+                data,
+                function (response) {
+                    if (!response["error"]) {
+                        $block.remove();
+                        // we update the header differently when presenting only one
+                        // invitation on the shake page itself.
+                        if ($header.hasClass("invitation-single")) {
+                            $header.html("Got it.");
+                        } else {
+                            var invitation_text =
+                                response["count"] == 1
+                                    ? "invitation"
+                                    : "invitations";
+                            $header.html(
+                                response["count"] +
+                                    " new shake " +
+                                    invitation_text,
+                            );
+                        }
                     }
-                }
-            },
-            "json",
-        );
+                },
+                "json",
+            );
 
-        return false;
-    });
+            return false;
+        },
+    );
 
     var NotificationInvitationContainer = function ($root) {
         this.$root = $root;
@@ -1631,19 +1672,6 @@ $(document).ready(function () {
             return false;
         }
     });
-
-    // Tools: Find People / Shakes
-    if ($("#content-find-people-body").length > 0) {
-        $("#content-find-people-body").load(
-            "/tools/find-shakes/quick-fetch-twitter",
-        );
-        $("#refresh-friends a").live("click", function () {
-            $("#content-find-people-body").load(
-                "/tools/find-shakes/quick-fetch-twitter?refresh=1",
-            );
-            return false;
-        });
-    }
 
     // Tools: Recommended group shakes
     if ($("#shake-categories").length > 0) {
@@ -2097,22 +2125,54 @@ $(document).ready(function () {
         var shake_member_list = new ShakeMemberList($shake_member_list);
     }
 
-    // support for dismissable "Vote 2020" banner; cookie naturally expires on Nov 4th
-    var alertVote2020 = $("#alert-vote-2020");
-    var alertVote2020CookieVal = "dismiss-alert-vote-2020=1";
-    var alertVote2020Expires = new Date("2020-11-04T00:00:00");
+    // support for dismissable "Vote" banner;
+    // cookie naturally expires the day after the election
+    var alertVote = $("#alert-vote");
+    var alertVoteCookieVal = "dismiss-alert-vote=1";
+    var alertVoteExpires = new Date("2024-11-06T00:00:00");
     if (
-        document.cookie.indexOf(alertVote2020CookieVal) === -1 &&
-        new Date() < alertVote2020Expires
+        document.cookie.indexOf(alertVoteCookieVal) === -1 &&
+        new Date() < alertVoteExpires
     ) {
-        alertVote2020.css({ display: "block" });
-        alertVote2020.find("button").click(function () {
+        alertVote.css({ display: "block" });
+        alertVote.find("button").click(function () {
             document.cookie = [
-                alertVote2020CookieVal,
-                "expires=" + alertVote2020Expires.toGMTString(),
+                alertVoteCookieVal,
+                "expires=" + alertVoteExpires.toGMTString(),
                 "path=/",
             ].join("; ");
-            alertVote2020.css({ display: "none" });
+            alertVote.css({ display: "none" });
         });
+    }
+
+    // Support for sticky site header
+    const $siteHeader = $('.site-header');
+    if ($siteHeader.length > 0) {
+        let lastScrollY = window.scrollY;
+        const scrollHandler = () => {
+            if (!$siteHeader.hasClass('docked')) {
+                if (window.scrollY > 120) {
+                $siteHeader.addClass('docked');
+                }
+            } else {
+                if (window.scrollY <= 120) {
+                $siteHeader.removeClass('docked visible hidden');
+                }
+            }
+            if ($siteHeader.hasClass('docked')) {
+                const isVisible = $siteHeader.hasClass('visible');
+                if (!isVisible && window.scrollY < lastScrollY) {
+                // triggering delta can be 1px
+                $siteHeader.addClass('visible');
+                $siteHeader.removeClass('hidden');
+                } else if (isVisible && window.scrollY > lastScrollY + 20) {
+                // triggering delta must be ~20px
+                $siteHeader.removeClass('visible');
+                $siteHeader.addClass('hidden');
+                }
+            }
+            lastScrollY = window.scrollY;
+        };
+        $(window).on('scroll', scrollHandler);
     }
 });

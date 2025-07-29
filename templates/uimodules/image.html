@@ -1,9 +1,17 @@
 <div class="image-title {% if show_attribution_in_title %}image-title-with-poster{% end %}">
     {% if can_edit and not site_is_readonly %}
         {% if list_view %}
-            <h3 class="image-edit-title">{{escape(sharedfile.get_title())}}</h3>
+            {% if sharedfile.get_title() == "" %}
+                <h3 class="image-edit-title the-title the-title-blank">click here to edit title</h3>
+            {% else %}
+                <h3 class="image-edit-title the-title">{{escape(sharedfile.get_title())}}</h3>
+            {% end %}
         {% else %}
-            <h1 class="image-edit-title">{{escape(sharedfile.get_title())}}</h1>
+            {% if sharedfile.get_title() == "" %}
+                <h1 class="image-edit-title the-title the-title-blank">click here to edit title</h1>
+            {% else %}
+                <h1 class="image-edit-title the-title">{{escape(sharedfile.get_title())}}</h1>
+            {% end %}
         {% end %}
         <form method="post" class="image-edit-title-form" action="/p/{{sharedfile.share_key}}/quick-edit-title">
             {{ xsrf_form_html() }}
@@ -23,9 +31,17 @@
             </div>
         {% end %}
         {% if list_view %}
+            {% if sharedfile.get_title() == "" and show_attribution_in_title %}
+            <h3>&nbsp;</h3>
+            {% elif sharedfile.get_title() != "" %}
             <h3>{{escape(sharedfile.get_title())}}</h3>
+            {% end %}
         {% else %}
+            {% if sharedfile.get_title() == "" and show_attribution_in_title %}
+            <h1>&nbsp;</h1>
+            {% elif sharedfile.get_title() != "" %}
             <h1>{{escape(sharedfile.get_title())}}</h1>
+            {% end %}
         {% end %}
         <div class="clear"><!-- --></div>
     {% end %}
@@ -53,15 +69,15 @@
                 </div>
             {% else %}
                 {% if sourcefile.mp4_flag or sourcefile.webm_flag %}
-                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{host}}/r/{{sharedfile.share_key}}" aria-description="Video embed: {{escape(sharedfile.get_alt_text(raw=True) or 'No alt provided')}}">
-                        {% if sourcefile.webm_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
-                        {% if sourcefile.mp4_flag %}<source src="//s.{{host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
+                    <video{% if can_autoplay %} class="autoplay" autoplay muted playsinline webkit-playsinline{% else %} controls{% end %} loop="loop" width="{{sized_width}}" height="{{sized_height}}" data-alt="{{escape(sharedfile.get_title())}}" data-src="//s.{{app_host}}/r/{{sharedfile.share_key}}" aria-description="Video embed: {{escape(sharedfile.get_alt_text(raw=True) or 'No alt provided')}}">
+                        {% if sourcefile.webm_flag %}<source src="//s.{{app_host}}/r/{{sharedfile.share_key}}.webm" type="video/webm" onerror="fallbackImage(this)" />{% end %}
+                        {% if sourcefile.mp4_flag %}<source src="//s.{{app_host}}/r/{{sharedfile.share_key}}.mp4" type="video/mp4" onerror="fallbackImage(this)" />{% end %}
                     </video>
                 {% else %}
                     {% if list_view %}
                         <a href="/p/{{sharedfile.share_key}}"><img
-                            srcset="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
-                            src="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}"
+                            srcset="//s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
+                            src="//s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}"
                             height="{{sized_height}}"
                             width="{{sized_width}}"
                             loading="lazy"
@@ -69,8 +85,8 @@
                             alt="{{escape(sharedfile.get_alt_text(raw=True) or 'No alt provided')}}"></a>
                     {% else %}
                         <a href="//{{cdn_host}}/r/{{sharedfile.share_key}}"><img
-                            srcset="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
-                            src="//s.{{host}}/r/{{sharedfile.share_key}}?width={{sized_width}}"
+                            srcset="//s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=1 1x, //s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2 2x, //s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}&dpr=2.5 2.5x"
+                            src="//s.{{app_host}}/r/{{sharedfile.share_key}}?width={{sized_width}}"
                             height="{{sized_height}}"
                             width="{{sized_width}}"
                             loading="lazy"
@@ -82,10 +98,10 @@
         {% end %}
     </div>
     <div id="image-content-footer-{{sharedfile.share_key}}" class="image-content-footer">
-        <div class="alt-text {% if can_edit %}alt-text-edit{%end%}{% if not sharedfile.get_alt_text() %} alt-text--blank{%else%} alt-text--hidden{%end%}">
+        <div class="alt-text {% if can_edit %}alt-text-edit{%end%}{% if sharedfile.get_alt_text() == "" %} alt-text--blank{%else%} alt-text--hidden{%end%}">
             <div class="alt-text-toggle link link--primary">alt text</div>
             {% if can_edit and not site_is_readonly %}
-                {% if not sharedfile.get_alt_text() %}
+                {% if sharedfile.get_alt_text() == "" %}
                     <div class="the-alt-text" role="button">add some alt text</div>
                 {% else %}
                     <div class="the-alt-text" role="button">{{sharedfile.get_alt_text()}}</div>
@@ -104,14 +120,14 @@
                     </div>
                 </form>
             {% else %}
-                {% if sharedfile.get_alt_text() %}
+                {% if sharedfile.get_alt_text() != "" %}
                     <div class="the-alt-text">{{sharedfile.get_alt_text()}}</div>
                 {% end %}
             {% end %}
         </div>
         <div class="description {% if can_edit %}description-edit{%end%}">
             {% if can_edit and not site_is_readonly %}
-                {% if not sharedfile.get_description() %}
+                {% if sharedfile.get_description() == "" %}
                     <div class="the-description the-description-blank">click here to edit description</div>
                 {% else %}
                     <div class="the-description">{{sharedfile.get_description()}}</div>

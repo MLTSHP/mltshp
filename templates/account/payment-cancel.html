@@ -4,23 +4,56 @@
   <div class="content content-membership">
     <h1 class="thank-you">Canceling</h1>
     <p>
-      Thanks for trying us out, we're sorry to see you go but understand the site isn't for everyone.
-    </p>
-    <p>
-      To cancel your account right now, click this button to confirm your the cancellation of your
-      subscription:
+      Thanks for trying us out, we&rsquo;re sorry to see you go but understand the site isn&rsquo;t for everyone.
     </p>
 
-    <form action="/account/payment/cancel" method="POST">
-      {{ xsrf_form_html() }}
-      <input type="submit"
-        class="subscription-button" value="Yes, Please Cancel" border="0">
-    </form>
+    <p>
+      Before you go, please let us know why you&rsquo;re canceling your subscription. Your feedback is not
+      required, but appreciated!
+    </p>
+
+    <div class="fun-form">
+      <form action="/account/payment/cancel" method="POST">
+        {{ xsrf_form_html() }}
+
+        <div class="field">
+          <label for="cancel-reason">Cancellation Reason:</label>
+          <div class="field-input">
+            <select name="cancel_reason" id="cancel-reason">
+              <option>--</option>
+              <option value="customer_service">Customer service issue</option>
+              <option value="missing_features">MLTSHP is missing feature(s) I&rsquo;d like</option>
+              <option value="switched_service">I found an alternative</option>
+              <option value="too_complex">MLTSHP is complex or hard to use</option>
+              <option value="too_expensive">MLTSHP is too expensive</option>
+              <option value="unused">Not using it enough</option>
+              <option value="other">Other reason not listed</option>
+            </select>
+          </div>
+          <div class="field-help">
+            Please let us know why you&rsquo;re canceling!
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="cancel-comments">Any additional comments?</label>
+          <div class="field-input">
+            <textarea name="cancel_comments" id="cancel-comments" rows="4" cols="40"></textarea>
+          </div>
+        </div>
+
+        <div class="field field-submit">
+          <input class="btn btn-danger" type="submit"
+            class="subscription-button" value="Yes, Please Cancel">
+        </div>
+      </form>
+    </div>
 
     <div class="clear"><!-- --></div>
+
     <p>
       If you have any questions or need help please email us at <a href="mailto:hello@mltshp.com">hello@mltshp.com</a>
-      and we'll get back to you as soon as possible.
+      and we&rsquo;ll get back to you as soon as possible.
     </p>
   </div>
 {% end %}

@@ -3,11 +3,21 @@
 {% block title %}Group Shakes{% end %}
 
 {% block main %}
-<div class="content content-with-sidebar admin-new-users">
+<div class="content admin-shake content-with-sidebar admin-new-users">
   {% include "admin/_sidebar.html" %}
 
   <div class="body">
-    <h1>All Shakes</h1>
+    <h1>Group Shakes</h1>
+
+    <form id="search-form" method="GET" action="/admin/group-shakes" style="margin-bottom: 1em;">
+        <input type="hidden" name="sort" value="{{ sort_order }}">
+        <input type="search" name="q" value="{{ escape(q) }}" placeholder="search" size="10">&nbsp; &nbsp;
+        <a class="sort-link {{ sort_order == "members" and "link--primary" or "" }}" href="#" data-value="members">Members</a> |
+        <a class="sort-link {{ sort_order == "posts" and "link--primary" or "" }}" href="#" data-value="posts">Posts</a> |
+        <a class="sort-link {{ sort_order == "last-activity" and "link--primary" or "" }}" href="#" data-value="last-activity">Last Activity</a> |
+        <a class="sort-link {{ sort_order == "recommended" and "link--primary" or "" }}" href="#" data-value="recommended" title="filtered; title sort">Recommended</a>
+    </form>
+
     <ol class="shake-list">
     {% for group_shake in group_shakes %}
         <li class="shake-list--shake">
@@ -15,16 +25,45 @@
                 <img src="{{group_shake.thumbnail_url()}}" width="48" height="48">
             </div>
             <div class="shake-list--description">
-                <a href="/{{group_shake.name}}" target="_blank">{{group_shake.display_name()}}</a>
-                <p>{{group_shake.description}}</p>
+                <a href="/{{group_shake.name}}" target="_blank">{{escape(group_shake.display_name())}}</a> ({{ escape(group_shake.name) }})
+                <p>{{ escape(group_shake.description) }}</p>
+                <p>{{ "{:,d}".format(group_shake.subscriber_count()) }} members &bull; {{ "{:,d}".format(group_shake.sharedfiles_count()) }} posts
+                {% set sf = group_shake.sharedfiles(per_page=1) %}
+                {% if sf %}
+                    &bull; posted {{ sf[0].pretty_created_at() }}
+                {% end %}
+                </p>
             </div>
             <div class="shake-list--recommend">
+                <form style='display:inline;' method="post" action='/admin/group-shake/{{ group_shake.id }}/{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>
+                    {{ xsrf_form_html() }}
+                    <input class="btn btn-small btn-pastel btn-primary" type='submit' value='{% if group_shake.recommended %}unrecommend{% else %}recommend{% end %}'>
+                </form>
                 <a class="btn btn-small btn-pastel btn-primary" href="/admin/group-shake/{{group_shake.id}}">edit</a>
             </div>
         </li>
     {% end %}
     </ol>
+
+    <br style="clear:both">
+    <div>
+        {{modules.Pagination(object_count=group_count, current_page=page, url_format=url_format, per_page=20)}}
+    </div>
   </div>
 </div>
 {% end %}
 
+{% block included_scripts %}
+<script type="text/javascript">
+$('.sort-link').click(function(e) {
+    e.preventDefault();
+    var sort = $(this).data('value');
+    $('#search-form input[name="sort"]').val(sort);
+    $('#search-form').submit();
+});
+</script>
+{% end %}
+
+{% block included_headers %}
+<link type="text/css" rel="stylesheet" href="{{ static_url("css/admin.css") }}">
+{% end %}

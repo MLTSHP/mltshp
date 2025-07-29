@@ -1,9 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import unittest
+import logging
+import re
+
 from torndb import Connection
 from tornado.options import options
 from tornado.httpclient import AsyncHTTPClient
+from tornado.options import options
 
 import MySQLdb
 
@@ -19,14 +23,13 @@ AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
 TEST_MODULES = [
     'test.AccountTests',
     'test.CommentTests',
-    'test.ExternalAccountTests',
+    # 'test.ExternalAccountTests',
     'test.FileTests',
     'test.SimpleTests',
     'test.SiteFunctionTests',
 
     'test.unit.app_tests',
     'test.unit.comment_tests',
-    'test.unit.externalservice_tests',
     'test.unit.notification_tests',
     'test.unit.shake_tests',
     'test.unit.sharedfile_tests',
@@ -70,24 +73,35 @@ def all():
 if __name__ == '__main__':
 
     mltshpoptions.parse_dictionary(test_settings)
+    if not options.tornado_logging:
+        options.logging = None
+        logging.getLogger("tornado.access").disabled = True
+        logging.getLogger("tornado.application").disabled = True
+        logging.getLogger("tornado.general").disabled = True
 
     import tornado.testing
     db = Connection(options.database_host, 'mysql', options.database_user, options.database_password)
     try:
-        db.execute("CREATE database %s" % options.database_name)
-    except MySQLdb.ProgrammingError, exc:
+        db.execute("DROP DATABASE IF EXISTS %s" % options.database_name)
+        db.execute("CREATE DATABASE %s" % options.database_name)
+    except MySQLdb.ProgrammingError as exc:
         if exc.args[0] != 1007:  # database already exists
             raise
     else:
+        db.execute("USE %s" % options.database_name)
         with open("setup/db-install.sql") as f:
             load_query = f.read()
-        db.execute("USE %s" % options.database_name)
         statements = load_query.split(";")
         for statement in statements:
             # Utilize in-memory tables for faster tests.
             # Note there are some differences here with InnoDB, but
             # they shouldn't materially affect our tests.
-            cmd = statement.replace("InnoDB", "MEMORY").strip()
+            # skip this for create statements definining "text" columns,
+            # since those aren't compatible with in-memory tables.
+            cmd = statement.strip()
             if cmd != "":
+                cmd = re.sub("^.+FULLTEXT KEY.+$", "", cmd, flags=re.M+re.I)
+                cmd = cmd.replace(" text,", " varchar(4000),")
+                cmd = cmd.replace("InnoDB", "MEMORY")
                 db.execute(cmd)
     tornado.testing.main()

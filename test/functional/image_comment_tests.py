@@ -23,7 +23,7 @@ class ImageCommentTests(test.base.BaseAsyncTestCase):
         sharedfile = test.factories.sharedfile(self.admin)
         comment = models.Comment(user_id=self.admin.id, sharedfile_id=sharedfile.id, body="just a comment")
         comment.save()
-        response = self.post_url("/p/%s/comment/%s/delete" % (sharedfile.share_key, comment.id))
+        response = self.post_url(sharedfile.post_url(relative=True) + "/comment/%s/delete" % (comment.id,))
         self.assertEqual(response.code, 403)
         self.assertEqual(comment.id, models.Comment.get("id = %s and deleted = 0", comment.id).id)
         self.assertEqual(None, models.Comment.get("id = %s and deleted = 1", comment.id))
@@ -37,7 +37,7 @@ class ImageCommentTests(test.base.BaseAsyncTestCase):
         comment.save()
         self.sign_in('bob', 'asdfasdf')
         self.assertEqual(None, models.Comment.get("id = %s and deleted = 1", comment.id))
-        response = self.post_url("/p/%s/comment/%s/delete" % (admins_sharedfile.share_key, comment.id))
+        response = self.post_url(admins_sharedfile.post_url(relative=True) + "/comment/%s/delete" % (comment.id,))
         self.assertEqual(comment.id, models.Comment.get("id = %s and deleted = 1", comment.id).id)
     
     def test_delete_anothers_comment_on_own_file(self):
@@ -49,7 +49,7 @@ class ImageCommentTests(test.base.BaseAsyncTestCase):
         comment.save()
         self.sign_in('admin', 'asdfasdf')
         self.assertEqual(None, models.Comment.get("id = %s and deleted = 1", comment.id))
-        response = self.post_url("/p/%s/comment/%s/delete" % (admins_sharedfile.share_key, comment.id))
+        response = self.post_url(admins_sharedfile.post_url(relative=True) + "/comment/%s/delete" % (comment.id,))
         self.assertEqual(comment.id, models.Comment.get("id = %s and deleted = 1", comment.id).id)
 
     def test_can_not_delete_anothers_sharedfile(self):
@@ -62,7 +62,7 @@ class ImageCommentTests(test.base.BaseAsyncTestCase):
         comment.save()
         self.sign_in('tom', 'asdfasdf')
         self.assertEqual(None, models.Comment.get("id = %s and deleted = 1", comment.id))
-        response = self.post_url("/p/%s/comment/%s/delete" % (admins_sharedfile.share_key, comment.id))
+        response = self.post_url(admins_sharedfile.post_url(relative=True) + "/comment/%s/delete" % (comment.id,))
         self.assertEqual(None, models.Comment.get("id = %s and deleted = 1", comment.id))
 
     

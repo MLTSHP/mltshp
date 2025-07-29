@@ -9,11 +9,11 @@
 
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/main.min.css") }}">
 
-    <link rel="dns-prefetch" href="//s.mltshp.com">
-    <link rel="dns-prefetch" href="//mltshp-cdn.com">
+    <link rel="dns-prefetch" href="//s.{{ app_host }}">{% if cdn_host %}
+    <link rel="dns-prefetch" href="//{{ cdn_host }}">{% end %}
 
     <!-- Behave more like an app when saved to home screen in iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
     <!-- Proper favicon generator by Philippe Bernard: http://realfavicongenerator.net/ -->
@@ -23,7 +23,8 @@
     <link rel="icon" type="image/png" href="{{ static_url("images/favicon-16x16.png") }}" sizes="16x16">
     <link rel="manifest" href="{{ static_url("manifest.json") }}">
     <link rel="mask-icon" href="{{ static_url("images/safari-pinned-tab.svg") }}" color="#fc1a9a">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#dbfaff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#13454c" media="(prefers-color-scheme: dark)">
 
     <script type="text/javascript">
     function fallbackImage(source) {
@@ -56,7 +57,7 @@
     {% end %}
 </head>
 <body>
-    <div id="alert-vote-2020"
+    <div id="alert-vote"
         class="alert alert--warning"
         style="text-align: center;
             background-image: url('/static/images/mltshp-flag.svg');
@@ -83,9 +84,11 @@
         <div class="wrapper">
             <header class="site-header">
                 <div class="site-branding">
-                    <a href="/"><img class="site-branding--logo" src="{{ static_url("images/logo-compact.svg") }}" alt="MLTSHP"></a>
+                    <a href="/"><img class="site-branding--logo" src="{{ static_url("images/logo-compact.svg") }}" alt="MLTSHP">
+                    <div class="site-branding--icon" aria-label="MLTSHP"></div></a>
                 </div>
                 <nav id="site-nav" class="site-nav">
+                    {% block notification_button %}{% end %}
                     <button type="button" class="site-nav--toggle btn btn-warning btn-pastel btn-icon">&#9776;</button>
                     <ul class="site-nav--list">
                         {% if current_user and current_user_object.is_member() %}
@@ -131,12 +134,22 @@
                                     We’re doing something cool with the database!
                                 </li>
                             {% end %}
+                            {% if host_banner %}
+                                <li class="user-nav--item">
+                                    {{ escape(host_banner) }}
+                                </li>
+                            {% end %}
                             {% if current_user_object and not current_user_object.email_confirmed %}
                                 {% if not site_is_readonly %}
                                     <li class="user-nav--item">
                                         Please visit settings to confirm your email!
                                     </li>
                                 {% end %}
+                            {% end %}
+                            {% if current_user_object and current_user_object.is_admin() %}
+                            <li class="user-nav--item">
+                                <a href="/admin" class="user-nav--link">admin</a>
+                            </li>
                             {% end %}
                             <li class="user-nav--item">
                                 <a href="/account/settings" class="user-nav--link">settings</a>
@@ -149,6 +162,11 @@
                             </li>
                         {% else %}
                             {% set handler_class = handler.__class__.__name__  %}
+                            {% if host_banner %}
+                                <li class="user-nav--item">
+                                    {{ escape(host_banner) }}
+                                </li>
+                            {% end %}
                             <li class="user-nav--item">
                                 <a href="/sign-in?next={{request.path}}" class="user-nav--link">sign in</a>
                             </li>
@@ -164,6 +182,9 @@
             </main>
 
             <footer class="site-footer">
+                <p>
+                    Follow <a href="https://mefi.social/@best_of_mltshp" target="_blank" class="link--primary">@best_of_mltshp</a> on Mastodon
+                </p>
                 <p>
                     Are you a developer? <a href="/developers" class="link--primary">Check out our API</a>.
                 </p>
@@ -183,7 +204,7 @@
         </div>
     </div>
     <div id="new-post-panel" class="new-post-panel"><div class="new-post-panel--inner"></div></div>
-    <script type="text/javascript" charset="utf-8" src="{{ static_url("js/jquery-min-1.4.2.js") }}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ static_url("js/jquery-3.7.1.min.js") }}"></script>
     <script type="text/javascript" charset="utf-8" src="{{ static_url("js/main.js") }}"></script>
     <script type="text/javascript" charset="utf-8" src="{{ static_url("js/paging_keys.js") }}"></script>
     {% block included_scripts %}

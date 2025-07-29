@@ -1,12 +1,12 @@
 from lib.flyingcow import Model, Property
+from lib.utilities import utcnow
 from tornado.options import options
 
 import postmark
 
 import hashlib
 import time
-import user
-from datetime import datetime
+from . import user
 
 
 class Invitation(Model):
@@ -43,7 +43,7 @@ class Invitation(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
     
     
     @classmethod
@@ -52,8 +52,8 @@ class Invitation(Model):
         Creates an invitation for an email address.
         """
         h = hashlib.sha1()
-        h.update("%s" % (time.time()))
-        h.update("%s" % (email))
+        h.update(("%s" % (time.time())).encode('ascii'))
+        h.update(("%s" % (email)).encode('ascii'))
         invitation_key = h.hexdigest()
         sending_user = user.User.get('id = %s', user_id)
         invitation = Invitation(user_id=user_id, invitation_key=invitation_key, email_address=email, claimed_by_user_id=0)
@@ -71,8 +71,7 @@ We're adding features and making updates daily so please check back often.
 
 Once you have your account set up, check out:
 https://%s/tools/plugins (browser plugins for saving images)
-https://%s/tools/twitter (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)
-https://twitter.com/mltshphq (our twitter account)
+https://mefi.social/@best_of_mltshp (our Mastodon account)
 https://mltshphq.tumblr.com/ (our blog)
 
 - MLTSHP""" % (sending_user.name, options.app_host, invitation_key, options.app_host, options.app_host)
@@ -89,8 +88,7 @@ https://mltshphq.tumblr.com/ (our blog)
 <p>Once you have your account set up, check out:</p>
 <p>
 <a href="https://%s/tools/plugins">https://%s/tools/plugins</a> (browser plugins for saving images)<br>
-<a href="https://%s/tools/twitter">https://%s/tools/twitter</a> (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)<br>
-<a href="https://twitter.com/mltshphq">https://twitter.com/mltshphq</a> (our twitter account)<br>
+<a href="https://mefi.social/@best_of_mltshp">https://mefi.social/@best_of_mltshp</a> (our Mastodon account)<br>
 <a href="https://mltshphq.tumblr.com/">https://mltshp.tumblr.com/</a> (our weblog)
 </p>
 <p>

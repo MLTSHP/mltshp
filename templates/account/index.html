@@ -3,7 +3,7 @@
 {% block included_headers %}
 
   {% if user.is_plus() %}
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://mltshp.com/user/{{user.name}}/rss">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ app_scheme }}://{{ app_host }}/user/{{user.name}}/rss">
   {% end %}
 {% end %}
 
@@ -88,6 +88,12 @@
     </div>
 
     {% if current_user_obj and current_user_obj.is_admin() and not site_is_readonly %}
+      <div>
+        <h3>Admin Actions</h3>
+        <div class="admin-actions">
+          <a href="/admin/user/{{user.name}}">Manage User</a>
+        </div>
+      </div>
       <div class="sidebar-flag-nsfw">
         <form action="/admin/user/{{user.name}}/flag-nsfw" method="post">
           {{ xsrf_form_html() }}
@@ -103,11 +109,6 @@
         </form>
       </div>
     {% end %}
-    {% if not current_user_obj %}
-    <div>
-      <!-- you get ads! -->
-    </div>
-    {% end %}
   </div>
   <div class="body">
     {% if has_data_to_migrate %}
@@ -121,12 +122,6 @@
         {{modules.Image(sharedfile, current_user=current_user_obj, list_view=True, show_attribution_in_title=False)}}
       {% end %}
     </div>
-
-    {% if not current_user_obj %}
-    <div>
-      <!-- you get ads! -->
-    </div>
-    {% end %}
 
     {{modules.Pagination(object_count=count, current_page=page, url_format=url_format)}}
   </div>

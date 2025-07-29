@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block included_scripts %}
+{% if production_site %}
 <script type="text/javascript" src="https://checkout.stripe.com/checkout.js" charset="utf-8"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -24,11 +25,20 @@ $(document).ready(function() {
 });
 </script>
 {% end %}
+{% end %}
 
 {% block title %}Your Account Settings{% end %}
 
 {% block main %}
   <div class="content content-settings">
+    {% if cancel_error %}
+    <div class="alert alert--danger">
+      <strong>We weren&rsquo;t able to cancel your subscription.</strong>
+      Please <a href="mailto:hello@mltshp.com">contact us</a>
+      about this and we&rsquo;ll take care of it.
+    </div>
+    {% end %}
+
     <div class="settings-header">
       <h1>Your Settings</h1>
       <div class="settings-navigation">
@@ -132,7 +142,7 @@ $(document).ready(function() {
                   Your MLKSHK posts are safe and sound and ready to be restored. Click the button below
                   to start restoring your content.
                 </p>
-                <a class="btn btn-primary btn-shadow" href="/account/mlkshk-migrate">Let's Go!</a>
+                <a class="btn btn-primary btn-shadow" href="/account/mlkshk-migrate">Let&rsquo;s Go!</a>
                 {% end %}
             </div>
         </div>
@@ -161,7 +171,7 @@ $(document).ready(function() {
               {% end %}
 
               <h4>Your Membership Plan: <a href="/account/membership">{{ plan_name }}</a></h4>
-                {% if user.stripe_plan_id == "mltshp-double" and user.stripe_plan_rate > 24 %}
+                {% if user.stripe_plan_id == "mltshp-double" and user.stripe_plan_rate is not None and user.stripe_plan_rate > 24 %}
               <p>You subscribe at a custom rate of ${{ user.stripe_plan_rate }}/year.
                 <em>Thank you for your added support.</em></p>
                 {% end %}
@@ -200,7 +210,9 @@ $(document).ready(function() {
                 {% end %}
               </p>
 
+              {% if production_site %}
               <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
+              {% end %}
 
               <form id="update-card-details-form" action="/account/payment/update" method="POST">
                 {{ xsrf_form_html() }}
@@ -209,13 +221,13 @@ $(document).ready(function() {
               {% end %}
 
               {% if not cancel_flag %}
-              <p>If you'd like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
+              <p>If you&rsquo;d like to cancel your subscription <a href="/account/payment/cancel">you can do so here</a>.</p>
               {% end %}
             {% else %}
               {% if user.stripe_customer_id %}
               <p>
                 You have no active MLTSHP subscription. <a href="/account/membership">Click here to re-subscribe</a>
-                if you'd like to support MLTSHP!
+                if you&rsquo;d like to support MLTSHP!
               </p>
 
               <p><hr></p>
@@ -230,7 +242,9 @@ $(document).ready(function() {
                 {% end %}
               </p>
 
+              {% if production_site %}
               <button id="update-card-details-btn" class="btn btn-secondary btn-shadow">Update Card Details</button>
+              {% end %}
 
               <form id="update-card-details-form" action="/account/payment/update" method="POST">
                 {{ xsrf_form_html() }}
@@ -239,7 +253,7 @@ $(document).ready(function() {
 
               {% else %}
               <p>
-                You are currently using a free account. If you'd like
+                You are currently using a free account. If you&rsquo;d like
                 to support MLTSHP and get some nifty new benefits you can
                 <a href="/account/membership">upgrade to a paid account</a>.
               </p>

@@ -12,7 +12,7 @@ class Pagination(UIModule):
             num_pages = 1
         else:
             diff = object_count % per_page
-            num_pages = object_count / per_page
+            num_pages = int(object_count / per_page)
             if diff > 0:
                 num_pages += 1
         
@@ -33,7 +33,7 @@ class Pagination(UIModule):
 
     def chunk_pages(self, num_pages=1, current_page=1, adjacent=2):
         max_pages_display = (adjacent * 2) + 1 + 4
-        mylist = range(1,num_pages+1)
+        mylist = list(range(1,num_pages+1))
         if num_pages < max_pages_display:
             return mylist
 
@@ -163,10 +163,10 @@ class Image(UIModule):
 
 
 class ImageMedium(UIModule):
-    def render(self, sharedfile):
+    def render(self, sharedfile, direct=False):
         sharedfile_user = sharedfile.user()
         return self.render_string("uimodules/image-medium.html", sharedfile=sharedfile, \
-            sharedfile_user=sharedfile_user)
+            sharedfile_user=sharedfile_user, direct=direct)
 
 class ShakeFollow(UIModule):
     def render(self, follow_user=None, follow_shake=None, current_user=None, 

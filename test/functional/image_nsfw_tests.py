@@ -23,7 +23,7 @@ class ImageNSFWTests(test.base.BaseAsyncTestCase):
     
     def test_non_logged_in_users_cant_set_nsfw(self):
         sharedfile = test.factories.sharedfile(self.admin)
-        response = self.post_url("/p/%s/nsfw" % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + "/nsfw")
         self.assertEqual(403, response.code)
     
     def test_set_nsfw_on_anothers_file(self):
@@ -35,7 +35,7 @@ class ImageNSFWTests(test.base.BaseAsyncTestCase):
         sourcefile = sharedfile.sourcefile()
         self.assertEqual(0, sourcefile.nsfw)
         self.sign_in('bob', 'asdfasdf')
-        response = self.post_url("/p/%s/nsfw" % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + "/nsfw")
         self.assertEqual(200, response.code)
         sharedfile = models.Sharedfile.get("id = %s", sharedfile.id)
         sourcefile = sharedfile.sourcefile()

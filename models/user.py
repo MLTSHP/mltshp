@@ -1,18 +1,17 @@
-import cStringIO
+import io
 import time
 import hashlib
 import calendar
 import random
 import re
-import urlparse
+import urllib.parse
 from datetime import datetime
 
 from lib.s3 import S3Bucket
-from boto.s3.key import Key
 import postmark
 from tornado.options import define, options
 
-from lib.utilities import email_re, s3_authenticated_url, s3_url, transform_to_square_thumbnail
+from lib.utilities import email_re, transform_to_square_thumbnail, utcnow, pretty_date
 from lib.flyingcow import Model, Property
 from lib.flyingcow.cache import ModelQueryCache
 from lib.flyingcow.db import IntegrityError
@@ -20,14 +19,14 @@ from tasks.counts import calculate_likes
 from tasks.migration import migrate_for_user
 from lib.badpasswords import bad_list
 
-import notification
-import subscription
-import shake
-import invitation
-import sharedfile
-import externalservice
-import invitation_request
-import shakemanager
+from . import notification
+from . import subscription
+from . import shake
+from . import invitation
+from . import sharedfile
+from . import externalservice
+from . import invitation_request
+from . import shakemanager
 # we use models.favorite due to some weird edge case where the reference
 # to the module gets lost.  To recreate, rename to "import favorite" and
 # change references from models.favorite to just favorite.  You can then
@@ -163,8 +162,8 @@ class User(ModelQueryCache, Model):
     def invalidate_email(self):
         self.email_confirmed = 0
         h = hashlib.sha1()
-        h.update("%s" % (time.time()))
-        h.update("%s" % (random.random()))
+        h.update(str(time.time()).encode("ascii"))
+        h.update(str(random.random()).encode("ascii"))
         self.verify_email_token = h.hexdigest()
         self.save()
         if not options.debug:
@@ -183,8 +182,8 @@ class User(ModelQueryCache, Model):
         """
 
         h = hashlib.sha1()
-        h.update("%s" % (time.time()))
-        h.update("%s" % (random.random()))
+        h.update(str(time.time()).encode("ascii"))
+        h.update(str(random.random()).encode("ascii"))
         self.reset_password_token = h.hexdigest()
         self.save()
         body = """
@@ -205,23 +204,6 @@ hello@mltshp.com
                 text_body=body)
             pm.send()
 
-    def sharedimages(self):
-        """
-        This is a bit of a hack, but I wanted it in the model so I could fix it up later.
-        This simply pulls all the shared images and adds one new field,
-        which is a signed url to the amazon s3 thumbnail rather than through the server.
-        Does not include deleted images.
-        """
-        images = self.connection.query("SELECT sf.id, sf.title, sf.name, sf.share_key, src.file_key, \
-            src.thumb_key FROM sharedfile as sf, sourcefile as src \
-            WHERE src.id = sf.source_id AND sf.user_id = %s and sf.deleted = 0 ORDER BY sf.created_at DESC limit 3", self.id)
-        for image in images:
-            file_path = "thumbnails/%s" % (image['thumb_key'])
-            authenticated_url = s3_authenticated_url(options.aws_key, options.aws_secret, \
-                bucket_name=options.aws_bucket, file_path=file_path)
-            image['thumbnail_url'] = authenticated_url
-        return images
-
     def set_profile_image(self, file_path, file_name, content_type, skip_s3=False):
         """
         Takes a local path, name and content-type, which are parameters passed in by
@@ -233,55 +215,40 @@ hello@mltshp.com
         if content_type not in valid_content_types:
             return False
 
-        destination =  cStringIO.StringIO()
+        destination = io.BytesIO()
         if not transform_to_square_thumbnail(file_path, 100*2, destination):
             return False
 
         if not skip_s3:
+            bytes = destination.getvalue()
             bucket = S3Bucket()
-            k = Key(bucket)
-            k.key = "account/%s/profile.jpg" % (self.id)
-            k.set_metadata('Content-Type', 'image/jpeg')
-            k.set_metadata('Cache-Control', 'max-age=86400')
-            k.set_contents_from_string(destination.getvalue())
-            k.set_acl('public-read')
+            bucket.put_object(
+                bytes,
+                "account/%s/profile.jpg" % self.id,
+                ContentType="image/jpeg",
+                ACL="public-read"
+            )
         self.profile_image = 1
         self.save()
         return True
 
     def profile_image_url(self, include_protocol=False):
         protocol = ''
+        host = (options.use_cdn and options.cdn_host) or options.app_host
+        if include_protocol:
+            protocol = (options.use_cdn and 'https:') or 'http:'
         if self.profile_image:
-            host = options.app_host
-            if options.app_host == 'mltshp.com':
-                host = options.cdn_ssl_host
-            else:
-                host = options.use_cdn and options.cdn_host or host
-            if include_protocol:
-                if options.app_host == 'mltshp.com':
-                    protocol = 'https:'
-                else:
-                    protocol = 'http:'
-            if options.app_host == 'mltshp.com':
-                aws_url = "%s//%s/s3" % (protocol, host)
-            else:
-                # must be running for development. use the /s3 alias
-                aws_url = "/s3"
-            return "%s/account/%s/profile.jpg" % (aws_url, self.id)
+            # For mltshp.com, we point to the CDN directly for profile images
+            # For other environments, use the /s3 alias that resolves by nginx routing.
+            aws_url = f"{protocol}//{host}/s3"
+            return f"{aws_url}/account/{self.id}/profile.jpg"
         else:
-            if include_protocol:
-                if options.app_host == 'mltshp.com':
-                    return "https://%s/static/images/default-icon-venti.svg" % options.cdn_ssl_host
-                elif options.use_cdn and options.cdn_host:
-                    return "http://%s/static/images/default-icon-venti.svg" % options.cdn_host
-            return "/static/images/default-icon-venti.svg"
+            return f"{protocol}//{host}/static/images/default-icon-venti.svg"
 
     def sharedfiles(self, page=1, per_page=10):
         """
         Shared files, paginated.
         """
-        limit_start = (page-1) * per_page
-        #return Sharedfile.where("user_id = %s and deleted=0 order by id desc limit %s, %s ", self.id, int(limit_start), per_page)
         user_shake = self.shake()
         return user_shake.sharedfiles(page=page, per_page=per_page)
 
@@ -289,7 +256,6 @@ hello@mltshp.com
         """
         Count of all of a user's saved sharedfiles, excluding deleted.
         """
-        #return Sharedfile.where_count("user_id = %s and deleted=0", self.id)
         user_shake = self.shake()
         return user_shake.sharedfiles_count()
 
@@ -442,7 +408,7 @@ hello@mltshp.com
         """
         counts = sharedfile.Sharedfile.query("SELECT sum(like_count) as likes, sum(save_count) as saves, sum(view_count) as views from sharedfile where user_id = %s AND deleted=0", self.id)
         counts = counts[0]
-        for key, value in counts.items():
+        for key, value in list(counts.items()):
             if not value:
                 counts[key] = 0
         return counts
@@ -539,10 +505,11 @@ hello@mltshp.com
             service.save()
 
         user_shake = self.shake()
-        subscriptions = subscription.Subscription.where("user_id=%s or shake_id=%s", self.id, user_shake.id)
-        for sub in subscriptions:
-            sub.deleted = 1
-            sub.save()
+        if user_shake:
+            subscriptions = subscription.Subscription.where("user_id=%s or shake_id=%s", self.id, user_shake.id)
+            for sub in subscriptions:
+                sub.deleted = 1
+                sub.save()
 
         shakemanagers = shakemanager.ShakeManager.where("user_id=%s and deleted=0", self.id)
         for sm in shakemanagers:
@@ -585,19 +552,33 @@ hello@mltshp.com
         it will not return any 'user' shakes that the user owns.
         """
         managed_shakes = []
-        if include_managed:
-            sql = """SELECT shake.* from shake, shake_manager
-                        WHERE shake_manager.user_id = %s
-                            AND shake.id = shake_manager.shake_id
-                            AND shake.deleted = 0
-                            AND shake_manager.deleted = 0
-                        ORDER BY shake_manager.shake_id
-            """
-            managed_shakes = shake.Shake.object_query(sql, self.id)
-        user_shakes_sql = 'user_id=%s ORDER BY id'
+        params = [self.id] # Guaranteed will need to substitute at least user_id value.
+        user_where_clause = 'user_id = %s '
         if include_only_group_shakes:
-            user_shakes_sql = "user_id=%s and type='group' and deleted=0 ORDER BY id"
-        return shake.Shake.where(user_shakes_sql, self.id) + managed_shakes
+            user_where_clause += "AND type = 'group' AND deleted = 0"
+        shakes_sql = """
+            SELECT shake.*
+            FROM shake
+            WHERE %s
+        """ % user_where_clause
+        if include_managed:
+            shakes_sql += """
+                UNION
+                SELECT shake.*
+                FROM shake, shake_manager
+                WHERE shake_manager.user_id = %s
+                AND shake.id = shake_manager.shake_id
+                AND shake.deleted = 0
+                AND shake_manager.deleted = 0
+            """
+            # Only include the second user_id param if we include managed shakes clause.
+            params.append(self.id)
+
+        # Order the whole lot by name.
+        shakes_sql += """
+            ORDER BY title
+        """
+        return shake.Shake.object_query(shakes_sql, *params)
 
     _has_multiple_shakes = None
     def has_multiple_shakes(self):
@@ -630,24 +611,32 @@ hello@mltshp.com
         """
         This needs to be refactored, but it would be so slow if we
         were grabbing user objects for each user on 1,000 users.
+        Sorting by title puts all user shakes first (because title is null)
+        with the rest of the group shakes following in correct order (title
+        is whatever), then by name to "tie-break" the user shakes. 
         """
         select = """
-          SELECT user.id as user_id, user.name as user_name, user.profile_image as user_image,
-                    shake.name as shake_name, shake.type as shake_type , shake.image as shake_image,
-                    shake.id as shake_id
+            SELECT user.id as user_id, user.name as user_name, user.profile_image as user_image,
+                shake.name as shake_name, shake.type as shake_type, shake.image as shake_image,
+                shake.id as shake_id, shake.title
             FROM subscription, user, shake
-              WHERE subscription.user_id = %s
-              AND subscription.shake_id = shake.id
-              AND user.id = shake.user_id
-              AND shake.deleted = 0
-              AND subscription.deleted = 0
+            WHERE subscription.user_id = %s
+            AND subscription.shake_id = shake.id
+            AND user.id = shake.user_id
+            AND shake.deleted = 0
+            AND subscription.deleted = 0
+            ORDER BY shake.title, shake.name
         """ % self.id
 
-        if page > 0:
+        if page is not None and page > 0:
             limit_start = (page-1) * 20
-            select = "%s LIMIT %s, %s" % (select, limit_start, 20)
+            select += " LIMIT %s, %s" % (limit_start, 20)
+        else:
+            select += " LIMIT 20"
 
         users_and_shakes = User.query(select)
+
+        scheme = (options.use_cdn and "https") or "http"
 
         us_list = []
         for us in users_and_shakes:
@@ -659,14 +648,14 @@ hello@mltshp.com
                 this_follow['name'] = us['user_name']
                 this_follow['type'] = 'user'
                 if us['user_image']:
-                    this_follow['image'] = s3_url("account/%s/profile.jpg" % us['user_id'])
+                    this_follow['image'] = "%s://%s/s3/account/%s/profile.jpg" % (scheme, options.cdn_host or options.app_host, us['user_id'])
             else:
                 this_follow['id'] = us['shake_id']
                 this_follow['path'] = '/%s' % (us['shake_name'])
                 this_follow['name'] = us['shake_name']
                 this_follow['type'] = 'shake'
                 if us['shake_image']:
-                    this_follow['image'] = s3_url("account/%s/shake_%s.jpg" % (us['user_id'], us['shake_name']))
+                    this_follow['image'] = "%s://%s/s3/account/%s/shake_%s.jpg" % (scheme, options.cdn_host or options.app_host, us['user_id'], us['shake_name'])
 
             us_list.append(this_follow)
         return us_list
@@ -737,6 +726,25 @@ hello@mltshp.com
             self.email = email
             self._validate_email_uniqueness()
 
+    def get_last_activity_date(self):
+        sql = """SELECT max(created_at) last_activity_date FROM (
+            SELECT max(created_at) created_at FROM sharedfile WHERE user_id=%s AND deleted=0
+            UNION
+            SELECT max(created_at) created_at FROM comment WHERE user_id=%s AND deleted=0
+            UNION
+            SELECT max(created_at) created_at FROM favorite WHERE user_id=%s AND deleted=0
+            UNION
+            SELECT max(created_at) created_at FROM bookmark WHERE user_id=%s
+            ) as activities
+        """
+        response = self.query(sql, self.id, self.id, self.id, self.id)
+        if response and response[0]['last_activity_date']:
+            return response[0]['last_activity_date']
+        return None
+
+    def pretty_created_at(self):
+        return pretty_date(self.created_at)
+
     def uploaded_kilobytes(self, start_time=None, end_time=None):
         """
         Returns the total number of kilobytes uploaded for the time period specified
@@ -762,6 +770,13 @@ hello@mltshp.com
     def can_post(self):
         return self.can_upload_this_month()
 
+    def uploaded_this_month(self):
+        month_days = calendar.monthrange(utcnow().year,utcnow().month)
+        start_time = utcnow().strftime("%Y-%m-01")
+        end_time = utcnow().strftime("%Y-%m-" + str(month_days[1]) )
+
+        return self.uploaded_kilobytes(start_time=start_time, end_time=end_time)
+
     def can_upload_this_month(self):
         """
         Returns if this user can upload this month.
@@ -773,11 +788,7 @@ hello@mltshp.com
         if self.is_plus():
             return True
 
-        month_days = calendar.monthrange(datetime.utcnow().year,datetime.utcnow().month)
-        start_time = datetime.utcnow().strftime("%Y-%m-01")
-        end_time = datetime.utcnow().strftime("%Y-%m-" + str(month_days[1]) )
-
-        total_bytes = self.uploaded_kilobytes(start_time=start_time, end_time=end_time)
+        total_bytes = self.uploaded_this_month()
 
         if total_bytes == 0:
             return True
@@ -825,7 +836,7 @@ hello@mltshp.com
             # fetch customer then find active plan
             customer = None
             try:
-                customer = stripe.Customer.retrieve(self.stripe_customer_id)
+                customer = stripe.Customer.retrieve(self.stripe_customer_id, expand=["subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and not getattr(customer, 'deleted', False):
@@ -892,7 +903,7 @@ hello@mltshp.com
             self.add_error('name', 'Username should be less than 30 characters.')
             return False
 
-        if re.search("[^a-zA-Z0-9\-\_]", self.name):
+        if re.search("[^a-zA-Z0-9_-]", self.name):
             self.add_error('name', 'Username can only contain letters, numbers, dash and underscore characters.')
             return False
         return True
@@ -926,7 +937,7 @@ hello@mltshp.com
             self.add_error('website', "The URL is too long.")
             return False
         if self.website != '':
-            parsed = urlparse.urlparse(self.website)
+            parsed = urllib.parse.urlparse(self.website)
             if parsed.scheme not in ('http', 'https',):
                 self.add_error('website', "Doesn't look to be a valid URL.")
                 return False
@@ -941,8 +952,8 @@ hello@mltshp.com
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+            self.created_at = utcnow()
+        self.updated_at = utcnow()
 
     @classmethod
     def random_recommended(self, limit):
@@ -1000,7 +1011,7 @@ hello@mltshp.com
         else:
             sample_size = 5
 
-        samples = random.sample(not_following_favorited, sample_size)
+        samples = random.sample(list(not_following_favorited), sample_size)
         users = []
         for user_id in samples:
             fetched_user = User.get("id = %s and deleted = 0", user_id)
@@ -1044,8 +1055,8 @@ hello@mltshp.com
     def generate_password_digest(password):
         secret = options.auth_secret
         h = hashlib.sha1()
-        h.update(password)
-        h.update(secret)
+        h.update(password.encode(encoding="UTF-8"))
+        h.update(secret.encode(encoding="UTF-8"))
         return h.hexdigest()
 
-from sharedfile import Sharedfile
+from .sharedfile import Sharedfile

@@ -64,7 +64,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         self.assertEqual(None, favorite)
         self.assertEqual(0, sharedfile.like_count)
 
-        response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + '/like?json=1')
         json_response = json.loads(response.body)
         self.assertEqual(json_response['response'], 'ok')
         self.assertEqual(json_response['count'], 1)
@@ -95,7 +95,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         self.assertEqual(1, sharedfile_fetched.like_count)
 
         self.sign_in('joe', 'asdfasdf')
-        response = self.post_url('/p/%s/unlike?json=1' % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + '/unlike?json=1')
         json_response = json.loads(response.body)
         self.assertEqual(json_response['response'], 'ok')
         self.assertEqual(json_response['count'], 0)
@@ -113,12 +113,12 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         signed in.  No Favorites should be created.
         """
         sharedfile = self._create_sharedfile(self.admin)
-        response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + '/like?json=1')
 
         self.assertEqual(response.code, 403)
         favorites = Favorite.all()
         self.assertEqual(len(favorites), 0)
-        response = self.post_url('/p/%s/unlike?json=1' % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + '/unlike?json=1')
         self.assertEqual(response.code, 403)
 
     def test_cannot_like_own(self):
@@ -128,11 +128,11 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         """
         sharedfile = self._create_sharedfile(self.admin)
         self.sign_in('admin', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + '/like?json=1')
         json_response = json.loads(response.body)
 
         self.assertEqual(response.code, 200)
-        self.assertTrue(json_response.has_key('error'))
+        self.assertTrue('error' in json_response)
         favorite = Favorite.get('user_id= %s and sharedfile_id = %s', self.admin.id, sharedfile.id)
         self.assertFalse(favorite)
 
@@ -144,7 +144,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         """
         sharedfile = self._create_sharedfile(self.admin)
         self.sign_in('joe', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % sharedfile.share_key)
+        response = self.post_url(sharedfile.post_url(relative=True) + '/like?json=1')
 
         notifications = Notification.all()
         self.assertEqual(len(notifications), 1)
@@ -163,7 +163,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
 
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/like?json=1')
 
         self.assertEqual(len(Favorite.all()), 3)
 
@@ -177,9 +177,8 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
 
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
-
-        response = self.post_url('/p/%s/unlike?json=1' % bill_sharedfile.share_key)
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/like?json=1')
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/unlike?json=1')
 
         un_favorites = Favorite.where('deleted=1')
         self.assertEqual(len(un_favorites),3)
@@ -195,9 +194,9 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
 
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
-        response = self.post_url('/p/%s/unlike?json=1' % bill_sharedfile.share_key)
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/like?json=1')
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/unlike?json=1')
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/like?json=1')
 
         self.assertEqual(len(Favorite.all()), 3)
 
@@ -210,7 +209,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         joe_sharedfile = sharedfile.save_to_shake(self.joe)
 
         self.sign_in('admin', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % joe_sharedfile.share_key)
+        response = self.post_url(joe_sharedfile.post_url(relative=True) + '/like?json=1')
 
         self.assertEqual(len(Favorite.all()), 1)
 
@@ -225,13 +224,13 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         bill_sharedfile = joe_sharedfile.save_to_shake(self.bill)
 
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/like?json=1')
 
         self.assertEqual(len(Favorite.all()), 3)
         sharedfile.delete()
         joe_sharedfile.delete()
 
-        response = self.post_url('/p/%s/unlike?json=1' % bill_sharedfile.share_key)
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/unlike?json=1')
 
         self.assertEqual(len(Favorite.where('deleted = 1')), 3)
 
@@ -248,7 +247,7 @@ class ImageLikeTests(test.base.BaseAsyncTestCase):
         joe_sharedfile.delete()
 
         self.sign_in('frank', 'asdfasdf')
-        response = self.post_url('/p/%s/like?json=1' % bill_sharedfile.share_key)
+        response = self.post_url(bill_sharedfile.post_url(relative=True) + '/like?json=1')
 
         self.assertEqual(len(Favorite.all()), 1)
 

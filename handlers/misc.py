@@ -1,10 +1,5 @@
-from base import BaseHandler
+from .base import BaseHandler
 
-import postmark
-
-import hashlib
-import time
-import hashlib
 import random
 from lib.utilities import email_re
 
@@ -25,7 +20,7 @@ class HeartbeatHandler(BaseHandler):
         "url":null,
         "follow_request_sent":false,
         "lang":"en",
-        "profile_background_image_url":"http:\/\/s.twimg.com\/a\/1289607957\/images\/themes\/theme1\/bg.png",
+        "profile_background_image_url":"http://s.twimg.com/a/1289607957/images/themes/theme1/bg.png",
         "created_at":"Sun May 03 17:29:18 +0000 2009",
         "profile_text_color":"333333",
         "location":null,
@@ -41,7 +36,7 @@ class HeartbeatHandler(BaseHandler):
         "protected":false,
         "show_all_inline_media":false,
         "friends_count":2,
-        "profile_image_url":"http:\/\/s.twimg.com\/a\/1289518607\/images\/default_profile_0_normal.png",
+        "profile_image_url":"http://s.twimg.com/a/1289518607/images/default_profile_0_normal.png",
         "name":"Drop Cash",
         "contributors_enabled":false,
         "time_zone":"Alaska",

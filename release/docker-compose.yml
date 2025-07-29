@@ -1,10 +1,7 @@
-version: "2"
 services:
   mltshp:
-    image: mltshp/mltshp-web:latest
-    build:
-      context: ..
-      dockerfile: Dockerfile
+    image: "mltshp/mltshp-web:build-${build_number}"
+    build: ..
     volumes:
       - ./settings.py:/srv/mltshp.com/mltshp/settings.py
       - ../.git:/srv/mltshp.com/mltshp/.git
@@ -20,7 +17,7 @@ services:
         aliases:
           - mltshp.dev
   mysql:
-    image: mysql:latest
+    image: mysql:8
     ports:
       - "3306:3306"
     environment:

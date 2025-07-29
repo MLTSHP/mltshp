@@ -8,7 +8,6 @@ exclude_lines =
 
 omit =
     */lib/flyingcow/*
-    */lib/feathers/*
 
 [xml]
 output = coverage.xml

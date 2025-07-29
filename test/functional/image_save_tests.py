@@ -1,5 +1,5 @@
 import json
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 import test.base
 import lib.utilities
@@ -46,7 +46,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         return sharedfile
 
     def test_non_authenticated_save_returns_403(self):
-        response = self.post_url('/p/%s/save' % self.sharedfile.share_key)
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/save')
         self.assertEqual(403, response.code)
 
     def test_saving_non_existant_file_returns_404(self):
@@ -64,12 +64,12 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         shared file to start.
         """
         self.sign_in('bob', 'asdfasdf')
-        response = self.post_url('/p/%s/save' % self.sharedfile.share_key)
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/save')
         self.assertEqual(200, response.code)
         self.assertEqual('/p/2', urlparse(response.effective_url).path)
 
         arguments = {'json' : 1}
-        response = self.post_url('/p/%s/save' % self.sharedfile.share_key, arguments=arguments)
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/save', arguments=arguments)
         self.assertEqual(200, response.code)
         json_response = json.loads(response.body)
         # because previous save still exists, id should be 3 and count should be 2.
@@ -87,7 +87,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         """
         #bob saves admin's original file
         self.sign_in("bob", "asdfasdf")
-        response = self.post_url('/p/%s/save' % self.sharedfile.share_key)
+        response = self.post_url(self.sharedfile.post_url(relative=True) + '/save')
 
         #bob's saves file points to admin's shared file as the parent and admin's shared file as the original id
         bobs_file = Sharedfile.get("share_key= %s and user_id = %s", 2, self.bob.id)
@@ -96,7 +96,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
 
         #tom saves bob's file
         self.sign_in("tom", "asdfasdf")
-        response = self.post_url('/p/%s/save' % bobs_file.share_key)
+        response = self.post_url(bobs_file.post_url(relative=True) + '/save')
 
         #tom's saves file points to bob's as the parent and admin's shared file as the original id
         toms_file = Sharedfile.get("share_key=%s and user_id = %s", 3, self.tom.id)
@@ -110,7 +110,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         We assume file that gets saved has id of 2.
         """
         self.sign_in("bob", "asdfasdf")
-        self.post_url('/p/%s/save' % self.sharedfile.id)
+        self.post_url(self.sharedfile.post_url(relative=True) + '/save')
         bob_shake = self.bob.shake()
         ssf = Shakesharedfile.where('shake_id = %s', bob_shake.id)
         self.assertEqual(1, len(ssf))
@@ -122,7 +122,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         bob's user id.
         """
         self.sign_in("bob", "asdfasdf")
-        self.post_url('/p/%s/save' % self.sharedfile.id)
+        self.post_url(self.sharedfile.post_url(relative=True) + '/save')
         posts = Post.where('user_id = %s', self.bob.id)
         self.assertEqual(1, len(posts))
         self.assertTrue(posts[0].seen)
@@ -140,7 +140,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         - type should be save
         """
         self.sign_in("bob", "asdfasdf")
-        self.post_url('/p/%s/save' % self.sharedfile.id)
+        self.post_url(self.sharedfile.post_url(relative=True) + '/save')
         notifications = Notification.all()
         self.assertEqual(len(notifications), 1)
         self.assertEqual(notifications[0].sender_id, self.bob.id)
@@ -155,7 +155,7 @@ class ImageSaveTests(test.base.BaseAsyncTestCase):
         Assume only one file to begin with.
         """
         sid = self.sign_in("bob", "asdfasdf")
-        self.post_url('/p/%s/save' % self.sharedfile.id)
+        self.post_url(self.sharedfile.post_url(relative=True) + '/save')
         sharedfile = Sharedfile.get("share_key = %s and user_id = %s", 2, self.bob.id)
         self.assertEqual(sharedfile.source_url, 'https://www.mltshp.com/?hi')
         self.assertEqual(sharedfile.title, 'the title')

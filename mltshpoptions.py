@@ -2,18 +2,19 @@ from tornado.options import define, options
 
 
 def parse_dictionary(settings):
-    for key, value in settings.iteritems():
+    for key, value in settings.items():
         if key in options:
             setattr(options, key, value)
 
 
 define('debug', type=bool, default=True, help="Run in debug/development mode")
 define('dump_settings', type=bool, default=False, help="Dump evaluated settings and exit")
+define('tornado_logging', type=bool, default=True, help="Controls Tornado logging")
 
 # app settings
 define('app_host', default='mltshp.com', metavar="HOST", help="Base hostname for web site")
 define('cdn_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for CDN")
-define('cdn_ssl_host', default='mltshp-cdn.com', metavar="HOST", help="Hostname for SSL CDN")
+define('use_fastly', default=False, type=bool, help="Enable for Fastly CDN support")
 define('disable_signups', type=bool, default=False, help="Are new user signups disabled")
 define('readonly', type=bool, default=False, help="Switch to enable site-wide readonly mode (disables posts, signups, etc).")
 define('show_promos', type=bool, default=True, help="Are we showing promos")
@@ -29,6 +30,7 @@ define('use_query_cache', type=bool, default=True, help="Turn on flyingcow's Que
 define('best_of_user_name', default='mltshp', help="User name where Best Of images are saved.")
 define('superuser_list', default='', help='Comma separated list of users who are superuser accounts')
 define('moderator_list', default='', help='Comma separated list of users who are moderator accounts')
+define('host_banner', default='', help='Shown in header when present')
 
 # infrastructure
 define('database_host', metavar="HOST", help="Hostname for database connection")
@@ -47,14 +49,11 @@ define('aws_host', metavar="AWS_HOST", help="AWS Host", default="s3.amazonaws.co
 define('aws_port', metavar="AWS_PORT", type=int, help="AWS Port", default=None)
 define('aws_secret', metavar="SECRET", help="Amazon API secret for S3 & Payments")
 define('aws_bucket', metavar="NAME", help="Name of Amazon S3 bucket to use")
-define('twitter_consumer_key', metavar='KEY', help="Twitter API consumer key")
-define('twitter_consumer_secret', metavar='SECRET', help="Twitter API consumer secret")
-define('twitter_access_key', metavar='KEY', help="Twitter API Access Key")
-define('twitter_access_secret', metavar='SECRET', help="Twitter API Access Secret")
 define('postmark_api_key', metavar='KEY', help="Postmark (postmarkapp.com) API key")
 define('recaptcha_site_key', metavar="KEY", help="Site key for reCAPTCHA v3")
 define('recaptcha_secret_key', metavar="SECRET", help="Secret key for reCAPTCHA v3")
 define('slack_webhook_url', metavar="SECRET", help="URL for posting notifications to Slack")
+define('repost_slack_webhook_url', metavar="SECRET", help="URL for posting best-of notifications to Slack")
 
 # Stripe
 define('stripe_secret_key', metavar='SECRET', help='Stripe.com secret key')

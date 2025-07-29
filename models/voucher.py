@@ -5,12 +5,12 @@ import postmark
 
 import hashlib
 import time
-import user
+from . import user
 import datetime
 
-import promotion
+from . import promotion
 
-from lib.utilities import payment_notifications
+from lib.utilities import payment_notifications, utcnow
 
 
 class Voucher(Model):
@@ -51,7 +51,7 @@ class Voucher(Model):
         a subclass of Property that takes care of this during the save cycle.
         """
         if self.id is None or self.created_at is None:
-            self.created_at = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            self.created_at = utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
     def get_promotion(self):
         if self.promotion_id:
@@ -86,8 +86,7 @@ We're adding features and making updates daily so please check back often.
 
 Once you have your account set up, check out:
 https://%s/tools/plugins (browser plugins for saving images)
-https://%s/tools/twitter (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)
-https://twitter.com/mltshphq (our twitter account)
+https://mefi.social/@best_of_mltshp (our Mastodon account)
 https://mltshp.tumblr.com/ (our blog)
 
 - MLTSHP""" % (sending_user.name, options.app_host, voucher_key, options.app_host, options.app_host)
@@ -104,8 +103,7 @@ https://mltshp.tumblr.com/ (our blog)
 <p>Once you have your account set up, check out:</p>
 <p>
 <a href="https://%s/tools/plugins">https://%s/tools/plugins</a> (browser plugins for saving images)<br>
-<a href="https://%s/tools/twitter">https://%s/tools/twitter</a> (connecting your phone's Twitter app to use MLTSHP instead of Twitpic or yFrog)<br>
-<a href="https://twitter.com/mltshphq">https://twitter.com/mltshphq</a> (our twitter account)<br>
+<a href="https://mefi.social/@best_of_mltshp">https://mefi.social/@best_of_mltshp</a> (our Mastodon account)<br>
 <a href="https://mltshphq.tumblr.com/">https://mltshphq.tumblr.com/</a> (our blog)
 </p>
 <p>
@@ -134,7 +132,7 @@ https://mltshp.tumblr.com/ (our blog)
             return None
         vouchers = self.where("email_address = %s and claimed_by_user_id = 0", email)
         try:
-            return invitations[0]
+            return vouchers[0]
         except IndexError:
             return None
     
@@ -175,7 +173,7 @@ https://mltshp.tumblr.com/ (our blog)
                 # associate the voucher with that shake's owner
                 self.offered_by_user_id = shake.user_id
 
-        now = datetime.datetime.utcnow()
+        now = utcnow()
 
         # if the user has a voucher, then we need
         # to apply a credit to their account using
@@ -199,7 +197,7 @@ https://mltshp.tumblr.com/ (our blog)
             days = int((365 * (months/12.0)) + 0.5)
             next_date = now + datetime.timedelta(days=days)
             if months >= 12 and months % 12 == 0:
-                years = months / 12
+                years = int(months / 12)
                 if years == 1:
                     amount = '1 Year'
                 elif years > 1:

@@ -6,15 +6,6 @@ import test.base
 import models
 
 
-def twittertest(fn):
-    # This would be a "skip" if unittest v1 supported skipping.
-    @wraps(fn)
-    def test(self):
-        if options.twitter_consumer_key:
-            return fn(self)
-    return test
-
-
 class ToolsFindPeopleTests(test.base.BaseAsyncTestCase):
 
     def setUp(self):

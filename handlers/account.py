@@ -1,21 +1,18 @@
 import datetime
-import re
-import json
-from urllib import urlencode
-import logging
+from urllib.parse import urlencode
 
 import tornado.httpclient
 import tornado.web
-from tornado.escape import json_encode, xhtml_escape
-from tornado.options import define, options
+from tornado.escape import xhtml_escape
+from tornado.options import options
 import torndb
 import postmark
 import requests
 
-from base import BaseHandler, require_membership
-from models import User, Invitation, Shake, Notification, Conversation, Invitation,\
+from .base import BaseHandler, require_membership
+from models import User, Invitation, Shake, Notification, Invitation,\
     App, PaymentLog, Voucher, Promotion, MigrationState
-from lib.utilities import email_re, base36decode, is_valid_voucher_key,\
+from lib.utilities import email_re, is_valid_voucher_key,\
     payment_notifications, uses_a_banned_phrase, plan_name
 import stripe
 from tasks.migration import migrate_for_user
@@ -63,12 +60,13 @@ class AccountImagesHandler(BaseHandler):
         url_format = '/user/%s/' % user.name
         url_format = url_format + '%d'
 
-        following_shakes = user.following()
-        following_shakes_count = len(following_shakes)
+        following_shakes = user.following(page=1)
+        following_shakes_count = user.following_count()
 
         user_shake = user.shake()
-        followers = user_shake.subscribers()
-        follower_count = len(followers)
+        followers = user_shake.subscribers(page=1)
+        follower_count = user_shake.subscriber_count()
+
         count = user_shake.sharedfiles_count()
         images = user_shake.sharedfiles(page=page)
 
@@ -144,11 +142,12 @@ class UserLikesHandler(BaseHandler):
             if len(sharedfiles) > 10:
                 older_link = "/user/%s/likes/before/%s" % (user.name, sharedfiles[9].favorite_id)
 
-        following_shakes = user.following()
-        following_shakes_count = len(following_shakes)
+        following_shakes = user.following(page=1)
+        following_shakes_count = user.following_count()
 
-        followers = user.shake().subscribers()
-        follower_count = len(followers)
+        shake = user.shake()
+        followers = shake.subscribers(page=1)
+        follower_count = shake.subscriber_count()
 
         return self.render("account/likes.html", sharedfiles=sharedfiles[0:10],
             current_user_obj=current_user_obj,
@@ -203,10 +202,12 @@ class SettingsHandler(BaseHandler):
         cancel_flag = "canceled" in (user.stripe_plan_id or "")
         updated_flag = self.get_argument("update", "") == "1"
         migrated_flag = self.get_argument("migrated", 0)
+        cancel_error = self.get_argument("cancel-error", "") == "1"
         past_due = False
         source_card_type = None
         source_last_4 = None
         source_expiration = None
+        production_site = options.app_host == "mltshp.com"
 
         promotions = Promotion.active()
 
@@ -215,7 +216,7 @@ class SettingsHandler(BaseHandler):
         if user.stripe_customer_id:
             customer = None
             try:
-                customer = stripe.Customer.retrieve(user.stripe_customer_id)
+                customer = stripe.Customer.retrieve(user.stripe_customer_id, expand=["sources", "subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and not hasattr(customer, 'deleted'):
@@ -245,7 +246,9 @@ class SettingsHandler(BaseHandler):
             has_data_to_migrate=has_data_to_migrate,
             updated_flag=updated_flag,
             migrated_flag=migrated_flag,
-            cancel_flag=cancel_flag)
+            cancel_flag=cancel_flag,
+            cancel_error=cancel_error,
+            production_site=production_site)
 
     @tornado.web.authenticated
     def post(self):
@@ -350,9 +353,9 @@ class SettingsConnectionsHandler(BaseHandler):
         user = self.get_current_user_object()
         app = App.get("id = %s", app_id)
         if not app:
-            return {'error' : 'Invalid request.'}
+            return self.write({'error' : 'Invalid request.'})
         app.disconnect_for_user(user)
-        return {'result' : 'ok'}
+        return self.write({'result' : 'ok'})
 
 
 class ForgotPasswordHandler(BaseHandler):
@@ -544,12 +547,12 @@ class SubscribeHandler(BaseHandler):
 
         if not user.subscribe_to_user(shake_owner):
             if is_json:
-                return self.write(json_encode({'error':'error'}))
+                return self.write({'error':'error'})
             else:
                 return self.redirect('/user/%s' % (user_name))
         else:
             if is_json:
-                return self.write(json_encode({'subscription_status': True}))
+                return self.write({'subscription_status': True})
             else:
                 return self.redirect('/user/%s' % (user_name))
 
@@ -570,12 +573,12 @@ class UnsubscribeHandler(BaseHandler):
 
         if not user.unsubscribe_from_user(shake_owner):
             if is_json:
-                return self.write(json_encode({'error':'error'}))
+                return self.write({'error':'error'})
             else:
                 return self.redirect('/user/%s' % (user_name))
         else:
             if is_json:
-                return self.write(json_encode({'subscription_status': False}))
+                return self.write({'subscription_status': False})
             else:
                 return self.redirect('/user/%s' % (user_name))
 
@@ -605,12 +608,12 @@ class ClearNotificationHandler(BaseHandler):
                 notification_type = n.type
                 n.delete()
             else:
-                return self.write(json_encode({'error' : 'Can\'t find that notification'}))
+                return self.write({'error' : 'Can\'t find that notification'})
         elif _type in ['favorite', 'save', 'subscriber', 'comment', 'invitation_approved']:
             ns = Notification.where('type=%s and receiver_id=%s and deleted=0', _type, current_user['id'])
             [n.delete() for n in ns]
         else:
-            return self.write(json_encode({'error' : 'I dont\'t understand that message.'}))
+            return self.write({'error' : 'I dont\'t understand that message.'})
 
         if _type == 'favorite':
             response = {'response' : "0 new likes"}
@@ -646,14 +649,6 @@ class CreateAccountHandler(BaseHandler):
         key_value = self.get_argument('key', '')
 
         promotions = Promotion.active()
-
-        # If we're using mltshp-cdn.com, we know that we can use
-        # https; if something else is configured, check the
-        # X-Forwarded-Proto header and fallback to the protocol
-        # of the request
-        using_https = options.cdn_ssl_host == "mltshp-cdn.com" or \
-            self.request.headers.get("X-Forwarded-Proto",
-                self.request.protocol) == "https"
 
         return self.render("account/create.html", name="", email="",
             key=key_value,
@@ -845,7 +840,7 @@ class AnnouncementHandler(BaseHandler):
         """
         current_user_obj = self.get_current_user_object()
 
-        if self.get_arguments('agree', None):
+        if self.get_argument('agree', None):
             current_user_obj.tou_agreed = True
             current_user_obj.save()
             return self.redirect("/")
@@ -931,14 +926,14 @@ class MembershipHandler(BaseHandler):
         if plan_id == "mltshp-double":
             quantity = int(float(self.get_argument("quantity")))
             if quantity < 24 or quantity > 500:
-                raise "Invalid request"
+                raise Exception("Invalid request")
 
         customer = None
         sub = None
         stripe_customer_id = current_user.stripe_customer_id
         if stripe_customer_id is not None:
             try:
-                customer = stripe.Customer.retrieve(stripe_customer_id)
+                customer = stripe.Customer.retrieve(stripe_customer_id, expand=["subscriptions"])
             except stripe.error.InvalidRequestError:
                 pass
             if customer and getattr(customer, "deleted", False):
@@ -948,7 +943,7 @@ class MembershipHandler(BaseHandler):
             if customer is None:
                 if token_id is None:
                     # FIXME: handle this more gracefully...
-                    raise "Invalid request"
+                    raise Exception("Invalid request")
 
                 # create a new customer object for this subscription
                 customer = stripe.Customer.create(
@@ -963,6 +958,9 @@ class MembershipHandler(BaseHandler):
                 if token_id is not None:
                     customer.source = token_id
                     customer.save()
+
+            # Re-fetch customer object with latest information, including subscription data
+            customer = stripe.Customer.retrieve(customer.id, expand=["subscriptions"])
 
             # if this works, we should have a customer with 1 subscription, this one
             if customer.subscriptions.total_count > 0:
@@ -1063,6 +1061,12 @@ class RSSFeedHandler(BaseHandler):
         if not shake:
             raise tornado.web.HTTPError(404)
         sharedfiles = shake.sharedfiles(per_page=20)
+
+        # If this is the "mltshp" RSS feed, use original files so that links
+        # won't go to the seemingly "unpopular" copy.
+        if user_name == options.best_of_user_name:
+            sharedfiles = list(map(lambda sf: sf.original(), sharedfiles))
+
         if sharedfiles:
             build_date = sharedfiles[0].feed_date()
 
@@ -1110,13 +1114,21 @@ class PaymentCancelHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self):
         user = self.get_current_user_object()
+        cancel_comments = self.get_argument("cancel_comments", "")
+        cancel_reason = self.get_argument("cancel_reason", "")
         if user.stripe_customer_id:
             try:
-                customer = stripe.Customer.retrieve(user.stripe_customer_id)
+                customer = stripe.Customer.retrieve(user.stripe_customer_id, expand=["subscriptions"])
                 if customer and customer.subscriptions.total_count > 0:
                     subscription = customer.subscriptions.data[0]
                     if subscription:
-                        subscription.delete(at_period_end=True)
+                        cancellation_details = {
+                            "feedback": cancel_reason,
+                            "comment": cancel_comments,
+                        }
+                        stripe.Subscription.modify(
+                            subscription.id, cancel_at_period_end=True,
+                            cancellation_details=cancellation_details)
                         if user.stripe_plan_id and ("-canceled" not in user.stripe_plan_id):
                             user.stripe_plan_id = user.stripe_plan_id + "-canceled"
                         user.stripe_plan_rate = None
@@ -1131,7 +1143,7 @@ class PaymentCancelHandler(BaseHandler):
 
                         payment_notifications(user, 'cancellation')
             except stripe.error.InvalidRequestError:
-                pass
+                self.redirect('/account/settings?cancel-error=1')
         return self.redirect('/account/settings?cancel=1')
 
     @tornado.web.authenticated

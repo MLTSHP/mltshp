@@ -9,7 +9,7 @@
             <strong>Upload an image</strong> to represent your shake.
           </p>
           <p>
-            284px &times;  284px
+            486&times486
           </p>
         </div>
       {% end %}
@@ -168,7 +168,12 @@
     </div>
   </div>
 
-
-
-
+  {% if current_user_obj and current_user_obj.is_admin() and not site_is_readonly and shake.type == 'group' %}
+  <div>
+    <h3>Admin Actions</h3>
+    <div class="admin-actions">
+      <a href="/admin/group-shake/{{shake.id}}">Manage Shake</a>
+    </div>
+  </div>
+  {% end %}
 </div>

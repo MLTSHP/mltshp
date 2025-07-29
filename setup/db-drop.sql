@@ -32,3 +32,4 @@ DROP TABLE IF EXISTS `tag`;
 DROP TABLE IF EXISTS `tagged_file`;
 DROP TABLE IF EXISTS `voucher`;
 DROP TABLE IF EXISTS `promotion`;
+DROP TABLE IF EXISTS `dmca_takedown`;

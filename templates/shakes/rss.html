@@ -1,18 +1,17 @@
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>{{xhtml_escape(shake.display_name())}}</title>
 <link>https://{{ app_host }}{{shake.path()}}</link>
-{% if shake.description %}
+<atom:link href="https://{{ app_host }}{{shake.path()}}/rss" rel="self" type="application/rss+xml" />
 <description>
-{{xhtml_escape(shake.description)}}
+{% if (shake.type == "group") and shake.description %}{{xhtml_escape(shake.description)}}{% end %}
 </description>
-{% end %}
 <language>en-us</language>
 {% if build_date %}
 <lastBuildDate>{{build_date}}</lastBuildDate>
 {% end %}
 <image>
-<url>https:{{shake.page_image()}}</url>
+<url>{{shake.page_image(include_protocol=True)}}</url>
 <title>{{xhtml_escape(shake.display_name())}}</title>
 <link>https://{{ app_host }}{{shake.path()}}</link>
 </image>
@@ -23,13 +22,14 @@
 {{xhtml_escape(sf.get_title())}}
 </title>
 <link>https://{{ app_host }}/p/{{sf.share_key}}</link>
+<guid>https://{{ app_host }}/p/{{sf.share_key}}</guid>
 <description>
 <![CDATA[
   <p>
     {% if sf.type() == "link" %}
       {{sf.render_data(store_view=False)}}
     {% else %}
-      <a href="https://{{ app_host }}/r/{{sf.share_key}}"><img border="0" src="https://{{ app_host }}/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}" alt="{{escape(sf.get_alt_text(raw=True) or 'No alt provided')}}"></a>
+      <a href="https://{{ cdn_host }}/r/{{sf.share_key}}"><img border="0" src="https://{{ cdn_host }}/r/{{sf.share_key}}" width="{{sf.sourcefile().width}}" height="{{sf.sourcefile().height}}" alt="{{escape(sf.get_alt_text(raw=True) or 'No alt provided')}}"></a>
     {% end %}
   </p>
   {% if sf.description %}
@@ -38,6 +38,9 @@
 ]]>
 </description>
 <pubDate>{{sf.feed_date()}}</pubDate>
+{% if sf.sourcefile().nsfw %}
+<category>nsfw</category>
+{% end %}
 </item>
 {% end %}
 </channel>

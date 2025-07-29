@@ -4,6 +4,12 @@
   30 Recently Popular Files
 {% end %}
 
+{% block notification_button %}
+  {% if notifications_count > 0 %}
+  <a href="#notifications-anchor" class="site-nav--notifications btn btn-danger btn-pastel">{{ notifications_count }}</a>
+  {% end %}
+{% end %}
+
 {% block main %}
 <div class="content content-with-sidebar content-account">
   <div class="account-header">
@@ -11,7 +17,7 @@
       <h2>30 Recently Popular Files</h2>
     </div>
   </div>
-  <div class="sidebar">
+  <div class="sidebar" id="notifications-anchor">
     {% if notifications_count > 0 %}
     <div class="notification-block notification-block-aggregate" id="notification-block-aggregate">
       <div class="notification-block-hd">
