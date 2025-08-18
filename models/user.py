@@ -8,6 +8,7 @@ import urllib.parse
 from datetime import datetime
 
 from lib.s3 import S3Bucket
+from lib.utilities import succinct_large_number
 import postmark
 from tornado.options import define, options
 
@@ -404,15 +405,18 @@ hello@mltshp.com
 
     def total_file_stats(self):
         """
-        Returns the file like, save, and view counts
+        Returns the file like, save, and view counts in exact and brief formats.
         """
         counts = sharedfile.Sharedfile.query("SELECT sum(like_count) as likes, sum(save_count) as saves, sum(view_count) as views from sharedfile where user_id = %s AND deleted=0", self.id)
         counts = counts[0]
         for key, value in list(counts.items()):
             if not value:
                 counts[key] = 0
-        return counts
-
+        return counts | {
+            "likes_brief": succinct_large_number(counts["likes"]),
+            "saves_brief": succinct_large_number(counts["saves"]),
+            "views_brief": succinct_large_number(counts["views"]),
+        }
 
     def unsubscribe_from_user(self, shake_owner):
         """

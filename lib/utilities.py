@@ -1,6 +1,7 @@
 import hashlib
 import re
 import hmac
+import math
 import time
 import base64
 import urllib.request, urllib.parse, urllib.error
@@ -192,6 +193,33 @@ def rfc822_date(time):
     # instead of "UTC" or "GMT"
     return time.strftime("%a, %d %b %Y %H:%M:%S Z")
 
+def succinct_large_number(num):
+    """
+    Format a number with K, M, B, T suffixes. Format to avoid irrelevant
+    specificity like 99.9 or 11.0 (99 and 11 are fine).
+    """
+    suffixes = ['', 'K', 'M', 'B', 'T']
+    magnitude = 0
+    n = float(num)
+
+    while abs(n) >= 1000 and magnitude < len(suffixes) - 1:
+        print(n)
+        magnitude += 1
+        n /= 1000.0
+
+    # Truncate so 1099 still displays 1K as f"" rounds when printing fractional 
+    # part.
+    n_trunc = math.trunc(n * 10) / 10
+    
+    # Format based on size and if there's a non zero fractional part.
+    if n_trunc >= 10 or f"{n_trunc:.1f}" == f"{int(n_trunc):.1f}":
+        # As integer e.g. 11.4 => 11, 9.0 => 9
+        formatted = f"{int(n_trunc)}"
+    else:
+        # Otherwise to 1 decimal place.
+        formatted = f"{n_trunc:.1f}"
+
+    return formatted + suffixes[magnitude]
 
 def normalize_string(token, timestamp, nonce, request_method, host, port, path, query_array):
     normalized_string = "%s\n" % (token)
