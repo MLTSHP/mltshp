@@ -1874,28 +1874,19 @@ $(document).ready(function () {
 
             return {
                 display_results: function (result) {
-                    // Update user count html elements. Sets brief version (83K)
-                    // for main view, and the exact value (83,123) as a tooltip.
                     if ("views" in result) {
                         $root
-                            .find(".views")
-                            .attr("title", UserCounts.format(result["views"]) + " views")
-                            .find(".num")
-                            .html(result["views_brief"]);
+                            .find(".views .num")
+                            .html(UserCounts.format(result["views"]));
                         $root
-                            .find(".saves")
-                            .attr("title", UserCounts.format(result["saves"]) + " saves")
-                            .find(".num")
-                            .html(result["saves_brief"]);
+                            .find(".saves .num")
+                            .html(UserCounts.format(result["saves"]));
                         $root
-                            .find(".likes")
-                            .attr("title", UserCounts.format(result["likes"]) + " likes")
-                            .find(".num")
-                            .html(result["likes_brief"]);
+                            .find(".likes .num")
+                            .html(UserCounts.format(result["likes"]));
                     }
                 },
                 format: function (str_num) {
-                    // Format number with commas.
                     var rgx = /(\d+)(\d{3})/;
                     str_num = "" + str_num;
                     while (rgx.test(str_num)) {

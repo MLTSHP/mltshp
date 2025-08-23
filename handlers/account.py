@@ -1199,17 +1199,7 @@ class FileCountHandler(BaseHandler):
             raise tornado.web.HTTPError(404)
 
         stats = user_object.total_file_stats()
-        # Return exact (83123) and brief (83K) values. 
-        return self.write(
-            {
-                "likes": int(stats["likes"]),
-                "saves": int(stats["saves"]),
-                "views": int(stats["views"]),
-                "likes_brief": stats["likes_brief"],
-                "saves_brief": stats["saves_brief"],
-                "views_brief": stats["views_brief"],
-            }
-        )
+        return self.write({'likes':int(stats['likes']), 'saves':int(stats['saves']), 'views':int(stats['views'])})
 
 
 class FollowingHandler(BaseHandler):
