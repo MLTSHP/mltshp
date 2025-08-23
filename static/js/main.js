@@ -1876,23 +1876,58 @@ $(document).ready(function () {
                 display_results: function (result) {
                     if ("views" in result) {
                         $root
-                            .find(".views .num")
-                            .html(UserCounts.format(result["views"]));
+                            .find(".views")
+                            .attr("title", UserCounts.format(result["views"]) + " views")
+                            .find(".num")
+                            .html(UserCounts.formatBrief(result["views"]));
                         $root
-                            .find(".saves .num")
-                            .html(UserCounts.format(result["saves"]));
+                            .find(".saves")
+                            .attr("title", UserCounts.format(result["saves"]) + " saves")
+                            .find(".num")
+                            .html(UserCounts.formatBrief(result["saves"]));
                         $root
-                            .find(".likes .num")
-                            .html(UserCounts.format(result["likes"]));
+                            .find(".likes")
+                            .attr("title", UserCounts.format(result["likes"]) + " likes")
+                            .find(".num")
+                            .html(UserCounts.formatBrief(result["likes"]));
                     }
                 },
                 format: function (str_num) {
-                    var rgx = /(\d+)(\d{3})/;
-                    str_num = "" + str_num;
-                    while (rgx.test(str_num)) {
-                        str_num = str_num.replace(rgx, "$1" + "," + "$2");
+                    return Number.parseInt(str_num).toLocaleString();
+                },
+                formatBrief: function (str_num) {
+                    // Format number in a way that won't need excessive space to
+                    // display. Abbreviate with suffixes and limit to four 
+                    // significant digits.
+                    const suffixes = ['', 'K', 'M', 'B', 'T'];
+                    let magnitude = 0;
+                    let n = Number(str_num);
+
+                    // Figure out which suffix - K, M, B, T - to use.
+                    while (Math.abs(n) >= 1000 && magnitude < suffixes.length - 1) {
+                        magnitude++;
+                        n /= 1000;
                     }
-                    return str_num;
+
+                    // Number of significant digits to left of the decimal.
+                    // n guaranteed to be < 1000 at this point.
+                    // 10 -> log10 = 1, + 1 = 2
+                    // 999 -> log10 = 2, + 1 = 3
+                    const digits = Math.floor(Math.log10(n)) + 1;
+
+                    // Use remaining digits to the right of the decimal.
+                    const decimals = 4 - digits;
+                    const factor = Math.pow(10, decimals);
+
+                    // Always truncate rather than round. 999.9999 should show
+                    // as 999.9 rathern than 1K.
+                    const truncated = Math.trunc(n * factor) / factor;
+
+                    // Format with up to `decimals` decimal places, then strip 
+                    // trailing zeros
+                    const formatted = truncated.toFixed(decimals).replace(/\.?0+$/, '');
+
+                    return formatted + suffixes[magnitude];
                 },
             };
         })();
