@@ -142,6 +142,9 @@ def pretty_date(time=False):
     """
     Expects a datetime in utc.
     """
+    if not time:
+        return ''
+
     now = utcnow()
     diff = now - time
     second_diff = diff.seconds
