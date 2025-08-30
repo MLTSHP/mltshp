@@ -83,9 +83,9 @@ HotKey.prototype.remove = function (key) {
 var pagingKeys = (function () {
     // settings
     var config = {
-        nodeSelector: ".image-title", // used to select each item on the page and place in the map (must be a link)
-        prevPageSelector: ".newer a", // link on this element should always jump to prev page a.prev_page (must be a link)
-        nextPageSelector: ".older a", // link on this element should always jump to next page a.next_page (must be a link)
+        nodeSelector: "article.shared-file", // used to select each item on the page and place in the map (must be a link)
+        prevPageSelector: "a.newer", // link on this element should always jump to prev page a.prev_page (must be a link)
+        nextPageSelector: "a.older", // link on this element should always jump to next page a.next_page (must be a link)
         pagingNavId: "paging-nav", // dom id of the floating page navigation element
         keyNext: "j", // hot keys used
         keyPrev: "k",
