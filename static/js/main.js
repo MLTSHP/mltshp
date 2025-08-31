@@ -1897,37 +1897,46 @@ $(document).ready(function () {
                 },
                 formatBrief: function (str_num) {
                     // Format number in a way that won't need excessive space to
-                    // display. Abbreviate with suffixes and limit to four 
-                    // significant digits.
-                    const suffixes = ['', 'K', 'M', 'B', 'T'];
-                    let magnitude = 0;
-                    let n = Number(str_num);
-
-                    // Figure out which suffix - K, M, B, T - to use.
-                    while (Math.abs(n) >= 1000 && magnitude < suffixes.length - 1) {
-                        magnitude++;
-                        n /= 1000;
+                    // display. Abbreviate with suffixes and limit to one
+                    // decimal place.
+                    
+                    const n = parseInt(str_num, 10);
+                    
+                    // Handle garbage input (somewhat) gracefully.
+                    if (Number.isNaN(n)) {
+                        return '0';
                     }
 
-                    // Number of significant digits to left of the decimal.
-                    // n guaranteed to be < 1000 at this point.
-                    // 10 -> log10 = 1, + 1 = 2
-                    // 999 -> log10 = 2, + 1 = 3
-                    const digits = Math.floor(Math.log10(n)) + 1;
+                    // Anything up to and including 9,999 return verbatim as
+                    // we've got four characters minimum to play with.
+                    if (n < 10000) {
+                        return n.toLocaleString();
+                    }
+  
+                    const suffixes = [
+                        { threshold: 1e12, suffix: 'T' },
+                        { threshold: 1e9, suffix: 'B' },
+                        { threshold: 1e6, suffix: 'M' },
+                        { threshold: 1e3, suffix: 'K' }
+                    ];
 
-                    // Use remaining digits to the right of the decimal.
-                    const decimals = 4 - digits;
-                    const factor = Math.pow(10, decimals);
-
-                    // Always truncate rather than round. 999.9999 should show
-                    // as 999.9 rathern than 1K.
-                    const truncated = Math.trunc(n * factor) / factor;
-
-                    // Format with up to `decimals` decimal places, then strip 
-                    // trailing zeros
-                    const formatted = truncated.toFixed(decimals).replace(/\.?0+$/, '');
-
-                    return formatted + suffixes[magnitude];
+                    for (const { threshold, suffix } of suffixes) {
+                        // Iterate until we find a suffix that can handle this
+                        // value.
+                        if (n >= threshold) {
+                            // Truncate to 1 decimal place.
+                            const truncated = Math.floor((n / threshold) * 10) / 10;
+                            
+                            // If the decimal part is 0 trim it.
+                            if (truncated % 1 === 0) {
+                                return truncated.toFixed(0) + suffix;
+                            } else {
+                                return truncated.toFixed(1) + suffix;
+                            }
+                        }
+                    }
+                    
+                    return n.toLocaleString();
                 },
             };
         })();
