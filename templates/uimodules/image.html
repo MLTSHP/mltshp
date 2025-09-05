@@ -1,4 +1,4 @@
-<article id="shared-file-{{sharedfile.share_key}}" class="shared-file">  
+<article id="shared-file-{{sharedfile.share_key}}" class="shared-file{{ " first-on-page" if sharedfile.first_on_page else "" }}{{ " last-on-page" if sharedfile.last_on_page else "" }}">  
     <header class="image-title {% if show_attribution_in_title %}image-title-with-poster{% end %}">
         {% if can_edit and not site_is_readonly %}
             {% if list_view %}
