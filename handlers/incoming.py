@@ -54,7 +54,15 @@ class IncomingHandler(BaseHandler):
             if len(sharedfiles) > 10:
                 older_link = "/incoming/before/%s" % sharedfiles[9].share_key
 
-        return self.render("incoming/index.html", sharedfiles=sharedfiles[0:10],
+        # Trim to presentation length
+        sharedfiles = sharedfiles[0:10]
+
+        # Annotate each file with page position to facilitate navigation.
+        for i, file in enumerate(sharedfiles):
+            file.first_on_page = (i == 0)
+            file.last_on_page = (i == len(sharedfiles) - 1)
+
+        return self.render("incoming/index.html", sharedfiles=sharedfiles,
             current_user_obj=current_user_obj,
             older_link=older_link, newer_link=newer_link,
             notifications_count=notifications_count)
