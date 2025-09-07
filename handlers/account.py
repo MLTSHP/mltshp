@@ -1,7 +1,6 @@
 import datetime
 from urllib.parse import urlencode
 
-import tornado.httpclient
 import tornado.web
 from tornado.escape import xhtml_escape
 from tornado.options import options
@@ -16,6 +15,9 @@ from lib.utilities import email_re, is_valid_voucher_key,\
     payment_notifications, uses_a_banned_phrase, plan_name
 import stripe
 from tasks.migration import migrate_for_user
+
+import logging
+logger = logging.getLogger("mltshp")
 
 
 class VerifyEmailHandler(BaseHandler):
@@ -320,6 +322,23 @@ class SettingsProfileHandler(BaseHandler):
             profile_image_saved = user.set_profile_image(
                 photo_path, photo_name, photo_content_type,
                 skip_s3=self.get_argument('skip_s3', None))
+
+            # issue PURGE command for profile URL
+            if not self.get_argument('skip_s3', False) and \
+                profile_image_saved and \
+                options.use_cdn:
+                try:
+                    urls = [s for s in [
+                        user.profile_image_url(include_protocol=True),
+                        user.profile_image_url(include_protocol=True).replace("/s3", ""),
+                    ] if "default-icon" not in s]
+
+                    for url in urls:
+                        response = requests.request("PURGE", url)
+                        if response.status_code != 200:
+                            logger.warning("PURGE failed: %s" % response.text)
+                except Exception as e:
+                    logger.error("PURGE exception: %s" % str(e))
 
         if user.is_paid or not uses_a_banned_phrase(full_name):
             user.full_name = full_name
