@@ -14,5 +14,5 @@ python-postmark==0.6.0
 requests==2.32.3
 setuptools==75.8.0
 stripe==11.4.1
-tornado==6.4.2
+tornado==6.5.1
 yoyo-migrations==8.2.0
