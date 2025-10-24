@@ -35,6 +35,12 @@ class IndexHandler(BaseHandler):
 
         best_of_user = user.User.get("name=%s", options.best_of_user_name)
         best_of_shake = best_of_user.shake()
+
+        # Annotate each file with page position to facilitate navigation.
+        for i, file in enumerate(sharedfiles):
+            file.first_on_page = (i == 0)
+            file.last_on_page = (i == len(sharedfiles) - 1)
+
         return self.render("popular/index.html", 
             sharedfiles=sharedfiles, 
             notifications_count=notifications_count,

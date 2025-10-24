@@ -83,6 +83,12 @@ class AccountImagesHandler(BaseHandler):
 
         if not images and page != 1:
             raise tornado.web.HTTPError(404)
+
+        # Annotate each file with page position to facilitate navigation.
+        for i, file in enumerate(images):
+            file.first_on_page = (i == 0)
+            file.last_on_page = (i == len(images) - 1)
+            
         return self.render("account/index.html", images=images, user=user,
             current_user_obj=current_user, count=count, page=page,
             url_format=url_format, can_follow=can_follow,
@@ -151,7 +157,15 @@ class UserLikesHandler(BaseHandler):
         followers = shake.subscribers(page=1)
         follower_count = shake.subscriber_count()
 
-        return self.render("account/likes.html", sharedfiles=sharedfiles[0:10],
+        # Trim to presentation length
+        sharedfiles = sharedfiles[0:10]
+
+        # Annotate each file with page position to facilitate navigation.
+        for i, file in enumerate(sharedfiles):
+            file.first_on_page = (i == 0)
+            file.last_on_page = (i == len(sharedfiles) - 1)
+
+        return self.render("account/likes.html", sharedfiles=sharedfiles,
             current_user_obj=current_user_obj,
             following_shakes=following_shakes[:10],
             following_shakes_count=following_shakes_count,
