@@ -1876,23 +1876,67 @@ $(document).ready(function () {
                 display_results: function (result) {
                     if ("views" in result) {
                         $root
-                            .find(".views .num")
-                            .html(UserCounts.format(result["views"]));
+                            .find(".views")
+                            .attr("title", UserCounts.format(result["views"]) + " views")
+                            .find(".num")
+                            .html(UserCounts.formatBrief(result["views"]));
                         $root
-                            .find(".saves .num")
-                            .html(UserCounts.format(result["saves"]));
+                            .find(".saves")
+                            .attr("title", UserCounts.format(result["saves"]) + " saves")
+                            .find(".num")
+                            .html(UserCounts.formatBrief(result["saves"]));
                         $root
-                            .find(".likes .num")
-                            .html(UserCounts.format(result["likes"]));
+                            .find(".likes")
+                            .attr("title", UserCounts.format(result["likes"]) + " likes")
+                            .find(".num")
+                            .html(UserCounts.formatBrief(result["likes"]));
                     }
                 },
                 format: function (str_num) {
-                    var rgx = /(\d+)(\d{3})/;
-                    str_num = "" + str_num;
-                    while (rgx.test(str_num)) {
-                        str_num = str_num.replace(rgx, "$1" + "," + "$2");
+                    return Number.parseInt(str_num).toLocaleString();
+                },
+                formatBrief: function (str_num) {
+                    // Format number in a way that won't need excessive space to
+                    // display. Abbreviate with suffixes and limit to one
+                    // decimal place.
+                    
+                    const n = parseInt(str_num, 10);
+                    
+                    // Handle garbage input (somewhat) gracefully.
+                    if (Number.isNaN(n)) {
+                        return '0';
                     }
-                    return str_num;
+
+                    // Anything up to and including 9,999 return verbatim as
+                    // we've got four characters minimum to play with.
+                    if (n < 10000) {
+                        return n.toLocaleString();
+                    }
+  
+                    const suffixes = [
+                        { threshold: 1e12, suffix: 'T' },
+                        { threshold: 1e9, suffix: 'B' },
+                        { threshold: 1e6, suffix: 'M' },
+                        { threshold: 1e3, suffix: 'K' }
+                    ];
+
+                    for (const { threshold, suffix } of suffixes) {
+                        // Iterate until we find a suffix that can handle this
+                        // value.
+                        if (n >= threshold) {
+                            // Truncate to 1 decimal place.
+                            const truncated = Math.floor((n / threshold) * 10) / 10;
+                            
+                            // If the decimal part is 0 trim it.
+                            if (truncated % 1 === 0) {
+                                return truncated.toFixed(0) + suffix;
+                            } else {
+                                return truncated.toFixed(1) + suffix;
+                            }
+                        }
+                    }
+                    
+                    return n.toLocaleString();
                 },
             };
         })();
