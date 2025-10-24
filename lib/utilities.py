@@ -138,15 +138,15 @@ def generate_digest_from_dictionary(values):
 
 
 # Adapted from http://stackoverflow.com/questions/1551382/python-user-friendly-time-format
-def pretty_date(time=False):
+def pretty_date(pdate):
     """
     Expects a datetime in utc.
     """
-    if not time:
+    if pdate is None:
         return ''
 
     now = utcnow()
-    diff = now - time
+    diff = now - pdate
     second_diff = diff.seconds
     day_diff = diff.days
 
