@@ -8,7 +8,7 @@
         <h4><a href="{{shake.path()}}">{{ escape(shake.display_name()) }}</a> {% if follow_user and follow_user.is_plus() %}<a href="/account/membership" title="upgraded their account!"><img alt="pro" src="{{ static_url("images/icon_plus.svg") }}" width="12" height="12" border="0" valign="center"></a>{% end %}</h4>
         {% if follow_user %}
           <p class="about">{{escape(follow_user.about)}}</p>
-          <p class="website">{{linkify(follow_user.website, True, extra_params='rel="nofollow" target="_blank"')}}</p>
+          <p class="website">{{linkify(follow_user.website, True, extra_params='rel="me nofollow" target="_blank"')}}</p>
         {% else %}
           <p class="about">{{escape(shake.description)}}</p>
         {% end %}
