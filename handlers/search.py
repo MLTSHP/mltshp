@@ -37,6 +37,14 @@ class SearchHandler(BaseHandler):
 
         current_user_obj = self.get_current_user_object()
         q = self.get_argument("q", "")
+
+        # Take care of an mysql specific case where prepending an @ to a token
+        # causes a query syntax error. Wrap any token like that in double
+        # quotes first.
+        # More info: @distance fulltext search proximity operator
+        # https://dev.mysql.com/doc/refman/8.4/en/fulltext-boolean.html
+        q = re.sub(r'(?<!")(\B@[\w\-]+)(?!")', r'"\1"', q)
+
         context = self.get_argument("context", "")
         if context:
             q = q + " " + context
