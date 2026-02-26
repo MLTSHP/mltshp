@@ -2,10 +2,14 @@ import tornado.web
 from tornado import escape
 import torndb
 from tornado.options import options
+import requests
 
 from .base import BaseHandler, require_membership
 from models import Shake, User, Notification, ShakeManager, MigrationState
 from lib.utilities import base36decode
+
+import logging
+logger = logging.getLogger("mltshp")
 
 
 def _invitations(shake, current_user):
@@ -233,6 +237,24 @@ class UpdateShakeHandler(BaseHandler):
 
         if file_name and not skip_s3:
             shake_to_update.set_page_image(file_path, sha1_value)
+
+            # issue PURGE command for shake image URLs
+            if not skip_s3 and \
+                options.use_cdn:
+                try:
+                    urls = [s for s in [
+                        shake_to_update.page_image(),
+                        shake_to_update.page_image().replace("/s3", ""),
+                        shake_to_update.thumbnail_url(),
+                        shake_to_update.thumbnail_url().replace("/s3", ""),
+                    ] if "default-icon" not in s]
+
+                    for url in urls:
+                        response = requests.request("PURGE", url)
+                        if response.status_code != 200:
+                            logger.warning("PURGE failed: %s" % response.text)
+                except Exception as e:
+                    logger.error("PURGE exception: %s" % str(e))
 
         shake_to_update.save()
 
