@@ -136,6 +136,11 @@ class SearchHandler(BaseHandler):
                     older_link = "/search?q=%s&offset=%d" % (escape.url_escape(q), offset + MAX_PER_PAGE)
                     sharedfiles = sharedfiles[0:MAX_PER_PAGE]
 
+        # Annotate each file with page position to facilitate navigation.
+        for i, file in enumerate(sharedfiles):
+            file.first_on_page = (i == 0)
+            file.last_on_page = (i == len(sharedfiles) - 1)
+
         return self.render("search/search.html",
             current_user_obj=current_user_obj,
             sharedfiles=sharedfiles, q=q,
