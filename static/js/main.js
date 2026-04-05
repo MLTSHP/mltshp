@@ -11,6 +11,10 @@ $(document).ready(function () {
         var $save_video_form_button;
         var $post_video_form;
         var $post_video_form_button;
+        let $upload_image_input;
+        let $link_to_video;
+        let $video_shake_id;
+        let $shake_selector;
 
         var init_dom = function () {
             $new_post_panel = $("#new-post-panel");
@@ -336,7 +340,7 @@ $(document).ready(function () {
     // when we hit enter on a form, we want to submit it
     // even though we don't have an type="submit" input
     // available, since we're using a styled button.
-    $sign_in_form = $("#sign-in-form");
+    const $sign_in_form = $("#sign-in-form");
     $("input", $sign_in_form).keydown(function (e) {
         if (e.keyCode == 13) {
             $sign_in_form.submit();
@@ -1494,7 +1498,7 @@ $(document).ready(function () {
     });
 
     var init_notification_invitation_request = function () {
-        $notification_invitation_request = $(
+        const $notification_invitation_request = $(
             "#notification-block-invitation-request",
         );
         if ($notification_invitation_request.length > 0) {
@@ -1523,7 +1527,7 @@ $(document).ready(function () {
     });
 
     /* Site Nav dropdown */
-    $site_nav = $("#site-nav");
+    const $site_nav = $("#site-nav");
     var site_nav_expanded = false;
     $("#site-nav .site-nav--toggle").click(function (event) {
         event.stopPropagation();
@@ -1546,7 +1550,7 @@ $(document).ready(function () {
     });
 
     /* Choose a shake dropdown */
-    $choose_a_shake = $("#choose-a-shake");
+    const $choose_a_shake = $("#choose-a-shake");
     var shake_expanded = false;
     $("#choose-a-shake .choose-a-shake--toggle").click(function (event) {
         event.stopPropagation();
@@ -1877,17 +1881,26 @@ $(document).ready(function () {
                     if ("views" in result) {
                         $root
                             .find(".views")
-                            .attr("title", UserCounts.format(result["views"]) + " views")
+                            .attr(
+                                "title",
+                                UserCounts.format(result["views"]) + " views",
+                            )
                             .find(".num")
                             .html(UserCounts.formatBrief(result["views"]));
                         $root
                             .find(".saves")
-                            .attr("title", UserCounts.format(result["saves"]) + " saves")
+                            .attr(
+                                "title",
+                                UserCounts.format(result["saves"]) + " saves",
+                            )
                             .find(".num")
                             .html(UserCounts.formatBrief(result["saves"]));
                         $root
                             .find(".likes")
-                            .attr("title", UserCounts.format(result["likes"]) + " likes")
+                            .attr(
+                                "title",
+                                UserCounts.format(result["likes"]) + " likes",
+                            )
                             .find(".num")
                             .html(UserCounts.formatBrief(result["likes"]));
                     }
@@ -1899,12 +1912,12 @@ $(document).ready(function () {
                     // Format number in a way that won't need excessive space to
                     // display. Abbreviate with suffixes and limit to one
                     // decimal place.
-                    
+
                     const n = parseInt(str_num, 10);
-                    
+
                     // Handle garbage input (somewhat) gracefully.
                     if (Number.isNaN(n)) {
-                        return '0';
+                        return "0";
                     }
 
                     // Anything up to and including 9,999 return verbatim as
@@ -1912,12 +1925,12 @@ $(document).ready(function () {
                     if (n < 10000) {
                         return n.toLocaleString();
                     }
-  
+
                     const suffixes = [
-                        { threshold: 1e12, suffix: 'T' },
-                        { threshold: 1e9, suffix: 'B' },
-                        { threshold: 1e6, suffix: 'M' },
-                        { threshold: 1e3, suffix: 'K' }
+                        { threshold: 1e12, suffix: "T" },
+                        { threshold: 1e9, suffix: "B" },
+                        { threshold: 1e6, suffix: "M" },
+                        { threshold: 1e3, suffix: "K" },
                     ];
 
                     for (const { threshold, suffix } of suffixes) {
@@ -1925,8 +1938,9 @@ $(document).ready(function () {
                         // value.
                         if (n >= threshold) {
                             // Truncate to 1 decimal place.
-                            const truncated = Math.floor((n / threshold) * 10) / 10;
-                            
+                            const truncated =
+                                Math.floor((n / threshold) * 10) / 10;
+
                             // If the decimal part is 0 trim it.
                             if (truncated % 1 === 0) {
                                 return truncated.toFixed(0) + suffix;
@@ -1935,7 +1949,7 @@ $(document).ready(function () {
                             }
                         }
                     }
-                    
+
                     return n.toLocaleString();
                 },
             };
@@ -2190,33 +2204,33 @@ $(document).ready(function () {
     }
 
     // Support for sticky site header
-    const $siteHeader = $('.site-header');
+    const $siteHeader = $(".site-header");
     if ($siteHeader.length > 0) {
         let lastScrollY = window.scrollY;
         const scrollHandler = () => {
-            if (!$siteHeader.hasClass('docked')) {
+            if (!$siteHeader.hasClass("docked")) {
                 if (window.scrollY > 120) {
-                $siteHeader.addClass('docked');
+                    $siteHeader.addClass("docked");
                 }
             } else {
                 if (window.scrollY <= 120) {
-                $siteHeader.removeClass('docked visible hidden');
+                    $siteHeader.removeClass("docked visible hidden");
                 }
             }
-            if ($siteHeader.hasClass('docked')) {
-                const isVisible = $siteHeader.hasClass('visible');
+            if ($siteHeader.hasClass("docked")) {
+                const isVisible = $siteHeader.hasClass("visible");
                 if (!isVisible && window.scrollY < lastScrollY) {
-                // triggering delta can be 1px
-                $siteHeader.addClass('visible');
-                $siteHeader.removeClass('hidden');
+                    // triggering delta can be 1px
+                    $siteHeader.addClass("visible");
+                    $siteHeader.removeClass("hidden");
                 } else if (isVisible && window.scrollY > lastScrollY + 20) {
-                // triggering delta must be ~20px
-                $siteHeader.removeClass('visible');
-                $siteHeader.addClass('hidden');
+                    // triggering delta must be ~20px
+                    $siteHeader.removeClass("visible");
+                    $siteHeader.addClass("hidden");
                 }
             }
             lastScrollY = window.scrollY;
         };
-        $(window).on('scroll', scrollHandler);
+        $(window).on("scroll", scrollHandler);
     }
 });
