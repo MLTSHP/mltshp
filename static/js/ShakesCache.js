@@ -11,3 +11,5 @@ var ShakesCache = {
         this.result = result;
     },
 };
+
+export { ShakesCache };

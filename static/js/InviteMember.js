@@ -1,3 +1,4 @@
+// Invite Member widget for the Shake administrator.
 var InviteMember = (function () {
     var $main_module = $("#shake-invite-member");
     var $input_field = $main_module.find(".input-text");
@@ -129,3 +130,5 @@ var InviteMember = (function () {
         },
     };
 })();
+
+export { InviteMember };

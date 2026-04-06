@@ -1,15 +1,18 @@
 var UserCounts = (function () {
-    var $root = $user_counts,
-        name = $root.attr("name");
-    $.get(
-        "/user/" + name + "/counts",
-        function (result) {
-            UserCounts.display_results(result);
-        },
-        "json",
-    );
+    var $root;
 
     return {
+        populate($user_counts) {
+            $root = $user_counts;
+            var name = $root.attr("name");
+            $.get(
+                "/user/" + name + "/counts",
+                function (result) {
+                    UserCounts.display_results(result);
+                },
+                "json",
+            );
+        },
         display_results: function (result) {
             if ("views" in result) {
                 $root
@@ -86,3 +89,5 @@ var UserCounts = (function () {
         },
     };
 })();
+
+export { UserCounts };

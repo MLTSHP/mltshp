@@ -232,3 +232,5 @@ $.extend(StreamStatsView.prototype, {
         }
     },
 });
+
+export { StreamStatsView };

@@ -53,3 +53,5 @@ $.extend(NSFWCover.prototype, {
         }
     },
 });
+
+export { NSFWCover };

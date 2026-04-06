@@ -19,3 +19,5 @@ var StreamStatsViewRegistry = {
         return this.files_on_page[share_key];
     },
 };
+
+export { StreamStatsViewRegistry };

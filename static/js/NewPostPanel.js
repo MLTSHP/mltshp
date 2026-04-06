@@ -121,7 +121,7 @@ var NewPostPanel = (function () {
         expand_panel: function () {
             panel_expanded = true;
             $new_post_panel.slideDown();
-            that = this;
+            var that = this;
             $("body").one("click", $.proxy(this.close_panel, this));
             // we want to hide anything with a video since we can't
             // overlap things like youtube embeds, which is an iframe
@@ -177,3 +177,5 @@ var NewPostPanel = (function () {
         },
     };
 })();
+
+export { NewPostPanel };

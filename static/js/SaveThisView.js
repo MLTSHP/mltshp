@@ -1,3 +1,5 @@
+import { ShakesCache } from "./ShakesCache.js";
+
 var SaveThisView = function (container) {
     this.$save_this = $(container);
     this.init();
@@ -119,3 +121,5 @@ $.extend(SaveThisView.prototype, {
         }
     },
 });
+
+export { SaveThisView };

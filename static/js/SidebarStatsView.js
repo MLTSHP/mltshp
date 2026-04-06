@@ -1,3 +1,5 @@
+const DEFAULT_IMAGE_STATS = { save_count: 0, like_count: 0 };
+
 var SidebarStatsView = (function (scope) {
     // if we aren't on a permalink page, just expose a dummy public API
     if ($(scope).length == 0) {
@@ -8,7 +10,7 @@ var SidebarStatsView = (function (scope) {
         };
     }
 
-    var image_stats = new ImageStats();
+    const image_stats = { ...DEFAULT_IMAGE_STATS };
     $save_count = $(".save-count", scope);
     $like_count = $(".like-count", scope);
     image_stats.save_count = parseInt($save_count.html(), 10);
@@ -205,3 +207,5 @@ var SidebarStatsView = (function (scope) {
         },
     };
 })("#sidebar-stats");
+
+export { SidebarStatsView };

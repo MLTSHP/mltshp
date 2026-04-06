@@ -1,15 +1,20 @@
 /* For now the core JS behavior needed accross the site */
 
-$(document).ready(function () {
-    // TODO moved to NewPostPanel.js
+import { SaveThisView } from "./SaveThisView.js";
+import { SidebarStatsView } from "./SidebarStatsView.js";
+import { StreamStatsView } from "./StreamStatsView.js";
+import { StreamStatsViewRegistry } from "./StreamStatsViewRegistry.js";
+import { NSFWCover } from "./NSFWCover.js";
+import { NewPostPanel } from "./NewPostPanel.js";
+import { InviteMember } from "./InviteMember.js";
+import { UserCounts } from "./UserCounts.js";
 
+$(document).ready(function () {
     var to_text = function (num, base) {
         return num == 1
             ? num + " " + "<span>" + base + "</span>"
             : num + " " + "<span>" + base + "s" + "</span>";
     };
-
-    // TODO moved to ShakesCache.js
 
     function screen_reader_focus(el) {
         el.setAttribute("tabindex", "0");
@@ -337,12 +342,7 @@ $(document).ready(function () {
         return false;
     });
 
-    // TODO moved to ImageStats.js
-
-    // TODO moved to SidebarStatsView.js
     SidebarStatsView.init();
-
-    // TODO moved to StreamStatsViewRegistry.js
 
     function apply_hover_for_video(sel) {
         sel.hover(function () {
@@ -841,7 +841,7 @@ $(document).ready(function () {
 
     var $user_counts = $("#user-counts");
     if ($user_counts.length > 0) {
-        // TODO moved to UserCounts.js
+        UserCounts.populate($user_counts);
     }
 
     /* Shake Page: Request invitation to shake */
@@ -864,9 +864,6 @@ $(document).ready(function () {
             document.location.host +
             "/incoming";
     });
-
-    // Invite Member widget for the Shake administrator.
-    // TODO moved to InviteMember.js
 
     /* Shake Page: Remove Members From Shake */
     var $shake_member_list = $("#shake-members-list");
