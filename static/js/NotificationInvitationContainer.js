@@ -1,29 +1,31 @@
-var NotificationInvitationContainer = function ($root) {
-    this.$root = $root;
-    this.init();
-};
+import { NotificationInvitationRequest } from "./NotificationInvitationRequest.js";
 
-$.extend(NotificationInvitationContainer.prototype, {
-    init: function () {
-        this.$hd = this.$root.find(".notification-block-hd");
-        this.$bd = this.$root.find(".notification-block-bd");
-        this.on_shake_page = this.$hd.hasClass("on-shake-page");
-        var that = this;
-        this.$root.find(".notification").each(function () {
-            var new_invitation_request = new NotificationInvitationRequest(
-                $(this),
-                that,
-            );
+let on_shake_page;
+let $hd;
+let $bd;
+
+function update_count(count) {
+    if (!on_shake_page) {
+        var request_text = count == 1 ? " request" : " requests";
+        var html = count + request_text + " to join a shake";
+        $hd.html(html);
+    } else {
+        $hd.html("Got it!");
+    }
+}
+
+const NotificationInvitationContainer = {
+    populate: function ($root) {
+        $hd = $root.find(".notification-block-hd");
+        $bd = $root.find(".notification-block-bd");
+        on_shake_page = $hd.hasClass("on-shake-page");
+        $root.find(".notification").each(function () {
+            // Attach events to each invitation, passing the update_count
+            // function as a callback for approval / disapproval clicks to
+            // update the container header.
+            NotificationInvitationRequest.attachEvents($(this), update_count);
         });
     },
+};
 
-    update_count: function (count) {
-        if (!this.on_shake_page) {
-            var request_text = count == 1 ? " request" : " requests";
-            var html = count + request_text + " to join a shake";
-            this.$hd.html(html);
-        } else {
-            this.$hd.html("Got it!");
-        }
-    },
-});
+export { NotificationInvitationContainer };

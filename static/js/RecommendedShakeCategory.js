@@ -1,36 +1,46 @@
-var RecommendedShakeCategory = function (root) {
-    this.root = root;
-    this.$root = $(root);
-    this.fetched = false;
-    this.init_events();
+/**
+ * Functionality associated with the shake categories accordian control on the
+ * find shakes page e.g. https://mltshp.com/tools/find-shakes
+ *
+ * Adds event listener to toggle category open and closed, and load shakes from
+ * the server upon first opening of a category.
+ */
+
+const RecommendedShakeCategory = {
+    attachEvents: function (root) {
+        const $root = $(root);
+        const $toggle = $root.find(".shake-category-toggle");
+        const $body = $root.find(".shake-category-body");
+
+        let fetched = false;
+
+        // Per invocation functions that will close over the context dependent
+        // variables defined above.
+        function click_toggle() {
+            if (!fetched) {
+                var url =
+                    "/tools/find-shakes/quick-fetch-category/" +
+                    $toggle.attr("href").replace("#", "");
+                $.get(url, (resp) => populate_results(resp));
+            } else {
+                toggle();
+            }
+            return false;
+        }
+
+        function populate_results(results) {
+            fetched = true;
+            $body.html(results);
+            toggle();
+        }
+
+        function toggle(result) {
+            $root.toggleClass("shake-category-selected");
+        }
+
+        // Attach any event handlers.
+        $toggle.click(() => click_toggle());
+    },
 };
 
-$.extend(RecommendedShakeCategory.prototype, {
-    init_events: function () {
-        this.$toggle = this.$root.find(".shake-category-toggle");
-        this.$body = this.$root.find(".shake-category-body");
-        this.$toggle.click($.proxy(this.click_toggle, this));
-    },
-
-    click_toggle: function () {
-        if (!this.fetched) {
-            var url =
-                "/tools/find-shakes/quick-fetch-category/" +
-                this.$toggle.attr("href").replace("#", "");
-            $.get(url, $.proxy(this.populate_results, this));
-        } else {
-            this.toggle();
-        }
-        return false;
-    },
-
-    populate_results: function (results) {
-        this.fetched = true;
-        this.$body.html(results);
-        this.toggle();
-    },
-
-    toggle: function (result) {
-        this.$root.toggleClass("shake-category-selected");
-    },
-});
+export { RecommendedShakeCategory };

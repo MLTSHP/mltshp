@@ -1,24 +1,27 @@
-var PermalinkCommentsView = function ($root) {
-    this.$root = $root;
-    this.init();
-    this.init_events();
-};
+import { setCaret } from "./common.js";
 
-$.extend(PermalinkCommentsView.prototype, {
-    init: function () {
-        this.$post_comment_body = $("#post-comment-body");
-    },
+/**
+ * Functionality associated with replying to or deleting a comment from a
+ * permalink page e.g. https://mltshp.com/p/1RNJS#post-comment
+ *
+ * Attaches event handlers to "reply" and "delete" (if owned by the current
+ * user) links on each existing comment. Only initialised if the
+ * #post-comment-body has some children.
+ */
 
-    init_events: function () {
-        this.$root.delegate(
-            ".reply-to",
-            "click",
-            $.proxy(this.click_reply_to, this),
+let $root;
+let $post_comment_body;
+
+const PermalinkCommentsView = {
+    addEvents: function ($image_comments_permalink) {
+        $root = $image_comments_permalink;
+        $post_comment_body = $("#post-comment-body");
+
+        $root.delegate(".reply-to", "click", (ev) =>
+            PermalinkCommentsView.click_reply_to(ev),
         );
-        this.$root.delegate(
-            ".delete",
-            "click",
-            $.proxy(this.click_delete, this),
+        $root.delegate(".delete", "click", (ev) =>
+            PermalinkCommentsView.click_delete(ev),
         );
     },
 
@@ -27,9 +30,9 @@ $.extend(PermalinkCommentsView.prototype, {
         var $meta = $target.parent();
         var username = $meta.find(".username").html();
         var username_clean = username.replace(/[^a-zA-Z0-9_\-]+/g, "");
-        var current_text = this.$post_comment_body.val();
-        this.$post_comment_body.val(current_text + "@" + username_clean + " ");
-        setCaret(this.$post_comment_body.get(0));
+        var current_text = $post_comment_body.val();
+        $post_comment_body.val(current_text + "@" + username_clean + " ");
+        setCaret($post_comment_body.get(0));
         window.location.hash = "post-comment";
         return false;
     },
@@ -41,4 +44,6 @@ $.extend(PermalinkCommentsView.prototype, {
         }
         return false;
     },
-});
+};
+
+export { PermalinkCommentsView };

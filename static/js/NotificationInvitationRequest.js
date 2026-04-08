@@ -1,50 +1,40 @@
-var NotificationInvitationRequest = function ($root, container) {
-    this.$root = $root;
-    this.container = container;
-    this.init_dom();
-    this.init_events();
+const NotificationInvitationRequest = {
+    attachEvents: function ($root, updateFn) {
+        // const $form = $root.find("form");
+        const $form_approve_invitation = $root.find(".approve-invitation");
+        const $form_decline_invitation = $root.find(".decline-invitation");
+
+        function submit_approve_invitation(ev) {
+            ev.preventDefault();
+            submit_form($form_approve_invitation);
+        }
+
+        function submit_decline_invitation(ev) {
+            ev.preventDefault();
+            submit_form($form_decline_invitation);
+        }
+
+        function submit_form($form) {
+            var url = $form.attr("action");
+            var data = $form.serialize();
+            $.post(url, data, (resp) => clear_notification(resp), "json");
+        }
+
+        function clear_notification(response) {
+            if (response["status"] == "ok") {
+                $root.remove();
+                updateFn(response["count"]);
+            }
+        }
+
+        $root.delegate(".approve-invitation", "submit", (ev) =>
+            submit_approve_invitation(ev),
+        );
+
+        $root.delegate(".decline-invitation", "submit", (ev) =>
+            submit_decline_invitation(ev),
+        );
+    },
 };
 
-$.extend(NotificationInvitationRequest.prototype, {
-    init_dom: function () {
-        this.$form = this.$root.find("form");
-        this.$form_approve_invitation = this.$root.find(".approve-invitation");
-        this.$form_decline_invitation = this.$root.find(".decline-invitation");
-    },
-
-    init_events: function () {
-        this.$root.delegate(
-            ".approve-invitation",
-            "submit",
-            $.proxy(this.submit_approve_invitation, this),
-        );
-        this.$root.delegate(
-            ".decline-invitation",
-            "submit",
-            $.proxy(this.submit_decline_invitation, this),
-        );
-    },
-
-    submit_approve_invitation: function (ev) {
-        ev.preventDefault();
-        this.submit_form(this.$form_approve_invitation);
-    },
-
-    submit_decline_invitation: function (ev) {
-        ev.preventDefault();
-        this.submit_form(this.$form_decline_invitation);
-    },
-
-    submit_form: function ($form) {
-        var url = $form.attr("action");
-        var data = $form.serialize();
-        $.post(url, data, $.proxy(this.clear_notification, this), "json");
-    },
-
-    clear_notification: function (response) {
-        if (response["status"] == "ok") {
-            this.$root.remove();
-            this.container.update_count(response["count"]);
-        }
-    },
-});
+export { NotificationInvitationRequest };

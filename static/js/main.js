@@ -1,19 +1,22 @@
 /* For now the core JS behavior needed accross the site */
 
+import { InviteMember } from "./InviteMember.js";
+import { NewPostPanel } from "./NewPostPanel.js";
+import { NotificationInvitationContainer } from "./NotificationInvitationContainer.js";
+import { NSFWCover } from "./NSFWCover.js";
+import { PermalinkCommentsView } from "./PermalinkCommentsView.js";
+import { RecommendedShakeCategory } from "./RecommendedShakeCategory.js";
+import { RequestInvitation } from "./RequestInvitation.js";
 import { SaveThisView } from "./SaveThisView.js";
+import { ShakeMemberList } from "./ShakeMemberList.js";
 import { SidebarStatsView } from "./SidebarStatsView.js";
 import { StreamStatsView } from "./StreamStatsView.js";
 import { StreamStatsViewRegistry } from "./StreamStatsViewRegistry.js";
-import { NSFWCover } from "./NSFWCover.js";
-import { NewPostPanel } from "./NewPostPanel.js";
-import { InviteMember } from "./InviteMember.js";
 import { UserCounts } from "./UserCounts.js";
+import { toText } from "./common.js";
 
-var to_text = function (num, base) {
-    return num == 1
-        ? num + " " + "<span>" + base + "</span>"
-        : num + " " + "<span>" + base + "s" + "</span>";
-};
+NewPostPanel.attachEvents();
+InviteMember.attachEvents();
 
 function screen_reader_focus(el) {
     el.setAttribute("tabindex", "0");
@@ -22,7 +25,7 @@ function screen_reader_focus(el) {
 }
 
 $(".save-this").each(function () {
-    var save_this_view = new SaveThisView(this);
+    SaveThisView.attachEvents(this);
 });
 
 // when we hit enter on a form, we want to submit it even though we don't have
@@ -293,12 +296,6 @@ $(".delete-from-shakes-form").click(function () {
 
 /* Like / Unlike button */
 $(".like-button, .unlike-button").click(function () {
-    var to_text = function (num, base) {
-        return num == 1
-            ? num + " " + "<span>" + base + "</span>"
-            : num + " " + "<span>" + base + "s" + "</span>";
-    };
-
     var $form = $(this).parents("form");
     var $buttons = $form.children("button");
     var url = $form.attr("action");
@@ -313,7 +310,7 @@ $(".like-button, .unlike-button").click(function () {
             } else {
                 var count = response["count"];
                 var share_key = response["share_key"];
-                var count_string = to_text(count, "Like");
+                var count_string = toText(count, "Like");
                 $("#like-count-amount-" + share_key).html(count_string);
                 if (response["like"] === true) {
                     $form.attr("action", "/p/" + share_key + "/unlike");
@@ -330,7 +327,7 @@ $(".like-button, .unlike-button").click(function () {
     return false;
 });
 
-SidebarStatsView.init();
+SidebarStatsView.init("#sidebar-stats");
 
 function apply_hover_for_video(sel) {
     sel.hover(function () {
@@ -348,7 +345,9 @@ $(".image-content").each(function () {
         $nsfw_cover = $image_content.find(".nsfw-cover");
     var stream_stats_view = new StreamStatsView($image_footer);
     StreamStatsViewRegistry.register(stream_stats_view);
-    var nsfw_cover = new NSFWCover($nsfw_cover);
+    if ($nsfw_cover.length > 0) {
+        NSFWCover.attachEvents($nsfw_cover);
+    }
 });
 
 apply_hover_for_video($(".image-content video.autoplay"));
@@ -536,7 +535,7 @@ var init_notification_invitation_request = function () {
         "#notification-block-invitation-request",
     );
     if ($notification_invitation_request.length > 0) {
-        var invitation_requests = new NotificationInvitationContainer(
+        NotificationInvitationContainer.populate(
             $notification_invitation_request,
         );
     }
@@ -618,25 +617,9 @@ $(".mute-this-conversation").click(function () {
     return false;
 });
 
-// http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity
-function setCaret(el) {
-    ctrl = el;
-    pos = ctrl.value.length;
-    if (ctrl.setSelectionRange) {
-        ctrl.focus();
-        ctrl.setSelectionRange(pos, pos);
-    } else if (ctrl.createTextRange) {
-        var range = ctrl.createTextRange();
-        range.collapse(true);
-        range.moveEnd("character", pos);
-        range.moveStart("character", pos);
-        range.select();
-    }
-}
-
 var $image_comments_permalink = $("#image-comments-permalink");
 if ($image_comments_permalink.length > 0) {
-    var new_comment = new PermalinkCommentsView($image_comments_permalink);
+    PermalinkCommentsView.addEvents($image_comments_permalink);
 }
 
 $("#nsfw-filter-button a").click(function () {
@@ -667,7 +650,7 @@ $("#apps .disconnect").click(function () {
 // Tools: Recommended group shakes
 if ($("#shake-categories").length > 0) {
     $("#shake-categories .shake-category").each(function () {
-        var new_category = new RecommendedShakeCategory(this);
+        RecommendedShakeCategory.attachEvents(this);
     });
 }
 
@@ -816,7 +799,7 @@ if ($user_counts.length > 0) {
 /* Shake Page: Request invitation to shake */
 var $request_invitation = $("#request-invitation");
 if ($request_invitation.length > 0) {
-    request_invitation = new RequestInvitation($request_invitation);
+    RequestInvitation.attachEvents($request_invitation);
 }
 
 // Button to remove from shake.
@@ -837,7 +820,7 @@ $(".incoming-header").click(function () {
 /* Shake Page: Remove Members From Shake */
 var $shake_member_list = $("#shake-members-list");
 if ($shake_member_list.length > 0) {
-    var shake_member_list = new ShakeMemberList($shake_member_list);
+    ShakeMemberList.attachEvents($shake_member_list);
 }
 
 // support for dismissable "Vote" banner;

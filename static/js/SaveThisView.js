@@ -1,125 +1,125 @@
 import { ShakesCache } from "./ShakesCache.js";
+import { SidebarStatsView } from "./SidebarStatsView.js";
+import { StreamStatsViewRegistry } from "./StreamStatsViewRegistry.js";
+import { toText } from "./common.js";
 
-var SaveThisView = function (container) {
-    this.$save_this = $(container);
-    this.init();
-};
+/**
+ * Functionality related to the "save this" button on posts. Sets up event
+ * handlers for responding to buttons, dynamically generating and displaying
+ * the drop down box to select shakes from, and handles submitting the save.
+ *
+ * Although a global module the attachEvents function is called once per post,
+ * passing per post context as a parameter.
+ */
 
-$.extend(SaveThisView.prototype, {
-    init: function () {
-        this.init_dom();
-        this.init_events();
-    },
-
-    init_dom: function () {
-        this.$save_this_link = this.$save_this.find(".save-this-link");
-        this.$form = this.$save_this.find("form");
-        this.$shake_id_input = this.$save_this.find(".shake-id-input");
-        this.$shake_selector = $(
+const SaveThisView = {
+    attachEvents: function (container) {
+        const $save_this = $(container);
+        const $save_this_link = $save_this.find(".save-this-link");
+        const $form = $save_this.find("form");
+        const $shake_id_input = $save_this.find(".shake-id-input");
+        const $shake_selector = $(
             "<div class='save-this-shake-selector save-this-shake-selector-loading'></div>",
         );
-    },
 
-    init_events: function () {
-        this.$save_this_link.click($.proxy(this.click_save_this, this));
-        this.$save_this.delegate(
-            ".shake-link",
-            "click",
-            $.proxy(this.click_choose_shake, this),
-        );
-        this.$save_this.delegate(
-            ".close",
-            "click",
-            $.proxy(this.click_close_selector, this),
-        );
-    },
-
-    click_save_this: function (ev) {
-        ev.stopPropagation();
-        if (this.$save_this_link.hasClass("save-this-link-multiple")) {
-            this.show_shake_selector();
-        } else {
-            this.submit_image_save();
+        // Per invocation functions that will close over the context dependent
+        // variables defined above.
+        function click_save_this(ev) {
+            ev.stopPropagation();
+            if ($save_this_link.hasClass("save-this-link-multiple")) {
+                show_shake_selector();
+            } else {
+                submit_image_save();
+            }
+            return false;
         }
-        return false;
-    },
 
-    click_choose_shake: function (ev) {
-        ev.stopPropagation();
-        var shake_id = ev.target.id.replace(/[^\d]+/, "");
-        this.$shake_id_input.val(shake_id);
-        this.submit_image_save();
-        return false;
-    },
+        function click_choose_shake(ev) {
+            ev.stopPropagation();
+            var shake_id = ev.target.id.replace(/[^\d]+/, "");
+            $shake_id_input.val(shake_id);
+            submit_image_save();
+            return false;
+        }
 
-    click_close_selector: function (ev) {
-        ev.stopPropagation();
-        this.$shake_selector.remove();
-    },
+        function click_close_selector(ev) {
+            ev.stopPropagation();
+            $shake_selector.remove();
+        }
 
-    show_shake_selector: function () {
-        this.$save_this.append(this.$shake_selector);
-        $("body").one("click", $.proxy(this.click_close_selector, this));
+        function show_shake_selector() {
+            $save_this.append($shake_selector);
+            $("body").one("click", (ev) => click_close_selector(ev));
 
-        // Only query once per page.
-        if (ShakesCache.fetch() !== false) {
-            this.fetch_available_shakes(ShakesCache.fetch());
-        } else {
-            $.get(
-                "/account/shakes",
-                $.proxy(this.fetch_available_shakes, this),
+            // Only query once per page.
+            if (ShakesCache.fetch() !== false) {
+                fetch_available_shakes(ShakesCache.fetch());
+            } else {
+                $.get(
+                    "/account/shakes",
+                    (resp) => fetch_available_shakes(resp),
+                    "json",
+                );
+            }
+        }
+
+        function fetch_available_shakes(response) {
+            ShakesCache.store(response);
+            var html = '<span class="close caret"></span><ul>';
+            for (var i = 0; i < response["result"].length; i++) {
+                html +=
+                    '<li><a class="shake-link" href="" id="save-this-shake-selector-' +
+                    response["result"][i]["id"] +
+                    '">' +
+                    response["result"][i]["name"] +
+                    "</a></li>";
+            }
+            html += "</ul>";
+            $shake_selector
+                .removeClass("save-this-shake-selector-loading")
+                .html(html);
+        }
+
+        function submit_image_save(ev) {
+            var url = $form.attr("action");
+            var data = $form.serialize();
+            $.post(
+                url,
+                data,
+                (resp) => process_image_save_response(resp),
                 "json",
             );
         }
-    },
 
-    fetch_available_shakes: function (response) {
-        ShakesCache.store(response);
-        var html = '<span class="close caret"></span><ul>';
-        for (var i = 0; i < response["result"].length; i++) {
-            html +=
-                '<li><a class="shake-link" href="" id="save-this-shake-selector-' +
-                response["result"][i]["id"] +
-                '">' +
-                response["result"][i]["name"] +
-                "</a></li>";
+        function process_image_save_response(response) {
+            if (response["share_key"]) {
+                var count = response["count"];
+                var share_key = response["share_key"];
+                var new_share_key = response["new_share_key"];
+                var count_string = toText(count, "Save");
+                $("#save-count-amount-" + share_key).html(count_string);
+                var output =
+                    '<a href="/p/' +
+                    new_share_key +
+                    '" title="Saved It!"><img width="29" height="22" src="/static/images/saved-this.svg"></a>';
+                $shake_selector.remove();
+                $save_this.html(output);
+                SidebarStatsView.refresh_saves();
+                StreamStatsViewRegistry.refresh_saves(share_key);
+            } else {
+                return false;
+            }
         }
-        html += "</ul>";
-        this.$shake_selector
-            .removeClass("save-this-shake-selector-loading")
-            .html(html);
-    },
 
-    submit_image_save: function (ev) {
-        var url = this.$form.attr("action");
-        var data = this.$form.serialize();
-        $.post(
-            url,
-            data,
-            $.proxy(this.process_image_save_response, this),
-            "json",
+        // Attach any event handlers.
+        $save_this_link.click((ev) => click_save_this(ev));
+        $save_this.delegate(".shake-link", "click", (ev) =>
+            click_choose_shake(ev),
+        );
+        $save_this.delegate(".close", "click", (ev) =>
+            click_close_selector(ev),
         );
     },
-
-    process_image_save_response: function (response) {
-        if (response["share_key"]) {
-            var count = response["count"];
-            var share_key = response["share_key"];
-            var new_share_key = response["new_share_key"];
-            var count_string = to_text(count, "Save");
-            $("#save-count-amount-" + share_key).html(count_string);
-            var output =
-                '<a href="/p/' +
-                new_share_key +
-                '" title="Saved It!"><img width="29" height="22" src="/static/images/saved-this.svg"></a>';
-            this.$shake_selector.remove();
-            this.$save_this.html(output);
-            SidebarStatsView.refresh_saves();
-            StreamStatsViewRegistry.refresh_saves(share_key);
-        } else {
-            return false;
-        }
-    },
-});
+};
 
 export { SaveThisView };
