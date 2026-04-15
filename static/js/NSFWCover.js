@@ -1,36 +1,44 @@
+import { applyHoverForVideo } from "./common.js";
+
+/**
+ * Functionality associated with NSFW covers. Called on to attach event
+ * handlers to any posts that the server has generated a NSFW cover for.
+ */
+
 const NSFWCover = {
     attachEvents($root) {
         // Per invocation functions that will close over the context dependent
         // variables defined above.
-        function click_show_image(ev) {
+        function clickShowImage(ev) {
             var location = document.location,
-                host = location.host,
-                protocol = location.protocol,
-                base_path = location.protocol + "//" + location.host,
-                file_path = $(ev.target).attr("href");
+                basePath = location.protocol + "//" + location.host,
+                filePath = $(ev.target).attr("href");
+            // Going to leave this as a jquery get rather than migrate to fetch
+            // right away. The two implementations behave differently and only
+            // the existing method seems to work with /services/oembed
             $.get(
-                base_path +
+                basePath +
                     "/services/oembed?include_embed=1&url=" +
-                    escape(base_path + file_path),
-                (resp) => load_image(resp),
+                    escape(basePath + filePath),
+                (resp) => loadImage(resp),
                 "json",
             );
             return false;
         }
 
-        function load_image(response) {
+        function loadImage(response) {
             var parent = $root.parent(),
-                parent_height = parent.height();
+                parentHeight = parent.height();
 
             if (response["type"] === "photo") {
                 parent
-                    .css("min-height", parent_height + "px")
+                    .css("min-height", parentHeight + "px")
                     .html(
                         '<img class="unsized" src="' + response["url"] + '">',
                     );
             } else if (response["embed_html"]) {
                 parent
-                    .css("min-height", parent_height + "px")
+                    .css("min-height", parentHeight + "px")
                     .html(
                         '<div class="data-wrapper">' +
                             response["embed_html"] +
@@ -38,19 +46,19 @@ const NSFWCover = {
                     );
             } else if (response["type"] === "video") {
                 var content = parent
-                    .css("min-height", parent_height + "px")
+                    .css("min-height", parentHeight + "px")
                     .html(
                         response["html"].replace(
                             /<source /g,
                             '<source onerror="fallbackImage(this)" ',
                         ),
                     );
-                apply_hover_for_video(content.find("video.autoplay"));
+                applyHoverForVideo(content.find("video.autoplay"));
             }
         }
 
         // Attach any event handlers.
-        $root.delegate("a", "click", (ev) => click_show_image(ev));
+        $root.delegate("a", "click", (ev) => clickShowImage(ev));
     },
 };
 

@@ -15,8 +15,8 @@ const ShakeMemberList = {
     attachEvents: function ($root) {
         // Per invocation functions that will close over the context dependent
         // variable defined above.
-        function remove_from_shake(ev) {
-            var $target = $(ev.target),
+        async function removeFromShake(ev) {
+            const $target = $(ev.target),
                 $li = $target.parents("li"),
                 $form = $target.next(),
                 url = $form.attr("action");
@@ -27,14 +27,18 @@ const ShakeMemberList = {
                     "Are you sure you want to remove this user from a shake? If they have notifications on an email will be sent informing them of the change.",
                 )
             ) {
-                $.post(url, data, () => process_remove($li));
+                await fetch(url, {
+                    method: "POST",
+                    body: new URLSearchParams(data),
+                });
+                process_remove($li);
             }
             return false;
         }
 
         // Attach any event handlers.
         $root.delegate(".remove-from-shake-button-link", "click", (ev) =>
-            remove_from_shake(ev),
+            removeFromShake(ev),
         );
     },
 };

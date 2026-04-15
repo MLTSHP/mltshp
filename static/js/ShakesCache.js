@@ -1,4 +1,4 @@
-var ShakesCache = {
+const ShakesCache = {
     fetch: function () {
         if (this.result !== undefined) {
             return this.result;

@@ -13,12 +13,12 @@ import { SidebarStatsView } from "./SidebarStatsView.js";
 import { StreamStatsView } from "./StreamStatsView.js";
 import { StreamStatsViewRegistry } from "./StreamStatsViewRegistry.js";
 import { UserCounts } from "./UserCounts.js";
-import { toText } from "./common.js";
+import { applyHoverForVideo, toText } from "./common.js";
 
 NewPostPanel.attachEvents();
 InviteMember.attachEvents();
 
-function screen_reader_focus(el) {
+function screenReaderFocus(el) {
     el.setAttribute("tabindex", "0");
     el.blur();
     el.focus();
@@ -67,6 +67,7 @@ $(".image-edit-title-form .cancel").click(function () {
     return false;
 });
 
+// TODO this could probably be a CSS :hover
 $(".image-edit-title").hover(
     function () {
         $(this).addClass("image-edit-title-hover");
@@ -76,104 +77,93 @@ $(".image-edit-title").hover(
     },
 );
 
-$(".image-edit-title").click(function () {
-    var $title_container = $(this).closest(".image-title");
-    var url = $title_container.find("form").attr("action");
-    var that = this;
+$(".image-edit-title").click(async (ev) => {
+    const $label = $(ev.currentTarget);
+    const $container = $label.closest(".image-title");
+    const url = $container.find("form").attr("action");
 
-    $.get(
-        url,
-        function (result) {
-            if ("title_raw" in result) {
-                $(that).hide();
-                $title_container.find(".title-input").val(result["title_raw"]);
-                var $input = $title_container.find(".title-input");
-                $(that).next(".image-edit-title-form").addClass("is-active");
-                screen_reader_focus($input[0]);
-            }
-        },
-        "json",
-    );
+    const resp = await fetch(url);
+    const json = await resp.json();
+
+    if ("title_raw" in json) {
+        $label.hide();
+        const $input = $container.find(".title-input");
+        $input.val(json["title_raw"]);
+        $label.next(".image-edit-title-form").addClass("is-active");
+        screenReaderFocus($input[0]);
+    }
 });
 
-$(".image-edit-title-form").submit(function () {
-    var data = $(this).serialize();
-    var url = $(this).attr("action");
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (result) {
-            if ("title" in result && "title_raw" in result) {
-                var $title_container = $(that).closest(".image-title");
-                $title_container
-                    .find(".image-edit-title")
-                    .html(result["title"])
-                    .show();
-                $title_container.find(".title-input").val(result["title_raw"]);
-                $title_container
-                    .find(".image-edit-title-form")
-                    .removeClass("is-active");
-                if (result["title_raw"] === "") {
-                    $title_container
-                        .find(".the-title")
-                        .html("click here to edit title")
-                        .show();
-                    $title_container
-                        .find(".the-title")
-                        .addClass("the-title-blank");
-                } else {
-                    $title_container
-                        .find(".the-title")
-                        .removeClass("the-title-blank");
-                }
-            }
-        },
-        "json",
-    );
-    return false;
+$(".image-edit-title-form").submit(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $form = $(ev.currentTarget);
+    const data = $form.serialize();
+    const url = $form.attr("action");
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
+    if ("title" in json && "title_raw" in json) {
+        const $container = $form.closest(".image-title");
+        $container.find(".image-edit-title").html(json["title"]).show();
+        $container.find(".title-input").val(json["title_raw"]);
+        $container.find(".image-edit-title-form").removeClass("is-active");
+        if (json["title_raw"] === "") {
+            $container
+                .find(".the-title")
+                .html("click here to edit title")
+                .show();
+            $container.find(".the-title").addClass("the-title-blank");
+        } else {
+            $container.find(".the-title").removeClass("the-title-blank");
+        }
+    }
 });
 
 // Inline editing of the description.
-$(".description-edit-form").submit(function () {
-    var data = $(this).serialize();
-    var url = $(this).attr("action");
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (result) {
-            if ("description" in result && "description_raw" in result) {
-                var $description_container =
-                    $(that).closest(".description-edit");
-                $description_container
-                    .find("textarea")
-                    .val(result["description_raw"]);
-                $description_container.find(".description-edit-form").hide();
-                if (result["description"]) {
-                    $description_container
-                        .find(".the-description")
-                        .html(result["description"])
-                        .show();
-                    $description_container
-                        .find(".the-description")
-                        .removeClass("the-description-blank");
-                } else {
-                    $description_container
-                        .find(".the-description")
-                        .html("click here to edit description")
-                        .show();
-                    $description_container
-                        .find(".the-description")
-                        .addClass("the-description-blank");
-                }
-            }
-        },
-        "json",
-    );
-    return false;
+$(".description-edit-form").submit(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $form = $(ev.currentTarget);
+    const data = $form.serialize();
+    const url = $form.attr("action");
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
+
+    console.log(json);
+
+    if ("description" in json && "description_raw" in json) {
+        const $container = $form.closest(".description-edit");
+        $container.find("textarea").val(json["description_raw"]);
+        $container.find(".description-edit-form").hide();
+        if (json["description"]) {
+            $container
+                .find(".the-description")
+                .html(json["description"])
+                .show();
+            $container
+                .find(".the-description")
+                .removeClass("the-description-blank");
+        } else {
+            $container
+                .find(".the-description")
+                .html("click here to edit description")
+                .show();
+            $container
+                .find(".the-description")
+                .addClass("the-description-blank");
+        }
+    }
 });
 
+// TODO this could probably be a CSS :hover
 $(".description-edit .the-description").hover(
     function () {
         $(this).addClass("the-description-hover");
@@ -183,25 +173,20 @@ $(".description-edit .the-description").hover(
     },
 );
 
-$(".description-edit .the-description").click(function () {
-    var $description_container = $(this).closest(".description-edit");
-    var url = $description_container.find("form").attr("action");
-    var that = this;
-    $.get(
-        url,
-        function (result) {
-            if ("description_raw" in result) {
-                $(that).hide();
-                let $textarea = $description_container.find(
-                    ".description-edit-textarea",
-                );
-                $textarea.val(result["description_raw"]);
-                $(that).next(".description-edit-form").show();
-                screen_reader_focus($textarea[0]);
-            }
-        },
-        "json",
-    );
+$(".description-edit .the-description").click(async (ev) => {
+    const $label = $(ev.currentTarget);
+    const $container = $label.closest(".description-edit");
+    const url = $container.find("form").attr("action");
+    const resp = await fetch(url);
+    const json = await resp.json();
+
+    if ("description_raw" in json) {
+        $label.hide();
+        const $textarea = $container.find(".description-edit-textarea");
+        $textarea.val(json["description_raw"]);
+        $label.next(".description-edit-form").show();
+        screenReaderFocus($textarea[0]);
+    }
 });
 
 $(".description-edit .cancel").click(function () {
@@ -211,42 +196,41 @@ $(".description-edit .cancel").click(function () {
 });
 
 // Inline editing of the alt text.
-$(".alt-text-edit-form").submit(function () {
-    var data = $(this).serialize();
-    var url = $(this).attr("action");
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (result) {
-            if ("alt_text" in result && "alt_text_raw" in result) {
-                var $alt_text_container = $(that).closest(".alt-text-edit");
-                if (result["alt_text"]) {
-                    $alt_text_container.removeClass("alt-text--blank");
-                    $alt_text_container
-                        .find(".the-alt-text")
-                        .html(result["alt_text"]);
-                } else {
-                    $alt_text_container.addClass("alt-text--blank");
-                    $alt_text_container
-                        .find(".the-alt-text")
-                        .html("add some alt text");
-                }
-                $alt_text_container.removeClass("alt-text--hidden");
-                $alt_text_container.removeClass("alt-text--editing");
-                $alt_text_container
-                    .find("textarea")
-                    .val(result["alt_text_raw"]);
-                screen_reader_focus(
-                    $alt_text_container.find(".the-alt-text")[0],
-                );
-            }
-        },
-        "json",
-    );
-    return false;
+$(".alt-text-edit-form").submit(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $form = $(ev.currentTarget);
+    const data = $form.serialize();
+    const url = $form.attr("action");
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
+    if ("alt_text" in json && "alt_text_raw" in json) {
+        var $container = $form.closest(".alt-text-edit");
+        if (json["alt_text"]) {
+            $container
+                .removeClass("alt-text--blank")
+                .find(".the-alt-text")
+                .html(json["alt_text"]);
+        } else {
+            $container
+                .addClass("alt-text--blank")
+                .find(".the-alt-text")
+                .html("add some alt text");
+        }
+        $container
+            .removeClass("alt-text--hidden")
+            .removeClass("alt-text--editing")
+            .find("textarea")
+            .val(json["alt_text_raw"]);
+        screenReaderFocus($container.find(".the-alt-text")[0]);
+    }
 });
 
+// TODO this could probably be a CSS :hover
 $(".alt-text-edit .the-alt-text").hover(
     function () {
         $(this).addClass("the-alt-text-hover");
@@ -256,29 +240,26 @@ $(".alt-text-edit .the-alt-text").hover(
     },
 );
 
-$(".alt-text-edit .the-alt-text").click(function () {
-    var $alt_text_container = $(this).closest(".alt-text-edit");
-    var url = $alt_text_container.find("form").attr("action");
-    var that = this;
-    $.get(
-        url,
-        function (result) {
-            if ("alt_text_raw" in result) {
-                $(that).closest(".alt-text-edit").addClass("alt-text--editing");
-                let $textarea = $alt_text_container.find(
-                    ".alt-text-edit-textarea",
-                );
-                $textarea.val(result["alt_text_raw"]);
-                screen_reader_focus($textarea[0]);
-            }
-        },
-        "json",
-    );
+$(".alt-text-edit .the-alt-text").click(async (ev) => {
+    const $label = $(ev.currentTarget);
+    const $container = $label.closest(".alt-text-edit");
+    const url = $container.find("form").attr("action");
+    const resp = await fetch(url);
+    const json = await resp.json();
+
+    if ("alt_text_raw" in json) {
+        $label.closest(".alt-text-edit").addClass("alt-text--editing");
+        const $textarea = $container.find(".alt-text-edit-textarea");
+        $textarea.val(json["alt_text_raw"]);
+        screenReaderFocus($textarea[0]);
+    }
 });
 
 $(".alt-text-edit .cancel").click(function () {
-    $(this).closest(".alt-text-edit").removeClass("alt-text--hidden");
-    $(this).closest(".alt-text-edit").removeClass("alt-text--editing");
+    $(this)
+        .closest(".alt-text-edit")
+        .removeClass("alt-text--hidden")
+        .removeClass("alt-text--editing");
     return false;
 });
 
@@ -286,7 +267,7 @@ $(".alt-text-toggle").click(function () {
     let $alt = $(this).closest(".alt-text");
     $alt.toggleClass("alt-text--hidden");
     if (!$alt.hasClass("alt-text--hidden")) {
-        screen_reader_focus($alt.find(".the-alt-text")[0]);
+        screenReaderFocus($alt.find(".the-alt-text")[0]);
     }
 });
 
@@ -295,62 +276,52 @@ $(".delete-from-shakes-form").click(function () {
 });
 
 /* Like / Unlike button */
-$(".like-button, .unlike-button").click(function () {
-    var $form = $(this).parents("form");
-    var $buttons = $form.children("button");
-    var url = $form.attr("action");
-    var data = $form.serialize() + "&json=1";
+$(".like-button, .unlike-button").click(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
 
-    $.post(
-        url,
-        data,
-        function (response) {
-            if (response["error"]) {
-                return false;
-            } else {
-                var count = response["count"];
-                var share_key = response["share_key"];
-                var count_string = toText(count, "Like");
-                $("#like-count-amount-" + share_key).html(count_string);
-                if (response["like"] === true) {
-                    $form.attr("action", "/p/" + share_key + "/unlike");
-                } else {
-                    $form.attr("action", "/p/" + share_key + "/like");
-                }
-                $buttons.toggleClass("is-active");
-                SidebarStatsView.refresh_likes();
-                StreamStatsViewRegistry.refresh_likes(share_key);
-            }
-        },
-        "json",
-    );
-    return false;
+    const $form = $(ev.currentTarget).parents("form");
+    const $buttons = $form.children("button");
+    const url = $form.attr("action");
+    const data = $form.serialize() + "&json=1"; // TODO json suffix required?
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
+
+    if (json["error"]) {
+        return;
+    }
+
+    const count = json["count"];
+    const shareKey = json["share_key"];
+    const countString = toText(count, "Like");
+    $("#like-count-amount-" + shareKey).html(countString);
+    if (json["like"] === true) {
+        $form.attr("action", `/p/${shareKey}/unlike`);
+    } else {
+        $form.attr("action", `/p/${shareKey}/like`);
+    }
+    $buttons.toggleClass("is-active");
+    SidebarStatsView.refreshLikes();
+    StreamStatsViewRegistry.refreshLikes(shareKey);
 });
 
 SidebarStatsView.init("#sidebar-stats");
 
-function apply_hover_for_video(sel) {
-    sel.hover(function () {
-        if (this.hasAttribute("controls")) {
-            this.removeAttribute("controls");
-        } else {
-            this.setAttribute("controls", "controls");
-        }
-    });
-}
-
 $(".image-content").each(function () {
-    var $image_content = $(this),
+    const $image_content = $(this),
         $image_footer = $image_content.find(".image-content-footer"),
         $nsfw_cover = $image_content.find(".nsfw-cover");
-    var stream_stats_view = new StreamStatsView($image_footer);
+    const stream_stats_view = new StreamStatsView($image_footer);
     StreamStatsViewRegistry.register(stream_stats_view);
     if ($nsfw_cover.length > 0) {
         NSFWCover.attachEvents($nsfw_cover);
     }
 });
 
-apply_hover_for_video($(".image-content video.autoplay"));
+applyHoverForVideo($(".image-content video.autoplay"));
 
 /* Open / close notification boxes */
 $(document).on("click", ".notification-block-hd", function () {
@@ -358,196 +329,174 @@ $(document).on("click", ".notification-block-hd", function () {
 });
 
 /* User follow module */
-$(document).on("click", ".user-follow .submit-form", function () {
-    var $container = $(this).parents(".user-follow");
-    var $form = $container.find("form");
-    var url = $form.attr("action");
-    var data = $form.serialize() + "&json=1";
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (response) {
-            if (response["error"]) {
-                return false;
-            } else {
-                if (response["subscription_status"] == true) {
-                    $form.attr(
-                        "action",
-                        url.replace("subscribe", "unsubscribe"),
-                    );
-                    $(that)
-                        .text("- Unfollow")
-                        .addClass("btn-warning")
-                        .removeClass("btn-secondary");
-                } else {
-                    $form.attr(
-                        "action",
-                        url.replace("unsubscribe", "subscribe"),
-                    );
-                    $(that)
-                        .text("+ Follow")
-                        .addClass("btn-secondary")
-                        .removeClass("btn-warning");
-                }
-            }
-        },
-        "json",
-    );
-    return false;
+$(document).on("click", ".user-follow .submit-form", async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $button = $(ev.currentTarget);
+    const $container = $(button).parents(".user-follow");
+    const $form = $container.find("form");
+    const url = $form.attr("action");
+    const data = $form.serialize() + "&json=1"; // TODO json suffix required?
+    const resp = await fetch(url, {
+        method: "POST",
+        body: URLSearchParams(data),
+    });
+    const json = await resp.json();
+
+    if (json["error"]) {
+        return false;
+    }
+
+    if (json["subscription_status"] == true) {
+        $form.attr("action", url.replace("subscribe", "unsubscribe"));
+        $button
+            .text("- Unfollow")
+            .addClass("btn-warning")
+            .removeClass("btn-secondary");
+    } else {
+        $form.attr("action", url.replace("unsubscribe", "subscribe"));
+        $button
+            .text("+ Follow")
+            .addClass("btn-secondary")
+            .removeClass("btn-warning");
+    }
 });
 
-$(document).on("click", ".notification-close", function () {
-    $notification = $(this).parent(".notification");
-    var $notification_block = $(this).parents(".notification-block");
-    var $notification_block_hd = $notification_block.find(
+$(document).on("click", ".notification-close", async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $button = $(ev.currentTarget);
+    const $notification = $button.parent(".notification");
+    const $notificationBlock = $button.parents(".notification-block");
+    const $notificationBlockHd = $notificationBlock.find(
         ".notification-block-hd",
     );
-    var id = $(this)
-        .attr("id")
-        .replace(/[^\d]+/, "");
-    $.post(
-        "/account/clear-notification" + "?type=single&id=" + id,
-        {},
-        function (response) {
-            $notification.remove();
-            var html = $notification_block_hd.html();
-            var count = html.replace(/[^\d]+/, "");
-            var new_count = parseInt(count, 10) - 1;
-            if (new_count == 0) {
-                $notification_block_hd.html("You have 0 new followers");
-                $notification_block.find(".clear-all").remove();
-            } else {
-                $notification_block_hd.html(html.replace(/[\d]+/, new_count));
-            }
-        },
-        "json",
-    );
-    return false;
+    const id = $button.attr("id").replace(/[^\d]+/, "");
+    const url = `/account/clear-notification?type=single&id=${id}`;
+    // TODO data should be sent as body for POST?
+    const resp = await fetch(url, { method: "POST" });
+
+    $notification.remove();
+    const html = $notificationBlockHd.html();
+    const count = html.replace(/[^\d]+/, "");
+    var newCount = parseInt(count, 10) - 1;
+    if (newCount == 0) {
+        $notificationBlockHd.html("You have 0 new followers");
+        $notificationBlock.find(".clear-all").remove();
+    } else {
+        $notificationBlockHd.html(html.replace(/[\d]+/, newCount));
+    }
 });
 
-$(document).on("click", ".notification-block .clear-all a", function () {
-    var url = $(this).attr("href");
-    var $notification_block = $(this).parents(".notification-block");
-    $.post(
-        url,
-        {},
-        function (response) {
-            if (response["error"]) {
-                return false;
-            } else {
-                $notification_block
-                    .find(".notification-block-hd")
-                    .html(response["response"]);
-                $notification_block
-                    .find(".notification-block-bd")
-                    .html("")
-                    .toggle();
-            }
-        },
-        "json",
-    );
+$(document).on("click", ".notification-block .clear-all a", async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $link = $(ev.currentTarget);
+    const url = $link.attr("href");
+    const $notificationBlock = $link.parents(".notification-block");
+    const resp = await fetch(url, { method: "POST" });
+    const json = await resp.json();
+
+    if (json["error"]) {
+        return false;
+    }
+
+    $notificationBlock.find(".notification-block-hd").html(resp["response"]);
+    $notificationBlock.find(".notification-block-bd").html("").toggle();
 
     return false;
 });
 
 /* Notification block: invitations: */
-$(document).on("submit", "#notifcation-block-invitations form", function () {
-    var data = $(this).serialize();
-    var url = $(this).attr("action");
+$(document).on("submit", "#notifcation-block-invitations form", async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
 
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (response) {
-            if (response["error"]) {
-                $(that)
-                    .find(".main-message")
-                    .html("<p>" + response["error"] + "</p>");
-            } else {
-                if (response["count"] == 0) {
-                    $(that).find("input").hide();
-                    $("#invitation-count-text").html(
-                        response["count"] + " invitations",
-                    );
-                    $(that).find(".main-message").html("<p>Thanks!</p>");
-                } else {
-                    var invitation_text =
-                        response["count"] == 1 ? "invitation" : "invitations";
-                    $("#invitation-count-text").html(
-                        response["count"] + " " + invitation_text,
-                    );
-                    $(that).find(".main-message").html(response["message"]);
-                    $("#email_address").val("");
-                }
-            }
-        },
-        "json",
-    );
+    const $form = $(ev.currentTarget);
+    const data = $form.serialize();
+    const url = $form.attr("action");
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
 
-    return false;
+    if (json["error"]) {
+        $form.find(".main-message").html(`<p>${response["error"]}</p>`);
+    } else {
+        if (json["count"] == 0) {
+            $form.find("input").hide();
+            $("#invitation-count-text").html(`${json["count"]} invitations`);
+            $form.find(".main-message").html("<p>Thanks!</p>");
+        } else {
+            const invitation_text =
+                json["count"] == 1 ? "invitation" : "invitations";
+            $("#invitation-count-text").html(
+                `${json["count"]} ${invitation_text}`,
+            );
+            $form.find(".main-message").html(json["message"]);
+            $("#email_address").val("");
+        }
+    }
 });
 
 /* Notification block: shake invitations: */
 $(document).on(
     "submit",
     "#notifcation-block-shakeinvitation form",
-    function () {
-        var data = $(this).serialize();
-        var url = $(this).attr("action");
-        var $block = $(this).parents(".notification");
-        var $header = $(
+    async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const $form = $(ev.currentTarget);
+        const data = $form.serialize();
+        const url = $form.attr("action");
+        const $block = $form.parents(".notification");
+        const $header = $(
             "#notifcation-block-shakeinvitation .notification-block-hd",
         );
+        const resp = await fetch(url, {
+            method: "POST",
+            body: new URLSearchParams(data),
+        });
+        const json = await resp.json();
 
-        var that = this;
-        $.post(
-            url,
-            data,
-            function (response) {
-                if (!response["error"]) {
-                    $block.remove();
-                    // we update the header differently when presenting only one
-                    // invitation on the shake page itself.
-                    if ($header.hasClass("invitation-single")) {
-                        $header.html("Got it.");
-                    } else {
-                        var invitation_text =
-                            response["count"] == 1
-                                ? "invitation"
-                                : "invitations";
-                        $header.html(
-                            response["count"] + " new shake " + invitation_text,
-                        );
-                    }
-                }
-            },
-            "json",
-        );
-
-        return false;
+        if (!json["error"]) {
+            $block.remove();
+            // we update the header differently when presenting only one
+            // invitation on the shake page itself.
+            if ($header.hasClass("invitation-single")) {
+                $header.html("Got it.");
+            } else {
+                const invitationText =
+                    json["count"] == 1 ? "invitation" : "invitations";
+                $header.html(`${json["count"]} new shake ${invitationText}`);
+            }
+        }
     },
 );
 
-var init_notification_invitation_request = function () {
-    const $notification_invitation_request = $(
+const initNotificationInvitationRequest = function () {
+    const $notificationInvitationRequest = $(
         "#notification-block-invitation-request",
     );
-    if ($notification_invitation_request.length > 0) {
+    if ($notificationInvitationRequest.length > 0) {
         NotificationInvitationContainer.populate(
-            $notification_invitation_request,
+            $notificationInvitationRequest,
         );
     }
 };
-init_notification_invitation_request();
+initNotificationInvitationRequest();
 
 // Expand all notifications.
 $("#notification-block-aggregate").click(function () {
     $(this).find(".notification-block-hd").html("Loading...");
     $.get("/account/quick-notifications", function (response) {
         $("#notification-block-aggregate").hide().after(response);
-        init_notification_invitation_request();
+        initNotificationInvitationRequest();
     });
 });
 
@@ -560,21 +509,21 @@ $(".field-submit .btn:not(.g-recaptcha)").click(function () {
 });
 
 /* Site Nav dropdown */
-const $site_nav = $("#site-nav");
-var site_nav_expanded = false;
+const $siteNav = $("#site-nav");
+let siteNavExpanded = false;
 $("#site-nav .site-nav--toggle").click(function (event) {
     event.stopPropagation();
-    if (site_nav_expanded == false) {
-        site_nav_expanded = true;
-        $site_nav.addClass("is-expanded");
+    if (siteNavExpanded == false) {
+        siteNavExpanded = true;
+        $siteNav.addClass("is-expanded");
         $("body").one("click", function () {
-            $site_nav.removeClass("is-expanded");
-            site_nav_expanded = false;
+            $siteNav.removeClass("is-expanded");
+            siteNavExpanded = false;
         });
     } else {
-        $site_nav.removeClass("is-expanded");
+        $siteNav.removeClass("is-expanded");
         $("body").unbind("click");
-        site_nav_expanded = false;
+        siteNavExpanded = false;
     }
 });
 
@@ -583,21 +532,21 @@ $("#site-nav .site-nav--list").click(function (event) {
 });
 
 /* Choose a shake dropdown */
-const $choose_a_shake = $("#choose-a-shake");
-var shake_expanded = false;
+const $chooseAShake = $("#choose-a-shake");
+let shakeExpanded = false;
 $("#choose-a-shake .choose-a-shake--toggle").click(function (event) {
     event.stopPropagation();
-    if (shake_expanded == false) {
-        shake_expanded = true;
-        $choose_a_shake.addClass("is-expanded");
+    if (shakeExpanded == false) {
+        shakeExpanded = true;
+        $chooseAShake.addClass("is-expanded");
         $("body").one("click", function () {
-            $choose_a_shake.removeClass("is-expanded");
-            shake_expanded = false;
+            $chooseAShake.removeClass("is-expanded");
+            shakeExpanded = false;
         });
     } else {
-        $choose_a_shake.removeClass("is-expanded");
+        $chooseAShake.removeClass("is-expanded");
         $("body").unbind("click");
-        shake_expanded = false;
+        shakeExpanded = false;
     }
 });
 
@@ -606,20 +555,22 @@ $("#choose-a-shake .choose-a-shake--dropdown").click(function (event) {
 });
 
 /* Conversations - mute this button */
-$(".mute-this-conversation").click(function () {
-    var $form = $(this).next(".mute-this-conversation-form");
-    var url = $form.attr("action");
-    var data = $form.serialize();
-    var $conversation = $(this).parents(".conversation");
-    $.post(url, data, function () {
-        $conversation.fadeOut("slow");
-    });
-    return false;
+$(".mute-this-conversation").click(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $button = $(ev.currentTarget);
+    const $form = $button.next(".mute-this-conversation-form");
+    const url = $form.attr("action");
+    const data = $form.serialize();
+    const $conversation = $button.parents(".conversation");
+    await fetch(url, { method: "POST", body: new URLSearchParams(data) });
+    $conversation.fadeOut("slow");
 });
 
-var $image_comments_permalink = $("#image-comments-permalink");
-if ($image_comments_permalink.length > 0) {
-    PermalinkCommentsView.addEvents($image_comments_permalink);
+const $imageCommentsPermalink = $("#image-comments-permalink");
+if ($imageCommentsPermalink.length > 0) {
+    PermalinkCommentsView.addEvents($imageCommentsPermalink);
 }
 
 $("#nsfw-filter-button a").click(function () {
@@ -627,23 +578,18 @@ $("#nsfw-filter-button a").click(function () {
     return false;
 });
 
-$("#apps .disconnect").click(function () {
+$("#apps .disconnect").click(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
     if (confirm("Are you sure you want to disconnect this app?")) {
-        var $form = $(this).parent().next("form");
-        var url = $form.attr("action");
-        var data = $form.serialize();
-        var parent = $(this).parents("li");
-        $.post(
-            url,
-            data,
-            function (response) {
-                parent.hide("slow");
-            },
-            "ajax",
-        );
-        return false;
-    } else {
-        return false;
+        const $button = $(ev.currentTarget);
+        const $form = $button.parent().next("form");
+        const url = $form.attr("action");
+        const data = $form.serialize();
+        const parent = $button.parents("li");
+        await fetch(url, { method: "POST", body: new URLSearchParams(data) });
+        parent.hide("slow");
     }
 });
 
@@ -655,6 +601,7 @@ if ($("#shake-categories").length > 0) {
 }
 
 // Shake Page - change image.
+// TODO this could probably be a CSS :hover
 $("#shake-image-edit").hover(
     function () {
         $(this).addClass("shake-image-hover");
@@ -676,6 +623,7 @@ $(".shake-edit-title-form .cancel").click(function () {
     return false;
 });
 
+// TODO this could probably be a CSS :hover
 $(".shake-edit-title").hover(
     function () {
         $(this).addClass("shake-edit-title-hover");
@@ -685,58 +633,50 @@ $(".shake-edit-title").hover(
     },
 );
 
-$(".shake-edit-title").click(function () {
-    var $title_container = $(this).closest(".shake-details");
-    var url = $title_container.find("form").attr("action");
-    var that = this;
+$(".shake-edit-title").click(async (ev) => {
+    const $label = $(ev.currentTarget);
+    const $container = $label.closest(".shake-details");
+    const url = $container.find("form").attr("action");
+    const resp = await fetch(url);
+    const json = await resp.json();
 
-    $.get(
-        url,
-        function (result) {
-            if ("title_raw" in result) {
-                $(that).hide();
-                $title_container
-                    .find(".shake-edit-title-input")
-                    .val(result["title_raw"]);
-                $(that).next(".shake-edit-title-form").show();
-            }
-        },
-        "json",
-    );
+    if ("title_raw" in json) {
+        $label.hide();
+        $container.find(".shake-edit-title-input").val(json["title_raw"]);
+        $label.next(".shake-edit-title-form").show();
+    }
 });
 
-$(".shake-edit-title-form").submit(function () {
-    var data = $(this).serialize();
-    var url = $(this).attr("action");
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (result) {
-            if ("title" in result && "title_raw" in result) {
-                var $title_container = $(that).closest(".shake-details");
-                $title_container
-                    .find(".shake-edit-title")
-                    .html(result["title"])
-                    .show();
-                $title_container
-                    .find(".shake-edit-title-input")
-                    .val(result["title_raw"]);
-                $title_container.find(".shake-edit-title-form").hide();
-            }
-        },
-        "json",
-    );
-    return false;
+$(".shake-edit-title-form").submit(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $form = $(ev.currentTarget);
+    const data = $form.serialize();
+    const url = $form.attr("action");
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
+
+    if ("title" in json && "title_raw" in json) {
+        const $container = $form.closest(".shake-details");
+        $container.find(".shake-edit-title").html(json["title"]).show();
+        $container.find(".shake-edit-title-input").val(json["title_raw"]);
+        $container.find(".shake-edit-title-form").hide();
+    }
 });
 
 // Shake Page: Edit Description
-$(".shake-edit-description-form .cancel").click(function () {
-    $(this).parents(".shake-details").find(".shake-edit-description").show();
-    $(this).closest(".shake-edit-description-form").hide();
+$(".shake-edit-description-form .cancel").click((ev) => {
+    const $form = $(ev.currentTarget);
+    $form.parents(".shake-details").find(".shake-edit-description").show();
+    $form.closest(".shake-edit-description-form").hide();
     return false;
 });
 
+// TODO this could probably be a CSS :hover
 $(".shake-edit-description").hover(
     function () {
         $(this).addClass("shake-edit-description-hover");
@@ -746,63 +686,63 @@ $(".shake-edit-description").hover(
     },
 );
 
-$(".shake-edit-description").click(function () {
-    var $title_container = $(this).closest(".shake-details");
-    var url = $title_container.find("form").attr("action");
-    var that = this;
+$(".shake-edit-description").click(async (ev) => {
+    const $label = $(ev.currentTarget);
+    // Form is sibling of label, so find the enclosing container ...
+    const $container = $label.closest(".shake-details");
 
-    $.get(
-        url,
-        function (result) {
-            if ("description_raw" in result) {
-                $(that).hide();
-                $title_container
-                    .find(".shake-edit-description-input")
-                    .val(result["description_raw"]);
-                $(that).next(".shake-edit-description-form").show();
-            }
-        },
-        "json",
-    );
+    // ... then navigate down to the form
+    const url = $container.find("form").attr("action");
+    const resp = await fetch(url);
+    const json = await resp.json();
+
+    if ("description_raw" in json) {
+        $label.hide();
+        $container
+            .find(".shake-edit-description-input")
+            .val(json["description_raw"]);
+        $label.next(".shake-edit-description-form").show();
+    }
 });
 
-$(".shake-edit-description-form").submit(function () {
-    var data = $(this).serialize();
-    var url = $(this).attr("action");
-    var that = this;
-    $.post(
-        url,
-        data,
-        function (result) {
-            if ("description" in result && "description_raw" in result) {
-                var $title_container = $(that).closest(".shake-details");
-                $title_container
-                    .find(".shake-edit-description")
-                    .html(result["description"])
-                    .show();
-                $title_container
-                    .find(".shake-edit-description-input")
-                    .val(result["description_raw"]);
-                $title_container.find(".shake-edit-description-form").hide();
-            }
-        },
-        "json",
-    );
-    return false;
+$(".shake-edit-description-form").submit(async (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const $form = $(ev.currentTarget);
+    const data = $form.serialize();
+    const url = $form.attr("action");
+
+    const resp = await fetch(url, {
+        method: "POST",
+        body: new URLSearchParams(data),
+    });
+    const json = await resp.json();
+    if ("description" in json && "description_raw" in json) {
+        const $container = $form.closest(".shake-details");
+        $container
+            .find(".shake-edit-description")
+            .html(json["description"])
+            .show();
+        $container
+            .find(".shake-edit-description-input")
+            .val(json["description_raw"]);
+        $container.find(".shake-edit-description-form").hide();
+    }
 });
 
-var $user_counts = $("#user-counts");
-if ($user_counts.length > 0) {
-    UserCounts.populate($user_counts);
+const $userCountsPanel = $("#user-counts");
+if ($userCountsPanel.length > 0) {
+    UserCounts.populate($userCountsPanel);
 }
 
-/* Shake Page: Request invitation to shake */
-var $request_invitation = $("#request-invitation");
-if ($request_invitation.length > 0) {
-    RequestInvitation.attachEvents($request_invitation);
+/* Shake Page: Request invitation to join shake */
+const $requestInvitationPanel = $("#request-invitation");
+if ($requestInvitationPanel.length > 0) {
+    RequestInvitation.attachEvents($requestInvitationPanel);
 }
 
-// Button to remove from shake.
+// Button to remove user from shake membership.
 $(".remove-from-shake").click(function () {
     $form = $(this).find("form").submit();
     return false;
@@ -810,17 +750,13 @@ $(".remove-from-shake").click(function () {
 
 //make incoming clickable (I know.)
 $(".incoming-header").click(function () {
-    document.location =
-        document.location.protocol +
-        "//" +
-        document.location.host +
-        "/incoming";
+    document.location = `${document.location.protocol}//${document.location.host}/incoming`;
 });
 
 /* Shake Page: Remove Members From Shake */
-var $shake_member_list = $("#shake-members-list");
-if ($shake_member_list.length > 0) {
-    ShakeMemberList.attachEvents($shake_member_list);
+const $shakeMembersList = $("#shake-members-list");
+if ($shakeMembersList.length > 0) {
+    ShakeMemberList.attachEvents($shakeMembersList);
 }
 
 // support for dismissable "Vote" banner;

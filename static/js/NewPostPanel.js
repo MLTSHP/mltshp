@@ -6,88 +6,98 @@
  * the shake dropdowns on both the image and video sides of the dialog. The new
  * post dropdown slides in from the top of the screen.
  */
-var $new_post_panel;
-var $new_post_panel_inner;
-var $new_post_button;
-var $save_video_form;
-var $save_video_form_button;
-var $post_video_form;
-var $post_video_form_button;
-let $upload_image_input;
-let $link_to_video;
-let $video_shake_id;
-let $shake_selector;
-let panel_expanded = false; // unused?
+let $newPostPanel;
+let $newPostPanelInner;
+let $newPostButton;
+let $saveVideoForm;
+let $saveVideoFormButton;
+let $postVideoForm;
+let $postVideoFormButton;
+let $uploadImageInput;
+let $linkToVideo;
+let $videoShakeId;
+let $shakeSelector;
 
-function remove_events() {
-    $save_video_form_button.unbind();
-    $post_video_form_button.unbind();
-    $shake_selector.unbind();
-    $link_to_video.unbind();
+function removeEvents() {
+    $saveVideoFormButton.unbind();
+    $postVideoFormButton.unbind();
+    $shakeSelector.unbind();
+    $linkToVideo.unbind();
 }
 
-function init_dom() {
-    $new_post_panel = $("#new-post-panel");
-    $new_post_panel_inner = $("#new-post-panel .new-post-panel--inner");
-    $new_post_button = $("#new-post-button");
+function initDom() {
+    $newPostPanel = $("#new-post-panel");
+    $newPostPanelInner = $("#new-post-panel .new-post-panel--inner");
+    $newPostButton = $("#new-post-button");
     // upload image
-    $upload_image_input = $("#upload-image-input");
+    $uploadImageInput = $("#upload-image-input");
     // link to video
-    $link_to_video = $("#link-to-video");
-    $video_shake_id = $("#video-shake-id");
+    $linkToVideo = $("#link-to-video");
+    $videoShakeId = $("#video-shake-id");
     // video preview screen
-    $save_video_form = $("#new-post-panel .save-video-form");
-    $save_video_form_button = $("#new-post-panel .save-video-form .btn");
-    $post_video_form = $("#new-post-panel .post-video-form");
-    $post_video_form_button = $("#new-post-panel .post-video-form .btn");
+    $saveVideoForm = $("#new-post-panel .save-video-form");
+    $saveVideoFormButton = $("#new-post-panel .save-video-form .btn");
+    $postVideoForm = $("#new-post-panel .post-video-form");
+    $postVideoFormButton = $("#new-post-panel .post-video-form .btn");
     // shake selector
-    $shake_selector = $(".shake-selector");
+    $shakeSelector = $(".shake-selector");
 }
 
-function init_events() {
+function initEvents() {
     // The events that are inside the panel that we want to initialize
     // when the panel loads.  These are the events that are subject
     // to change depending on content that is loaded.
-    $link_to_video.click(function () {
-        NewPostPanel.load_post_video();
+
+    // Video upload step 1.
+    // Called when user clicks "video" link and takes them to a new form where
+    // they can enter the video url.
+    $linkToVideo.click(function () {
+        NewPostPanel.loadPostVideo();
         return false;
     });
 
-    $save_video_form_button.click(function (e) {
-        NewPostPanel.submit_save_video();
+    // Video upload step 2.
+    // Called when the user clicks "Go get it!" button which takes the user to a
+    // new form containing a preview of the video.
+    $saveVideoFormButton.click(function (e) {
+        NewPostPanel.submitSaveVideo();
         return false;
     });
 
-    $post_video_form_button.click(function (e) {
-        NewPostPanel.submit_post_video();
+    // Video upload step 3.
+    // Called when the user clicks "Yes! Post it please!" which uploads the
+    // video via submitPostVideo().
+    $postVideoFormButton.click(function (e) {
+        NewPostPanel.submitPostVideo();
         return false;
     });
 
-    $upload_image_input.change(function () {
+    // Uploads the image file upon selection by the file upload dialog.
+    $uploadImageInput.change(function () {
         $(this).closest("form").submit();
     });
 
-    $shake_selector.click(NewPostPanel.toggle_shake_selector);
-    $shake_selector.find("ul a").click(NewPostPanel.choose_shake);
+    $shakeSelector.click(NewPostPanel.toggleShakeSelector);
+    $shakeSelector.find("ul a").click(NewPostPanel.chooseShake);
 }
 
 const NewPostPanel = {
     attachEvents: function () {
-        init_dom();
+        initDom();
 
-        $new_post_button.click(function () {
-            NewPostPanel.load_new_post();
+        $newPostButton.click(function () {
+            NewPostPanel.loadNewPost();
             return false;
         });
 
         // We don't want click event on panel to bubble up to body
         // since a click to body closes the panel.
-        $new_post_panel.click(function (ev) {
+        $newPostPanel.click(function (ev) {
             ev.stopPropagation();
         });
     },
 
-    toggle_shake_selector: function (ev) {
+    toggleShakeSelector: function (ev) {
         $(this).toggleClass("is-active").find("ul").toggle();
         ev.stopPropagation();
         ev.preventDefault();
@@ -95,45 +105,44 @@ const NewPostPanel = {
 
     // Sets the text of the shake to the chosen one and
     // sets a hidden input field with the proper shake id.
-    choose_shake: function () {
-        var $shake_selector = $(this).parents(".shake-selector");
-        var $selected_shake = $shake_selector.find(".green");
-        var $selected_shake_input = $shake_selector.find("input");
-        var name = $(this).html();
-        var id = $(this)
+    chooseShake: function () {
+        const $shakeSelector = $(this).parents(".shake-selector");
+        const $selectedShake = $shakeSelector.find(".green");
+        const $selectedShakeInput = $shakeSelector.find("input");
+        const name = $(this).html();
+        const id = $(this)
             .attr("id")
             .replace(/[^0-9]+/, "");
-        $selected_shake.html(name);
-        $selected_shake_input.val(id);
+        $selectedShake.html(name);
+        $selectedShakeInput.val(id);
     },
 
-    load_new_post: function () {
+    // Renders step 1 of image / video upload process - shake choice and file
+    // type.
+    loadNewPost: async function () {
         var url = "/tools/new-post";
-        var that = this;
-        $.get(url, function (response) {
-            that.refresh_panel(response);
-            that.expand_panel();
-        });
+        const resp = await fetch(url);
+
+        this.refreshPanel(await resp.text());
+        this.expandPanel();
         return false;
     },
 
-    load_post_video: function () {
-        if ($video_shake_id.length > 0) {
-            var shake_suffix = "?shake_id=" + $video_shake_id.val();
-        } else {
-            var shake_suffix = "";
+    // Renders step 2 of the video upload process - entering the url.
+    loadPostVideo: async function () {
+        let shakeSuffix = "";
+        if ($videoShakeId.length > 0) {
+            shakeSuffix = "?shake_id=" + $videoShakeId.val();
         }
-        var url = "/tools/save-video" + shake_suffix;
-        var that = this;
-        $.get(url, function (response) {
-            that.refresh_panel(response);
-            that.expand_panel();
-        });
+        const url = `/tools/save-video${shakeSuffix}`;
+
+        const resp = await fetch(url);
+        this.refreshPanel(await resp.text());
+        this.expandPanel();
     },
 
-    expand_panel: function () {
-        panel_expanded = true;
-        $new_post_panel.slideDown();
+    expandPanel: function () {
+        $newPostPanel.slideDown();
         var that = this;
         $("body").one("click", $.proxy(this.close_panel, this));
         // we want to hide anything with a video since we can't
@@ -147,47 +156,44 @@ const NewPostPanel = {
     },
 
     close_panel: function () {
-        panel_expanded = false;
-        $new_post_panel.hide();
-        remove_events();
+        $newPostPanel.hide();
+        removeEvents();
         // show the videos again.
         $(".the-image iframe").show();
     },
 
-    submit_save_video: function () {
-        var url = $save_video_form.attr("action");
-        var data = $save_video_form.serialize();
-        var that = this;
-        $.get(url, data, function (response) {
-            that.refresh_panel(response);
+    // Renders step 3 of the video upload process - previewing the video.
+    submitSaveVideo: async function () {
+        const url = $saveVideoForm.attr("action");
+        const data = $saveVideoForm.serialize();
+
+        const resp = await fetch(`${url}?${new URLSearchParams(data)}`);
+        this.refreshPanel(await resp.text());
+    },
+
+    // Final step of video upload - submitting the post details to the server.
+    submitPostVideo: async function () {
+        const url = $postVideoForm.attr("action");
+        const data = $postVideoForm.serialize();
+        $postVideoFormButton.unbind("click").find("span").html("Posting...");
+
+        const resp = await fetch(url, {
+            method: "POST",
+            body: new URLSearchParams(data),
         });
+        const json = await resp.json();
+
+        // Redirect to the new post permalink page.
+        document.location =
+            document.location.protocol +
+            `//${document.location.host}${json["path"]}`;
     },
 
-    submit_post_video: function () {
-        var url = $post_video_form.attr("action");
-        var data = $post_video_form.serialize();
-        var that = this;
-        $post_video_form_button.unbind("click").find("span").html("Posting...");
-        $.post(
-            url,
-            data,
-            function (response) {
-                document.location =
-                    document.location.protocol +
-                    "//" +
-                    document.location.host +
-                    response["path"];
-            },
-            "json",
-        );
-    },
-
-    refresh_panel: function (response) {
-        $new_post_panel_inner.html(response);
-        $new_post_panel_inner.html();
-        remove_events();
-        init_dom();
-        init_events();
+    refreshPanel: function (html) {
+        $newPostPanelInner.html(html);
+        removeEvents();
+        initDom();
+        initEvents();
     },
 };
 

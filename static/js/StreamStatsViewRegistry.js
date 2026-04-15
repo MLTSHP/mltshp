@@ -4,28 +4,28 @@
  * comments of each individual post.
  */
 
-const files_on_page = {};
+const filesOnPage = {};
 
-const get_view = function (share_key) {
-    return files_on_page[share_key];
+const getView = function (shareKey) {
+    return filesOnPage[shareKey];
 };
 
-var StreamStatsViewRegistry = {
+const StreamStatsViewRegistry = {
     register: function (view) {
-        files_on_page[view.share_key] = view;
+        filesOnPage[view.shareKey] = view;
     },
 
-    refresh_likes: function (share_key) {
-        var view = get_view(share_key);
+    refreshLikes: function (shareKey) {
+        const view = getView(shareKey);
         if (view !== undefined) {
-            view.refresh_likes();
+            view.refreshLikes();
         }
     },
 
-    refresh_saves: function (share_key) {
-        var view = get_view(share_key);
+    refreshSaves: function (shareKey) {
+        const view = getView(shareKey);
         if (view !== undefined) {
-            view.refresh_saves();
+            view.refreshSaves();
         }
     },
 };

@@ -6,23 +6,23 @@ import { toText } from "./common.js";
  *
  * Defines and attaches event handlers.
  */
-const DEFAULT_IMAGE_STATS = { save_count: 0, like_count: 0 };
+const DEFAULT_IMAGE_STATS = { saveCount: 0, likeCount: 0 };
 
 let scope;
 
-const image_stats = { ...DEFAULT_IMAGE_STATS };
+const imageStats = { ...DEFAULT_IMAGE_STATS };
 
 // Initialise these once init() has been called with a valid scope. If never
 // initialised, never referred to.
-let $save_count;
-let $like_count;
+let $saveCount;
+let $likeCount;
 
-let $save_button;
-let $like_button;
+let $saveButton;
+let $likeButton;
 let $content;
 
-let saves_expanded;
-let likes_expanded;
+let savesExpanded;
+let likesExpanded;
 
 // if we aren't on a permalink page, just expose a dummy public API
 function noScope() {
@@ -38,170 +38,162 @@ const SidebarStatsView = {
         }
 
         // Set all these now that we have been provided a meaningful scope.
-        $save_count = $(".save-count", scope);
-        $like_count = $(".like-count", scope);
-        image_stats.save_count = parseInt($save_count.html(), 10);
-        image_stats.like_count = parseInt($like_count.html(), 10);
+        $saveCount = $(".save-count", scope);
+        $likeCount = $(".like-count", scope);
+        imageStats.saveCount = parseInt($saveCount.html(), 10);
+        imageStats.likeCount = parseInt($likeCount.html(), 10);
 
-        $save_button = $(".sidebar-stats-saves", scope);
-        $like_button = $(".sidebar-stats-hearts", scope);
+        $saveButton = $(".sidebar-stats-saves", scope);
+        $likeButton = $(".sidebar-stats-hearts", scope);
         $content = $(".sidebar-stats-content", scope);
 
-        saves_expanded = false;
-        likes_expanded = false;
+        savesExpanded = false;
+        likesExpanded = false;
 
-        if (image_stats.save_count > 0) {
-            this.bind_saves();
+        if (imageStats.saveCount > 0) {
+            this.bindSaves();
         } else {
-            this.unbind_saves();
+            this.unbindSaves();
         }
-        if (image_stats.like_count > 0) {
-            this.bind_likes();
-            this.toggle_likes();
+        if (imageStats.likeCount > 0) {
+            this.bindLikes();
+            this.toggleLikes();
         } else {
-            this.unbind_likes();
+            this.unbindLikes();
         }
     },
 
-    refresh_likes: function () {
+    refreshLikes: function () {
         if (noScope()) {
             return;
         }
 
-        $like_count = $(".like-count", scope);
-        image_stats.like_count = parseInt($like_count.html(), 10);
-        if (likes_expanded) {
-            this.get_likes();
+        $likeCount = $(".like-count", scope);
+        imageStats.likeCount = parseInt($likeCount.html(), 10);
+        if (likesExpanded) {
+            this.getLikes();
         }
-        if (image_stats.like_count > 0) {
-            this.bind_likes();
+        if (imageStats.likeCount > 0) {
+            this.bindLikes();
         } else {
-            likes_expanded = false;
-            this.unbind_likes();
+            likesExpanded = false;
+            this.unbindLikes();
         }
     },
 
-    refresh_saves: function () {
+    refreshSaves: async function () {
         if (noScope()) {
             return;
         }
 
-        $save_count = $(".save-count", scope);
-        image_stats.save_count = parseInt($save_count.html(), 10);
-        if (saves_expanded) {
-            this.get_saves();
+        $saveCount = $(".save-count", scope);
+        imageStats.saveCount = parseInt($saveCount.html(), 10);
+        if (savesExpanded) {
+            await this.getSaves();
         }
-        if (image_stats.save_count > 0) {
-            this.bind_saves();
+        if (imageStats.saveCount > 0) {
+            this.bindSaves();
         } else {
-            saves_expanded = false;
-            this.unbind_saves();
+            savesExpanded = false;
+            this.unbindSaves();
         }
     },
 
-    bind_saves: function () {
-        $save_button.unbind("click");
-        $save_button.addClass("enable-cursor");
-        $save_button.click(function () {
-            SidebarStatsView.toggle_saves();
+    bindSaves: function () {
+        $saveButton.unbind("click");
+        $saveButton.addClass("enable-cursor");
+        $saveButton.click(function () {
+            SidebarStatsView.toggleSaves();
         });
     },
 
-    unbind_saves: function () {
-        $save_button.removeClass("enable-cursor");
-        $save_button.unbind("click");
+    unbindSaves: function () {
+        $saveButton.removeClass("enable-cursor");
+        $saveButton.unbind("click");
         this.collapse();
     },
 
-    bind_likes: function () {
-        $like_button.unbind("click");
-        $like_button.addClass("enable-cursor");
-        $like_button.click(function () {
-            SidebarStatsView.toggle_likes();
+    bindLikes: function () {
+        $likeButton.unbind("click");
+        $likeButton.addClass("enable-cursor");
+        $likeButton.click(function () {
+            SidebarStatsView.toggleLikes();
         });
     },
 
-    unbind_likes: function () {
-        $like_button.removeClass("enable-cursor");
-        $like_button.unbind("click");
+    unbindLikes: function () {
+        $likeButton.removeClass("enable-cursor");
+        $likeButton.unbind("click");
         this.collapse();
     },
 
-    toggle_saves: function () {
-        likes_expanded = false;
-        saves_expanded = !saves_expanded;
-        if (saves_expanded) {
-            $like_button.removeClass("selected");
+    toggleSaves: function () {
+        likesExpanded = false;
+        savesExpanded = !savesExpanded;
+        if (savesExpanded) {
+            $likeButton.removeClass("selected");
             $content.addClass("loading").show();
-            $save_button.addClass("selected");
-            this.get_saves();
+            $saveButton.addClass("selected");
+            this.getSaves();
         } else {
             this.collapse();
         }
     },
 
-    get_saves: function () {
-        $.get(
-            document.location.pathname + "/saves",
-            function (response) {
-                if (response["result"]) {
-                    SidebarStatsView.process_save(response);
-                }
-            },
-            "json",
-        );
+    getSaves: async function () {
+        const resp = await fetch(`${document.location.pathname}/saves`);
+        const json = await resp.json();
+        if (response["result"]) {
+            SidebarStatsView.processSave(json);
+        }
     },
 
-    toggle_likes: function () {
-        saves_expanded = false;
-        likes_expanded = !likes_expanded;
-        if (likes_expanded) {
-            $save_button.removeClass("selected");
+    toggleLikes: function () {
+        savesExpanded = false;
+        likesExpanded = !likesExpanded;
+        if (likesExpanded) {
+            $saveButton.removeClass("selected");
             $content.addClass("loading").show();
-            $like_button.addClass("selected");
-            this.get_likes();
+            $likeButton.addClass("selected");
+            this.getLikes();
         } else {
             this.collapse();
         }
     },
 
-    get_likes: function () {
-        $.get(
-            document.location.pathname + "/likes",
-            function (response) {
-                if (response["result"]) {
-                    SidebarStatsView.process_like(response);
-                }
-            },
-            "json",
-        );
+    getLikes: async function () {
+        const resp = await fetch(document.location.pathname + "/likes");
+        const json = await resp.json();
+        if (json["result"]) {
+            SidebarStatsView.processLike(json);
+        }
     },
 
-    process_save: function (response) {
+    processSave: function (response) {
         if (response["count"] == 0) {
             this.disable_saves();
         } else {
-            $save_count.html(toText(response["count"], "Save"));
-            this.render_content(response);
+            $saveCount.html(toText(response["count"], "Save"));
+            this.renderContent(response);
         }
     },
 
-    process_like: function (response) {
+    processLike: function (response) {
         if (response["count"] == 0) {
-            this.unbind_likes();
+            this.unbindLikes();
         } else {
-            $like_count.html(toText(response["count"], "Like"));
-            this.render_content(response);
+            $likeCount.html(toText(response["count"], "Like"));
+            this.renderContent(response);
         }
     },
 
     collapse: function (repsponse) {
-        $like_button.removeClass("selected");
-        $save_button.removeClass("selected");
+        $likeButton.removeClass("selected");
+        $saveButton.removeClass("selected");
         $content.hide();
     },
 
-    render_content: function (response) {
+    renderContent: function (response) {
         var html = "";
         for (var i = 0, len = response["result"].length; i < len; i++) {
             var result = response["result"][i];
@@ -210,25 +202,17 @@ const SidebarStatsView = {
                 // for saves, we link to the saved post
                 link = result["post_url"];
             } else {
-                link = "/user/" + result["user_name"];
+                link = `/user/${result["user_name"]}`;
             }
-            html += '<div class="user-action">';
-            html += '<a class="icon" href="' + link + '">';
-            html +=
-                '<img class="avatar--img" src="' +
-                result["user_profile_image_url"] +
-                '" height="20" width="20" alt=""></a>';
-            html +=
-                '<a class="name" href="' +
-                link +
-                '">' +
-                result["user_name"] +
-                "</a>";
-            html +=
-                '<span class="date">' +
-                result["posted_at_friendly"] +
-                "</span>";
-            html += "</div>";
+            html += `
+                <div class="user-action">
+                    <a class="icon" href="${link}">
+                        <img class="avatar--img" src="${result["user_profile_image_url"]}" height="20" width="20" alt="">
+                    </a>
+                    <a class="name" href="${link}">${result["user_name"]}</a>
+                    <span class="date">${result["posted_at_friendly"]}</span>
+                </div>
+            `;
         }
         $content.removeClass("loading").html(html);
     },

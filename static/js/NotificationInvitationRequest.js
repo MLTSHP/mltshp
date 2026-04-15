@@ -1,38 +1,42 @@
 const NotificationInvitationRequest = {
-    attachEvents: function ($root, updateFn) {
-        // const $form = $root.find("form");
-        const $form_approve_invitation = $root.find(".approve-invitation");
-        const $form_decline_invitation = $root.find(".decline-invitation");
+    attachEvents: function ($root, updateCallbackFn) {
+        const $formApproveInvitation = $root.find(".approve-invitation");
+        const $formDeclineInvitation = $root.find(".decline-invitation");
 
-        function submit_approve_invitation(ev) {
+        function submitApproveInvitation(ev) {
             ev.preventDefault();
-            submit_form($form_approve_invitation);
+            submitForm($formApproveInvitation);
         }
 
-        function submit_decline_invitation(ev) {
+        function submitDeclineInvitation(ev) {
             ev.preventDefault();
-            submit_form($form_decline_invitation);
+            submitForm($formDeclineInvitation);
         }
 
-        function submit_form($form) {
-            var url = $form.attr("action");
-            var data = $form.serialize();
-            $.post(url, data, (resp) => clear_notification(resp), "json");
+        async function submitForm($form) {
+            const url = $form.attr("action");
+            const data = $form.serialize();
+            const resp = await fetch(url, {
+                method: "POST",
+                body: new URLSearchParams(data),
+            });
+            const json = await resp.json();
+            clearNotification(json);
         }
 
-        function clear_notification(response) {
+        function clearNotification(response) {
             if (response["status"] == "ok") {
                 $root.remove();
-                updateFn(response["count"]);
+                updateCallbackFn(response["count"]);
             }
         }
 
         $root.delegate(".approve-invitation", "submit", (ev) =>
-            submit_approve_invitation(ev),
+            submitApproveInvitation(ev),
         );
 
         $root.delegate(".decline-invitation", "submit", (ev) =>
-            submit_decline_invitation(ev),
+            submitDeclineInvitation(ev),
         );
     },
 };

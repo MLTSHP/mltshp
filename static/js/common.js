@@ -24,4 +24,14 @@ function toText(num, base) {
         : num + " " + "<span>" + base + "s" + "</span>";
 }
 
-export { setCaret, toText };
+function applyHoverForVideo(sel) {
+    sel.hover(function () {
+        if (this.hasAttribute("controls")) {
+            this.removeAttribute("controls");
+        } else {
+            this.setAttribute("controls", "controls");
+        }
+    });
+}
+
+export { applyHoverForVideo, setCaret, toText };

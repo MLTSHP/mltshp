@@ -10,12 +10,12 @@ function format(str_num) {
     return Number.parseInt(str_num).toLocaleString();
 }
 
-function formatBrief(str_num) {
+function formatBrief(strNum) {
     // Format number in a way that won't need excessive space to
     // display. Abbreviate with suffixes and limit to one
     // decimal place.
 
-    const n = parseInt(str_num, 10);
+    const n = parseInt(strNum, 10);
 
     // Handle garbage input (somewhat) gracefully.
     if (Number.isNaN(n)) {
@@ -54,26 +54,23 @@ function formatBrief(str_num) {
     return n.toLocaleString();
 }
 
-var $root;
-
 const UserCounts = {
-    populate: function ($user_counts) {
-        $root = $user_counts;
-        var name = $root.attr("name");
+    populate: async function ($userCountsPanel) {
+        const name = $userCountsPanel.attr("name");
 
-        function display_results(result) {
+        function displayResults(result) {
             if ("views" in result) {
-                $root
+                $userCountsPanel
                     .find(".views")
                     .attr("title", format(result["views"]) + " views")
                     .find(".num")
                     .html(formatBrief(result["views"]));
-                $root
+                $userCountsPanel
                     .find(".saves")
                     .attr("title", format(result["saves"]) + " saves")
                     .find(".num")
                     .html(formatBrief(result["saves"]));
-                $root
+                $userCountsPanel
                     .find(".likes")
                     .attr("title", format(result["likes"]) + " likes")
                     .find(".num")
@@ -81,11 +78,9 @@ const UserCounts = {
             }
         }
 
-        $.get(
-            "/user/" + name + "/counts",
-            (result) => display_results(result),
-            "json",
-        );
+        const resp = await fetch(`/user/${name}/counts`);
+        const json = await resp.json();
+        displayResults(json);
     },
 };
 

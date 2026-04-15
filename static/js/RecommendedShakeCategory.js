@@ -16,19 +16,21 @@ const RecommendedShakeCategory = {
 
         // Per invocation functions that will close over the context dependent
         // variables defined above.
-        function click_toggle() {
+        async function clickToggle() {
             if (!fetched) {
-                var url =
+                const url =
                     "/tools/find-shakes/quick-fetch-category/" +
                     $toggle.attr("href").replace("#", "");
-                $.get(url, (resp) => populate_results(resp));
+
+                const resp = await fetch(url);
+                populateResults(await resp.text());
             } else {
                 toggle();
             }
             return false;
         }
 
-        function populate_results(results) {
+        function populateResults(results) {
             fetched = true;
             $body.html(results);
             toggle();
@@ -39,7 +41,7 @@ const RecommendedShakeCategory = {
         }
 
         // Attach any event handlers.
-        $toggle.click(() => click_toggle());
+        $toggle.click(() => clickToggle());
     },
 };
 

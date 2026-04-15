@@ -10,37 +10,37 @@ import { setCaret } from "./common.js";
  */
 
 let $root;
-let $post_comment_body;
+let $postCommentBody;
 
 const PermalinkCommentsView = {
-    addEvents: function ($image_comments_permalink) {
-        $root = $image_comments_permalink;
-        $post_comment_body = $("#post-comment-body");
+    addEvents: function ($imageCommentsPermalink) {
+        $root = $imageCommentsPermalink;
+        $postCommentBody = $("#post-comment-body");
 
         $root.delegate(".reply-to", "click", (ev) =>
-            PermalinkCommentsView.click_reply_to(ev),
+            PermalinkCommentsView.clickReplyTo(ev),
         );
         $root.delegate(".delete", "click", (ev) =>
-            PermalinkCommentsView.click_delete(ev),
+            PermalinkCommentsView.clickDelete(ev),
         );
     },
 
-    click_reply_to: function (ev) {
-        var $target = $(ev.target);
-        var $meta = $target.parent();
-        var username = $meta.find(".username").html();
-        var username_clean = username.replace(/[^a-zA-Z0-9_\-]+/g, "");
-        var current_text = $post_comment_body.val();
-        $post_comment_body.val(current_text + "@" + username_clean + " ");
-        setCaret($post_comment_body.get(0));
+    clickReplyTo: function (ev) {
+        const $target = $(ev.target);
+        const $meta = $target.parent();
+        const username = $meta.find(".username").html();
+        const usernameClean = username.replace(/[^a-zA-Z0-9_\-]+/g, "");
+        const currentText = $postCommentBody.val();
+        $postCommentBody.val(currentText + "@" + usernameClean + " ");
+        setCaret($postCommentBody.get(0));
         window.location.hash = "post-comment";
         return false;
     },
 
-    click_delete: function (ev) {
-        var $delete_form = $("#" + ev.target.id + "-form");
+    clickDelete: function (ev) {
+        const $deleteForm = $("#" + ev.target.id + "-form");
         if (confirm("Are you sure you want to delete this?")) {
-            $delete_form.submit();
+            $deleteForm.submit();
         }
         return false;
     },
