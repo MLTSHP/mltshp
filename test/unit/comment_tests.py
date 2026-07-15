@@ -89,6 +89,94 @@ break
         new_conversation = Conversation.where("user_id = %s and sharedfile_id = %s", self.user.id, self.sharedfile.id)
         self.assertEqual(len(new_conversation), 1)
 
+    def test_deleting_only_comment_mutes_commenter_conversation(self):
+        comment = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="hello")
+        comment.save()
+
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 1)
+        self.assertEqual(len(Conversation.for_user(self.user.id)), 1)
+
+        comment.delete()
+
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+        self.assertEqual(len(Conversation.for_user(self.user.id)), 1)
+
+    def test_deleting_only_comment_does_not_mute_file_owner_conversation(self):
+        comment = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="hello")
+        comment.save()
+
+        comment.delete()
+
+        owner_conversation = Conversation.get("user_id = %s and sharedfile_id = %s", self.user.id, self.sharedfile.id)
+        self.assertTrue(owner_conversation)
+        self.assertEqual(owner_conversation.muted, 0)
+
+    def test_deleting_comments_from_first_mutes_on_last(self):
+        comment1 = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="first")
+        comment1.save()
+
+        comment2 = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="second")
+        comment2.save()
+
+        comment1.delete()
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 1)
+
+        comment2.delete()
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+
+    def test_deleting_comments_from_last_mutes_on_last(self):
+        comment1 = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="first")
+        comment1.save()
+
+        comment2 = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="second")
+        comment2.save()
+
+        comment2.delete()
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 1)
+
+        comment1.delete()
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+
+    def test_deleting_comment_does_not_mute_other_commenters_conversation(self):
+        visitor2 = User(name='visitor2', email='visitor2@example.com', verify_email_token='created', email_confirmed=1, is_paid=1)
+        visitor2.save()
+
+        comment1 = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="first visitor")
+        comment1.save()
+
+        comment2 = Comment(sharedfile_id=self.sharedfile.id, user_id=visitor2.id, body="second visitor")
+        comment2.save()
+
+        comment1.delete()
+
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+        self.assertEqual(len(Conversation.for_user(visitor2.id)), 1)
+
+    def test_recommenting_after_delete_does_not_unmute_conversation(self):
+        comment = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="hello")
+        comment.save()
+
+        comment.delete()
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+
+        recomment = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="hello again")
+        recomment.save()
+
+        # re-commenting does not restore a muted conversation
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+
+    def test_file_owner_deleting_visitor_comment_mutes_visitor_conversation(self):
+        comment = Comment(sharedfile_id=self.sharedfile.id, user_id=self.visitor.id, body="hello")
+        comment.save()
+
+        self.assertTrue(comment.can_user_delete(self.user))
+        comment.delete()
+
+        self.assertEqual(len(Conversation.for_user(self.visitor.id)), 0)
+        owner_conversation = Conversation.get("user_id = %s and sharedfile_id = %s", self.user.id, self.sharedfile.id)
+        self.assertTrue(owner_conversation)
+        self.assertEqual(owner_conversation.muted, 0)
+
     def test_comment_chopped_body(self):
         """
         Submits some lengthy comments and predicts their responses.
