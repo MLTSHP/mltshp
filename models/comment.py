@@ -158,6 +158,13 @@ class Comment(Model):
     def delete(self):
         self.deleted = 1
         self.save()
+        sf = self.sharedfile()
+        if sf and self.user_id != sf.user_id:
+            remaining = Comment.where('user_id = %s and sharedfile_id = %s and deleted = 0', self.user_id, self.sharedfile_id)
+            if not remaining:
+                existing_conversation = conversation.Conversation.get('user_id = %s and sharedfile_id = %s', self.user_id, self.sharedfile_id)
+                if existing_conversation:
+                    existing_conversation.mute()
 
     @classmethod
     def add(self, user=None, sharedfile=None, body=None):
